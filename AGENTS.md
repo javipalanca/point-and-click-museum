@@ -18,7 +18,9 @@ python3 -m http.server -d dist 8000   # http://localhost:8000/es/
 npm install && npx playwright install chromium   # una vez, para las pruebas
 npm test                         # pruebas de humo sobre dist/ (requiere build previo)
 python3 tools/export_artifact.py --out /tmp/artifact   # copia para publicar como Artifact de claude.ai
-python3 tools/add_game.py ~/Downloads/*.zip [--yes]   # añade juegos DOS locales (no versionados)
+python3 tools/add_game.py ~/Downloads/*.zip [--yes]   # añade juegos DOS o ScummVM locales (no versionados)
+tools/build_scummvm.sh           # compila ScummVM web en vendor/scummvm/ (no versionado; 30-60 min)
+npm run test:scummvm             # prueba la integración de ScummVM con tests/fixtures/fake-scummvm
 python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
 python3 build.py --no-local      # build público sin la colección local
 python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/games/x.jsdos
@@ -47,7 +49,10 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/scene.js` | primitivas de escena y desván procedural de la caza del píxel |
 | `src/js/characters.js` | personajes animados |
 | `src/js/sections.js`, `games.js`, `arcade.js` | lógica de cada página (cada bloque se activa solo si existe su elemento) |
+| `src/scummvm/player.*` | reproductor de ScummVM (iframe): copia datos y juego al sistema de ficheros de Emscripten |
+| `vendor/scummvm/` | ScummVM web compilado por `tools/build_scummvm.sh` (ignorado salvo `NOTICE.md`) |
 | `tests/site.test.js` | pruebas de humo con Playwright |
+| `tests/scummvm.test.js`, `tests/fixtures/` | integración de ScummVM con un ScummVM simulado |
 | `tools/` | bundles js-dos, descarga del emulador, exportación a Artifact, programas DOS |
 
 ## Reglas del proyecto
@@ -65,7 +70,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
    fuentes Press Start 2P (títulos) y VT323 (texto). Nada de emoji como iconos. Respeta `prefers-reduced-motion`.
 7. **Responsive:** ninguna página puede desbordar en horizontal (iPhone SE incluido). `npm test` lo comprueba.
 8. **Legalidad:** nada de juegos comerciales ni recreaciones de juegos existentes en el repositorio. La colección
-   personal del usuario va en `assets/games/` y `data/arcade.local.json`, que están en `.gitignore`: no los fuerces
+   personal del usuario va en `assets/games/`, `assets/scummvm/` y `data/arcade.local.json`, que están en `.gitignore`: no los fuerces
    con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos son originales.
 9. **Enlaces externos:** a Wikipedia o a webs oficiales; `target="_blank" rel="noopener"`. Verifica que existen.
 10. **SEO:** cada página nueva necesita título, descripción, entrada en `site.json → pages` y queda en el sitemap.

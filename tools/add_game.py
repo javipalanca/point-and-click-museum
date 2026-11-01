@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add DOS games to the DOSBox room straight from the .zip you downloaded.
+"""Add games to the DOSBox room straight from the .zip you downloaded (DOS games or ScummVM games).
 
     python3 tools/add_game.py ~/Downloads/game.zip                 # detects the executable, asks if unsure
     python3 tools/add_game.py ~/Downloads/*.zip --yes              # several at once, best guess, no questions
@@ -8,8 +8,14 @@
     python3 tools/add_game.py --list
     python3 tools/add_game.py --remove my-game
 
+It detects the kind of game:
+  * ScummVM data (Beneath a Steel Sky, LucasArts/Sierra data files, AGS games…) -> runs in ScummVM (web build)
+  * a DOS program (.EXE/.COM/.BAT)                                               -> runs in DOSBox
+Force one with --engine dosbox|scummvm.
+
 For each game it writes:
-    assets/games/<id>.jsdos     the js-dos bundle (zip + .jsdos/dosbox.conf)
+    assets/games/<id>.jsdos     the js-dos bundle (zip + .jsdos/dosbox.conf), or
+    assets/scummvm/<id>.zip     the game data for ScummVM
     data/arcade.local.json      the catalogue entry (title, year, studio, licence, description)
 Both paths are in .gitignore: your games stay on your computer and never reach the repository.
 Run `python3 build.py` afterwards to see them in the DOSBox room.
@@ -32,6 +38,8 @@ sys.path.insert(0, str(ROOT))
 from tools.jsdos import make_bundle  # noqa: E402
 
 GAMES_DIR = ROOT / "assets" / "games"
+SVM_DIR = ROOT / "assets" / "scummvm"
+SVM_BUILT = ROOT / "vendor" / "scummvm" / "scummvm.js"
 LOCAL = ROOT / "data" / "arcade.local.json"
 RUNNABLE = (".exe", ".com", ".bat")
 # helper programs that are almost never the game itself
@@ -44,6 +52,49 @@ DEFAULT_DESC = {
     "de": "Spiel aus deiner lokalen Sammlung.",
     "fr": "Jeu ajouté depuis votre collection locale.",
 }
+
+
+# data files that identify games ScummVM can run (engine id -> test on lower-case base names)
+SCUMMVM_SIGNATURES = [
+    ("sky", lambda n: {"sky.dnr", "sky.dsk"} <= n),
+    ("queen", lambda n: bool({"queen.1", "queen.1c"} & n)),
+    ("lure", lambda n: "disk1.vga" in n),
+    ("drascula", lambda n: "packet.001" in n),
+    ("dreamweb", lambda n: any(re.match(r"dreamw\w*\.r00$", x) for x in n)),
+    ("teenagent", lambda n: {"on.res", "off.res"} <= n),
+    ("cge", lambda n: {"vol.cat", "vol.dat"} <= n),
+    ("sci", lambda n: "resource.map" in n),
+    ("agi", lambda n: ("logdir" in n and "picdir" in n) or any(x.endswith("dir") and "vol.0" in n for x in n) or any(x.endswith(".wag") for x in n)),
+    ("scumm", lambda n: any(re.match(r"(\d\d\.lfl|.+\.(la0|he0|sou))$", x) for x in n)
+              or any(x.endswith(".000") and x != "resource.000" for x in n)),
+    ("ags", lambda n: "ac2game.dat" in n or any(x.endswith(".ags") for x in n)),
+]
+AGS_MAGIC = b"Adventure Creator Game File"
+
+
+def is_windows_exe(data: bytes) -> bool:
+    """MZ executables with a PE header are Windows programs: DOSBox cannot run them."""
+    if data[:2] != b"MZ" or len(data) < 0x40:
+        return False
+    off = int.from_bytes(data[0x3C:0x40], "little")
+    return data[off:off + 4] == b"PE\0\0"
+
+
+def detect_engine(files: dict[str, bytes]) -> tuple[str | None, str]:
+    """('sky', 'GAME') for ScummVM games (engine, folder holding the data), (None, '') otherwise."""
+    by_dir: dict[str, set] = {}
+    for name in files:
+        p = PurePosixPath(name)
+        by_dir.setdefault(str(p.parent) if str(p.parent) != "." else "", set()).add(p.name.lower())
+    for engine, test in SCUMMVM_SIGNATURES:
+        for folder, names in sorted(by_dir.items(), key=lambda kv: kv[0].count("/")):
+            if test(names):
+                return engine, folder
+    for name, data in files.items():  # Windows AGS games carry the game inside the .exe
+        if name.lower().endswith(".exe") and is_windows_exe(data) and AGS_MAGIC in data:
+            parent = str(PurePosixPath(name).parent)
+            return "ags", "" if parent == "." else parent
+    return None, ""
 
 
 def slugify(text: str) -> str:
@@ -87,7 +138,7 @@ def candidates(files: dict[str, bytes], stem: str) -> list[tuple[int, str]]:
     out = []
     for name in files:
         p = PurePosixPath(name)
-        if p.suffix.lower() not in RUNNABLE or NOT_THE_GAME.match(p.name):
+        if p.suffix.lower() not in RUNNABLE or NOT_THE_GAME.match(p.name) or is_windows_exe(files[name]):
             continue
         score = 10 - 3 * (len(p.parts) - 1)                      # closer to the root is better
         base = slugify(p.stem).replace("-", "")
@@ -112,7 +163,9 @@ def choose_exe(files, stem, given, assume_yes) -> str:
         sys.exit(f"  error: {given} is not in the archive")
     cands = candidates(files, stem)
     if not cands:
-        sys.exit("  error: no .EXE/.COM/.BAT found; use --exe (it may need an installer first)")
+        if any(is_windows_exe(d) for n, d in files.items() if n.lower().endswith(".exe")):
+            sys.exit("  error: this is a Windows game; DOSBox only runs DOS programs and ScummVM does not recognise it")
+        sys.exit("  error: no DOS .EXE/.COM/.BAT found; use --exe (it may need an installer first)")
     clear = len(cands) == 1 or cands[0][0] - cands[1][0] >= 4
     if clear or assume_yes or not sys.stdin.isatty():
         if not clear:
@@ -125,6 +178,14 @@ def choose_exe(files, stem, given, assume_yes) -> str:
         a = input(f"  number [1]: ").strip() or "1"
         if a.isdigit() and 1 <= int(a) <= min(12, len(cands)):
             return cands[int(a) - 1][1]
+
+
+def official_for(engine: str | None) -> dict | None:
+    """The data/arcade.json entry waiting for this ScummVM game (e.g. the official freeware), if any."""
+    if not engine:
+        return None
+    games = json.loads((ROOT / "data/arcade.json").read_text("utf-8"))["games"]
+    return next((g for g in games if g.get("svmEngine") == engine and not g.get("bundle")), None)
 
 
 def load_local() -> dict:
@@ -149,32 +210,68 @@ def add(path: Path, args, data: dict) -> bool:
     if existing and not args.force:
         print(f"  skipped: '{gid}' already exists (use --force to replace)")
         return False
-    GAMES_DIR.mkdir(parents=True, exist_ok=True)
-    out = GAMES_DIR / f"{gid}.jsdos"
+    exe, svm_engine = None, None
     if path.suffix.lower() == ".jsdos":
+        GAMES_DIR.mkdir(parents=True, exist_ok=True)
+        out = GAMES_DIR / f"{gid}.jsdos"
         out.write_bytes(path.read_bytes())
-        exe = None
     elif zipfile.is_zipfile(path):
         files = read_zip(path)
-        exe = choose_exe(files, path.stem, args.exe, args.yes)
-        out.write_bytes(make_bundle(files, exe, args.cycles))
+        engine, folder = detect_engine(files)
+        has_dos = bool(candidates(files, path.stem))
+        use = args.engine
+        if use == "auto":
+            if engine and (SVM_BUILT.exists() or not has_dos):
+                use = "scummvm"
+            elif engine and has_dos:
+                use = "dosbox"
+                print(f"  note: ScummVM ({engine}) would also run it, but vendor/scummvm is not built; using DOSBox")
+            else:
+                use = "dosbox"
+        if use == "scummvm":
+            if not engine:
+                print("  error: ScummVM does not recognise these files (use --engine dosbox for DOS games)")
+                return False
+            svm_engine = engine
+            known = official_for(engine) if not (args.title or args.id) else None
+            if known:  # e.g. the official Beneath a Steel Sky zip fills the catalogue entry
+                title, gid = known["title"], known["id"]
+                print(f"  recognised: {title} (listed in data/arcade.json)")
+            prefix = folder + "/" if folder else ""
+            game_files = {n[len(prefix):]: d for n, d in files.items() if n.startswith(prefix)}
+            SVM_DIR.mkdir(parents=True, exist_ok=True)
+            out = SVM_DIR / f"{gid}.zip"
+            with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+                for n, d in sorted(game_files.items()):
+                    z.writestr(n, d)
+            if not SVM_BUILT.exists():
+                print("  note: build ScummVM once with tools/build_scummvm.sh to play it")
+        else:
+            exe = choose_exe(files, path.stem, args.exe, args.yes)
+            GAMES_DIR.mkdir(parents=True, exist_ok=True)
+            out = GAMES_DIR / f"{gid}.jsdos"
+            out.write_bytes(make_bundle(files, exe, args.cycles))
     else:
         print("  error: not a .zip or .jsdos file")
         return False
     entry = {
         "id": gid, "title": title, "year": args.year, "studio": args.studio or "—", "icon": args.icon,
-        "bundle": f"games/{gid}.jsdos", "license": args.license, "local": True,
+        "bundle": f"{out.parent.name}/{out.name}",
+        "engine": "scummvm" if svm_engine else "dosbox", "license": args.license, "local": True,
         "desc": {k: (args.desc or v) for k, v in DEFAULT_DESC.items()},
     }
     if not args.desc:
         entry["autoDesc"] = True
     if exe:
         entry["exe"] = exe
+    if svm_engine:
+        entry["svmEngine"] = svm_engine
     if args.source:
         entry["source"] = args.source
     data["games"] = [g for g in data["games"] if g["id"] != gid] + [entry]
     size = out.stat().st_size // 1024
-    print(f"  ok: {title} -> assets/games/{gid}.jsdos ({size} KiB)" + (f", runs {exe}" if exe else ""))
+    where = f"{out.parent.name}/{out.name}"
+    print(f"  ok: {title} -> assets/{where} ({size} KiB)" + (f", DOSBox runs {exe}" if exe else "") + (f", ScummVM engine {svm_engine}" if svm_engine else ""))
     return True
 
 
@@ -191,6 +288,8 @@ def main() -> int:
     ap.add_argument("--source", help="URL where the game comes from")
     ap.add_argument("--icon", default="floppy", help="sprite name from data/sprites.json (default: floppy)")
     ap.add_argument("--cycles", help="DOSBox cpu cycles, e.g. 20000 for games that run too fast")
+    ap.add_argument("--engine", choices=("auto", "dosbox", "scummvm"), default="auto",
+                    help="auto: ScummVM if it recognises the data files (and is built), else DOSBox")
     ap.add_argument("-y", "--yes", action="store_true", help="never ask: take the best executable guess")
     ap.add_argument("--force", action="store_true", help="replace a game with the same id")
     ap.add_argument("--list", action="store_true", help="list local games")

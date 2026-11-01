@@ -87,9 +87,9 @@
  "fullscreenFail": "Cette vue n'autorise pas le plein écran.",
  "stop": "ÉTEINDRE",
  "byoTitle": "Apportez votre jeu",
- "byoBody": "Chargez un paquet .jsdos ou un .zip contenant les fichiers d'un jeu que vous possédez. Il tourne dans votre navigateur et n'est envoyé nulle part.",
+ "byoBody": "Chargez un .jsdos ou un .zip contenant les fichiers d'un jeu que vous possédez : un programme MS-DOS (DOSBox) ou les données d'un jeu compatible ScummVM. Il tourne dans votre navigateur et n'est envoyé nulle part.",
  "byoFile": "Fichier .jsdos ou .zip",
- "byoExe": "Exécutable dans le .zip (.zip uniquement)",
+ "byoExe": "Exécutable dans le .zip (jeux DOS uniquement ; laissez vide pour le détecter)",
  "byoRun": "▶ DÉMARRER",
  "byoNoFile": "Choisissez d'abord un fichier.",
  "byoNoExe": "Indiquez l'exécutable, par exemple GAME.EXE ou JEU\\START.BAT.",
@@ -178,5 +178,11 @@
  "catAllLetters": "Toutes",
  "catCount": "{n} jeux sur {total}",
  "catEmpty": "Aucun jeu ne correspond à la recherche.",
- "catLocal": "LOCAL"
+ "catLocal": "LOCAL",
+ "catAllEngines": "Tous les moteurs",
+ "svmMissing": "ScummVM n'est pas encore installé sur ce site : lancez tools/build_scummvm.sh et régénérez le site.",
+ "svmMouseHint": "ScummVM utilise la souris directement, sans capture. Clic gauche agit, clic droit regarde ; F5 ouvre le menu.",
+ "byoEngine": "Moteur",
+ "byoAuto": "Détecter automatiquement",
+ "byoNoGame": "Ce zip ne contient ni programme DOS ni données reconnues par ScummVM."
 }

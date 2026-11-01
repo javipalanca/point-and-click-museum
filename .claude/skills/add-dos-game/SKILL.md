@@ -1,6 +1,6 @@
 ---
 name: add-dos-game
-description: Empaqueta un juego o programa de MS-DOS como bundle de js-dos y lo añade a la sala DOSBox del Point and Click Museum (data/arcade.json). Úsala cuando pidan añadir juegos jugables, revisar la configuración del emulador o problemas de ratón en DOSBox.
+description: Añade juegos jugables a la sala DOSBox/ScummVM del Point and Click Museum (programas MS-DOS con js-dos o datos de juegos con ScummVM web), revisa la configuración de los emuladores o problemas de ratón. Úsala cuando pidan añadir juegos, compilar ScummVM o arreglar la sala de juegos.
 ---
 
 # Añadir un juego a la sala DOSBox
@@ -18,6 +18,15 @@ Escribe `assets/games/<id>.jsdos` y `data/arcade.local.json`, ambos en `.gitigno
 ni los publiques: los builds públicos (`tools/export_artifact.py`, `build.py --no-local`) los excluyen.
 Si el ejecutable elegido no es el correcto, repite con `--exe RUTA/PROGRAMA.EXE --force`. Si el juego necesita
 instalarse, instálalo antes en DOSBox de escritorio y comprime la carpeta instalada.
+
+## ScummVM
+
+- `add_game.py` detecta el motor (firmas de ficheros en `SCUMMVM_SIGNATURES`; mantén la copia JS de `src/js/arcade.js`
+  sincronizada si añades motores). Fuerza con `--engine`.
+- El motor se compila con `tools/build_scummvm.sh` (variables `SCUMMVM_VERSION`, `ENGINES`). Si añades un motor a
+  `ENGINES`, añade su firma en ambos detectores y, si sus plugins se llaman distinto, revisa `wanted()` en `src/scummvm/player.js`.
+- Prueba la integración sin compilar: `npm run test:scummvm` (usa `tests/fixtures/fake-scummvm`).
+- Con el build real, prueba al menos Beneath a Steel Sky (zip oficial de scummvm.org) en escritorio y móvil.
 
 ## Juegos versionados (solo redistribuibles)
 

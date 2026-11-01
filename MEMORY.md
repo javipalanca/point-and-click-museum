@@ -35,6 +35,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **2026-11-01 · Colección local de juegos fuera de git.** `tools/add_game.py` convierte zips descargados en bundles
   (`assets/games/`) y los registra en `data/arcade.local.json`; ambos ignorados. `build.py` los mezcla salvo con
   `--no-local` (usado por `export_artifact.py`) y no copia a `dist/` bundles que no estén en el catálogo.
+- **2026-11-01 · ScummVM web para los juegos sin ejecutable DOS.** Se usa el port oficial de Emscripten de
+  ScummVM 2.9.1 (`dists/emscripten`), compilado con `tools/build_scummvm.sh` (`--datadir=/data`, plugins dinámicos,
+  motores scumm, agi, sci, sky, queen, lure, drascula, dreamweb, teenagent, cge y ags). Reproductor propio
+  (`src/scummvm/player.js`) en un iframe en lugar del shell oficial: copia a MEMFS `/data` y `/games/<id>` antes de
+  arrancar y lanza con `--path=/games/<id> --auto-detect` vía el fragmento de la URL (lo lee `custom_shell-pre.js`).
+  Solo carga `libdetection.so` y el plugin del motor del juego. `vendor/scummvm/` no se versiona.
+- **2026-11-01 · `add_game.py` elige motor:** ScummVM si reconoce los datos (firmas de ficheros por motor, juegos AGS
+  dentro de un `.exe` de Windows), DOSBox si hay programa DOS (descarta ejecutables PE de Windows). Si ScummVM no está
+  compilado y hay `.exe` DOS, usa DOSBox. Los zips oficiales de los freeware rellenan su ficha de `arcade.json`.
 - **2026-11-01 · Catálogo de la sala DOSBox** con buscador, filtro por compañía, índice A–Z (sin artículos iniciales)
   y orden por título/año, visible a partir de 8 juegos (`arcade.json → catalogue.filtersFrom`); tarjetas compactas.
 
@@ -51,7 +60,11 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 
 - Verificar los enlaces externos (Wikipedia y webs oficiales): no se pudieron comprobar desde el entorno en la nube.
 - Probar la captura del ratón con un juego DOS real en un navegador de escritorio.
-- Conseguir versiones DOS redistribuibles de los freeware y empaquetarlas en `assets/games/`.
+- **Compilar ScummVM de verdad** (`tools/build_scummvm.sh`) y probar los freeware: en la sesión en la nube se bloqueó la
+  ejecución del script oficial (descarga y ejecuta Emscripten). La integración está probada con un ScummVM simulado;
+  pueden hacer falta ajustes (nombres de plugins, rutas) con el build real.
+- Guardar partidas de ScummVM entre visitas (hoy van a MEMFS y se pierden al cerrar; habría que enlazar IDBFS).
+- Los freeware de ScummVM se pueden redistribuir: valorar versionarlos (excepción en `.gitignore`) una vez probados.
 - Posibles mejoras: slugs localizados en las URLs, más estudios (Microïds, Cryo, Coktel Vision),
   modo de alto contraste.
 
@@ -62,3 +75,4 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - 2026-11-01 · v3: multipágina, personajes y escenas de más calidad, enlaces externos, ratón de DOSBox revisado.
 - 2026-11-01 · v4: repositorio git, AGENTS.md, MEMORY.md, skills y pruebas automatizadas (`npm test`).
 - 2026-11-01 · v5: `tools/add_game.py` para añadir juegos desde zips, colección local ignorada por git y catálogo con filtros.
+- 2026-11-01 · v6: soporte de ScummVM web (script de compilación, reproductor, detección de motor, freeware en el catálogo).

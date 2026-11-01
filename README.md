@@ -76,6 +76,21 @@ python3 tools/fetch_jsdos.py
 
 Si `vendor/js-dos/` no existe, la página carga js-dos desde jsDelivr.
 
+### ScummVM
+
+Muchos juegos no traen `.exe`: son datos que ejecuta ScummVM (Beneath a Steel Sky, Flight of the Amazon Queen,
+Drascula, Lure of the Temptress, Dreamweb, Teen Agent, Soltys, los datos de LucasArts/Sierra o los juegos de AGS).
+La sala DOSBox incluye un reproductor de ScummVM web (`src/scummvm/player.*`), pero el motor hay que compilarlo una vez:
+
+```bash
+tools/build_scummvm.sh      # ScummVM 2.9.1 → vendor/scummvm/ (30–60 min la primera vez; descarga Emscripten)
+python3 build.py
+```
+
+Requisitos: git, python3, make y herramientas de compilación de C/C++ (en macOS, `xcode-select --install`).
+`vendor/scummvm/` no se versiona (pesa varios MB y es GPLv3); sin compilar, las fichas de ScummVM avisan de que falta.
+Cada partida carga solo el plugin de detección y el del motor del juego. ScummVM usa el ratón directamente.
+
 ### Añadir juegos desde el zip descargado
 
 ```bash
@@ -87,9 +102,16 @@ python3 tools/add_game.py --remove titulo                             # quitar u
 python3 build.py
 ```
 
-El script abre el zip (también un zip dentro de otro), elige el programa que arranca el juego descartando instaladores
-y utilidades (`INSTALL`, `SETUP`, `DOS4GW`…), crea `assets/games/<id>.jsdos` y apunta el juego en
-`data/arcade.local.json`. **Ninguno de los dos se versiona** (están en `.gitignore`), así que tu colección no llega al
+El script abre el zip (también un zip dentro de otro) y decide el motor:
+
+- **ScummVM** si reconoce los datos (`sky.dnr`, `queen.1`, `resource.map`, `*.000`, `ac2game.dat`, juegos AGS de Windows…):
+  guarda los datos en `assets/scummvm/<id>.zip`. Si es uno de los freeware del catálogo, rellena su ficha.
+- **DOSBox** si hay un programa DOS: elige el que arranca el juego descartando instaladores y utilidades
+  (`INSTALL`, `SETUP`, `DOS4GW`…) y crea `assets/games/<id>.jsdos`.
+- Los juegos de Windows que no son de AGS se rechazan. Fuerza el motor con `--engine dosbox|scummvm`.
+
+Mientras no hayas compilado ScummVM, un juego que funcione en los dos motores va a DOSBox.
+El juego queda apuntado en `data/arcade.local.json`. **Nada de esto se versiona** (están en `.gitignore`), así que tu colección no llega al
 repositorio ni a GitHub. Para una versión pública sin tus juegos: `python3 build.py --no-local`
 (`tools/export_artifact.py` ya lo hace).
 
@@ -129,6 +151,7 @@ vendor/js-dos/      js-dos alojado localmente (opcional)
 npm install && npx playwright install chromium   # una vez
 python3 build.py && npm test
 python3 -m unittest discover -s tests            # pruebas de tools/add_game.py
+npm run test:scummvm                             # sala ScummVM con un ScummVM simulado (no hace falta compilarlo)
 ```
 
 `tests/site.test.js` comprueba las 44 páginas (errores, desbordamiento en móvil y tableta, enlaces internos), resuelve la

@@ -14,10 +14,10 @@
     }
   },
   "intro": {
-    "es": "Una sala con DOSBox dentro del navegador (js-dos). Las aventuras se cargan como paquetes .jsdos preparados en data/arcade.json. Solo incluimos programas que se pueden redistribuir; para el resto, carga tu propia copia desde tu ordenador: no se sube a ningún sitio.",
-    "en": "A room with DOSBox running in the browser (js-dos). Adventures load as .jsdos bundles configured in data/arcade.json. We only ship software that may be redistributed; for anything else, load your own copy from your computer: it never leaves your device.",
-    "de": "Ein Raum mit DOSBox im Browser (js-dos). Adventures werden als .jsdos-Pakete geladen, die in data/arcade.json eingetragen sind. Wir liefern nur weiterverbreitbare Software mit; alles andere lädst du als eigene Kopie von deinem Rechner – sie verlässt dein Gerät nie.",
-    "fr": "Une salle avec DOSBox dans le navigateur (js-dos). Les aventures se chargent sous forme de paquets .jsdos déclarés dans data/arcade.json. Nous ne livrons que des logiciels redistribuables ; pour le reste, chargez votre propre copie depuis votre ordinateur : elle ne quitte jamais votre appareil."
+    "es": "Una sala con dos emuladores en el navegador: DOSBox (js-dos) para programas de MS-DOS y ScummVM para juegos de datos como los de LucasArts, Sierra, Revolution o AGS. Solo incluimos lo que se puede redistribuir; tu colección se añade con tools/add_game.py y no sale de tu ordenador.",
+    "en": "A room with two emulators in the browser: DOSBox (js-dos) for MS-DOS programs and ScummVM for data-based games such as LucasArts, Sierra, Revolution or AGS titles. We only ship what may be redistributed; your collection is added with tools/add_game.py and never leaves your computer.",
+    "de": "Ein Raum mit zwei Emulatoren im Browser: DOSBox (js-dos) für MS-DOS-Programme und ScummVM für datenbasierte Spiele wie die von LucasArts, Sierra, Revolution oder AGS. Wir liefern nur Weiterverbreitbares; deine Sammlung fügst du mit tools/add_game.py hinzu, sie verlässt deinen Rechner nie.",
+    "fr": "Une salle avec deux émulateurs dans le navigateur : DOSBox (js-dos) pour les programmes MS-DOS et ScummVM pour les jeux à données comme ceux de LucasArts, Sierra, Revolution ou AGS. Nous ne livrons que ce qui est redistribuable ; votre collection s'ajoute avec tools/add_game.py et ne quitte jamais votre ordinateur."
   },
   "games": [
     {
@@ -34,7 +34,8 @@
         "de": "Zwei winzige DOS-Programme für dieses Museum. MUSEUM.COM prüft, ob der Emulator startet; PAINT.COM ist ein kleines Malprogramm zum Testen der Maus: Links malt, rechts wechselt die Farbe.",
         "fr": "Deux minuscules programmes DOS créés pour ce musée. MUSEUM.COM vérifie que l'émulateur démarre ; PAINT.COM est un petit logiciel de dessin pour tester la souris : clic gauche pour dessiner, clic droit pour changer de couleur."
       },
-      "pinned": true
+      "pinned": true,
+      "engine": "dosbox"
     },
     {
       "id": "beneath-a-steel-sky",
@@ -44,13 +45,15 @@
       "icon": "robot",
       "bundle": null,
       "license": "Freeware",
-      "source": "https://www.scummvm.org/games/#games-sky",
+      "source": "https://www.scummvm.org/games/",
       "desc": {
-        "es": "Freeware desde 2003. La descarga oficial está pensada para ScummVM; para DOSBox hace falta la versión DOS original con su ejecutable. Prepárala con tools/make_jsdos_bundle.py.",
-        "en": "Freeware since 2003. The official download targets ScummVM; DOSBox needs the original DOS release with its executable. Package it with tools/make_jsdos_bundle.py.",
-        "de": "Seit 2003 Freeware. Der offizielle Download ist für ScummVM gedacht; für DOSBox braucht es die DOS-Originalversion mit Programmdatei. Verpacke sie mit tools/make_jsdos_bundle.py.",
-        "fr": "Freeware depuis 2003. Le téléchargement officiel vise ScummVM ; DOSBox demande la version DOS d'origine avec son exécutable. Empaquetez-la avec tools/make_jsdos_bundle.py."
-      }
+        "es": "Ciberpunk de Revolution con arte de Dave Gibbons. Freeware para ScummVM. Descarga el zip oficial en scummvm.org y añádelo con tools/add_game.py: se colocará aquí.",
+        "en": "Revolution's cyberpunk adventure with art by Dave Gibbons. Freeware for ScummVM. Download the official zip from scummvm.org and add it with tools/add_game.py: it will land here.",
+        "de": "Revolutions Cyberpunk-Adventure mit Grafiken von Dave Gibbons. Freeware für ScummVM. Lade das offizielle Zip von scummvm.org und füge es mit tools/add_game.py hinzu: Es erscheint hier.",
+        "fr": "L'aventure cyberpunk de Revolution, dessinée par Dave Gibbons. Freeware pour ScummVM. Téléchargez le zip officiel sur scummvm.org et ajoutez-le avec tools/add_game.py : il apparaîtra ici."
+      },
+      "engine": "scummvm",
+      "svmEngine": "sky"
     },
     {
       "id": "flight-of-the-amazon-queen",
@@ -60,13 +63,15 @@
       "icon": "palm",
       "bundle": null,
       "license": "Freeware",
-      "source": "https://www.scummvm.org/games/#games-queen",
+      "source": "https://www.scummvm.org/games/",
       "desc": {
-        "es": "Aventura pulp liberada como freeware. Mismo caso: necesitas los ficheros DOS originales para empaquetarla.",
-        "en": "A pulp adventure released as freeware. Same as above: you need the original DOS files to package it.",
-        "de": "Ein Pulp-Adventure, als Freeware freigegeben. Auch hier brauchst du die originalen DOS-Dateien.",
-        "fr": "Une aventure pulp devenue freeware. Même cas : il faut les fichiers DOS d'origine pour l'empaqueter."
-      }
+        "es": "Aventura pulp en la jungla al estilo de los seriales de los años 30. Freeware para ScummVM. Descarga el zip oficial en scummvm.org y añádelo con tools/add_game.py: se colocará aquí.",
+        "en": "A pulp jungle adventure in the style of 1930s serials. Freeware for ScummVM. Download the official zip from scummvm.org and add it with tools/add_game.py: it will land here.",
+        "de": "Ein Pulp-Dschungelabenteuer im Stil der Serials der 1930er. Freeware für ScummVM. Lade das offizielle Zip von scummvm.org und füge es mit tools/add_game.py hinzu: Es erscheint hier.",
+        "fr": "Une aventure pulp dans la jungle, façon feuilletons des années 30. Freeware pour ScummVM. Téléchargez le zip officiel sur scummvm.org et ajoutez-le avec tools/add_game.py : il apparaîtra ici."
+      },
+      "engine": "scummvm",
+      "svmEngine": "queen"
     },
     {
       "id": "drascula",
@@ -76,13 +81,15 @@
       "icon": "skull",
       "bundle": null,
       "license": "Freeware",
-      "source": "https://www.scummvm.org/games/#games-drascula",
+      "source": "https://www.scummvm.org/games/",
       "desc": {
-        "es": "Aventura española de Alcachofa Soft, liberada como freeware. Empaquétala a partir de la versión DOS original.",
-        "en": "A Spanish adventure by Alcachofa Soft, released as freeware. Package it from the original DOS release.",
-        "de": "Ein spanisches Adventure von Alcachofa Soft, als Freeware freigegeben. Verpacke die DOS-Originalversion.",
-        "fr": "Une aventure espagnole d'Alcachofa Soft devenue freeware. Empaquetez-la depuis la version DOS d'origine."
-      }
+        "es": "Comedia de terror española de Alcachofa Soft. Freeware para ScummVM. Descarga el zip oficial en scummvm.org y añádelo con tools/add_game.py: se colocará aquí.",
+        "en": "A Spanish horror comedy by Alcachofa Soft. Freeware for ScummVM. Download the official zip from scummvm.org and add it with tools/add_game.py: it will land here.",
+        "de": "Eine spanische Horrorkomödie von Alcachofa Soft. Freeware für ScummVM. Lade das offizielle Zip von scummvm.org und füge es mit tools/add_game.py hinzu: Es erscheint hier.",
+        "fr": "Une comédie d'horreur espagnole d'Alcachofa Soft. Freeware pour ScummVM. Téléchargez le zip officiel sur scummvm.org et ajoutez-le avec tools/add_game.py : il apparaîtra ici."
+      },
+      "engine": "scummvm",
+      "svmEngine": "drascula"
     },
     {
       "id": "lure-of-the-temptress",
@@ -92,12 +99,68 @@
       "icon": "sword",
       "bundle": null,
       "license": "Freeware",
-      "source": "https://www.scummvm.org/games/#games-lure",
+      "source": "https://www.scummvm.org/games/",
       "desc": {
-        "es": "El estreno de Virtual Theatre, hoy freeware. Necesita los ficheros DOS originales.",
-        "en": "Virtual Theatre's debut, now freeware. Requires the original DOS files.",
-        "de": "Das Debüt von Virtual Theatre, heute Freeware. Benötigt die originalen DOS-Dateien.",
-        "fr": "Les débuts de Virtual Theatre, aujourd'hui freeware. Nécessite les fichiers DOS d'origine."
+        "es": "El estreno de Revolution y de su motor Virtual Theatre. Freeware para ScummVM. Descarga el zip oficial en scummvm.org y añádelo con tools/add_game.py: se colocará aquí.",
+        "en": "Revolution's debut and the first Virtual Theatre game. Freeware for ScummVM. Download the official zip from scummvm.org and add it with tools/add_game.py: it will land here.",
+        "de": "Revolutions Debüt und das erste Spiel mit Virtual Theatre. Freeware für ScummVM. Lade das offizielle Zip von scummvm.org und füge es mit tools/add_game.py hinzu: Es erscheint hier.",
+        "fr": "Les débuts de Revolution et le premier jeu Virtual Theatre. Freeware pour ScummVM. Téléchargez le zip officiel sur scummvm.org et ajoutez-le avec tools/add_game.py : il apparaîtra ici."
+      },
+      "engine": "scummvm",
+      "svmEngine": "lure"
+    },
+    {
+      "id": "dreamweb",
+      "title": "Dreamweb",
+      "year": 1994,
+      "studio": "Creative Reality",
+      "icon": "eye",
+      "bundle": null,
+      "license": "Freeware",
+      "engine": "scummvm",
+      "svmEngine": "dreamweb",
+      "source": "https://www.scummvm.org/games/",
+      "desc": {
+        "es": "Thriller ciberpunk oscuro con vista cenital. Freeware para ScummVM. Descarga el zip oficial en scummvm.org y añádelo con tools/add_game.py: se colocará aquí.",
+        "en": "A dark top-down cyberpunk thriller. Freeware for ScummVM. Download the official zip from scummvm.org and add it with tools/add_game.py: it will land here.",
+        "de": "Ein düsterer Cyberpunk-Thriller in Draufsicht. Freeware für ScummVM. Lade das offizielle Zip von scummvm.org und füge es mit tools/add_game.py hinzu: Es erscheint hier.",
+        "fr": "Un thriller cyberpunk sombre en vue de dessus. Freeware pour ScummVM. Téléchargez le zip officiel sur scummvm.org et ajoutez-le avec tools/add_game.py : il apparaîtra ici."
+      }
+    },
+    {
+      "id": "teen-agent",
+      "title": "Teen Agent",
+      "year": 1995,
+      "studio": "Metropolis Software",
+      "icon": "magnifier",
+      "bundle": null,
+      "license": "Freeware",
+      "engine": "scummvm",
+      "svmEngine": "teenagent",
+      "source": "https://www.scummvm.org/games/",
+      "desc": {
+        "es": "Un adolescente reclutado como agente secreto, en clave de comedia. Freeware para ScummVM. Descarga el zip oficial en scummvm.org y añádelo con tools/add_game.py: se colocará aquí.",
+        "en": "A comedy about a teenager recruited as a secret agent. Freeware for ScummVM. Download the official zip from scummvm.org and add it with tools/add_game.py: it will land here.",
+        "de": "Eine Komödie über einen Teenager, der Geheimagent wird. Freeware für ScummVM. Lade das offizielle Zip von scummvm.org und füge es mit tools/add_game.py hinzu: Es erscheint hier.",
+        "fr": "Une comédie sur un adolescent recruté comme agent secret. Freeware pour ScummVM. Téléchargez le zip officiel sur scummvm.org et ajoutez-le avec tools/add_game.py : il apparaîtra ici."
+      }
+    },
+    {
+      "id": "soltys",
+      "title": "Soltys",
+      "year": 1995,
+      "studio": "L.K. Avalon",
+      "icon": "crown",
+      "bundle": null,
+      "license": "Freeware",
+      "engine": "scummvm",
+      "svmEngine": "cge",
+      "source": "https://www.scummvm.org/games/",
+      "desc": {
+        "es": "Aventura polaca de fantasía y humor. Freeware para ScummVM. Descarga el zip oficial en scummvm.org y añádelo con tools/add_game.py: se colocará aquí.",
+        "en": "A Polish fantasy comedy adventure. Freeware for ScummVM. Download the official zip from scummvm.org and add it with tools/add_game.py: it will land here.",
+        "de": "Ein polnisches Fantasy-Komödien-Adventure. Freeware für ScummVM. Lade das offizielle Zip von scummvm.org und füge es mit tools/add_game.py hinzu: Es erscheint hier.",
+        "fr": "Une aventure polonaise de fantasy humoristique. Freeware pour ScummVM. Téléchargez le zip officiel sur scummvm.org et ajoutez-le avec tools/add_game.py : il apparaîtra ici."
       }
     }
   ],

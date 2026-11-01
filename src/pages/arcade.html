@@ -17,6 +17,7 @@
           <form class="byo" id="byoForm">
           <p>{{t:byoBody}}</p>
           <label for="byoFile">{{t:byoFile}}<input id="byoFile" type="file" accept=".jsdos,.zip,application/zip"></label>
+          <label for="byoEngine">{{t:byoEngine}}<select id="byoEngine"><option value="auto">{{t:byoAuto}}</option><option value="dosbox">DOSBox</option><option value="scummvm">ScummVM</option></select></label>
           <label for="byoExe">{{t:byoExe}}<input id="byoExe" type="text" spellcheck="false" autocapitalize="characters" placeholder="GAME.EXE"></label>
           <button class="pbtn small" type="submit">{{t:byoRun}}</button>
           <p class="err" id="byoErr" aria-live="polite"></p>

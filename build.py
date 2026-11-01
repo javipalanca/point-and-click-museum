@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import os
 import json
 import re
 import shutil
@@ -87,8 +88,12 @@ def load_arcade() -> dict:
     arcade = load("arcade.json")
     if INCLUDE_LOCAL and LOCAL_ARCADE.exists():
         ids = {g["id"] for g in arcade["games"]}
+        official = {g["id"]: g for g in arcade["games"]}
         for g in json.loads(LOCAL_ARCADE.read_text("utf-8")).get("games", []):
-            if g["id"] in ids:
+            if g["id"] in ids and not official.get(g["id"], {}).get("bundle") and (ROOT / "assets" / g["bundle"]).exists():
+                # your copy of a game the catalogue lists without a bundle (e.g. official freeware): fill it in
+                official[g["id"]].update({k: g[k] for k in ("bundle", "engine", "svmEngine", "exe") if k in g}, local=True)
+            elif g["id"] in ids:
                 print(f"warning: arcade.local.json: id {g['id']} already exists, skipped", file=sys.stderr)
             elif not (ROOT / "assets" / g["bundle"]).exists():
                 print(f"warning: arcade.local.json: {g['id']} has no bundle at assets/{g['bundle']}, skipped", file=sys.stderr)
@@ -498,9 +503,10 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         if g.get("source"):
             action += f' <a class="ext" href="{E(g["source"])}" rel="noopener" target="_blank">{E(ui["arcadeSource"])} ↗</a>'
         meta = " · ".join(x for x in (str(g["year"]) if g.get("year") else "", E(g.get("studio") or "")) if x)
-        chips = (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") else "")
+        engine = g.get("engine", "dosbox")
+        chips = f'<span class="chip engine">{"ScummVM" if engine == "scummvm" else "DOSBox"}</span> ' + (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") else "")
         items.append(
-            f'<article class="px dos-game" data-id="{E(g["id"])}" data-key="{E(key)}" data-letter="{letter}" '
+            f'<article class="px dos-game" data-id="{E(g["id"])}" data-engine="{engine}" data-key="{E(key)}" data-letter="{letter}" '
             f'data-studio="{E(g.get("studio") or "")}" data-year="{g.get("year") or 9999}">'
             f'<img src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">'
             f'<h3>{E(g["title"])}</h3><div class="meta">{meta} {chips}</div>'
@@ -518,7 +524,10 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
             '<div class="row">'
             f'<label class="vh" for="catStudio">{E(ui["catAllStudios"])}</label><select id="catStudio"><option value="">{E(ui["catAllStudios"])}</option>'
             + "".join(f'<option value="{E(st)}">{E(st)}</option>' for st in studios) + "</select>"
-            f'<label class="vh" for="catSort">{E(ui["catSortTitle"])}</label><select id="catSort">'
+            + (f'<label class="vh" for="catEngine">{E(ui["catAllEngines"])}</label><select id="catEngine"><option value="">{E(ui["catAllEngines"])}</option>'
+               '<option value="dosbox">DOSBox</option><option value="scummvm">ScummVM</option></select>'
+               if len({g.get("engine", "dosbox") for g in games}) > 1 else "")
+            + f'<label class="vh" for="catSort">{E(ui["catSortTitle"])}</label><select id="catSort">'
             f'<option value="title">{E(ui["catSortTitle"])}</option><option value="year">{E(ui["catSortYear"])}</option></select></div>'
             f'<nav class="letters" aria-label="{E(ui["catLetters"])}"><button type="button" data-l="" aria-pressed="true">{E(ui["catAllLetters"])}</button>'
             + "".join(f'<button type="button" data-l="{c}" aria-pressed="false"{"" if c in letters else " disabled"}>{c}</button>'
@@ -562,7 +571,7 @@ def pick(obj, path):
     return obj
 
 
-def render_page(S: Site, page, lang, is_root, layout, build_id, vendored) -> str:
+def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=None) -> str:
     d, site, langs, default = S.d, S.d["site"], S.d["langs"], S.d["site"]["defaultLanguage"]
     L = {k: localize(d[k], lang, langs, default) for k in ("timeline", "studios", "engines", "techniques", "hero", "games", "arcade")}
     L["timeline"]["games"].sort(key=lambda g: g["year"])
@@ -575,6 +584,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored) -> str
         "lang": lang, "root": root, "isRoot": is_root, "page": pid, "ui": ui,
         "site": {"score": site["score"]}, "sprites": d["sprites"], "font": d["font"], "characters": d["characters"],
         "arcadeVendored": vendored,
+        "svm": dict(svm or {"available": False}, base=f"{'../' * Site.depth(page, is_root)}scummvm/"),
         "pageUrls": {p["id"]: S.url(lang, p["id"], depth) for p in S.pages},
         "langHints": {l: {"text": d["i18n"][l]["langHintText"], "label": d["i18n"][l]["langHintLink"],
                           "url": S.url(l, pid, depth)} for l in langs},
@@ -619,6 +629,64 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored) -> str
     return pat.sub(lambda m: sub(m, vars_), layout)
 
 
+# --------------------------------------------------------------------------- ScummVM
+SVM_VENDOR = Path(os.environ.get("PCM_SCUMMVM_VENDOR", ROOT / "vendor" / "scummvm"))  # override used by the tests
+
+
+def write_pack(path: Path, logical: str, data: bytes):
+    """<path>.pack.js: a script that hands the file to the player (for hosts that refuse binary files)."""
+    import base64
+    path.parent.mkdir(parents=True, exist_ok=True)
+    Path(str(path) + ".pack.js").write_text(
+        f"PCM_SVM_FILE({json.dumps(logical)},{json.dumps(base64.b64encode(data).decode())});\n", "utf-8")
+
+
+def write_scummvm(d: dict, out: Path, inline: bool) -> dict:
+    """Copy the ScummVM web build and unpack the ScummVM games into out/scummvm/.
+
+    Returns what the pages need to know: whether ScummVM is available and its data files."""
+    import zipfile
+    dest = out / "scummvm"
+    dest.mkdir(parents=True, exist_ok=True)
+    for f in (SRC / "scummvm").iterdir():
+        shutil.copy(f, dest / f.name)
+    available = (SVM_VENDOR / "scummvm.js").exists() and (SVM_VENDOR / "scummvm.wasm").exists()
+    data_files = []
+    if available:
+        shutil.copy(SVM_VENDOR / "scummvm.js", dest / "scummvm.js")
+        shutil.copy(SVM_VENDOR / "scummvm.wasm", dest / "scummvm.wasm")
+        for f in sorted((SVM_VENDOR / "data").rglob("*")):
+            if not f.is_file() or f.name == "index.json":
+                continue
+            rel = f.relative_to(SVM_VENDOR / "data").as_posix()
+            data_files.append(rel)
+            target = dest / "data" / rel
+            if inline:
+                write_pack(target, "data/" + rel, f.read_bytes())
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(f, target)
+    for g in d["arcade"]["games"]:
+        if g.get("engine") != "scummvm" or not g.get("bundle"):
+            continue
+        src = ROOT / "assets" / g["bundle"]
+        files = []
+        with zipfile.ZipFile(src) as z:
+            for info in z.infolist():
+                if info.is_dir():
+                    continue
+                files.append(info.filename)
+                target = dest / "games" / g["id"] / info.filename
+                if inline:
+                    write_pack(target, f"games/{g['id']}/{info.filename}", z.read(info))
+                else:
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_bytes(z.read(info))
+        g["files"] = sorted(files)
+    version = (SVM_VENDOR / "VERSION").read_text().strip() if (SVM_VENDOR / "VERSION").exists() else ""
+    return {"available": available, "data": data_files, "inline": inline, "version": version}
+
+
 # --------------------------------------------------------------------------- main
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -659,15 +727,19 @@ def main() -> int:
         keep = {g["bundle"] for g in d["arcade"]["games"] if g.get("bundle")}
         def skip(folder, names):  # never copy bundles that are not in the catalogue (e.g. local games with --no-local)
             rel = Path(folder).relative_to(ROOT / "assets").as_posix()
+            if rel == ".":
+                return [n for n in names if n == "scummvm"]  # ScummVM zips are unpacked by write_scummvm()
             return [n for n in names if n.endswith(".jsdos") and f"{rel}/{n}".lstrip("./") not in keep]
         shutil.copytree(ROOT / "assets", out, dirs_exist_ok=True, ignore=skip)
     (out / "games").mkdir(exist_ok=True)
     (out / "games/museum-demo.jsdos").write_bytes(museum_demo_bundle())
     write_images(d, out)
+    svm = write_scummvm(d, out, args.inline_bundles)
     if args.inline_bundles:
         import base64
         packed = {g["bundle"]: base64.b64encode((out / g["bundle"]).read_bytes()).decode()
-                  for g in d["arcade"]["games"] if g.get("bundle") and not g["bundle"].startswith("http")}
+                  for g in d["arcade"]["games"]
+                  if g.get("bundle") and g.get("engine", "dosbox") == "dosbox" and not g["bundle"].startswith("http")}
         (out / "games/bundles.js").write_text("window.PCM_BUNDLES = " + json.dumps(packed) + ";\n", "utf-8")
 
     S = Site(d, args)
@@ -679,9 +751,9 @@ def main() -> int:
         for page in S.pages:
             target = out / lang / page["path"] / "index.html"
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(render_page(S, page, lang, False, layout, build_id, vendored), "utf-8")
+            target.write_text(render_page(S, page, lang, False, layout, build_id, vendored, svm), "utf-8")
             count += 1
-    (out / "index.html").write_text(render_page(S, S.by_id["home"], default, True, layout, build_id, vendored), "utf-8")
+    (out / "index.html").write_text(render_page(S, S.by_id["home"], default, True, layout, build_id, vendored, svm), "utf-8")
 
     today = time.strftime("%Y-%m-%d")
     urls = []

@@ -48,8 +48,16 @@ if (document.getElementById("dosHost")) (() => {
       ...(dir ? ["cd \\" + dir] : []), ...(file ? [file] : [])].join("\n") + "\n";
   }
 
+  /* the mouse controls only make sense for DOSBox; ScummVM reads the browser mouse directly */
+  function mouseMode(engine) {
+    const svm = engine === "scummvm";
+    mouseBtn.hidden = svm; sens.hidden = svm; $("label[for=dosSens]").hidden = svm;
+    if (svm) hint.textContent = t("svmMouseHint"); else renderMouse();
+  }
+
   async function stop() {
     if (document.pointerLockElement) document.exitPointerLock();
+    mouseMode("dosbox");
     if (player) { try { await player.stop(); } catch (e) { /* already stopped */ } }
     player = null; host.innerHTML = ""; idle.hidden = false; now.textContent = t("arcadeNothing");
     stopBtn.disabled = true; fullBtn.disabled = true;
@@ -75,6 +83,70 @@ if (document.getElementById("dosHost")) (() => {
     return true;
   }
 
+  /* ScummVM: player.html in an iframe; it reads window.PCM_SVM_JOB from this page */
+  async function runScummVM(title, job) {
+    sfx("open");
+    if (!D.svm || !D.svm.available) { now.textContent = t("svmMissing"); toast(t("svmMissing")); return false; }
+    await stop();
+    window.PCM_SVM_JOB = Object.assign({ data: D.svm.data, inline: D.svm.inline }, job);
+    idle.hidden = true; now.textContent = "▶ " + title + " · ScummVM";
+    const f = document.createElement("iframe");
+    f.className = "svm-frame"; f.title = title; f.allow = "autoplay; fullscreen; gamepad";
+    f.src = D.svm.base + "player.html#" + encodeURI(job.args.join(" "));
+    f.addEventListener("load", () => { try { f.contentWindow.focus(); f.contentWindow.postMessage("pcm-focus", "*"); } catch (e) { /* ignore */ } });
+    host.appendChild(f);
+    mouseMode("scummvm");
+    stopBtn.disabled = false; fullBtn.disabled = false;
+    $("#dosScreen").scrollIntoView({ behavior: PCM.reduceMotion ? "auto" : "smooth", block: "nearest" });
+    return true;
+  }
+  const svmArgs = id => ["--path=/games/" + id, "--auto-detect"];
+
+  /* ---------- zip reading in the browser (for "bring your own game") ---------- */
+  async function unzip(buf) {
+    const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength), out = {};
+    let eocd = -1;
+    for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    if (eocd < 0) throw new Error("not a zip");
+    let p = dv.getUint32(eocd + 16, true);
+    for (let k = 0, n = dv.getUint16(eocd + 10, true); k < n; k++) {
+      const method = dv.getUint16(p + 10, true), size = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true),
+        xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), local = dv.getUint32(p + 42, true);
+      const name = new TextDecoder().decode(buf.subarray(p + 46, p + 46 + nl)).replace(/\\/g, "/");
+      p += 46 + nl + xl + cl;
+      if (name.endsWith("/") || name.startsWith("__MACOSX/")) continue;
+      const start = local + 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true), raw = buf.subarray(start, start + size);
+      if (method === 0) out[name] = raw.slice();
+      else if (method === 8) out[name] = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+      else throw new Error("unsupported zip compression " + method);
+    }
+    return out;
+  }
+  /* same rules as tools/add_game.py */
+  const SIGNATURES = [
+    ["sky", n => n.has("sky.dnr") && n.has("sky.dsk")], ["queen", n => n.has("queen.1") || n.has("queen.1c")],
+    ["lure", n => n.has("disk1.vga")], ["drascula", n => n.has("packet.001")],
+    ["dreamweb", n => [...n].some(x => /^dreamw\w*\.r00$/.test(x))], ["teenagent", n => n.has("on.res") && n.has("off.res")],
+    ["cge", n => n.has("vol.cat") && n.has("vol.dat")], ["sci", n => n.has("resource.map")],
+    ["agi", n => (n.has("logdir") && n.has("picdir")) || [...n].some(x => x.endsWith(".wag"))],
+    ["scumm", n => [...n].some(x => /^(\d\d\.lfl|.+\.(la0|he0|sou))$/.test(x) || (x.endsWith(".000") && x !== "resource.000"))],
+    ["ags", n => n.has("ac2game.dat") || [...n].some(x => x.endsWith(".ags"))],
+  ];
+  function detectScummVM(files) {
+    const dirs = {};
+    Object.keys(files).forEach(f => { const i = f.lastIndexOf("/"), d = i < 0 ? "" : f.slice(0, i); (dirs[d] = dirs[d] || new Set()).add(f.slice(i + 1).toLowerCase()); });
+    const order = Object.keys(dirs).sort((a, b) => a.split("/").length - b.split("/").length);
+    for (const [engine, test] of SIGNATURES) for (const d of order) if (test(dirs[d])) return { engine, folder: d };
+    return null;
+  }
+  const isWindowsExe = b => b[0] === 0x4d && b[1] === 0x5a && b.length > 0x40 &&
+    (o => b[o] === 0x50 && b[o + 1] === 0x45 && b[o + 2] === 0 && b[o + 3] === 0)(b[0x3c] | b[0x3d] << 8 | b[0x3e] << 16 | b[0x3f] << 24);
+  function guessExe(files) {
+    const skip = /^(install|setup|uninst|config|setsound|sound|dos4gw|cwsdpmi|pkunzip|readme|patch|vesa|univbe)\.\w+$/i;
+    return Object.keys(files).filter(f => /\.(exe|com|bat)$/i.test(f) && !skip.test(f.split("/").pop()) && !isWindowsExe(files[f]))
+      .sort((a, b) => a.split("/").length - b.split("/").length || /\.exe$/i.test(b) - /\.exe$/i.test(a))[0] || "";
+  }
+
   /* pointer lock refused (sandboxed frame, some browsers): switch to direct mode */
   document.addEventListener("pointerlockerror", () => {
     if (!capture) return;
@@ -98,6 +170,10 @@ if (document.getElementById("dosHost")) (() => {
   $$(".dos-play").forEach(b => b.addEventListener("click", () => {
     const g = D.arcade.games.find(x => x.id === b.dataset.id);
     if (!g || !g.bundle) return;
+    if (g.engine === "scummvm") {
+      runScummVM(g.title, { gameId: g.id, engine: g.svmEngine, files: g.files || [], gameBase: "games/" + g.id + "/", args: svmArgs(g.id) });
+      return;
+    }
     const packed = window.PCM_BUNDLES && window.PCM_BUNDLES[g.bundle];
     if (packed) { /* bundle shipped as base64 (build.py --inline-bundles) */
       const bin = atob(packed), bytes = new Uint8Array(bin.length);
@@ -122,9 +198,20 @@ if (document.getElementById("dosHost")) (() => {
       const u = URL.createObjectURL(file);
       run(file.name, { url: u }, u);
     } else if (name.endsWith(".zip")) {
-      if (!exe) { err.textContent = t("byoNoExe"); sfx("bad"); return; }
-      const bytes = new Uint8Array(await file.arrayBuffer());
-      run(file.name, { dosboxConf: dosboxConf(exe), initFs: bytes });
+      const bytes = new Uint8Array(await file.arrayBuffer()), want = $("#byoEngine").value;
+      let files;
+      try { files = await unzip(bytes); } catch (x) { err.textContent = x.message; sfx("bad"); return; }
+      const svm = want !== "dosbox" ? detectScummVM(files) : null;
+      if (svm && (want === "scummvm" || !exe)) {
+        const prefix = svm.folder ? svm.folder + "/" : "", mem = {};
+        Object.keys(files).forEach(f => { if (f.startsWith(prefix)) mem[f.slice(prefix.length)] = files[f]; });
+        runScummVM(file.name, { gameId: "byo", engine: svm.engine, files: Object.keys(mem), memFiles: mem, gameBase: "", args: svmArgs("byo") });
+        return;
+      }
+      if (want === "scummvm") { err.textContent = t("byoNoGame"); sfx("bad"); return; }
+      const run_exe = exe || guessExe(files);
+      if (!run_exe) { err.textContent = t("byoNoGame"); sfx("bad"); return; }
+      run(file.name, { dosboxConf: dosboxConf(run_exe), initFs: bytes });
     } else { err.textContent = t("byoBadType"); sfx("bad"); }
   });
 })();
@@ -133,16 +220,16 @@ if (document.getElementById("dosHost")) (() => {
 if (document.getElementById("catList")) (() => {
   const { $, $$, t, sfx } = PCM;
   const list = $("#catList"), items = $$(".dos-game", list), count = $("#catCount"), empty = $("#catEmpty");
-  const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button");
+  const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button"), engineSel = $("#catEngine");
   if (!search) return; // few games: no filters
   const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   items.forEach(el => { el._text = norm(el.querySelector("h3").textContent + " " + el.dataset.studio); });
   let letter = "";
   function apply() {
-    const q = norm(search.value.trim()), st = studio.value;
+    const q = norm(search.value.trim()), st = studio.value, en = engineSel ? engineSel.value : "";
     let n = 0;
     items.forEach(el => {
-      const show = (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) && (!letter || el.dataset.letter === letter);
+      const show = (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) && (!letter || el.dataset.letter === letter) && (!en || el.dataset.engine === en);
       el.hidden = !show; if (show) n++;
     });
     count.textContent = t("catCount", { n, total: items.length });
@@ -155,6 +242,7 @@ if (document.getElementById("catList")) (() => {
   }
   search.addEventListener("input", apply);
   studio.addEventListener("change", () => { sfx("click"); apply(); });
+  if (engineSel) engineSel.addEventListener("change", () => { sfx("click"); apply(); });
   sort.addEventListener("change", () => { sfx("click"); reorder(); });
   letters.forEach(b => b.addEventListener("click", () => {
     letter = b.dataset.l; letters.forEach(x => x.setAttribute("aria-pressed", String(x === b))); sfx("click"); apply(); list.scrollTop = 0;

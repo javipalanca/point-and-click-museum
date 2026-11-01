@@ -1,0 +1,29 @@
+{
+  "sign": "POINT & CLICK MUSEUM",
+  "hotspots": [
+    { "id": "moon", "rect": [262, 14, 22, 22], "walkTo": 250,
+      "verb": { "es": "Mirar", "en": "Look at", "de": "Schau an", "fr": "Regarder" },
+      "name": { "es": "la luna", "en": "the moon", "de": "den Mond", "fr": "la lune" },
+      "text": { "es": "Una luna de 22 píxeles. En 1990 esto habría ocupado media paleta.", "en": "A 22-pixel moon. In 1990 this would have eaten half the palette.", "de": "Ein Mond aus 22 Pixeln. 1990 hätte er die halbe Palette verbraucht.", "fr": "Une lune de 22 pixels. En 1990, elle aurait occupé la moitié de la palette." } },
+    { "id": "lamp", "rect": [30, 72, 14, 62],
+      "verb": { "es": "Mirar", "en": "Look at", "de": "Schau an", "fr": "Regarder" },
+      "name": { "es": "la farola", "en": "the street lamp", "de": "die Laterne", "fr": "le réverbère" },
+      "text": { "es": "Una farola de gas. Ilumina lo justo para que se vea el pixel art.", "en": "A gas lamp. Just bright enough to show off the pixel art.", "de": "Eine Gaslaterne. Gerade hell genug, um die Pixel-Art zu zeigen.", "fr": "Un réverbère à gaz. Juste assez lumineux pour mettre en valeur le pixel art." } },
+    { "id": "sign", "rect": [112, 52, 96, 12], "walkTo": 160,
+      "verb": { "es": "Leer", "en": "Read", "de": "Lies", "fr": "Lire" },
+      "name": { "es": "el cartel", "en": "the sign", "de": "das Schild", "fr": "l'enseigne" },
+      "text": { "es": "POINT & CLICK MUSEUM. Abierto desde 1976. No se admiten pollos de goma con polea.", "en": "POINT & CLICK MUSEUM. Open since 1976. No rubber chickens with pulleys allowed.", "de": "POINT & CLICK MUSEUM. Geöffnet seit 1976. Gummihühner mit Umlenkrolle verboten.", "fr": "POINT & CLICK MUSEUM. Ouvert depuis 1976. Poulets en caoutchouc à poulie interdits." } },
+    { "id": "door", "rect": [148, 98, 24, 36], "go": "timeline",
+      "verb": { "es": "Entrar por", "en": "Walk through", "de": "Geh durch", "fr": "Entrer par" },
+      "name": { "es": "la puerta", "en": "the door", "de": "die Tür", "fr": "la porte" },
+      "text": { "es": "Está abierta. Dentro empieza la línea temporal.", "en": "It's open. The timeline starts inside.", "de": "Sie ist offen. Drinnen beginnt die Zeitleiste.", "fr": "Elle est ouverte. La chronologie commence à l'intérieur." } },
+    { "id": "cat", "rect": [280, 124, 14, 10],
+      "verb": { "es": "Hablar con", "en": "Talk to", "de": "Rede mit", "fr": "Parler à" },
+      "name": { "es": "el gato", "en": "the cat", "de": "der Katze", "fr": "le chat" },
+      "text": { "es": "Miau. El gato del museo duerme sobre la información más importante. Como siempre.", "en": "Meow. The museum cat is sleeping on the most important information. As usual.", "de": "Miau. Die Museumskatze schläft auf den wichtigsten Informationen. Wie immer.", "fr": "Miaou. Le chat du musée dort sur l'information la plus importante. Comme d'habitude." } },
+    { "id": "arcade", "rect": [232, 108, 22, 26], "go": "arcade",
+      "verb": { "es": "Usar", "en": "Use", "de": "Benutze", "fr": "Utiliser" },
+      "name": { "es": "la máquina recreativa", "en": "the arcade cabinet", "de": "den Spielautomaten", "fr": "la borne d'arcade" },
+      "text": { "es": "Una vieja máquina con un PC dentro. Pone «DOSBOX» en la pantalla.", "en": "An old cabinet with a PC inside. The screen says \"DOSBOX\".", "de": "Ein alter Automat mit einem PC darin. Auf dem Bildschirm steht „DOSBOX“.", "fr": "Une vieille borne avec un PC dedans. L'écran affiche « DOSBOX »." } }
+  ]
+}

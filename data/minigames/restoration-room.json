@@ -1,0 +1,2226 @@
+{
+ "id": "restoration-room",
+ "title": {
+  "es": "La sala de restauración",
+  "en": "The Restoration Room",
+  "de": "Die Restaurierungswerkstatt",
+  "fr": "L'atelier de restauration"
+ },
+ "how": {
+  "es": "Elige un verbo y toca la escena o el inventario. Objetivo: salir por la puerta.",
+  "en": "Pick a verb, then tap the scene or the inventory. Goal: get out through the door.",
+  "de": "Wähle ein Verb und tippe auf die Szene oder das Inventar. Ziel: durch die Tür entkommen.",
+  "fr": "Choisissez un verbe puis touchez la scène ou l'inventaire. But : sortir par la porte."
+ },
+ "award": "room",
+ "size": [
+  320,
+  150
+ ],
+ "walkBounds": [
+  10,
+  262
+ ],
+ "character": {
+  "name": "curator",
+  "y": 141,
+  "start": 160
+ },
+ "verbs": [
+  {
+   "id": "look",
+   "label": {
+    "es": "Mirar",
+    "en": "Look at",
+    "de": "Schau an",
+    "fr": "Regarder"
+   }
+  },
+  {
+   "id": "take",
+   "label": {
+    "es": "Coger",
+    "en": "Pick up",
+    "de": "Nimm",
+    "fr": "Prendre"
+   }
+  },
+  {
+   "id": "use",
+   "label": {
+    "es": "Usar",
+    "en": "Use",
+    "de": "Benutze",
+    "fr": "Utiliser"
+   }
+  },
+  {
+   "id": "open",
+   "label": {
+    "es": "Abrir",
+    "en": "Open",
+    "de": "Öffne",
+    "fr": "Ouvrir"
+   }
+  },
+  {
+   "id": "talk",
+   "label": {
+    "es": "Hablar",
+    "en": "Talk to",
+    "de": "Rede mit",
+    "fr": "Parler à"
+   }
+  },
+  {
+   "id": "push",
+   "label": {
+    "es": "Empujar",
+    "en": "Push",
+    "de": "Drücke",
+    "fr": "Pousser"
+   }
+  }
+ ],
+ "with": {
+  "es": "con",
+  "en": "with",
+  "de": "mit",
+  "fr": "avec"
+ },
+ "items": {
+  "flashlight": {
+   "icon": "flashlight",
+   "name": {
+    "es": "linterna",
+    "en": "flashlight",
+    "de": "Taschenlampe",
+    "fr": "lampe torche"
+   },
+   "desc": {
+    "es": "Una linterna sin pilas. Pesa menos que una buena excusa.",
+    "en": "A flashlight with no batteries. Lighter than a good excuse.",
+    "de": "Eine Taschenlampe ohne Batterien. Leichter als eine gute Ausrede.",
+    "fr": "Une lampe torche sans piles. Plus légère qu'une bonne excuse."
+   }
+  },
+  "flashlightOn": {
+   "icon": "flashlightOn",
+   "name": {
+    "es": "linterna con pilas",
+    "en": "working flashlight",
+    "de": "Taschenlampe mit Batterien",
+    "fr": "lampe torche chargée"
+   },
+   "desc": {
+    "es": "La linterna funciona. Ahora puedo ver en sitios oscuros.",
+    "en": "The flashlight works. Now I can see into dark places.",
+    "de": "Die Taschenlampe funktioniert. Jetzt sehe ich auch im Dunkeln.",
+    "fr": "La lampe fonctionne. Je peux voir dans les coins sombres."
+   }
+  },
+  "remote": {
+   "icon": "remote",
+   "name": {
+    "es": "mando a distancia",
+    "en": "remote control",
+    "de": "Fernbedienung",
+    "fr": "télécommande"
+   },
+   "desc": {
+    "es": "El mando de la tele de la sala de descanso. Tiene la tapa de las pilas suelta.",
+    "en": "The break room TV remote. The battery cover is loose.",
+    "de": "Die Fernbedienung aus dem Pausenraum. Das Batteriefach ist locker.",
+    "fr": "La télécommande de la salle de pause. Le couvercle des piles est mal fixé."
+   }
+  },
+  "batteries": {
+   "icon": "batteries",
+   "name": {
+    "es": "pilas",
+    "en": "batteries",
+    "de": "Batterien",
+    "fr": "piles"
+   },
+   "desc": {
+    "es": "Dos pilas casi nuevas.",
+    "en": "Two almost-new batteries.",
+    "de": "Zwei fast neue Batterien.",
+    "fr": "Deux piles presque neuves."
+   }
+  },
+  "key": {
+   "icon": "key",
+   "name": {
+    "es": "llave",
+    "en": "key",
+    "de": "Schlüssel",
+    "fr": "clé"
+   },
+   "desc": {
+    "es": "Una llave con una etiqueta: «SALIDA».",
+    "en": "A key with a tag: \"EXIT\".",
+    "de": "Ein Schlüssel mit Anhänger: „AUSGANG“.",
+    "fr": "Une clé avec une étiquette : « SORTIE »."
+   }
+  }
+ },
+ "spots": [
+  {
+   "id": "door",
+   "rect": [
+    272,
+    34,
+    38,
+    96
+   ],
+   "walkTo": 262,
+   "name": {
+    "es": "puerta",
+    "en": "door",
+    "de": "Tür",
+    "fr": "porte"
+   }
+  },
+  {
+   "id": "bust",
+   "rect": [
+    92,
+    70,
+    20,
+    60
+   ],
+   "name": {
+    "es": "busto de mármol",
+    "en": "marble bust",
+    "de": "Marmorbüste",
+    "fr": "buste en marbre"
+   }
+  },
+  {
+   "id": "key",
+   "rect": [
+    40,
+    37,
+    10,
+    6
+   ],
+   "if": [
+    "keySeen",
+    "!keyTaken"
+   ],
+   "name": {
+    "es": "llave",
+    "en": "key",
+    "de": "Schlüssel",
+    "fr": "clé"
+   }
+  },
+  {
+   "id": "vent",
+   "rect": [
+    30,
+    30,
+    30,
+    18
+   ],
+   "name": {
+    "es": "rejilla de ventilación",
+    "en": "air vent",
+    "de": "Lüftungsgitter",
+    "fr": "grille d'aération"
+   }
+  },
+  {
+   "id": "remote",
+   "rect": [
+    212,
+    89,
+    16,
+    8
+   ],
+   "if": [
+    "!remoteTaken"
+   ],
+   "name": {
+    "es": "mando a distancia",
+    "en": "remote control",
+    "de": "Fernbedienung",
+    "fr": "télécommande"
+   }
+  },
+  {
+   "id": "sofa",
+   "rect": [
+    186,
+    90,
+    70,
+    32
+   ],
+   "name": {
+    "es": "sofá",
+    "en": "sofa",
+    "de": "Sofa",
+    "fr": "canapé"
+   }
+  },
+  {
+   "id": "drawer",
+   "rect": [
+    18,
+    86,
+    64,
+    40
+   ],
+   "name": {
+    "es": "escritorio",
+    "en": "desk",
+    "de": "Schreibtisch",
+    "fr": "bureau"
+   }
+  },
+  {
+   "id": "painting",
+   "rect": [
+    118,
+    22,
+    54,
+    38
+   ],
+   "name": {
+    "es": "cuadro",
+    "en": "painting",
+    "de": "Gemälde",
+    "fr": "tableau"
+   }
+  }
+ ],
+ "scene": [
+  {
+   "grad": [
+    0,
+    0,
+    320,
+    84
+   ],
+   "from": "#2a1f4a",
+   "to": "#463470",
+   "steps": 5
+  },
+  {
+   "stripes": [
+    0,
+    0,
+    320,
+    84
+   ],
+   "step": 16,
+   "size": 1,
+   "c": "#3b2c60"
+  },
+  {
+   "r": [
+    0,
+    82,
+    320,
+    3
+   ],
+   "c": "#8a5a35"
+  },
+  {
+   "r": [
+    0,
+    85,
+    320,
+    1
+   ],
+   "c": "#5a3820"
+  },
+  {
+   "r": [
+    0,
+    86,
+    320,
+    40
+   ],
+   "c": "#3a2348"
+  },
+  {
+   "stripes": [
+    2,
+    90,
+    320,
+    32
+   ],
+   "step": 40,
+   "size": 36,
+   "c": "#432a54"
+  },
+  {
+   "stripes": [
+    2,
+    90,
+    320,
+    1
+   ],
+   "step": 40,
+   "size": 36,
+   "c": "#5a3a6a"
+  },
+  {
+   "r": [
+    0,
+    123,
+    320,
+    4
+   ],
+   "c": "#2a1a10"
+  },
+  {
+   "grad": [
+    0,
+    126,
+    320,
+    24
+   ],
+   "from": "#6e4428",
+   "to": "#3a2414",
+   "steps": 4
+  },
+  {
+   "stripes": [
+    0,
+    131,
+    320,
+    1
+   ],
+   "step": 26,
+   "size": 20,
+   "c": "#4a2e18"
+  },
+  {
+   "stripes": [
+    12,
+    137,
+    320,
+    1
+   ],
+   "step": 26,
+   "size": 20,
+   "c": "#4a2e18"
+  },
+  {
+   "stripes": [
+    4,
+    144,
+    320,
+    1
+   ],
+   "step": 26,
+   "size": 20,
+   "c": "#4a2e18"
+  },
+  {
+   "r": [
+    118,
+    134,
+    124,
+    12
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    120,
+    135,
+    120,
+    10
+   ],
+   "c": "#5e1f34"
+  },
+  {
+   "stripes": [
+    124,
+    137,
+    112,
+    6
+   ],
+   "step": 8,
+   "size": 4,
+   "c": "#8a2f4a"
+  },
+  {
+   "r": [
+    120,
+    135,
+    120,
+    1
+   ],
+   "c": "#ffb547"
+  },
+  {
+   "r": [
+    120,
+    144,
+    120,
+    1
+   ],
+   "c": "#ffb547"
+  },
+  {
+   "r": [
+    194,
+    16,
+    54,
+    48
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    196,
+    18,
+    50,
+    44
+   ],
+   "c": "#5a3820"
+  },
+  {
+   "grad": [
+    199,
+    21,
+    44,
+    38
+   ],
+   "from": "#0e0a20",
+   "to": "#2a1d5c",
+   "steps": 4
+  },
+  {
+   "px": [
+    [
+     204,
+     25
+    ],
+    [
+     214,
+     30
+    ],
+    [
+     236,
+     24
+    ],
+    [
+     226,
+     34
+    ],
+    [
+     208,
+     38
+    ],
+    [
+     240,
+     40
+    ]
+   ],
+   "c": "#f3e6c8"
+  },
+  {
+   "r": [
+    230,
+    26,
+    6,
+    6
+   ],
+   "c": "#f3e6c8"
+  },
+  {
+   "r": [
+    232,
+    26,
+    4,
+    2
+   ],
+   "c": "#ffffff"
+  },
+  {
+   "r": [
+    199,
+    46,
+    8,
+    13
+   ],
+   "c": "#1c1544"
+  },
+  {
+   "r": [
+    208,
+    40,
+    7,
+    19
+   ],
+   "c": "#241857"
+  },
+  {
+   "r": [
+    216,
+    48,
+    9,
+    11
+   ],
+   "c": "#1c1544"
+  },
+  {
+   "r": [
+    226,
+    43,
+    6,
+    16
+   ],
+   "c": "#241857"
+  },
+  {
+   "r": [
+    233,
+    50,
+    10,
+    9
+   ],
+   "c": "#1c1544"
+  },
+  {
+   "px": [
+    [
+     210,
+     44
+    ],
+    [
+     212,
+     48
+    ],
+    [
+     218,
+     51
+    ],
+    [
+     228,
+     47
+    ],
+    [
+     236,
+     53
+    ],
+    [
+     201,
+     50
+    ]
+   ],
+   "c": "#ffb547"
+  },
+  {
+   "r": [
+    220,
+    21,
+    2,
+    38
+   ],
+   "c": "#5a3820"
+  },
+  {
+   "r": [
+    199,
+    39,
+    44,
+    2
+   ],
+   "c": "#5a3820"
+  },
+  {
+   "r": [
+    194,
+    62,
+    54,
+    3
+   ],
+   "c": "#8a5a35"
+  },
+  {
+   "glow": [
+    221,
+    70,
+    40
+   ],
+   "rgb": "120,150,255",
+   "a": 0.12
+  },
+  {
+   "r": [
+    116,
+    20,
+    58,
+    42
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    118,
+    22,
+    54,
+    38
+   ],
+   "c": "#ffb547",
+   "hot": "painting",
+   "hc": "#ffd27a"
+  },
+  {
+   "r": [
+    118,
+    22,
+    54,
+    1
+   ],
+   "c": "#ffe0a0"
+  },
+  {
+   "r": [
+    118,
+    59,
+    54,
+    1
+   ],
+   "c": "#c47a1e"
+  },
+  {
+   "r": [
+    122,
+    26,
+    46,
+    30
+   ],
+   "c": "#1b1240"
+  },
+  {
+   "r": [
+    122,
+    42,
+    46,
+    14
+   ],
+   "c": "#2a1d5c"
+  },
+  {
+   "r": [
+    158,
+    30,
+    4,
+    4
+   ],
+   "c": "#f3e6c8"
+  },
+  {
+   "r": [
+    122,
+    47,
+    46,
+    9
+   ],
+   "c": "#2f7d46"
+  },
+  {
+   "r": [
+    130,
+    44,
+    10,
+    3
+   ],
+   "c": "#2f7d46"
+  },
+  {
+   "r": [
+    148,
+    42,
+    12,
+    5
+   ],
+   "c": "#2f7d46"
+  },
+  {
+   "r": [
+    140,
+    49,
+    20,
+    2
+   ],
+   "c": "#1f5a33"
+  },
+  {
+   "r": [
+    122,
+    26,
+    14,
+    30
+   ],
+   "c": "#a8a4c4"
+  },
+  {
+   "stripes": [
+    123,
+    27,
+    12,
+    28
+   ],
+   "step": 3,
+   "size": 1,
+   "c": "#c8c4e4"
+  },
+  {
+   "r": [
+    28,
+    28,
+    34,
+    22
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    30,
+    30,
+    30,
+    18
+   ],
+   "c": "#a8a4c4",
+   "hot": [
+    "vent",
+    "key"
+   ],
+   "hc": "#c8c4e4"
+  },
+  {
+   "r": [
+    30,
+    30,
+    30,
+    1
+   ],
+   "c": "#d8d4ec"
+  },
+  {
+   "r": [
+    32,
+    32,
+    26,
+    14
+   ],
+   "c": "#0a0814",
+   "if": [
+    "!keySeen"
+   ]
+  },
+  {
+   "r": [
+    32,
+    32,
+    26,
+    14
+   ],
+   "c": "#2a2050",
+   "if": [
+    "keySeen"
+   ]
+  },
+  {
+   "r": [
+    41,
+    39,
+    3,
+    3
+   ],
+   "c": "#ffb547",
+   "if": [
+    "keySeen",
+    "!keyTaken"
+   ]
+  },
+  {
+   "r": [
+    44,
+    40,
+    5,
+    1
+   ],
+   "c": "#ffb547",
+   "if": [
+    "keySeen",
+    "!keyTaken"
+   ]
+  },
+  {
+   "r": [
+    47,
+    41,
+    1,
+    1
+   ],
+   "c": "#ffb547",
+   "if": [
+    "keySeen",
+    "!keyTaken"
+   ]
+  },
+  {
+   "stripes": [
+    34,
+    32,
+    24,
+    14
+   ],
+   "step": 4,
+   "size": 1,
+   "c": "#8f8ab0"
+  },
+  {
+   "px": [
+    [
+     31,
+     31
+    ],
+    [
+     58,
+     31
+    ],
+    [
+     31,
+     46
+    ],
+    [
+     58,
+     46
+    ]
+   ],
+   "c": "#4a4470"
+  },
+  {
+   "r": [
+    17,
+    85,
+    66,
+    8
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    18,
+    86,
+    64,
+    6
+   ],
+   "c": "#8a5a35"
+  },
+  {
+   "r": [
+    18,
+    86,
+    64,
+    1
+   ],
+   "c": "#b07a4a"
+  },
+  {
+   "r": [
+    19,
+    92,
+    6,
+    34
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    20,
+    92,
+    4,
+    34
+   ],
+   "c": "#6e4428"
+  },
+  {
+   "r": [
+    75,
+    92,
+    6,
+    34
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    76,
+    92,
+    4,
+    34
+   ],
+   "c": "#6e4428"
+  },
+  {
+   "r": [
+    43,
+    93,
+    32,
+    14
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    44,
+    94,
+    30,
+    12
+   ],
+   "c": "#6e4428",
+   "hot": "drawer",
+   "hc": "#a8744a"
+  },
+  {
+   "r": [
+    44,
+    94,
+    30,
+    1
+   ],
+   "c": "#8a5a35"
+  },
+  {
+   "r": [
+    44,
+    106,
+    30,
+    6
+   ],
+   "c": "#3a2414",
+   "if": [
+    "drawerOpen"
+   ]
+  },
+  {
+   "r": [
+    46,
+    107,
+    26,
+    3
+   ],
+   "c": "#1a1022",
+   "if": [
+    "drawerOpen"
+   ]
+  },
+  {
+   "r": [
+    56,
+    99,
+    6,
+    2
+   ],
+   "c": "#ffb547"
+  },
+  {
+   "books": [
+    50,
+    72,
+    26,
+    14
+   ],
+   "seed": 5,
+   "colors": [
+    "#d9455f",
+    "#3f6fd8",
+    "#2f7d46",
+    "#c47a1e",
+    "#8a4fd8"
+   ]
+  },
+  {
+   "r": [
+    24,
+    84,
+    10,
+    2
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    28,
+    72,
+    2,
+    12
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    24,
+    66,
+    12,
+    7
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    25,
+    67,
+    10,
+    5
+   ],
+   "c": "#2f7d46"
+  },
+  {
+   "r": [
+    26,
+    71,
+    8,
+    1
+   ],
+   "c": "#ffe0a0"
+  },
+  {
+   "glow": [
+    30,
+    80,
+    26
+   ],
+   "rgb": "255,210,120",
+   "a": 0.35
+  },
+  {
+   "r": [
+    38,
+    82,
+    8,
+    4
+   ],
+   "c": "#f3e6c8"
+  },
+  {
+   "r": [
+    39,
+    83,
+    6,
+    1
+   ],
+   "c": "#a8a4c4"
+  },
+  {
+   "r": [
+    93,
+    95,
+    18,
+    36
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    94,
+    96,
+    16,
+    34
+   ],
+   "c": "#4a4470"
+  },
+  {
+   "r": [
+    94,
+    96,
+    2,
+    34
+   ],
+   "c": "#5a5490"
+  },
+  {
+   "r": [
+    91,
+    93,
+    22,
+    4
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    92,
+    94,
+    20,
+    2
+   ],
+   "c": "#6a64a0"
+  },
+  {
+   "r": [
+    95,
+    71,
+    14,
+    16
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    96,
+    72,
+    12,
+    14
+   ],
+   "c": "#e8e4f4",
+   "hot": "bust",
+   "hc": "#ffffff"
+  },
+  {
+   "r": [
+    93,
+    85,
+    18,
+    10
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    94,
+    86,
+    16,
+    8
+   ],
+   "c": "#e8e4f4",
+   "hot": "bust",
+   "hc": "#ffffff"
+  },
+  {
+   "r": [
+    96,
+    72,
+    12,
+    2
+   ],
+   "c": "#c8c4e4"
+  },
+  {
+   "r": [
+    105,
+    74,
+    3,
+    10
+   ],
+   "c": "#c8c4e4"
+  },
+  {
+   "r": [
+    98,
+    77,
+    2,
+    1
+   ],
+   "c": "#6a64a0"
+  },
+  {
+   "r": [
+    103,
+    77,
+    2,
+    1
+   ],
+   "c": "#6a64a0"
+  },
+  {
+   "r": [
+    100,
+    82,
+    4,
+    1
+   ],
+   "c": "#a8a4c4"
+  },
+  {
+   "r": [
+    99,
+    90,
+    6,
+    1
+   ],
+   "c": "#c8c4e4"
+  },
+  {
+   "r": [
+    185,
+    89,
+    72,
+    38
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    186,
+    98,
+    70,
+    20
+   ],
+   "c": "#d9455f",
+   "hot": "sofa",
+   "hc": "#f27aa0"
+  },
+  {
+   "r": [
+    186,
+    90,
+    8,
+    30
+   ],
+   "c": "#d9455f",
+   "hot": "sofa",
+   "hc": "#f27aa0"
+  },
+  {
+   "r": [
+    248,
+    90,
+    8,
+    30
+   ],
+   "c": "#d9455f",
+   "hot": "sofa",
+   "hc": "#f27aa0"
+  },
+  {
+   "r": [
+    194,
+    92,
+    54,
+    6
+   ],
+   "c": "#c03a54"
+  },
+  {
+   "r": [
+    194,
+    96,
+    54,
+    2
+   ],
+   "c": "#a8304a"
+  },
+  {
+   "stripes": [
+    211,
+    99,
+    40,
+    10
+   ],
+   "step": 18,
+   "size": 1,
+   "c": "#a8304a"
+  },
+  {
+   "r": [
+    186,
+    90,
+    8,
+    1
+   ],
+   "c": "#f27aa0"
+  },
+  {
+   "r": [
+    248,
+    90,
+    8,
+    1
+   ],
+   "c": "#f27aa0"
+  },
+  {
+   "r": [
+    189,
+    118,
+    4,
+    8
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    249,
+    118,
+    4,
+    8
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    213,
+    91,
+    14,
+    6
+   ],
+   "c": "#1a1022",
+   "if": [
+    "!remoteTaken"
+   ]
+  },
+  {
+   "r": [
+    214,
+    92,
+    12,
+    4
+   ],
+   "c": "#2a2040",
+   "hot": "remote",
+   "hc": "#4fd6c8",
+   "if": [
+    "!remoteTaken"
+   ]
+  },
+  {
+   "r": [
+    216,
+    93,
+    2,
+    2
+   ],
+   "c": "#d9455f",
+   "if": [
+    "!remoteTaken"
+   ]
+  },
+  {
+   "px": [
+    [
+     220,
+     93
+    ],
+    [
+     222,
+     93
+    ],
+    [
+     220,
+     94
+    ],
+    [
+     222,
+     94
+    ]
+   ],
+   "c": "#a8a4c4",
+   "if": [
+    "!remoteTaken"
+   ]
+  },
+  {
+   "r": [
+    268,
+    12,
+    46,
+    10
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    270,
+    14,
+    42,
+    6
+   ],
+   "c": "#2f7d46"
+  },
+  {
+   "px": [
+    [
+     276,
+     16
+    ],
+    [
+     277,
+     16
+    ],
+    [
+     278,
+     16
+    ],
+    [
+     276,
+     17
+    ],
+    [
+     276,
+     18
+    ],
+    [
+     277,
+     18
+    ],
+    [
+     278,
+     18
+    ],
+    [
+     280,
+     16
+    ],
+    [
+     282,
+     16
+    ],
+    [
+     281,
+     17
+    ],
+    [
+     280,
+     18
+    ],
+    [
+     282,
+     18
+    ],
+    [
+     285,
+     16
+    ],
+    [
+     285,
+     17
+    ],
+    [
+     285,
+     18
+    ],
+    [
+     288,
+     16
+    ],
+    [
+     289,
+     16
+    ],
+    [
+     290,
+     16
+    ],
+    [
+     289,
+     17
+    ],
+    [
+     289,
+     18
+    ],
+    [
+     285,
+     16
+    ],
+    [
+     285,
+     17
+    ],
+    [
+     285,
+     18
+    ]
+   ],
+   "c": "#c8ffd8"
+  },
+  {
+   "glow": [
+    291,
+    17,
+    16
+   ],
+   "rgb": "95,196,106",
+   "a": 0.25
+  },
+  {
+   "r": [
+    266,
+    30,
+    50,
+    98
+   ],
+   "c": "#1a1022"
+  },
+  {
+   "r": [
+    268,
+    32,
+    46,
+    96
+   ],
+   "c": "#5a3820"
+  },
+  {
+   "r": [
+    268,
+    32,
+    46,
+    2
+   ],
+   "c": "#8a5a35"
+  },
+  {
+   "r": [
+    270,
+    32,
+    42,
+    98
+   ],
+   "c": "#2a1d40"
+  },
+  {
+   "r": [
+    274,
+    36,
+    34,
+    94
+   ],
+   "c": "#ffd27a",
+   "if": [
+    "doorOpen"
+   ]
+  },
+  {
+   "r": [
+    274,
+    36,
+    8,
+    94
+   ],
+   "c": "#8a5a35",
+   "if": [
+    "doorOpen"
+   ]
+  },
+  {
+   "glow": [
+    291,
+    110,
+    40
+   ],
+   "rgb": "255,210,120",
+   "a": 0.4,
+   "if": [
+    "doorOpen"
+   ]
+  },
+  {
+   "r": [
+    274,
+    36,
+    34,
+    94
+   ],
+   "c": "#8a5a35",
+   "hot": "door",
+   "hc": "#a8744a",
+   "if": [
+    "!doorOpen"
+   ]
+  },
+  {
+   "r": [
+    278,
+    42,
+    26,
+    36
+   ],
+   "c": "#6e4428",
+   "if": [
+    "!doorOpen"
+   ]
+  },
+  {
+   "r": [
+    278,
+    86,
+    26,
+    38
+   ],
+   "c": "#6e4428",
+   "if": [
+    "!doorOpen"
+   ]
+  },
+  {
+   "r": [
+    278,
+    42,
+    26,
+    1
+   ],
+   "c": "#4a2e18",
+   "if": [
+    "!doorOpen"
+   ]
+  },
+  {
+   "r": [
+    278,
+    86,
+    26,
+    1
+   ],
+   "c": "#4a2e18",
+   "if": [
+    "!doorOpen"
+   ]
+  },
+  {
+   "r": [
+    299,
+    80,
+    4,
+    5
+   ],
+   "c": "#1a1022",
+   "if": [
+    "!doorOpen"
+   ]
+  },
+  {
+   "r": [
+    300,
+    81,
+    2,
+    3
+   ],
+   "c": "#ffb547",
+   "if": [
+    "!doorOpen"
+   ]
+  }
+ ],
+ "rules": [
+  {
+   "verb": "look",
+   "noun": "painting",
+   "say": {
+    "es": "Un paisaje nocturno a medio restaurar. En el marco alguien ha escrito a lápiz: «la llave se cayó por la rejilla, otra vez».",
+    "en": "A half-restored night landscape. Someone has pencilled on the frame: \"the key fell through the vent, again\".",
+    "de": "Eine halb restaurierte Nachtlandschaft. Auf dem Rahmen steht mit Bleistift: „Der Schlüssel ist wieder durchs Gitter gefallen“.",
+    "fr": "Un paysage nocturne à moitié restauré. Quelqu'un a écrit au crayon sur le cadre : « la clé est encore tombée dans la grille »."
+   }
+  },
+  {
+   "verb": "take",
+   "noun": "painting",
+   "say": {
+    "es": "Si me lo llevo, me cobran el doble de la entrada.",
+    "en": "If I take it, they'll charge me double admission.",
+    "de": "Wenn ich es mitnehme, kostet mich das den doppelten Eintritt.",
+    "fr": "Si je le prends, on me fera payer l'entrée double."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "drawer",
+   "if": [
+    "drawerOpen"
+   ],
+   "say": {
+    "es": "El cajón está abierto y vacío.",
+    "en": "The drawer is open and empty.",
+    "de": "Die Schublade ist offen und leer.",
+    "fr": "Le tiroir est ouvert et vide."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "drawer",
+   "say": {
+    "es": "Un escritorio de restaurador con un cajón.",
+    "en": "A restorer's desk with a drawer.",
+    "de": "Ein Restauratorenschreibtisch mit einer Schublade.",
+    "fr": "Un bureau de restaurateur avec un tiroir."
+   }
+  },
+  {
+   "verb": "open",
+   "noun": "drawer",
+   "if": [
+    "drawerOpen"
+   ],
+   "say": {
+    "es": "Ya está abierto.",
+    "en": "It's already open.",
+    "de": "Sie ist schon offen.",
+    "fr": "Il est déjà ouvert."
+   }
+  },
+  {
+   "verb": "open",
+   "noun": "drawer",
+   "do": [
+    "set:drawerOpen",
+    "give:flashlight",
+    "sound:open"
+   ],
+   "say": {
+    "es": "Abro el cajón. Hay una linterna. Me la llevo.",
+    "en": "I open the drawer. There's a flashlight inside. I'll take it.",
+    "de": "Ich öffne die Schublade. Darin liegt eine Taschenlampe. Die nehme ich mit.",
+    "fr": "J'ouvre le tiroir. Il y a une lampe torche. Je la prends."
+   }
+  },
+  {
+   "verb": "take",
+   "noun": "drawer",
+   "say": {
+    "es": "El escritorio no cabe en mis bolsillos. Lo he comprobado.",
+    "en": "The desk won't fit in my pockets. I checked.",
+    "de": "Der Schreibtisch passt nicht in meine Taschen. Ich habe es probiert.",
+    "fr": "Le bureau ne rentre pas dans mes poches. J'ai vérifié."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "sofa",
+   "if": [
+    "remoteTaken"
+   ],
+   "say": {
+    "es": "Un sofá de escay donde el conservador echa la siesta.",
+    "en": "A vinyl sofa where the curator takes his naps.",
+    "de": "Ein Kunstledersofa, auf dem der Kurator Mittagsschlaf hält.",
+    "fr": "Un canapé en skaï où le conservateur fait la sieste."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "sofa",
+   "say": {
+    "es": "Un sofá de escay donde el conservador echa la siesta. Hay un mando a distancia encima.",
+    "en": "A vinyl sofa where the curator takes his naps. There's a remote control on it.",
+    "de": "Ein Kunstledersofa, auf dem der Kurator Mittagsschlaf hält. Darauf liegt eine Fernbedienung.",
+    "fr": "Un canapé en skaï où le conservateur fait la sieste. Une télécommande traîne dessus."
+   }
+  },
+  {
+   "verb": "push",
+   "noun": "sofa",
+   "say": {
+    "es": "Lo muevo un poco. Debajo solo hay migas y un caramelo de 1994.",
+    "en": "I shift it a little. Underneath: crumbs and a sweet from 1994.",
+    "de": "Ich schiebe es ein Stück. Darunter: Krümel und ein Bonbon von 1994.",
+    "fr": "Je le déplace un peu. Dessous : des miettes et un bonbon de 1994."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "remote",
+   "say": {
+    "es": "Un mando a distancia.",
+    "en": "A remote control.",
+    "de": "Eine Fernbedienung.",
+    "fr": "Une télécommande."
+   }
+  },
+  {
+   "verb": "take",
+   "noun": "remote",
+   "do": [
+    "set:remoteTaken",
+    "give:remote",
+    "sound:click"
+   ],
+   "say": {
+    "es": "Cojo el mando.",
+    "en": "I pick up the remote.",
+    "de": "Ich nehme die Fernbedienung.",
+    "fr": "Je prends la télécommande."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "vent",
+   "if": [
+    "keySeen"
+   ],
+   "say": {
+    "es": "Dentro de la rejilla brilla la llave.",
+    "en": "The key glints inside the vent.",
+    "de": "Im Gitter blitzt der Schlüssel.",
+    "fr": "La clé brille derrière la grille."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "vent",
+   "say": {
+    "es": "Una rejilla de ventilación. Dentro está demasiado oscuro para ver nada.",
+    "en": "An air vent. It's too dark inside to see anything.",
+    "de": "Ein Lüftungsgitter. Dahinter ist es zu dunkel, um etwas zu sehen.",
+    "fr": "Une grille d'aération. Il fait trop sombre derrière pour voir quoi que ce soit."
+   }
+  },
+  {
+   "verb": "open",
+   "noun": "vent",
+   "say": {
+    "es": "Está atornillada, pero la malla tiene huecos por los que cabe una mano.",
+    "en": "It's screwed shut, but the mesh has gaps big enough for a hand.",
+    "de": "Es ist verschraubt, aber das Gitter hat Lücken, durch die eine Hand passt.",
+    "fr": "Elle est vissée, mais le grillage a des trous assez grands pour une main."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "key",
+   "say": {
+    "es": "Una llave con una etiqueta: «SALIDA».",
+    "en": "A key with a tag: \"EXIT\".",
+    "de": "Ein Schlüssel mit Anhänger: „AUSGANG“.",
+    "fr": "Une clé avec une étiquette : « SORTIE »."
+   }
+  },
+  {
+   "verb": "take",
+   "noun": "key",
+   "do": [
+    "set:keyTaken",
+    "give:key",
+    "sound:open"
+   ],
+   "say": {
+    "es": "Meto la mano por la malla y saco la llave. ¡Ajá!",
+    "en": "I reach through the mesh and pull out the key. Aha!",
+    "de": "Ich greife durchs Gitter und hole den Schlüssel heraus. Aha!",
+    "fr": "Je passe la main à travers le grillage et récupère la clé. Ah ah !"
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "bust",
+   "say": {
+    "es": "Un busto de mármol de un diseñador de aventuras muy serio. Tiene cara de saberse la solución.",
+    "en": "A marble bust of a very serious adventure designer. He looks like he knows the solution.",
+    "de": "Eine Marmorbüste eines sehr ernsten Adventure-Designers. Er sieht aus, als kenne er die Lösung.",
+    "fr": "Le buste en marbre d'un concepteur d'aventures très sérieux. Il a l'air de connaître la solution."
+   }
+  },
+  {
+   "verb": "talk",
+   "noun": "bust",
+   "if": [
+    "count:bustTalks>=2"
+   ],
+   "do": [
+    "inc:bustTalks",
+    "award:eggBust"
+   ],
+   "counter": "bustTalks",
+   "sayList": [
+    {
+     "es": "Busto: «...»",
+     "en": "Bust: \"...\"",
+     "de": "Büste: „…“",
+     "fr": "Buste : « … »"
+    },
+    {
+     "es": "Busto: «He visto puzles peores. Uno con un pelo de gato y un bigote postizo».",
+     "en": "Bust: \"I've seen worse puzzles. One with cat hair and a fake moustache.\"",
+     "de": "Büste: „Ich habe schlimmere Rätsel gesehen. Eins mit Katzenhaar und falschem Schnurrbart.“",
+     "fr": "Buste : « J'ai vu pire. Une énigme avec un poil de chat et une fausse moustache. »"
+    },
+    {
+     "es": "Busto: «Si no ves nada, quizá necesites más luz».",
+     "en": "Bust: \"If you can't see anything, maybe you need more light.\"",
+     "de": "Büste: „Wenn du nichts siehst, brauchst du vielleicht mehr Licht.“",
+     "fr": "Buste : « Si tu ne vois rien, il te faut peut-être plus de lumière. »"
+    },
+    {
+     "es": "Busto: «Las pilas suelen estar dentro de otras cosas. Como en la vida».",
+     "en": "Bust: \"Batteries are usually inside other things. Like in life.\"",
+     "de": "Büste: „Batterien stecken meist in anderen Dingen. Wie im Leben.“",
+     "fr": "Buste : « Les piles sont souvent dans d'autres objets. Comme dans la vie. »"
+    }
+   ]
+  },
+  {
+   "verb": "talk",
+   "noun": "bust",
+   "do": [
+    "inc:bustTalks"
+   ],
+   "counter": "bustTalks",
+   "sayList": [
+    {
+     "es": "Busto: «...»",
+     "en": "Bust: \"...\"",
+     "de": "Büste: „…“",
+     "fr": "Buste : « … »"
+    },
+    {
+     "es": "Busto: «He visto puzles peores. Uno con un pelo de gato y un bigote postizo».",
+     "en": "Bust: \"I've seen worse puzzles. One with cat hair and a fake moustache.\"",
+     "de": "Büste: „Ich habe schlimmere Rätsel gesehen. Eins mit Katzenhaar und falschem Schnurrbart.“",
+     "fr": "Buste : « J'ai vu pire. Une énigme avec un poil de chat et une fausse moustache. »"
+    }
+   ]
+  },
+  {
+   "verb": "push",
+   "noun": "bust",
+   "say": {
+    "es": "Mejor no. Si se rompe, lo tendría que restaurar yo.",
+    "en": "Better not. If it breaks, I'd have to restore it.",
+    "de": "Lieber nicht. Wenn sie zerbricht, muss ich sie restaurieren.",
+    "fr": "Mieux vaut pas. S'il se casse, c'est moi qui devrai le restaurer."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "door",
+   "if": [
+    "doorOpen"
+   ],
+   "say": {
+    "es": "La puerta está abierta.",
+    "en": "The door is open.",
+    "de": "Die Tür ist offen.",
+    "fr": "La porte est ouverte."
+   }
+  },
+  {
+   "verb": "look",
+   "noun": "door",
+   "say": {
+    "es": "La puerta de salida. Cerrada con llave.",
+    "en": "The exit door. Locked.",
+    "de": "Die Ausgangstür. Abgeschlossen.",
+    "fr": "La porte de sortie. Fermée à clé."
+   }
+  },
+  {
+   "verb": [
+    "open",
+    "use"
+   ],
+   "noun": "door",
+   "if": [
+    "!doorOpen"
+   ],
+   "say": {
+    "es": "Está cerrada con llave.",
+    "en": "It's locked.",
+    "de": "Sie ist abgeschlossen.",
+    "fr": "Elle est fermée à clé."
+   }
+  },
+  {
+   "verb": "push",
+   "noun": "door",
+   "say": {
+    "es": "Empujo. La puerta no se impresiona.",
+    "en": "I push. The door is not impressed.",
+    "de": "Ich drücke. Die Tür ist unbeeindruckt.",
+    "fr": "Je pousse. La porte n'est pas impressionnée."
+   }
+  },
+  {
+   "verb": "talk",
+   "noun": "door",
+   "say": {
+    "es": "Hola, puerta. Ábrete. ...No ha funcionado.",
+    "en": "Hello, door. Open sesame. ...That didn't work.",
+    "de": "Hallo, Tür. Sesam, öffne dich. … Hat nicht geklappt.",
+    "fr": "Bonjour, porte. Sésame, ouvre-toi. … Ça n'a pas marché."
+   }
+  },
+  {
+   "verb": "open",
+   "noun": "remote",
+   "do": [
+    "remove:remote",
+    "give:batteries",
+    "sound:open"
+   ],
+   "say": {
+    "es": "Abro la tapa del mando. Dentro hay dos pilas. Me las quedo.",
+    "en": "I open the remote's cover. Two batteries inside. I'll keep them.",
+    "de": "Ich öffne das Batteriefach. Zwei Batterien. Die behalte ich.",
+    "fr": "J'ouvre le couvercle de la télécommande. Deux piles. Je les garde."
+   }
+  },
+  {
+   "verb": "use",
+   "item": "batteries",
+   "noun": "flashlight",
+   "do": [
+    "remove:batteries",
+    "remove:flashlight",
+    "give:flashlightOn",
+    "sound:open"
+   ],
+   "say": {
+    "es": "Meto las pilas en la linterna. ¡Funciona!",
+    "en": "I put the batteries in the flashlight. It works!",
+    "de": "Ich lege die Batterien ein. Sie funktioniert!",
+    "fr": "Je mets les piles dans la lampe. Elle marche !"
+   }
+  },
+  {
+   "verb": "use",
+   "item": "remote",
+   "noun": "flashlight",
+   "say": {
+    "es": "Las pilas están dentro del mando. Tendría que abrirlo primero.",
+    "en": "The batteries are inside the remote. I'd need to open it first.",
+    "de": "Die Batterien stecken in der Fernbedienung. Ich müsste sie erst öffnen.",
+    "fr": "Les piles sont dans la télécommande. Il faudrait d'abord l'ouvrir."
+   }
+  },
+  {
+   "verb": "use",
+   "item": "flashlightOn",
+   "noun": [
+    "vent",
+    "key"
+   ],
+   "if": [
+    "keySeen"
+   ],
+   "say": {
+    "es": "Ya veo la llave ahí dentro.",
+    "en": "I can already see the key in there.",
+    "de": "Ich sehe den Schlüssel schon.",
+    "fr": "Je vois déjà la clé là-dedans."
+   }
+  },
+  {
+   "verb": "use",
+   "item": "flashlightOn",
+   "noun": "vent",
+   "do": [
+    "set:keySeen",
+    "sound:open"
+   ],
+   "say": {
+    "es": "Ilumino la rejilla... ¡Hay una llave dentro, enganchada en la malla!",
+    "en": "I shine the light into the vent... There's a key caught in the mesh!",
+    "de": "Ich leuchte ins Gitter … Da hängt ein Schlüssel im Geflecht!",
+    "fr": "J'éclaire la grille… Il y a une clé coincée dans le grillage !"
+   }
+  },
+  {
+   "verb": "use",
+   "item": "flashlight",
+   "noun": "vent",
+   "say": {
+    "es": "Sin pilas, esta linterna es un pisapapeles.",
+    "en": "Without batteries this flashlight is a paperweight.",
+    "de": "Ohne Batterien ist die Lampe ein Briefbeschwerer.",
+    "fr": "Sans piles, cette lampe est un presse-papier."
+   }
+  },
+  {
+   "verb": "use",
+   "item": "key",
+   "noun": "door",
+   "do": [
+    "set:doorOpen",
+    "remove:key",
+    "win"
+   ],
+   "say": {
+    "es": "La llave gira. La puerta se abre. ¡Libre! El conservador ni se había dado cuenta de que faltabas.",
+    "en": "The key turns. The door opens. Free! The curator hadn't even noticed you were missing.",
+    "de": "Der Schlüssel dreht sich. Die Tür geht auf. Frei! Der Kurator hatte nicht einmal bemerkt, dass du fehltest.",
+    "fr": "La clé tourne. La porte s'ouvre. Libre ! Le conservateur ne s'était même pas aperçu de votre absence."
+   }
+  },
+  {
+   "verb": "use",
+   "item": "remote",
+   "noun": "bust",
+   "say": {
+    "es": "Apunto al busto y pulso. No cambia de canal.",
+    "en": "I point it at the bust and press. It doesn't change channel.",
+    "de": "Ich ziele auf die Büste und drücke. Sie schaltet nicht um.",
+    "fr": "Je vise le buste et j'appuie. Il ne change pas de chaîne."
+   }
+  }
+ ],
+ "messages": {
+  "intro": {
+   "es": "Te has quedado encerrado en la sala de restauración. Otra vez.",
+   "en": "You've got yourself locked in the restoration room. Again.",
+   "de": "Du hast dich in der Restaurierungswerkstatt eingesperrt. Schon wieder.",
+   "fr": "Vous vous êtes encore fait enfermer dans l'atelier de restauration."
+  },
+  "chooseItem": {
+   "es": "Elige primero un objeto del inventario para usarlo con algo.",
+   "en": "First pick an inventory item to use with something.",
+   "de": "Wähle zuerst einen Gegenstand aus dem Inventar.",
+   "fr": "Choisissez d'abord un objet de l'inventaire."
+  },
+  "nonsense": {
+   "es": "Eso no tiene sentido. Ni siquiera en una aventura gráfica.",
+   "en": "That makes no sense. Not even in an adventure game.",
+   "de": "Das ergibt keinen Sinn. Nicht mal in einem Adventure.",
+   "fr": "Ça n'a aucun sens. Même dans un jeu d'aventure."
+  },
+  "noWork": {
+   "es": "No funciona.",
+   "en": "That doesn't work.",
+   "de": "Das funktioniert nicht.",
+   "fr": "Ça ne marche pas."
+  },
+  "cantTake": {
+   "es": "No puedo coger eso.",
+   "en": "I can't pick that up.",
+   "de": "Das kann ich nicht nehmen.",
+   "fr": "Je ne peux pas prendre ça."
+  },
+  "noTalk": {
+   "es": "No creo que tenga mucho que decir.",
+   "en": "I don't think it has much to say.",
+   "de": "Ich glaube nicht, dass es viel zu sagen hat.",
+   "fr": "Je ne pense pas qu'il ait grand-chose à dire."
+  },
+  "nothingSpecial": {
+   "es": "Nada especial.",
+   "en": "Nothing special.",
+   "de": "Nichts Besonderes.",
+   "fr": "Rien de spécial."
+  },
+  "cantItem": {
+   "es": "No puedo hacer eso con {item}.",
+   "en": "I can't do that with the {item}.",
+   "de": "Das geht nicht mit: {item}.",
+   "fr": "Je ne peux pas faire ça avec : {item}."
+  },
+  "emptySlot": {
+   "es": "hueco vacío",
+   "en": "empty slot",
+   "de": "leeres Fach",
+   "fr": "case vide"
+  }
+ },
+ "foreground": [
+  {
+   "r": [
+    0,
+    146,
+    320,
+    4
+   ],
+   "c": "#2a1a10"
+  }
+ ]
+}

@@ -1,0 +1,186 @@
+{
+ "characters": {
+  "curator": {
+   "palette": {
+    "o": "#1a1022",
+    "h": "#ece8f6",
+    "H": "#a8a4c4",
+    "s": "#f2c491",
+    "S": "#c98d62",
+    "k": "#2a2040",
+    "g": "#bfe9ff",
+    "w": "#f3e6c8",
+    "W": "#c9b98f",
+    "b": "#ffb547",
+    "B": "#c47a1e",
+    "v": "#8a2f4a",
+    "V": "#5e1f34",
+    "y": "#e0b040",
+    "p": "#4b4a78",
+    "P": "#33325a",
+    "n": "#3a2414",
+    "N": "#6e4428"
+   },
+   "art": [
+    "......ooooo.....",
+    ".....osssssoo...",
+    "....ohsssssssoo.",
+    "...ohhssssssssso",
+    "...ohhsskkkskkko",
+    "...ohhsskgkskgko",
+    "...ohhSssssssssk",
+    "...ohhSssshhhhso",
+    "....ohSsshhhhho.",
+    "....ohSssssssoo.",
+    ".....oSSsssso...",
+    "......oSSSSo....",
+    "....ooowbbwooo..",
+    "...ovvwwbBbwwvo.",
+    "..ovvvvwwwwvvvvo",
+    "..ovvvvvwwvvvvvo",
+    "..ovvvowwovvvvvo",
+    "..ovvvowwovvyvvo",
+    "..ovvvowWovvvvvo",
+    "..ovvvowWovvyvvo",
+    "..oVVVowWoVVVVVo",
+    "..oVVVossoVVVVVo",
+    "...oppoSSopppPo.",
+    "...opppoopppPPo."
+   ],
+   "talk": {
+    "8": "....ohSsshkkhho."
+   },
+   "blink": {
+    "5": "...ohhsskkkskkko"
+   },
+   "legs": {
+    "hipY": 24,
+    "hips": [
+     5,
+     9
+    ],
+    "length": 6,
+    "leg": "p",
+    "shade": "P",
+    "shoe": "n",
+    "shoeHi": "N",
+    "outline": "o",
+    "stride": 3
+   }
+  },
+  "visitor": {
+   "palette": {
+    "o": "#1a1022",
+    "r": "#d9455f",
+    "R": "#9a2a42",
+    "f": "#f3e6c8",
+    "k": "#3a2414",
+    "K": "#5a3820",
+    "s": "#f2c491",
+    "S": "#c98d62",
+    "e": "#1a1022",
+    "c": "#4fd6c8",
+    "C": "#2a9a90",
+    "j": "#8a5a35",
+    "J": "#5a3820",
+    "x": "#6b7a3a",
+    "X": "#4a5426",
+    "z": "#ffb547",
+    "p": "#3f6fd8",
+    "P": "#2343a0",
+    "n": "#f3e6c8",
+    "N": "#a8a4c4"
+   },
+   "art": [
+    "........ooo.....",
+    ".......offfo....",
+    ".....oorrrroo...",
+    "....orrrrrrrro..",
+    "...orrrrrrrrrro.",
+    "...oRRRRRRRRRRo.",
+    "...okkssssssso..",
+    "...okkssssesso..",
+    "...okksssssssso.",
+    "....okSssssso...",
+    "....okSsssoo....",
+    ".....oSSSSo.....",
+    "..ooxoccccco....",
+    ".oxxoccCCcccjo..",
+    ".oxxojjcCjjjjjo.",
+    ".oxxojjjjjjjjjo.",
+    ".oxxojjjjojjjjo.",
+    ".oXxojjjjojjzjo.",
+    ".oXxojjjjojjjjo.",
+    ".oXXojjjjosssjo.",
+    "..ooojjjjoSSojo.",
+    "....oJJJJJJJJo..",
+    "....opppppppo...",
+    "....oppPoppPo..."
+   ],
+   "talk": {
+    "8": "...okksssssseso."
+   },
+   "blink": {
+    "7": "...okkssssssso.."
+   },
+   "legs": {
+    "hipY": 24,
+    "hips": [
+     5,
+     9
+    ],
+    "length": 6,
+    "leg": "p",
+    "shade": "P",
+    "shoe": "n",
+    "shoeHi": "N",
+    "outline": "o",
+    "stride": 3
+   }
+  }
+ },
+ "cat": {
+  "palette": {
+   "o": "#0a0614",
+   "c": "#2a2040",
+   "C": "#3d3170",
+   "e": "#ffb547",
+   "p": "#ef5d8a"
+  },
+  "frames": [
+   [
+    "..........o.o.",
+    "..........ocoo",
+    "o.........ccco",
+    "co........cecc",
+    ".co.....occcc.",
+    "..cooooocccc..",
+    "...cCcccccc...",
+    "...ccccccccc..",
+    "...oc.oc..oc.."
+   ],
+   [
+    "..........o.o.",
+    "..........ocoo",
+    "..........ccco",
+    "...........ecc",
+    "o.......occcc.",
+    "cooooooocccc..",
+    "...cCcccccc...",
+    "...ccccccccc..",
+    "...oc.oc..oc.."
+   ],
+   [
+    "..........o.o.",
+    "..........ocoo",
+    "o.........ccco",
+    "co........cccc",
+    ".co.....occcc.",
+    "..cooooocccc..",
+    "...cCcccccc...",
+    "...ccccccccc..",
+    "...oc.oc..oc.."
+   ]
+  ]
+ }
+}

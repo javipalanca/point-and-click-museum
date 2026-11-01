@@ -1,0 +1,229 @@
+{
+  "name": "Point and Click Museum",
+  "baseUrl": "https://pointandclick.museum",
+  "defaultLanguage": "es",
+  "languages": [
+    {
+      "code": "es",
+      "label": "ES",
+      "name": "Español",
+      "locale": "es_ES"
+    },
+    {
+      "code": "en",
+      "label": "EN",
+      "name": "English",
+      "locale": "en_GB"
+    },
+    {
+      "code": "de",
+      "label": "DE",
+      "name": "Deutsch",
+      "locale": "de_DE"
+    },
+    {
+      "code": "fr",
+      "label": "FR",
+      "name": "Français",
+      "locale": "fr_FR"
+    }
+  ],
+  "themeColor": "#120d24",
+  "fonts": "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap",
+  "score": {
+    "total": 100,
+    "awards": {
+      "hero": {
+        "points": 2,
+        "cap": 3
+      },
+      "timeline": {
+        "points": 1,
+        "cap": 10
+      },
+      "studios": {
+        "points": 2,
+        "cap": 5
+      },
+      "engines": {
+        "points": 2,
+        "cap": 3
+      },
+      "techUi": {
+        "points": 1,
+        "cap": 2
+      },
+      "techCycle": {
+        "points": 2
+      },
+      "techDither": {
+        "points": 2
+      },
+      "techParallax": {
+        "points": 2
+      },
+      "techMusic": {
+        "points": 2
+      },
+      "textAdventure": {
+        "points": 15
+      },
+      "room": {
+        "points": 15
+      },
+      "hunt": {
+        "points": 10
+      },
+      "chronology": {
+        "points": 10
+      },
+      "eggXyzzy": {
+        "points": 4
+      },
+      "eggBust": {
+        "points": 4
+      }
+    }
+  },
+  "pages": [
+    {
+      "id": "home",
+      "path": "",
+      "verb": null,
+      "icon": "door",
+      "scripts": [
+        "sections"
+      ],
+      "data": [
+        "hero"
+      ]
+    },
+    {
+      "id": "timeline",
+      "path": "timeline/",
+      "room": 1,
+      "icon": "book",
+      "scripts": [
+        "sections"
+      ],
+      "data": [
+        "timeline"
+      ]
+    },
+    {
+      "id": "studios",
+      "path": "studios/",
+      "room": 2,
+      "icon": "magnifier",
+      "scripts": [
+        "sections"
+      ],
+      "data": [
+        "studios"
+      ]
+    },
+    {
+      "id": "engines",
+      "path": "engines/",
+      "room": 3,
+      "icon": "gear",
+      "scripts": [
+        "sections"
+      ],
+      "data": [
+        "engines"
+      ]
+    },
+    {
+      "id": "techniques",
+      "path": "techniques/",
+      "room": 4,
+      "icon": "eye",
+      "scripts": [
+        "sections"
+      ],
+      "data": [
+        "techniques"
+      ]
+    },
+    {
+      "id": "games",
+      "path": "games/",
+      "room": 5,
+      "icon": "star",
+      "scripts": [],
+      "data": []
+    },
+    {
+      "id": "text-adventure",
+      "path": "games/text-adventure/",
+      "parent": "games",
+      "icon": "terminal",
+      "scripts": [
+        "rules",
+        "games"
+      ],
+      "data": [
+        "games.textAdventure"
+      ]
+    },
+    {
+      "id": "restoration-room",
+      "path": "games/restoration-room/",
+      "parent": "games",
+      "icon": "key",
+      "scripts": [
+        "rules",
+        "games"
+      ],
+      "data": [
+        "games.room"
+      ]
+    },
+    {
+      "id": "pixel-hunt",
+      "path": "games/pixel-hunt/",
+      "parent": "games",
+      "icon": "floppy",
+      "scripts": [
+        "games"
+      ],
+      "data": [
+        "games.hunt"
+      ]
+    },
+    {
+      "id": "chronology",
+      "path": "games/chronology/",
+      "parent": "games",
+      "icon": "cursor",
+      "scripts": [
+        "games"
+      ],
+      "data": [
+        "games.chronology",
+        "timeline"
+      ]
+    },
+    {
+      "id": "arcade",
+      "path": "arcade/",
+      "room": 6,
+      "icon": "cd",
+      "scripts": [
+        "arcade"
+      ],
+      "data": [
+        "arcade"
+      ]
+    }
+  ],
+  "nav": [
+    "timeline",
+    "studios",
+    "engines",
+    "techniques",
+    "games",
+    "arcade"
+  ]
+}

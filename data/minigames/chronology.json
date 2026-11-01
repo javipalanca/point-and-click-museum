@@ -1,0 +1,16 @@
+{
+  "id": "chronology",
+  "title": { "es": "Ordena la cronología", "en": "Sort the Timeline", "de": "Ordne die Zeitleiste", "fr": "Remettez dans l'ordre" },
+  "how": {
+    "es": "Toca los juegos del más antiguo al más reciente y comprueba.",
+    "en": "Tap the games from oldest to newest, then check.",
+    "de": "Tippe die Spiele vom ältesten zum neuesten an und prüfe.",
+    "fr": "Touchez les jeux du plus ancien au plus récent, puis vérifiez." },
+  "award": "chronology",
+  "count": 4,
+  "messages": {
+    "needAll": { "es": "Marca los {count} juegos antes de comprobar.", "en": "Mark all {count} games before checking.", "de": "Markiere alle {count} Spiele, bevor du prüfst.", "fr": "Marquez les {count} jeux avant de vérifier." },
+    "ok": { "es": "¡Perfecto! Eres un archivero de primera.", "en": "Perfect! You're a first-rate archivist.", "de": "Perfekt! Du bist ein erstklassiger Archivar.", "fr": "Parfait ! Vous êtes un archiviste hors pair." },
+    "bad": { "es": "Casi. Mira los años y prueba con una ronda nueva.", "en": "Almost. Check the years and try a new round.", "de": "Fast. Schau dir die Jahre an und versuch eine neue Runde.", "fr": "Presque. Regardez les années et tentez une nouvelle manche." }
+  }
+}

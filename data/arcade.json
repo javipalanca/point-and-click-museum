@@ -1,0 +1,103 @@
+{
+  "emulator": {
+    "package": "js-dos",
+    "version": "8.3.20",
+    "local": "vendor/js-dos/",
+    "cdn": "https://cdn.jsdelivr.net/npm/js-dos@8.3.20/dist/",
+    "options": {
+      "autoStart": true,
+      "theme": "dark",
+      "noCloud": true,
+      "noNetworking": true,
+      "renderAspect": "4/3",
+      "imageRendering": "pixelated"
+    }
+  },
+  "intro": {
+    "es": "Una sala con DOSBox dentro del navegador (js-dos). Las aventuras se cargan como paquetes .jsdos preparados en data/arcade.json. Solo incluimos programas que se pueden redistribuir; para el resto, carga tu propia copia desde tu ordenador: no se sube a ningún sitio.",
+    "en": "A room with DOSBox running in the browser (js-dos). Adventures load as .jsdos bundles configured in data/arcade.json. We only ship software that may be redistributed; for anything else, load your own copy from your computer: it never leaves your device.",
+    "de": "Ein Raum mit DOSBox im Browser (js-dos). Adventures werden als .jsdos-Pakete geladen, die in data/arcade.json eingetragen sind. Wir liefern nur weiterverbreitbare Software mit; alles andere lädst du als eigene Kopie von deinem Rechner – sie verlässt dein Gerät nie.",
+    "fr": "Une salle avec DOSBox dans le navigateur (js-dos). Les aventures se chargent sous forme de paquets .jsdos déclarés dans data/arcade.json. Nous ne livrons que des logiciels redistribuables ; pour le reste, chargez votre propre copie depuis votre ordinateur : elle ne quitte jamais votre appareil."
+  },
+  "games": [
+    {
+      "id": "museum-demo",
+      "title": "MUSEUM.COM + PAINT.COM",
+      "year": 2026,
+      "studio": "Point and Click Museum",
+      "icon": "terminal",
+      "bundle": "games/museum-demo.jsdos",
+      "license": "CC0",
+      "desc": {
+        "es": "Dos programas DOS diminutos hechos para este museo. MUSEUM.COM comprueba que el emulador arranca; PAINT.COM es un pequeño programa de dibujo para probar el ratón: botón izquierdo dibuja, derecho cambia de color.",
+        "en": "Two tiny DOS programs made for this museum. MUSEUM.COM checks that the emulator boots; PAINT.COM is a small drawing program to test the mouse: left button draws, right button changes colour.",
+        "de": "Zwei winzige DOS-Programme für dieses Museum. MUSEUM.COM prüft, ob der Emulator startet; PAINT.COM ist ein kleines Malprogramm zum Testen der Maus: Links malt, rechts wechselt die Farbe.",
+        "fr": "Deux minuscules programmes DOS créés pour ce musée. MUSEUM.COM vérifie que l'émulateur démarre ; PAINT.COM est un petit logiciel de dessin pour tester la souris : clic gauche pour dessiner, clic droit pour changer de couleur."
+      }
+    },
+    {
+      "id": "beneath-a-steel-sky",
+      "title": "Beneath a Steel Sky",
+      "year": 1994,
+      "studio": "Revolution Software",
+      "icon": "robot",
+      "bundle": null,
+      "license": "Freeware",
+      "source": "https://www.scummvm.org/games/#games-sky",
+      "desc": {
+        "es": "Freeware desde 2003. La descarga oficial está pensada para ScummVM; para DOSBox hace falta la versión DOS original con su ejecutable. Prepárala con tools/make_jsdos_bundle.py.",
+        "en": "Freeware since 2003. The official download targets ScummVM; DOSBox needs the original DOS release with its executable. Package it with tools/make_jsdos_bundle.py.",
+        "de": "Seit 2003 Freeware. Der offizielle Download ist für ScummVM gedacht; für DOSBox braucht es die DOS-Originalversion mit Programmdatei. Verpacke sie mit tools/make_jsdos_bundle.py.",
+        "fr": "Freeware depuis 2003. Le téléchargement officiel vise ScummVM ; DOSBox demande la version DOS d'origine avec son exécutable. Empaquetez-la avec tools/make_jsdos_bundle.py."
+      }
+    },
+    {
+      "id": "flight-of-the-amazon-queen",
+      "title": "Flight of the Amazon Queen",
+      "year": 1995,
+      "studio": "Interactive Binary Illusions",
+      "icon": "palm",
+      "bundle": null,
+      "license": "Freeware",
+      "source": "https://www.scummvm.org/games/#games-queen",
+      "desc": {
+        "es": "Aventura pulp liberada como freeware. Mismo caso: necesitas los ficheros DOS originales para empaquetarla.",
+        "en": "A pulp adventure released as freeware. Same as above: you need the original DOS files to package it.",
+        "de": "Ein Pulp-Adventure, als Freeware freigegeben. Auch hier brauchst du die originalen DOS-Dateien.",
+        "fr": "Une aventure pulp devenue freeware. Même cas : il faut les fichiers DOS d'origine pour l'empaqueter."
+      }
+    },
+    {
+      "id": "drascula",
+      "title": "Drascula: The Vampire Strikes Back",
+      "year": 1996,
+      "studio": "Alcachofa Soft",
+      "icon": "skull",
+      "bundle": null,
+      "license": "Freeware",
+      "source": "https://www.scummvm.org/games/#games-drascula",
+      "desc": {
+        "es": "Aventura española de Alcachofa Soft, liberada como freeware. Empaquétala a partir de la versión DOS original.",
+        "en": "A Spanish adventure by Alcachofa Soft, released as freeware. Package it from the original DOS release.",
+        "de": "Ein spanisches Adventure von Alcachofa Soft, als Freeware freigegeben. Verpacke die DOS-Originalversion.",
+        "fr": "Une aventure espagnole d'Alcachofa Soft devenue freeware. Empaquetez-la depuis la version DOS d'origine."
+      }
+    },
+    {
+      "id": "lure-of-the-temptress",
+      "title": "Lure of the Temptress",
+      "year": 1992,
+      "studio": "Revolution Software",
+      "icon": "sword",
+      "bundle": null,
+      "license": "Freeware",
+      "source": "https://www.scummvm.org/games/#games-lure",
+      "desc": {
+        "es": "El estreno de Virtual Theatre, hoy freeware. Necesita los ficheros DOS originales.",
+        "en": "Virtual Theatre's debut, now freeware. Requires the original DOS files.",
+        "de": "Das Debüt von Virtual Theatre, heute Freeware. Benötigt die originalen DOS-Dateien.",
+        "fr": "Les débuts de Virtual Theatre, aujourd'hui freeware. Nécessite les fichiers DOS d'origine."
+      }
+    }
+  ]
+}

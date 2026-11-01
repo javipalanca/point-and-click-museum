@@ -1,0 +1,772 @@
+{
+ "studios": [
+  {
+   "id": "infocom",
+   "name": "Infocom",
+   "years": "1979–1989",
+   "dialog": {
+    "es": [
+     [
+      "¿Cómo empezó Infocom?",
+      "Un grupo del laboratorio de informática del MIT. Tras escribir Zork por diversión, fundaron la empresa en 1979 y lo vendieron por entregas para que cupiera en la memoria de los ordenadores domésticos."
+     ],
+     [
+      "¿Qué inventaron?",
+      "La Z-machine, una máquina virtual. Escribían el juego una vez y solo portaban el intérprete a cada ordenador. Además metían «feelies» en las cajas: mapas, monedas y pistas físicas."
+     ],
+     [
+      "¿Qué pasó con ellos?",
+      "Apostaron por un programa de bases de datos que fracasó. Activision los compró en 1986 y cerró el estudio en 1989. Sus juegos siguen siendo de culto."
+     ]
+    ],
+    "en": [
+     [
+      "How did Infocom start?",
+      "A group from MIT's computer science lab. After writing Zork for fun, they founded the company in 1979 and sold it in instalments so it would fit in home computers' memory."
+     ],
+     [
+      "What did they invent?",
+      "The Z-machine, a virtual machine. They wrote each game once and only ported the interpreter to each computer. They also packed \"feelies\" in the boxes: maps, coins and physical clues."
+     ],
+     [
+      "What happened to them?",
+      "They bet on a database program that flopped. Activision bought them in 1986 and closed the studio in 1989. Their games are still cult classics."
+     ]
+    ],
+    "de": [
+     [
+      "Wie fing Infocom an?",
+      "Eine Gruppe aus dem Informatiklabor des MIT. Nachdem sie Zork zum Spaß geschrieben hatten, gründeten sie 1979 die Firma und verkauften es in Teilen, damit es in den Speicher der Heimcomputer passte."
+     ],
+     [
+      "Was haben sie erfunden?",
+      "Die Z-machine, eine virtuelle Maschine. Jedes Spiel wurde einmal geschrieben, nur der Interpreter wurde portiert. Dazu legten sie „Feelies“ in die Packungen: Karten, Münzen, echte Hinweise."
+     ],
+     [
+      "Was wurde aus ihnen?",
+      "Sie setzten auf eine Datenbanksoftware, die floppte. Activision kaufte sie 1986 und schloss das Studio 1989. Ihre Spiele haben bis heute Kultstatus."
+     ]
+    ],
+    "fr": [
+     [
+      "Comment Infocom a-t-il commencé ?",
+      "Un groupe du laboratoire d'informatique du MIT. Après avoir écrit Zork pour s'amuser, ils ont fondé la société en 1979 et l'ont vendu en plusieurs parties pour tenir dans la mémoire des ordinateurs familiaux."
+     ],
+     [
+      "Qu'ont-ils inventé ?",
+      "La Z-machine, une machine virtuelle. Chaque jeu était écrit une fois, seul l'interpréteur était porté. Ils glissaient aussi des « feelies » dans les boîtes : cartes, pièces et indices physiques."
+     ],
+     [
+      "Que sont-ils devenus ?",
+      "Ils ont misé sur un logiciel de base de données qui a échoué. Activision les a rachetés en 1986 et a fermé le studio en 1989. Leurs jeux restent cultes."
+     ]
+    ]
+   },
+   "link": "https://en.wikipedia.org/wiki/Infocom"
+  },
+  {
+   "id": "sierra",
+   "name": "Sierra On-Line",
+   "years": "1979–2008",
+   "dialog": {
+    "es": [
+     [
+      "¿Quiénes la fundaron?",
+      "Ken y Roberta Williams. Roberta diseñaba las historias y Ken la tecnología. Empezaron en casa con Mystery House en 1980."
+     ],
+     [
+      "¿Qué la hacía especial?",
+      "Las sagas Quest: King's, Space, Police y Quest for Glory. Mundos grandes, mucha narrativa y muchas muertes. Había que guardar partida a menudo."
+     ],
+     [
+      "¿Y su final?",
+      "Una cadena de compras empresariales desde 1996 desmanteló el estudio original. La marca sobrevivió como editorial, pero el espíritu de Oakhurst se perdió."
+     ]
+    ],
+    "en": [
+     [
+      "Who founded it?",
+      "Ken and Roberta Williams. Roberta designed the stories and Ken the technology. They started at home with Mystery House in 1980."
+     ],
+     [
+      "What made it special?",
+      "The Quest series: King's, Space, Police and Quest for Glory. Big worlds, lots of story and lots of deaths. You had to save often."
+     ],
+     [
+      "And how did it end?",
+      "A chain of corporate takeovers from 1996 dismantled the original studio. The brand lived on as a publisher, but the Oakhurst spirit was lost."
+     ]
+    ],
+    "de": [
+     [
+      "Wer hat sie gegründet?",
+      "Ken und Roberta Williams. Roberta entwarf die Geschichten, Ken die Technik. Sie begannen 1980 zu Hause mit Mystery House."
+     ],
+     [
+      "Was machte sie besonders?",
+      "Die Quest-Reihen: King's, Space, Police und Quest for Glory. Große Welten, viel Geschichte und viele Tode. Man musste oft speichern."
+     ],
+     [
+      "Und ihr Ende?",
+      "Eine Kette von Übernahmen ab 1996 zerlegte das ursprüngliche Studio. Die Marke überlebte als Publisher, doch der Geist von Oakhurst ging verloren."
+     ]
+    ],
+    "fr": [
+     [
+      "Qui l'a fondée ?",
+      "Ken et Roberta Williams. Roberta concevait les histoires et Ken la technique. Ils ont commencé chez eux avec Mystery House en 1980."
+     ],
+     [
+      "Qu'est-ce qui la rendait spéciale ?",
+      "Les séries Quest : King's, Space, Police et Quest for Glory. De grands mondes, beaucoup de récit et beaucoup de morts. Il fallait sauvegarder souvent."
+     ],
+     [
+      "Et sa fin ?",
+      "Une série de rachats à partir de 1996 a démantelé le studio d'origine. La marque a survécu comme éditeur, mais l'esprit d'Oakhurst s'est perdu."
+     ]
+    ]
+   },
+   "link": "https://en.wikipedia.org/wiki/Sierra_Entertainment"
+  },
+  {
+   "id": "lucasarts",
+   "name": "LucasArts",
+   "years": "1982–2013",
+   "dialog": {
+    "es": [
+     [
+      "¿De dónde salió?",
+      "Nació como Lucasfilm Games, la división de juegos de la productora de George Lucas, y adoptó el nombre LucasArts en 1990."
+     ],
+     [
+      "¿Su gran aportación?",
+      "SCUMM, los verbos en pantalla y la filosofía de no castigar al jugador: sin muertes inesperadas ni callejones sin salida. Y la música adaptativa iMUSE."
+     ],
+     [
+      "¿Quiénes trabajaban allí?",
+      "Ron Gilbert, Tim Schafer, Dave Grossman, Hal Barwood, Noah Falstein, Brian Moriarty, Sean Clark, Larry Ahern... Un plantel que luego fundó medio sector independiente."
+     ]
+    ],
+    "en": [
+     [
+      "Where did it come from?",
+      "It began as Lucasfilm Games, the games division of George Lucas's company, and became LucasArts in 1990."
+     ],
+     [
+      "Its big contribution?",
+      "SCUMM, on-screen verbs and a philosophy of not punishing the player: no sudden deaths, no dead ends. Plus the adaptive music system iMUSE."
+     ],
+     [
+      "Who worked there?",
+      "Ron Gilbert, Tim Schafer, Dave Grossman, Hal Barwood, Noah Falstein, Brian Moriarty, Sean Clark, Larry Ahern... A team that went on to found half the indie scene."
+     ]
+    ],
+    "de": [
+     [
+      "Woher kam sie?",
+      "Sie begann als Lucasfilm Games, die Spielesparte von George Lucas' Firma, und hieß ab 1990 LucasArts."
+     ],
+     [
+      "Ihr großer Beitrag?",
+      "SCUMM, Verben auf dem Bildschirm und die Philosophie, Spieler nicht zu bestrafen: keine plötzlichen Tode, keine Sackgassen. Dazu die adaptive Musik iMUSE."
+     ],
+     [
+      "Wer arbeitete dort?",
+      "Ron Gilbert, Tim Schafer, Dave Grossman, Hal Barwood, Noah Falstein, Brian Moriarty, Sean Clark, Larry Ahern … Ein Team, das später die halbe Indie-Szene gründete."
+     ]
+    ],
+    "fr": [
+     [
+      "D'où vient-elle ?",
+      "Elle est née sous le nom de Lucasfilm Games, la division jeux de la société de George Lucas, et s'est appelée LucasArts en 1990."
+     ],
+     [
+      "Sa grande contribution ?",
+      "SCUMM, les verbes à l'écran et une philosophie qui ne punit pas le joueur : pas de mort soudaine ni d'impasse. Et la musique adaptative iMUSE."
+     ],
+     [
+      "Qui y travaillait ?",
+      "Ron Gilbert, Tim Schafer, Dave Grossman, Hal Barwood, Noah Falstein, Brian Moriarty, Sean Clark, Larry Ahern… Une équipe qui a ensuite fondé la moitié de la scène indé."
+     ]
+    ]
+   },
+   "link": "https://en.wikipedia.org/wiki/LucasArts"
+  },
+  {
+   "id": "revolution",
+   "name": "Revolution Software",
+   "years": "1990–",
+   "dialog": {
+    "es": [
+     [
+      "¿Dónde nació?",
+      "En York, Inglaterra, en 1990. Charles Cecil es su cara visible desde el principio."
+     ],
+     [
+      "¿Cuál era su motor?",
+      "Virtual Theatre: los personajes no esperaban quietos; tenían rutinas y se movían por el escenario por su cuenta. Se estrenó en Lure of the Temptress (1992)."
+     ],
+     [
+      "¿Siguen en activo?",
+      "Sí. La saga Broken Sword continúa: financiaron una entrega por Kickstarter en 2013 y en 2024 publicaron un remaster completo del primer juego."
+     ]
+    ],
+    "en": [
+     [
+      "Where was it born?",
+      "In York, England, in 1990. Charles Cecil has been its public face from the start."
+     ],
+     [
+      "What was its engine?",
+      "Virtual Theatre: characters didn't stand still; they had routines and moved around the scene on their own. It debuted in Lure of the Temptress (1992)."
+     ],
+     [
+      "Are they still around?",
+      "Yes. Broken Sword goes on: they crowdfunded an instalment on Kickstarter in 2013 and released a full remaster of the first game in 2024."
+     ]
+    ],
+    "de": [
+     [
+      "Wo entstand sie?",
+      "1990 in York, England. Charles Cecil ist von Anfang an ihr Gesicht."
+     ],
+     [
+      "Welche Engine hatten sie?",
+      "Virtual Theatre: Figuren standen nicht still, sie hatten Tagesabläufe und bewegten sich selbstständig. Premiere war Lure of the Temptress (1992)."
+     ],
+     [
+      "Gibt es sie noch?",
+      "Ja. Broken Sword geht weiter: 2013 finanzierten sie einen Teil über Kickstarter, 2024 erschien ein komplettes Remaster des ersten Spiels."
+     ]
+    ],
+    "fr": [
+     [
+      "Où est-il né ?",
+      "À York, en Angleterre, en 1990. Charles Cecil en est le visage depuis le début."
+     ],
+     [
+      "Quel était son moteur ?",
+      "Virtual Theatre : les personnages ne restaient pas immobiles, ils avaient des routines et se déplaçaient seuls. Il a débuté avec Lure of the Temptress (1992)."
+     ],
+     [
+      "Sont-ils toujours actifs ?",
+      "Oui. Broken Sword continue : un épisode financé sur Kickstarter en 2013 et un remaster complet du premier jeu en 2024."
+     ]
+    ]
+   },
+   "link": "https://revolution.co.uk/"
+  },
+  {
+   "id": "westwood",
+   "name": "Westwood Studios",
+   "years": "1985–2003",
+   "dialog": {
+    "es": [
+     [
+      "¿Aventuras? ¿No eran de estrategia?",
+      "Antes de Command & Conquer, Westwood hizo la trilogía Kyrandia y Blade Runner, y eran excelentes."
+     ],
+     [
+      "¿Qué tenía de raro Blade Runner?",
+      "Personajes de voxels, una ciudad viva en tiempo real y una historia que se reorganizaba en cada partida: quién era replicante cambiaba al azar."
+     ],
+     [
+      "¿Qué fue de ellos?",
+      "Electronic Arts los compró en 1998 y los cerró en 2003."
+     ]
+    ],
+    "en": [
+     [
+      "Adventures? Weren't they a strategy studio?",
+      "Before Command & Conquer, Westwood made the Kyrandia trilogy and Blade Runner, and they were excellent."
+     ],
+     [
+      "What was unusual about Blade Runner?",
+      "Voxel characters, a city living in real time and a story that reshuffled every playthrough: who was a replicant changed at random."
+     ],
+     [
+      "What became of them?",
+      "Electronic Arts bought them in 1998 and closed them in 2003."
+     ]
+    ],
+    "de": [
+     [
+      "Adventures? Waren die nicht für Strategie bekannt?",
+      "Vor Command & Conquer machte Westwood die Kyrandia-Trilogie und Blade Runner, und die waren hervorragend."
+     ],
+     [
+      "Was war an Blade Runner besonders?",
+      "Voxel-Figuren, eine Stadt, die in Echtzeit lebte, und eine Geschichte, die sich jede Partie neu mischte: Wer Replikant war, entschied der Zufall."
+     ],
+     [
+      "Was wurde aus ihnen?",
+      "Electronic Arts kaufte sie 1998 und schloss sie 2003."
+     ]
+    ],
+    "fr": [
+     [
+      "Des aventures ? Ce n'était pas un studio de stratégie ?",
+      "Avant Command & Conquer, Westwood a fait la trilogie Kyrandia et Blade Runner, et c'étaient d'excellents jeux."
+     ],
+     [
+      "Qu'avait Blade Runner de particulier ?",
+      "Des personnages en voxels, une ville vivante en temps réel et une histoire remaniée à chaque partie : l'identité des réplicants changeait au hasard."
+     ],
+     [
+      "Que sont-ils devenus ?",
+      "Electronic Arts les a rachetés en 1998 et fermés en 2003."
+     ]
+    ]
+   },
+   "link": "https://en.wikipedia.org/wiki/Westwood_Studios"
+  },
+  {
+   "id": "cyan",
+   "name": "Cyan",
+   "years": "1987–",
+   "dialog": {
+    "es": [
+     [
+      "¿Quiénes son?",
+      "Los hermanos Rand y Robyn Miller, de Spokane, Washington. Empezaron con libros interactivos para niños en HyperCard."
+     ],
+     [
+      "¿Por qué Myst fue tan importante?",
+      "Vendió millones, hizo que la gente comprara lectores de CD-ROM y demostró que un videojuego podía ser contemplativo y adulto."
+     ],
+     [
+      "¿Qué hacen hoy?",
+      "Siguen explorando: Obduction (2016), Firmament (2023) y un remake de Riven en 2024."
+     ]
+    ],
+    "en": [
+     [
+      "Who are they?",
+      "Brothers Rand and Robyn Miller, from Spokane, Washington. They started with interactive children's books in HyperCard."
+     ],
+     [
+      "Why was Myst so important?",
+      "It sold millions, made people buy CD-ROM drives and proved a game could be contemplative and grown-up."
+     ],
+     [
+      "What do they do today?",
+      "They keep exploring: Obduction (2016), Firmament (2023) and a remake of Riven in 2024."
+     ]
+    ],
+    "de": [
+     [
+      "Wer sind sie?",
+      "Die Brüder Rand und Robyn Miller aus Spokane, Washington. Sie begannen mit interaktiven Kinderbüchern in HyperCard."
+     ],
+     [
+      "Warum war Myst so wichtig?",
+      "Es verkaufte sich millionenfach, brachte Leute dazu, CD-ROM-Laufwerke zu kaufen, und bewies, dass ein Spiel kontemplativ und erwachsen sein kann."
+     ],
+     [
+      "Was machen sie heute?",
+      "Sie erkunden weiter: Obduction (2016), Firmament (2023) und ein Remake von Riven 2024."
+     ]
+    ],
+    "fr": [
+     [
+      "Qui sont-ils ?",
+      "Les frères Rand et Robyn Miller, de Spokane, dans l'État de Washington. Ils ont commencé par des livres interactifs pour enfants sous HyperCard."
+     ],
+     [
+      "Pourquoi Myst a-t-il tant compté ?",
+      "Il s'est vendu à des millions d'exemplaires, a poussé le public à acheter des lecteurs CD-ROM et a prouvé qu'un jeu pouvait être contemplatif et adulte."
+     ],
+     [
+      "Que font-ils aujourd'hui ?",
+      "Ils explorent toujours : Obduction (2016), Firmament (2023) et un remake de Riven en 2024."
+     ]
+    ]
+   },
+   "link": "https://cyan.com/"
+  },
+  {
+   "id": "pendulo",
+   "name": "Pendulo Studios",
+   "years": "1993–",
+   "dialog": {
+    "es": [
+     [
+      "¿Un estudio español?",
+      "Sí, de Madrid. Ramón Hernáez, Rafael Latiegui, Felipe Gómez y Miguel Ángel Ramos debutaron con Igor: Objetivo Uikokahonia en 1994."
+     ],
+     [
+      "¿Su mayor éxito?",
+      "Runaway (2001) triunfó en toda Europa justo cuando se decía que el género había muerto. Antes, Hollywood Monsters había arrasado en España."
+     ],
+     [
+      "¿Y ahora?",
+      "Siguen haciendo aventuras narrativas como Yesterday (2012) o Blacksad: Under the Skin (2019). Es uno de los estudios de aventuras más longevos del mundo."
+     ]
+    ],
+    "en": [
+     [
+      "A Spanish studio?",
+      "Yes, from Madrid. Ramón Hernáez, Rafael Latiegui, Felipe Gómez and Miguel Ángel Ramos debuted with Igor: Objetivo Uikokahonia in 1994."
+     ],
+     [
+      "Their biggest hit?",
+      "Runaway (2001) succeeded all over Europe just as people said the genre was dead. Before that, Hollywood Monsters was a smash in Spain."
+     ],
+     [
+      "And now?",
+      "They still make narrative adventures such as Yesterday (2012) and Blacksad: Under the Skin (2019). One of the longest-running adventure studios in the world."
+     ]
+    ],
+    "de": [
+     [
+      "Ein spanisches Studio?",
+      "Ja, aus Madrid. Ramón Hernáez, Rafael Latiegui, Felipe Gómez und Miguel Ángel Ramos debütierten 1994 mit Igor: Objetivo Uikokahonia."
+     ],
+     [
+      "Ihr größter Erfolg?",
+      "Runaway (2001) war in ganz Europa erfolgreich, gerade als man das Genre für tot erklärte. Davor war Hollywood Monsters in Spanien ein Hit."
+     ],
+     [
+      "Und heute?",
+      "Sie machen weiter erzählerische Adventures wie Yesterday (2012) oder Blacksad: Under the Skin (2019). Eines der langlebigsten Adventure-Studios der Welt."
+     ]
+    ],
+    "fr": [
+     [
+      "Un studio espagnol ?",
+      "Oui, de Madrid. Ramón Hernáez, Rafael Latiegui, Felipe Gómez et Miguel Ángel Ramos ont débuté avec Igor: Objetivo Uikokahonia en 1994."
+     ],
+     [
+      "Leur plus grand succès ?",
+      "Runaway (2001) a triomphé dans toute l'Europe au moment où l'on disait le genre mort. Avant cela, Hollywood Monsters avait cartonné en Espagne."
+     ],
+     [
+      "Et maintenant ?",
+      "Ils font toujours des aventures narratives comme Yesterday (2012) ou Blacksad: Under the Skin (2019). L'un des studios d'aventure les plus durables au monde."
+     ]
+    ]
+   },
+   "link": "https://www.pendulostudios.com/"
+  },
+  {
+   "id": "telltale",
+   "name": "Telltale Games",
+   "years": "2004–2018 · 2018–",
+   "dialog": {
+    "es": [
+     [
+      "¿Cómo surgió?",
+      "Exempleados de LucasArts la fundaron en 2004 tras la cancelación de una secuela de Sam & Max."
+     ],
+     [
+      "¿Qué cambiaron?",
+      "El formato episódico y, con The Walking Dead (2012), las decisiones con consecuencias por encima de los puzles."
+     ],
+     [
+      "¿Por qué cerró?",
+      "Demasiados proyectos a la vez y un motor envejecido. Cerró en 2018; la marca fue comprada y relanzada después."
+     ]
+    ],
+    "en": [
+     [
+      "How did it start?",
+      "Former LucasArts staff founded it in 2004 after a Sam & Max sequel was cancelled."
+     ],
+     [
+      "What did they change?",
+      "The episodic format and, with The Walking Dead (2012), choices with consequences over puzzles."
+     ],
+     [
+      "Why did it close?",
+      "Too many projects at once and an ageing engine. It closed in 2018; the brand was later bought and relaunched."
+     ]
+    ],
+    "de": [
+     [
+      "Wie entstand es?",
+      "Ehemalige LucasArts-Leute gründeten es 2004, nachdem eine Sam-&-Max-Fortsetzung gestrichen wurde."
+     ],
+     [
+      "Was haben sie verändert?",
+      "Das Episodenformat und mit The Walking Dead (2012) Entscheidungen mit Folgen statt Rätseln."
+     ],
+     [
+      "Warum schloss es?",
+      "Zu viele Projekte gleichzeitig und eine veraltete Engine. 2018 war Schluss; die Marke wurde später gekauft und neu gestartet."
+     ]
+    ],
+    "fr": [
+     [
+      "Comment est-il né ?",
+      "D'anciens de LucasArts l'ont fondé en 2004 après l'annulation d'une suite de Sam & Max."
+     ],
+     [
+      "Qu'ont-ils changé ?",
+      "Le format épisodique et, avec The Walking Dead (2012), des choix lourds de conséquences plutôt que des énigmes."
+     ],
+     [
+      "Pourquoi a-t-il fermé ?",
+      "Trop de projets à la fois et un moteur vieillissant. Fermeture en 2018 ; la marque a été rachetée et relancée ensuite."
+     ]
+    ]
+   },
+   "link": "https://telltale.com/"
+  },
+  {
+   "id": "wadjet-eye",
+   "name": "Wadjet Eye Games",
+   "years": "2006–",
+   "dialog": {
+    "es": [
+     [
+      "¿Quién está detrás?",
+      "Dave Gilbert, desde Nueva York. Empezó con juegos gratuitos hechos en Adventure Game Studio."
+     ],
+     [
+      "¿Qué publican?",
+      "Pixel art de autor: la saga Blackwell, Gemini Rue, Technobabylon, Primordia, Unavowed, Old Skies..."
+     ],
+     [
+      "¿Por qué AGS?",
+      "Es gratuito, maduro y está pensado para este género. Wadjet Eye demostró que se podían vender juegos hechos con él."
+     ]
+    ],
+    "en": [
+     [
+      "Who is behind it?",
+      "Dave Gilbert, in New York. He started with free games made in Adventure Game Studio."
+     ],
+     [
+      "What do they publish?",
+      "Auteur pixel art: the Blackwell series, Gemini Rue, Technobabylon, Primordia, Unavowed, Old Skies..."
+     ],
+     [
+      "Why AGS?",
+      "It is free, mature and designed for this genre. Wadjet Eye proved you could sell games made with it."
+     ]
+    ],
+    "de": [
+     [
+      "Wer steckt dahinter?",
+      "Dave Gilbert aus New York. Er begann mit kostenlosen Spielen aus dem Adventure Game Studio."
+     ],
+     [
+      "Was veröffentlichen sie?",
+      "Autoren-Pixel-Art: die Blackwell-Reihe, Gemini Rue, Technobabylon, Primordia, Unavowed, Old Skies …"
+     ],
+     [
+      "Warum AGS?",
+      "Es ist kostenlos, ausgereift und genau für dieses Genre gemacht. Wadjet Eye bewies, dass man damit verkäufliche Spiele machen kann."
+     ]
+    ],
+    "fr": [
+     [
+      "Qui est derrière ?",
+      "Dave Gilbert, à New York. Il a commencé avec des jeux gratuits faits sous Adventure Game Studio."
+     ],
+     [
+      "Que publient-ils ?",
+      "Du pixel art d'auteur : la série Blackwell, Gemini Rue, Technobabylon, Primordia, Unavowed, Old Skies…"
+     ],
+     [
+      "Pourquoi AGS ?",
+      "Il est gratuit, mûr et pensé pour ce genre. Wadjet Eye a prouvé qu'on pouvait vendre des jeux faits avec."
+     ]
+    ]
+   },
+   "link": "https://www.wadjeteyegames.com/"
+  },
+  {
+   "id": "daedalic",
+   "name": "Daedalic Entertainment",
+   "years": "2007–",
+   "dialog": {
+    "es": [
+     [
+      "¿De dónde son?",
+      "De Hamburgo. Su primer gran juego fue Edna & Harvey: The Breakout, un proyecto universitario de Jan Müller-Michaelis."
+     ],
+     [
+      "¿Qué los hizo destacar?",
+      "Recuperaron la aventura clásica dibujada a mano en los años 2010: Deponia, The Whispered World, Chains of Satinav..."
+     ],
+     [
+      "¿Y hoy?",
+      "En 2023 dejaron el desarrollo propio para centrarse en publicar juegos de otros estudios."
+     ]
+    ],
+    "en": [
+     [
+      "Where are they from?",
+      "Hamburg. Their first big game was Edna & Harvey: The Breakout, a university project by Jan Müller-Michaelis."
+     ],
+     [
+      "What made them stand out?",
+      "They revived the classic hand-drawn adventure in the 2010s: Deponia, The Whispered World, Chains of Satinav..."
+     ],
+     [
+      "And today?",
+      "In 2023 they stopped in-house development to focus on publishing other studios' games."
+     ]
+    ],
+    "de": [
+     [
+      "Woher kommen sie?",
+      "Aus Hamburg. Ihr erstes großes Spiel war Edna bricht aus, ein Uni-Projekt von Jan Müller-Michaelis."
+     ],
+     [
+      "Was zeichnete sie aus?",
+      "Sie belebten in den 2010ern das klassische handgezeichnete Adventure: Deponia, The Whispered World, Die Säulen der Erde …"
+     ],
+     [
+      "Und heute?",
+      "2023 beendeten sie die eigene Entwicklung und konzentrieren sich aufs Publishing für andere Studios."
+     ]
+    ],
+    "fr": [
+     [
+      "D'où viennent-ils ?",
+      "De Hambourg. Leur premier grand jeu fut Edna & Harvey: The Breakout, un projet universitaire de Jan Müller-Michaelis."
+     ],
+     [
+      "Qu'est-ce qui les distinguait ?",
+      "Ils ont ressuscité l'aventure classique dessinée à la main dans les années 2010 : Deponia, The Whispered World, Chains of Satinav…"
+     ],
+     [
+      "Et aujourd'hui ?",
+      "En 2023, ils ont arrêté le développement interne pour se consacrer à l'édition des jeux d'autres studios."
+     ]
+    ]
+   },
+   "link": "https://www.daedalic.com/"
+  },
+  {
+   "id": "amanita",
+   "name": "Amanita Design",
+   "years": "2003–",
+   "dialog": {
+    "es": [
+     [
+      "¿Quiénes son?",
+      "Un estudio de Brno, República Checa, fundado por Jakub Dvorský. Samorost nació como juego de navegador en Flash."
+     ],
+     [
+      "¿Qué los hace únicos?",
+      "No usan palabras: todo se cuenta con imagen, música y sonido. Machinarium, Botanicula o Creaks parecen libros ilustrados que se mueven."
+     ],
+     [
+      "¿Tienen algún truco?",
+      "Mezclan fotografía, objetos reales y dibujo a mano, y cuidan muchísimo la música, a menudo con el grupo checo DVA o con Floex."
+     ]
+    ],
+    "en": [
+     [
+      "Who are they?",
+      "A studio from Brno, Czech Republic, founded by Jakub Dvorský. Samorost began as a Flash browser game."
+     ],
+     [
+      "What makes them unique?",
+      "No words: everything is told through images, music and sound. Machinarium, Botanicula and Creaks feel like moving picture books."
+     ],
+     [
+      "Any tricks?",
+      "They mix photography, real objects and hand drawing, and care enormously about music, often with Czech band DVA or Floex."
+     ]
+    ],
+    "de": [
+     [
+      "Wer sind sie?",
+      "Ein Studio aus Brünn in Tschechien, gegründet von Jakub Dvorský. Samorost entstand als Flash-Browserspiel."
+     ],
+     [
+      "Was macht sie einzigartig?",
+      "Keine Worte: Alles wird mit Bild, Musik und Klang erzählt. Machinarium, Botanicula oder Creaks wirken wie bewegte Bilderbücher."
+     ],
+     [
+      "Haben sie einen Trick?",
+      "Sie mischen Fotos, echte Objekte und Handzeichnung und legen enormen Wert auf Musik, oft mit der tschechischen Band DVA oder Floex."
+     ]
+    ],
+    "fr": [
+     [
+      "Qui sont-ils ?",
+      "Un studio de Brno, en Tchéquie, fondé par Jakub Dvorský. Samorost est né comme jeu Flash dans le navigateur."
+     ],
+     [
+      "Qu'est-ce qui les rend uniques ?",
+      "Aucun mot : tout passe par l'image, la musique et le son. Machinarium, Botanicula ou Creaks ressemblent à des livres illustrés animés."
+     ],
+     [
+      "Ont-ils un secret ?",
+      "Ils mêlent photographie, objets réels et dessin à la main, et soignent énormément la musique, souvent avec le groupe tchèque DVA ou Floex."
+     ]
+    ]
+   },
+   "link": "https://amanita-design.net/"
+  },
+  {
+   "id": "terrible-toybox",
+   "name": "Terrible Toybox",
+   "years": "2014–",
+   "dialog": {
+    "es": [
+     [
+      "¿Qué es Terrible Toybox?",
+      "El estudio de Ron Gilbert y Gary Winnick, los creadores de Maniac Mansion, creado para hacer Thimbleweed Park."
+     ],
+     [
+      "¿Qué hicieron después?",
+      "Return to Monkey Island en 2022, junto a Dave Grossman y con Devolver Digital como editora."
+     ],
+     [
+      "¿Algún consejo de diseño?",
+      "Gilbert insiste en que el jugador siempre debe saber cuál es su objetivo inmediato, aunque no sepa cómo alcanzarlo."
+     ]
+    ],
+    "en": [
+     [
+      "What is Terrible Toybox?",
+      "The studio of Ron Gilbert and Gary Winnick, the creators of Maniac Mansion, set up to make Thimbleweed Park."
+     ],
+     [
+      "What did they do next?",
+      "Return to Monkey Island in 2022, with Dave Grossman and Devolver Digital as publisher."
+     ],
+     [
+      "Any design advice?",
+      "Gilbert insists that players should always know their immediate goal, even if they don't know how to reach it."
+     ]
+    ],
+    "de": [
+     [
+      "Was ist Terrible Toybox?",
+      "Das Studio von Ron Gilbert und Gary Winnick, den Machern von Maniac Mansion, gegründet für Thimbleweed Park."
+     ],
+     [
+      "Was kam danach?",
+      "Return to Monkey Island im Jahr 2022, mit Dave Grossman und Devolver Digital als Publisher."
+     ],
+     [
+      "Ein Designtipp?",
+      "Gilbert betont, dass Spieler immer ihr nächstes Ziel kennen sollten, auch wenn sie nicht wissen, wie sie es erreichen."
+     ]
+    ],
+    "fr": [
+     [
+      "Qu'est-ce que Terrible Toybox ?",
+      "Le studio de Ron Gilbert et Gary Winnick, les créateurs de Maniac Mansion, monté pour faire Thimbleweed Park."
+     ],
+     [
+      "Et ensuite ?",
+      "Return to Monkey Island en 2022, avec Dave Grossman et Devolver Digital comme éditeur."
+     ],
+     [
+      "Un conseil de conception ?",
+      "Gilbert insiste : le joueur doit toujours connaître son objectif immédiat, même s'il ne sait pas comment l'atteindre."
+     ]
+    ]
+   },
+   "link": "https://terribletoybox.com/"
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+<section class="room-page" id="room-studios" aria-labelledby="page-title">
+  <div class="wrap">
+    {{raw:pageHeader}}
+    <p class="lead">{{t:studiosLead}}</p>
+    <div class="studios" id="studiosGrid">{{raw:studios}}</div>
+    <div class="px dialog-box" id="dialog" aria-live="polite" hidden>
+      <div class="dlg-who"><canvas id="dlgFace" width="16" height="16"></canvas>
+        <div><h3 id="dlgName"></h3><div class="dlg-text" id="dlgText"></div><p class="dlg-link" id="dlgLink"></p></div></div>
+      <ul class="dlg-opts" id="dlgOpts"></ul>
+    </div>
+  </div>
+</section>

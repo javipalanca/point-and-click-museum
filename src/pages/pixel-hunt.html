@@ -1,0 +1,11 @@
+<section class="room-page" id="room-pixel-hunt" aria-labelledby="page-title">
+  <div class="wrap">
+    {{raw:pageHeader}}
+      <article class="px game" id="g-hunt">
+        <p class="how">{{raw:huntHow}}</p>
+        <div class="hunt-bar"><button class="pbtn small" id="huntStart" type="button">{{t:start}}</button><span>{{t:round}} <span id="huntRound">-</span>/<span id="huntRounds">3</span></span><span>{{t:time}} <span class="t" id="huntTime">--</span></span><span>{{t:misses}} <span id="huntMiss">0</span></span><button class="pbtn small" id="huntHint" type="button" disabled>{{t:hint}}</button></div>
+        <canvas id="huntCanvas" class="clickable scene" width="320" height="180" role="img" aria-label="{{raw:huntTitle}}"></canvas>
+        <div class="result" id="huntMsg" aria-live="polite"></div>
+      </article>
+  </div>
+</section>

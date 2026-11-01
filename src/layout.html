@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="{{v:lang}}" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{v:title}}</title>
+<meta name="description" content="{{v:description}}">
+<meta name="author" content="{{v:siteName}}">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="{{v:themeColor}}">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="{{v:canonical}}">
+{{raw:alternates}}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{v:siteName}}">
+<meta property="og:title" content="{{v:title}}">
+<meta property="og:description" content="{{v:description}}">
+<meta property="og:url" content="{{v:canonical}}">
+<meta property="og:image" content="{{v:ogImage}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{t:ogImageAlt}}">
+<meta property="og:locale" content="{{v:locale}}">
+{{raw:ogAlternates}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{v:title}}">
+<meta name="twitter:description" content="{{v:description}}">
+<meta name="twitter:image" content="{{v:ogImage}}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{v:root}}img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="{{v:root}}img/icon-192.png">
+<link rel="apple-touch-icon" href="{{v:root}}img/icon-180.png">
+<link rel="manifest" href="{{v:root}}manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{{v:fonts}}">
+<link rel="stylesheet" href="{{v:root}}css/style.css?v={{v:build}}">
+<script type="application/ld+json">{{raw:jsonld}}</script>
+</head>
+<body class="crt page-{{v:pageId}}">
+<a class="skip" href="#main">{{t:skip}}</a>
+
+<header class="status">
+  <a class="brand" href="{{v:homeUrl}}"><img src="{{v:root}}img/favicon-32.png" width="16" height="16" alt="">POINT AND CLICK MUSEUM</a>
+  <span class="score" id="score" aria-live="polite">{{raw:scoreInitial}}</span>
+  <span class="right">
+    <nav class="langs" aria-label="{{t:language}}">{{raw:langLinks}}</nav>
+    <button id="sndBtn" type="button" aria-pressed="true" title="{{t:soundTitle}}">{{t:sound}}</button>
+    <button id="crtBtn" type="button" aria-pressed="true" title="{{t:crtTitle}}">CRT</button>
+  </span>
+</header>
+<div class="lang-hint" id="langHint" hidden></div>
+
+<main id="main">
+<noscript><div class="wrap"><p>{{t:noscript}}</p></div></noscript>
+{{raw:content}}
+{{raw:roomNav}}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav class="footer-map" aria-label="{{t:mapTitle}}">{{raw:footerMap}}</nav>
+    <p>{{t:footer}}</p>
+    <div class="row">{{raw:footerLangs}}</div>
+  </div>
+</footer>
+
+<nav class="verbnav" aria-label="{{t:roomsNav}}">
+  <div class="line" id="navLine">{{v:navHere}}</div>
+  <ul>{{raw:verbnav}}</ul>
+</nav>
+
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="px pmodal" id="modal"></div>
+</div>
+<div class="ptoast" id="toast"></div>
+
+<script id="pcm-data" type="application/json">{{raw:data}}</script>
+<script src="{{v:root}}js/core.js?v={{v:build}}" defer></script>
+<script src="{{v:root}}js/characters.js?v={{v:build}}" defer></script>
+{{raw:scripts}}
+</body>
+</html>

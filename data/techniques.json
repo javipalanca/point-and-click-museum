@@ -1,0 +1,107 @@
+{
+  "interfaces": [
+    { "id": "parser", "label": { "es": "Parser · 1976", "en": "Parser · 1976", "de": "Parser · 1976", "fr": "Parser · 1976" }, "kind": "parser",
+      "lines": {
+        "es": ["Estás frente a una casa blanca. Hay un buzón.", "> ABRIR BUZON", "Abres el buzón. Dentro hay un folleto.", "> LEER FOLLETO"],
+        "en": ["You are standing in front of a white house. There is a mailbox.", "> OPEN MAILBOX", "Opening the mailbox reveals a leaflet.", "> READ LEAFLET"],
+        "de": ["Du stehst vor einem weißen Haus. Hier ist ein Briefkasten.", "> OEFFNE BRIEFKASTEN", "Im Briefkasten liegt ein Flugblatt.", "> LIES FLUGBLATT"],
+        "fr": ["Vous êtes devant une maison blanche. Il y a une boîte aux lettres.", "> OUVRIR BOITE", "Dans la boîte, il y a un prospectus.", "> LIRE PROSPECTUS"] },
+      "desc": {
+        "es": "El jugador escribe y el juego intenta entenderle. Si el verbo no está en el diccionario, toca probar sinónimos.",
+        "en": "The player types and the game tries to understand. If the verb isn't in the dictionary, you try synonyms.",
+        "de": "Man tippt, und das Spiel versucht zu verstehen. Steht das Verb nicht im Wörterbuch, probiert man Synonyme.",
+        "fr": "Le joueur tape et le jeu essaie de comprendre. Si le verbe n'est pas dans le dictionnaire, il faut tenter des synonymes." } },
+    { "id": "verbs15", "label": { "es": "15 verbos · 1987", "en": "15 verbs · 1987", "de": "15 Verben · 1987", "fr": "15 verbes · 1987" }, "kind": "verbs", "cols": 5,
+      "sentence": { "es": "Abrir puerta principal", "en": "Open front door", "de": "Öffne Haustür", "fr": "Ouvrir porte d'entrée" },
+      "verbs": {
+        "es": ["Empujar", "Abrir", "Caminar", "Nuevo chico", "Encender", "Tirar", "Cerrar", "Coger", "Desbloquear", "Apagar", "Dar", "Leer", "Usar", "Arreglar", "¿Qué es?"],
+        "en": ["Push", "Open", "Walk to", "New kid", "Turn on", "Pull", "Close", "Pick up", "Unlock", "Turn off", "Give", "Read", "Use", "Fix", "What is"],
+        "de": ["Drücke", "Öffne", "Gehe zu", "Neues Kind", "Schalte ein", "Ziehe", "Schließe", "Nimm", "Schließe auf", "Schalte aus", "Gib", "Lies", "Benutze", "Repariere", "Was ist"],
+        "fr": ["Pousser", "Ouvrir", "Aller vers", "Autre ado", "Allumer", "Tirer", "Fermer", "Prendre", "Déverrouiller", "Éteindre", "Donner", "Lire", "Utiliser", "Réparer", "Qu'est-ce"] },
+      "desc": {
+        "es": "Maniac Mansion puso todas las acciones en pantalla. La frase se construye con clics: verbo más objeto.",
+        "en": "Maniac Mansion put every action on screen. You build the sentence with clicks: verb plus object.",
+        "de": "Maniac Mansion brachte alle Aktionen auf den Bildschirm. Der Satz entsteht per Klick: Verb plus Objekt.",
+        "fr": "Maniac Mansion a mis toutes les actions à l'écran. On construit la phrase en cliquant : verbe plus objet." } },
+    { "id": "verbs9", "label": { "es": "9 verbos · 1991", "en": "9 verbs · 1991", "de": "9 Verben · 1991", "fr": "9 verbes · 1991" }, "kind": "verbs", "cols": 3,
+      "sentence": { "es": "Usar cuerda con rama", "en": "Use rope with branch", "de": "Benutze Seil mit Ast", "fr": "Utiliser corde avec branche" },
+      "verbs": {
+        "es": ["Dar", "Coger", "Usar", "Abrir", "Mirar", "Empujar", "Cerrar", "Hablar", "Tirar"],
+        "en": ["Give", "Pick up", "Use", "Open", "Look at", "Push", "Close", "Talk to", "Pull"],
+        "de": ["Gib", "Nimm", "Benutze", "Öffne", "Schau an", "Drücke", "Schließe", "Rede mit", "Ziehe"],
+        "fr": ["Donner", "Prendre", "Utiliser", "Ouvrir", "Regarder", "Pousser", "Fermer", "Parler", "Tirer"] },
+      "desc": {
+        "es": "La rejilla de 3 × 3 fue el estándar de LucasArts a principios de los 90, con el inventario a la derecha.",
+        "en": "The 3 × 3 grid became the LucasArts standard in the early 1990s, with the inventory on the right.",
+        "de": "Das 3 × 3-Raster wurde Anfang der 90er zum LucasArts-Standard, mit dem Inventar rechts daneben.",
+        "fr": "La grille de 3 × 3 est devenue la norme LucasArts au début des années 90, avec l'inventaire à droite." } },
+    { "id": "pie", "label": { "es": "Menú radial · 1995", "en": "Radial menu · 1995", "de": "Kreismenü · 1995", "fr": "Menu radial · 1995" }, "kind": "pie",
+      "sentence": { "es": "Mantén pulsado sobre el objeto", "en": "Hold the button over the object", "de": "Taste über dem Objekt gedrückt halten", "fr": "Maintenez le bouton sur l'objet" },
+      "verbs": {
+        "es": ["OJO", "MANO", "BOCA", "PIE"], "en": ["EYE", "HAND", "MOUTH", "FOOT"], "de": ["AUGE", "HAND", "MUND", "FUSS"], "fr": ["ŒIL", "MAIN", "BOUCHE", "PIED"] },
+      "desc": {
+        "es": "Full Throttle y luego la moneda de verbos de The Curse of Monkey Island despejaron la pantalla: las acciones aparecen sobre el objeto.",
+        "en": "Full Throttle, then The Curse of Monkey Island's verb coin, cleared the screen: actions pop up over the object.",
+        "de": "Full Throttle und später die Verbmünze von The Curse of Monkey Island räumten den Bildschirm frei: Aktionen erscheinen über dem Objekt.",
+        "fr": "Full Throttle puis la pièce de verbes de The Curse of Monkey Island ont dégagé l'écran : les actions apparaissent sur l'objet." } },
+    { "id": "oneclick", "label": { "es": "Un clic · hoy", "en": "One click · today", "de": "Ein Klick · heute", "fr": "Un clic · aujourd'hui" }, "kind": "parser",
+      "lines": {
+        "es": ["Clic izquierdo: mirar · Clic derecho: usar", "El cursor cambia de forma sobre cada objeto: ojo, mano o bocadillo."],
+        "en": ["Left click: look · Right click: use", "The cursor changes shape over each object: eye, hand or speech bubble."],
+        "de": ["Linksklick: ansehen · Rechtsklick: benutzen", "Der Cursor ändert über jedem Objekt seine Form: Auge, Hand oder Sprechblase."],
+        "fr": ["Clic gauche : regarder · Clic droit : utiliser", "Le curseur change de forme sur chaque objet : œil, main ou bulle."] },
+      "desc": {
+        "es": "La mayoría de aventuras actuales usan un clic contextual. Menos acciones y más foco en la historia y en los puzles de lógica.",
+        "en": "Most modern adventures use a contextual click. Fewer actions, more focus on story and logic puzzles.",
+        "de": "Die meisten heutigen Adventures nutzen einen kontextabhängigen Klick. Weniger Aktionen, mehr Fokus auf Geschichte und Logikrätsel.",
+        "fr": "La plupart des aventures actuelles utilisent un clic contextuel. Moins d'actions, plus de place pour l'histoire et les énigmes logiques." } }
+  ],
+  "demos": {
+    "cycle": {
+      "title": { "es": "Ciclo de color", "en": "Colour cycling", "de": "Farbrotation", "fr": "Cycle de couleurs" },
+      "body": {
+        "es": "Nada se redibuja: solo rotan los colores de la paleta. Así animaban el agua, el fuego y el cielo las tarjetas VGA de 256 colores, con un coste casi nulo. Mark Ferrari lo llevó al arte en los fondos de Loom.",
+        "en": "Nothing is redrawn: only the palette colours rotate. That is how 256-colour VGA cards animated water, fire and sky at almost no cost. Mark Ferrari turned it into art in Loom's backgrounds.",
+        "de": "Nichts wird neu gezeichnet, nur die Palettenfarben rotieren. So animierten 256-Farben-VGA-Karten Wasser, Feuer und Himmel fast ohne Rechenaufwand. Mark Ferrari machte daraus Kunst in den Hintergründen von Loom.",
+        "fr": "Rien n'est redessiné : seules les couleurs de la palette tournent. C'est ainsi que les cartes VGA 256 couleurs animaient l'eau, le feu et le ciel pour un coût quasi nul. Mark Ferrari en a fait un art dans les décors de Loom." } },
+    "dither": {
+      "title": { "es": "Tramado (dithering)", "en": "Dithering", "de": "Dithering", "fr": "Tramage (dithering)" },
+      "body": {
+        "es": "Con 16 colores en EGA, mezclar píxeles en patrón de damero simulaba tonos intermedios. Desactiva el tramado y verás bandas duras de color.",
+        "en": "With only 16 EGA colours, mixing pixels in a checkerboard pattern faked in-between tones. Turn dithering off and you will see hard colour bands.",
+        "de": "Mit nur 16 EGA-Farben täuschte ein Schachbrettmuster Zwischentöne vor. Schalte Dithering aus, und du siehst harte Farbstufen.",
+        "fr": "Avec 16 couleurs en EGA, mélanger les pixels en damier simulait des tons intermédiaires. Désactivez le tramage et vous verrez des bandes de couleur nettes." } },
+    "parallax": {
+      "title": { "es": "Parallax", "en": "Parallax", "de": "Parallax", "fr": "Parallaxe" },
+      "body": {
+        "es": "Varias capas que se desplazan a distinta velocidad crean profundidad en un fondo plano. Las capas lejanas se mueven poco y las cercanas mucho.",
+        "en": "Several layers scrolling at different speeds create depth in a flat background. Distant layers move a little, near ones a lot.",
+        "de": "Mehrere Ebenen, die unterschiedlich schnell scrollen, erzeugen Tiefe in einem flachen Hintergrund. Ferne Ebenen bewegen sich wenig, nahe stark.",
+        "fr": "Plusieurs couches qui défilent à des vitesses différentes donnent de la profondeur à un décor plat. Les couches lointaines bougent peu, les proches beaucoup." } },
+    "music": {
+      "title": { "es": "Música dinámica (estilo iMUSE)", "en": "Dynamic music (iMUSE style)", "de": "Dynamische Musik (wie iMUSE)", "fr": "Musique dynamique (style iMUSE)" },
+      "body": {
+        "es": "LucasArts patentó iMUSE en 1994 (Michael Land y Peter McConnell). La música cambia según la acción, pero espera al final del compás para que la transición no se note. Cambia de tema mientras suena.",
+        "en": "LucasArts patented iMUSE in 1994 (Michael Land and Peter McConnell). Music follows the action but waits for the end of the bar so the transition is seamless. Switch themes while it plays.",
+        "de": "LucasArts patentierte iMUSE 1994 (Michael Land und Peter McConnell). Die Musik folgt der Handlung, wartet aber das Taktende ab, damit der Übergang nahtlos ist. Wechsle das Thema während der Wiedergabe.",
+        "fr": "LucasArts a breveté iMUSE en 1994 (Michael Land et Peter McConnell). La musique suit l'action mais attend la fin de la mesure pour une transition invisible. Changez de thème pendant la lecture." } }
+  },
+  "ideas": [
+    { "title": { "es": "Parser", "en": "Parser", "de": "Parser", "fr": "Parser" },
+      "body": { "es": "El jugador escribe órdenes como COGER LÁMPARA. Libertad total y frustración total: adivinar el verbo exacto era parte del puzle.", "en": "The player types commands such as GET LAMP. Total freedom and total frustration: guessing the exact verb was part of the puzzle.", "de": "Man tippt Befehle wie NIMM LAMPE. Totale Freiheit und totaler Frust: Das richtige Verb zu erraten gehörte zum Rätsel.", "fr": "Le joueur tape des ordres comme PRENDRE LAMPE. Liberté totale et frustration totale : deviner le verbe exact faisait partie de l'énigme." } },
+    { "title": { "es": "Verbos en pantalla", "en": "On-screen verbs", "de": "Verben auf dem Bildschirm", "fr": "Verbes à l'écran" },
+      "body": { "es": "SCUMM (1987) puso las acciones a la vista. Se acabó adivinar palabras y empezó la era del ratón.", "en": "SCUMM (1987) put actions in plain sight. No more guessing words: the mouse era began.", "de": "SCUMM (1987) machte die Aktionen sichtbar. Schluss mit Wörterraten, die Ära der Maus begann.", "fr": "SCUMM (1987) a rendu les actions visibles. Fini de deviner les mots : l'ère de la souris commençait." } },
+    { "title": { "es": "Sin muertes ni callejones", "en": "No deaths, no dead ends", "de": "Keine Tode, keine Sackgassen", "fr": "Ni mort ni impasse" },
+      "body": { "es": "En 1989 Ron Gilbert publicó el ensayo «Why Adventure Games Suck»: el jugador no debería morir por sorpresa ni quedarse atascado sin saberlo. LucasArts lo convirtió en norma.", "en": "In 1989 Ron Gilbert published \"Why Adventure Games Suck\": players shouldn't die by surprise or get stuck without knowing it. LucasArts made it a rule.", "de": "1989 veröffentlichte Ron Gilbert „Why Adventure Games Suck“: Spieler sollten weder überraschend sterben noch unbemerkt steckenbleiben. LucasArts machte das zur Regel.", "fr": "En 1989, Ron Gilbert publie « Why Adventure Games Suck » : le joueur ne devrait ni mourir par surprise ni rester bloqué sans le savoir. LucasArts en a fait une règle." } },
+    { "title": { "es": "Árboles de diálogo", "en": "Dialogue trees", "de": "Dialogbäume", "fr": "Arbres de dialogue" },
+      "body": { "es": "Elegir frases en lugar de escribirlas convirtió las conversaciones en puzles y en comedia.", "en": "Picking lines instead of typing them turned conversations into puzzles and comedy.", "de": "Sätze auszuwählen statt zu tippen machte Gespräche zu Rätseln und zu Komödie.", "fr": "Choisir des répliques au lieu de les taper a transformé les conversations en énigmes et en comédie." } },
+    { "title": { "es": "Lógica de dibujo animado", "en": "Cartoon logic", "de": "Zeichentrick-Logik", "fr": "Logique de dessin animé" },
+      "body": { "es": "Usar un pollo de goma con una polea no es lógico, pero sí coherente con su mundo. El humor justifica el puzle.", "en": "Using a rubber chicken with a pulley isn't logical, but it fits its world. Humour justifies the puzzle.", "de": "Ein Gummihuhn mit Rolle zu benutzen ist nicht logisch, passt aber zu seiner Welt. Der Humor rechtfertigt das Rätsel.", "fr": "Utiliser un poulet en caoutchouc avec une poulie n'est pas logique, mais cohérent avec son monde. L'humour justifie l'énigme." } },
+    { "title": { "es": "Fondos prerrenderizados", "en": "Pre-rendered backgrounds", "de": "Vorgerenderte Hintergründe", "fr": "Décors précalculés" },
+      "body": { "es": "Personajes 3D sobre fondos renderizados en estaciones de trabajo, como en Grim Fandango: detalle de cine con hardware doméstico.", "en": "3D characters over backgrounds rendered on workstations, as in Grim Fandango: cinematic detail on home hardware.", "de": "3D-Figuren vor auf Workstations gerenderten Hintergründen wie in Grim Fandango: Kinodetails auf Heimhardware.", "fr": "Des personnages 3D sur des décors calculés sur stations de travail, comme dans Grim Fandango : un détail de cinéma sur du matériel domestique." } },
+    { "title": { "es": "Elecciones con consecuencias", "en": "Choices with consequences", "de": "Entscheidungen mit Folgen", "fr": "Des choix lourds de conséquences" },
+      "body": { "es": "Telltale cambió los puzles por decisiones morales y por el famoso aviso de que un personaje «recordará eso».", "en": "Telltale swapped puzzles for moral decisions and the famous notice that a character \"will remember that\".", "de": "Telltale tauschte Rätsel gegen moralische Entscheidungen und den berühmten Hinweis, dass sich eine Figur „daran erinnern wird“.", "fr": "Telltale a remplacé les énigmes par des choix moraux et le célèbre avertissement qu'un personnage « s'en souviendra »." } },
+    { "title": { "es": "Deducción", "en": "Deduction", "de": "Deduktion", "fr": "Déduction" },
+      "body": { "es": "La ola reciente (Golden Idol, Return of the Obra Dinn) pide razonar y rellenar huecos en lugar de combinar objetos.", "en": "The recent wave (Golden Idol, Return of the Obra Dinn) asks you to reason and fill in blanks rather than combine objects.", "de": "Die jüngste Welle (Golden Idol, Return of the Obra Dinn) verlangt Schlussfolgern und Lückenfüllen statt Gegenstände zu kombinieren.", "fr": "La vague récente (Golden Idol, Return of the Obra Dinn) demande de raisonner et de remplir des blancs plutôt que de combiner des objets." } }
+  ]
+}

@@ -1,0 +1,15 @@
+<section class="room-page" id="room-engines" aria-labelledby="page-title">
+  <div class="wrap">
+    {{raw:pageHeader}}
+    <p class="lead">{{t:enginesLead}}</p>
+    <div class="engines">
+      <div class="carts" id="carts" role="group" aria-label="{{t:enginesTitle}}">{{raw:carts}}</div>
+      <div class="px console">
+        <div class="screen" id="screen" aria-live="polite">{{t:insertCartridge}}<span class="cur">█</span></div>
+        <div class="console-base"><span><span class="led" id="led"></span>MUSEUM-STATION</span><span id="slot">{{t:emptySlot}}</span></div>
+        <div class="console-links" id="engLinks" aria-live="polite"></div>
+      </div>
+    </div>
+    <details class="px list-details"><summary>{{t:enginesListTitle}}</summary>{{raw:enginesList}}</details>
+  </div>
+</section>

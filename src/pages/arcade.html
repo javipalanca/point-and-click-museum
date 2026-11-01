@@ -1,0 +1,30 @@
+<section class="room-page" id="room-arcade" aria-labelledby="page-title">
+  <div class="wrap">
+    {{raw:pageHeader}}
+    <p class="lead">{{raw:arcadeIntro}}</p>
+    <div class="arcade">
+      <div class="px dos-frame">
+        <div class="dos-screen" id="dosScreen">
+          <div class="dos-host" id="dosHost"></div>
+          <div class="dos-idle" id="dosIdle"><div><b>DOSBOX</b>{{t:arcadeIdle}}</div></div>
+        </div>
+        <div class="dos-bar">
+          <span class="now" id="dosNow">{{t:arcadeNothing}}</span>
+          <span class="row"><button class="pbtn small" id="dosMouse" type="button" aria-pressed="true" title="{{t:mouseModeTitle}}">{{t:mouseLock}}</button><button class="pbtn small" id="dosFull" type="button" disabled>{{t:fullscreen}}</button><button class="pbtn small" id="dosStop" type="button" disabled>{{t:stop}}</button></span>
+        </div>
+        <div class="dos-help"><label for="dosSens">{{t:mouseSpeed}}</label><input type="range" id="dosSens" min="0.1" max="1" step="0.05" value="0.5"><span id="dosMouseHint">{{t:mouseHintLock}}</span></div>
+      </div>
+      <div class="dos-list">
+        {{raw:arcadeGames}}
+        <form class="px byo" id="byoForm">
+          <h3>{{t:byoTitle}}</h3>
+          <p>{{t:byoBody}}</p>
+          <label for="byoFile">{{t:byoFile}}<input id="byoFile" type="file" accept=".jsdos,.zip,application/zip"></label>
+          <label for="byoExe">{{t:byoExe}}<input id="byoExe" type="text" spellcheck="false" autocapitalize="characters" placeholder="GAME.EXE"></label>
+          <button class="pbtn small" type="submit">{{t:byoRun}}</button>
+          <p class="err" id="byoErr" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

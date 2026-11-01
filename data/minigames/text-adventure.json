@@ -1,0 +1,236 @@
+{
+  "id": "text-adventure",
+  "title": { "es": "El sótano del museo", "en": "The Museum Basement", "de": "Der Museumskeller", "fr": "Le sous-sol du musée" },
+  "how": {
+    "es": "Aventura de texto. Prueba MIRAR, COGER, ABRIR, ENCENDER, NORTE, INVENTARIO o AYUDA.",
+    "en": "Text adventure. Try LOOK, TAKE, OPEN, LIGHT, NORTH, INVENTORY or HELP.",
+    "de": "Textadventure. Probiere SCHAU, NIMM, ÖFFNE, ZÜNDE, NORDEN, INVENTAR oder HILFE.",
+    "fr": "Fiction interactive. Essayez REGARDER, PRENDRE, OUVRIR, ALLUMER, NORD, INVENTAIRE ou AIDE." },
+  "placeholder": { "es": "escribe una orden y pulsa Intro", "en": "type a command and press Enter", "de": "Befehl eingeben und Enter drücken", "fr": "tapez un ordre et appuyez sur Entrée" },
+  "start": "basement",
+  "award": "textAdventure",
+
+  "vocab": {
+    "es": {
+      "stop": ["el", "la", "los", "las", "un", "una", "al", "del", "de", "a", "con", "en", "por", "y", "que"],
+      "verbs": {
+        "look": ["mirar", "mira", "m", "l", "examinar", "examina", "x", "ex", "leer", "lee", "ver"],
+        "take": ["coger", "coge", "cojo", "tomar", "toma", "agarrar", "recoger", "pillar"],
+        "drop": ["dejar", "deja", "soltar", "suelta"],
+        "inventory": ["inventario", "i", "inv"],
+        "light": ["encender", "enciende", "prender"],
+        "extinguish": ["apagar", "apaga"],
+        "type": ["teclear", "teclea", "introducir", "marcar", "marca", "escribir", "pulsar"],
+        "open": ["abrir", "abre", "forzar", "fuerza"],
+        "use": ["usar", "usa", "utilizar"],
+        "push": ["empujar", "empuja"],
+        "go": ["ir", "ve", "caminar", "camina", "andar"],
+        "help": ["ayuda", "help", "pista"],
+        "restart": ["reiniciar", "reinicio"],
+        "talk": ["hablar", "habla", "saludar"],
+        "eat": ["comer", "come"],
+        "magic": ["xyzzy", "plugh"]
+      },
+      "dirs": { "n": ["n", "norte", "subir", "sube", "arriba"], "s": ["s", "sur"], "e": ["e", "este"], "w": ["o", "oeste", "w"] },
+      "nouns": {
+        "lamp": ["lampara", "farol", "luz"], "crowbar": ["palanca"], "floppy": ["disquete", "disco"],
+        "poster": ["poster", "cartel"], "keypad": ["teclado", "codigo"], "door": ["puerta"], "hatch": ["trampilla", "escalera"],
+        "boxes": ["caja", "cajas"], "cabinet": ["vitrina", "vitrinas"], "shelves": ["estanteria", "estanterias", "cartuchos"]
+      }
+    },
+    "en": {
+      "stop": ["the", "a", "an", "to", "at", "with", "on", "in", "into", "of", "and"],
+      "verbs": {
+        "look": ["look", "l", "examine", "x", "read", "inspect", "check"],
+        "take": ["take", "get", "grab", "pick"],
+        "drop": ["drop", "put"],
+        "inventory": ["inventory", "i", "inv"],
+        "light": ["light", "ignite", "turn on", "switch on"],
+        "extinguish": ["extinguish", "douse", "turn off", "switch off"],
+        "type": ["type", "enter", "dial", "input", "key", "press"],
+        "open": ["open", "force", "pry", "prise"],
+        "use": ["use"],
+        "push": ["push", "lift"],
+        "go": ["go", "walk", "climb"],
+        "help": ["help", "hint"],
+        "restart": ["restart"],
+        "talk": ["talk", "speak", "hello"],
+        "eat": ["eat"],
+        "magic": ["xyzzy", "plugh"]
+      },
+      "dirs": { "n": ["n", "north", "up", "u"], "s": ["s", "south"], "e": ["e", "east"], "w": ["w", "west"] },
+      "nouns": {
+        "lamp": ["lamp", "lantern", "light"], "crowbar": ["crowbar", "bar", "lever"], "floppy": ["floppy", "disk", "disc", "diskette"],
+        "poster": ["poster", "sign"], "keypad": ["keypad", "code", "keys", "pad"], "door": ["door"], "hatch": ["hatch", "trapdoor", "stairs", "ladder"],
+        "boxes": ["box", "boxes", "crate", "crates"], "cabinet": ["cabinet", "cabinets", "case", "cases"], "shelves": ["shelf", "shelves", "cartridges"]
+      }
+    },
+    "de": {
+      "stop": ["der", "die", "das", "den", "dem", "des", "ein", "eine", "einen", "einem", "einer", "zu", "mit", "an", "auf", "in", "im", "ins", "und", "von", "ein"],
+      "verbs": {
+        "look": ["schau", "schaue", "sieh", "untersuche", "u", "betrachte", "lies", "lese", "l", "x"],
+        "take": ["nimm", "nehme", "nehmen", "hol", "hole", "greif"],
+        "drop": ["leg", "lege", "lass", "lasse", "wirf"],
+        "inventory": ["inventar", "i", "inv"],
+        "light": ["zunde", "zuende", "zunden", "entzunde", "anzunden", "mach an"],
+        "extinguish": ["losche", "loesche", "loschen", "mach aus"],
+        "type": ["tippe", "tippen", "gib", "eingeben", "wahle", "waehle"],
+        "open": ["offne", "oeffne", "offnen", "oeffnen", "brich"],
+        "use": ["benutze", "benutzen", "verwende"],
+        "push": ["druck", "drucke", "druecke", "schieb", "schiebe"],
+        "go": ["geh", "gehe", "lauf", "laufe"],
+        "help": ["hilfe", "tipp"],
+        "restart": ["neustart", "neu"],
+        "talk": ["rede", "sprich", "hallo"],
+        "eat": ["iss", "esse"],
+        "magic": ["xyzzy", "plugh"]
+      },
+      "dirs": { "n": ["n", "norden", "nord", "hoch", "rauf"], "s": ["s", "suden", "sueden", "sud"], "e": ["o", "osten", "ost"], "w": ["w", "westen", "west"] },
+      "nouns": {
+        "lamp": ["lampe", "laterne", "licht"], "crowbar": ["brechstange", "stemmeisen", "hebel"], "floppy": ["diskette", "disk", "floppy"],
+        "poster": ["poster", "plakat"], "keypad": ["tastenfeld", "tastatur", "code", "zahlenfeld"], "door": ["tur", "tuer"], "hatch": ["falltur", "falltuer", "klappe", "luke", "treppe"],
+        "boxes": ["kiste", "kisten", "karton", "kartons"], "cabinet": ["vitrine", "vitrinen"], "shelves": ["regal", "regale", "module"]
+      }
+    },
+    "fr": {
+      "stop": ["le", "la", "les", "l", "un", "une", "des", "du", "de", "d", "a", "au", "aux", "avec", "sur", "dans", "et"],
+      "verbs": {
+        "look": ["regarder", "regarde", "r", "examiner", "examine", "x", "lire", "lis", "observer"],
+        "take": ["prendre", "prends", "ramasser", "ramasse", "attraper"],
+        "drop": ["poser", "pose", "lacher", "lache", "deposer"],
+        "inventory": ["inventaire", "i", "inv"],
+        "light": ["allumer", "allume"],
+        "extinguish": ["eteindre", "eteins"],
+        "type": ["taper", "tape", "composer", "compose", "saisir"],
+        "open": ["ouvrir", "ouvre", "forcer", "force"],
+        "use": ["utiliser", "utilise"],
+        "push": ["pousser", "pousse", "soulever"],
+        "go": ["aller", "va", "marcher"],
+        "help": ["aide", "aider", "indice"],
+        "restart": ["recommencer", "redemarrer"],
+        "talk": ["parler", "parle", "bonjour"],
+        "eat": ["manger", "mange"],
+        "magic": ["xyzzy", "plugh"]
+      },
+      "dirs": { "n": ["n", "nord", "monter", "monte", "haut"], "s": ["s", "sud"], "e": ["e", "est"], "w": ["o", "ouest", "w"] },
+      "nouns": {
+        "lamp": ["lampe", "lanterne", "lumiere"], "crowbar": ["pied", "levier", "barre"], "floppy": ["disquette", "disque"],
+        "poster": ["affiche", "poster"], "keypad": ["clavier", "code", "digicode"], "door": ["porte"], "hatch": ["trappe", "escalier", "echelle"],
+        "boxes": ["caisse", "caisses", "carton", "cartons"], "cabinet": ["vitrine", "vitrines"], "shelves": ["etagere", "etageres", "cartouches"]
+      }
+    }
+  },
+
+  "items": {
+    "lamp": { "at": "storage",
+      "name": { "es": "una lámpara de aceite", "en": "an oil lamp", "de": "eine Öllampe", "fr": "une lampe à huile" },
+      "desc": [
+        { "text": { "es": "Una lámpara de aceite. Está", "en": "An oil lamp. It is", "de": "Eine Öllampe. Sie ist", "fr": "Une lampe à huile. Elle est" } },
+        { "if": ["lampOn"], "text": { "es": "encendida.", "en": "lit.", "de": "an.", "fr": "allumée." } },
+        { "if": ["!lampOn"], "text": { "es": "apagada.", "en": "unlit.", "de": "aus.", "fr": "éteinte." } } ] },
+    "crowbar": { "at": "archive",
+      "name": { "es": "una palanca oxidada", "en": "a rusty crowbar", "de": "eine rostige Brechstange", "fr": "un pied-de-biche rouillé" },
+      "desc": [ { "text": { "es": "Hierro oxidado, perfecto para forzar cosas.", "en": "Rusty iron, perfect for prying things open.", "de": "Rostiges Eisen, ideal zum Aufhebeln.", "fr": "Du fer rouillé, parfait pour forcer les choses." } } ] },
+    "floppy": { "at": "archive",
+      "name": { "es": "un disquete de 5¼ con la etiqueta «PROTOTIPO»", "en": "a 5¼\" floppy disk labelled \"PROTOTYPE\"", "de": "eine 5¼-Zoll-Diskette mit dem Etikett „PROTOTYP“", "fr": "une disquette 5¼ étiquetée « PROTOTYPE »" },
+      "desc": [ { "text": { "es": "Un disquete de 5¼. La etiqueta dice «PROTOTIPO · NO BORRAR».", "en": "A 5¼\" floppy. The label reads \"PROTOTYPE · DO NOT ERASE\".", "de": "Eine 5¼-Zoll-Diskette. Auf dem Etikett steht „PROTOTYP · NICHT LÖSCHEN“.", "fr": "Une disquette 5¼. L'étiquette indique « PROTOTYPE · NE PAS EFFACER »." } } ] }
+  },
+
+  "rooms": {
+    "basement": {
+      "desc": [
+        { "text": { "es": "SÓTANO DEL MUSEO. Cajas de embalaje apiladas hasta el techo. Al norte, una escalera sube hasta una trampilla", "en": "MUSEUM BASEMENT. Packing crates stacked to the ceiling. To the north, stairs climb to a hatch that is", "de": "MUSEUMSKELLER. Kisten bis unter die Decke gestapelt. Im Norden führt eine Treppe zu einer Falltür, die", "fr": "SOUS-SOL DU MUSÉE. Des caisses empilées jusqu'au plafond. Au nord, un escalier monte vers une trappe" } },
+        { "if": ["hatchOpen"], "text": { "es": "abierta.", "en": "open.", "de": "offen ist.", "fr": "ouverte." } },
+        { "if": ["!hatchOpen"], "text": { "es": "cerrada y atascada.", "en": "shut and stuck.", "de": "verklemmt ist.", "fr": "fermée et coincée." } },
+        { "text": { "es": "Al este hay un almacén. Al oeste, una puerta metálica", "en": "A storeroom lies to the east. To the west there is a metal door", "de": "Im Osten liegt ein Lager. Im Westen ist eine Metalltür", "fr": "À l'est se trouve une réserve. À l'ouest, une porte métallique" } },
+        { "if": ["westOpen"], "text": { "es": "abierta.", "en": "standing open.", "de": "offen.", "fr": "ouverte." } },
+        { "if": ["!westOpen"], "text": { "es": "con un teclado numérico.", "en": "with a numeric keypad.", "de": "mit einem Zahlenfeld.", "fr": "équipée d'un digicode." } } ],
+      "exits": { "e": "storage", "w": { "to": "archive", "if": ["westOpen"], "else": { "es": "La puerta metálica está cerrada. El teclado numérico parpadea esperando un código.", "en": "The metal door is shut. The keypad blinks, waiting for a code.", "de": "Die Metalltür ist zu. Das Zahlenfeld blinkt und wartet auf einen Code.", "fr": "La porte métallique est fermée. Le digicode clignote en attendant un code." } } },
+      "scenery": {
+        "keypad": [ { "if": ["westOpen"], "text": { "es": "La puerta metálica ya está abierta.", "en": "The metal door is already open.", "de": "Die Metalltür ist schon offen.", "fr": "La porte métallique est déjà ouverte." } },
+                    { "if": ["!westOpen"], "text": { "es": "Un teclado de cuatro dígitos. Una nota pegada dice: «El código es el año en que empezó todo».", "en": "A four-digit keypad. A sticky note says: \"The code is the year it all began\".", "de": "Ein vierstelliges Zahlenfeld. Auf einem Zettel steht: „Der Code ist das Jahr, in dem alles begann“.", "fr": "Un clavier à quatre chiffres. Un post-it indique : « Le code est l'année où tout a commencé »." } } ],
+        "door": [ { "if": ["westOpen"], "text": { "es": "La puerta metálica está abierta.", "en": "The metal door is open.", "de": "Die Metalltür ist offen.", "fr": "La porte métallique est ouverte." } },
+                  { "if": ["!westOpen"], "text": { "es": "No tiene pomo. Solo un teclado numérico. Una nota pegada dice: «El código es el año en que empezó todo».", "en": "It has no handle, only a keypad. A sticky note says: \"The code is the year it all began\".", "de": "Sie hat keine Klinke, nur ein Zahlenfeld. Auf einem Zettel steht: „Der Code ist das Jahr, in dem alles begann“.", "fr": "Elle n'a pas de poignée, juste un digicode. Un post-it indique : « Le code est l'année où tout a commencé »." } } ],
+        "hatch": [ { "if": ["hatchOpen"], "text": { "es": "La trampilla está abierta. Arriba se ve la luz de la sala principal.", "en": "The hatch is open. You can see the main hall's light above.", "de": "Die Falltür ist offen. Oben sieht man das Licht der Haupthalle.", "fr": "La trappe est ouverte. On voit la lumière de la grande salle au-dessus." } },
+                   { "if": ["!hatchOpen"], "text": { "es": "Una trampilla de madera hinchada por la humedad. Está atascada.", "en": "A wooden hatch swollen with damp. It is stuck.", "de": "Eine von Feuchtigkeit aufgequollene Holzklappe. Sie klemmt.", "fr": "Une trappe en bois gonflée par l'humidité. Elle est coincée." } } ],
+        "boxes": [ { "text": { "es": "Cajas con etiquetas: «CARTUCHOS», «MANUALES», «PEGATINAS DE MONO». Nada útil.", "en": "Boxes labelled \"CARTRIDGES\", \"MANUALS\", \"MONKEY STICKERS\". Nothing useful.", "de": "Kisten mit den Aufschriften „MODULE“, „HANDBÜCHER“, „AFFENAUFKLEBER“. Nichts Nützliches.", "fr": "Des caisses étiquetées « CARTOUCHES », « MANUELS », « AUTOCOLLANTS DE SINGE ». Rien d'utile." } } ]
+      }
+    },
+    "storage": {
+      "desc": [ { "text": { "es": "ALMACÉN. Estanterías con cartuchos sin etiquetar. En la pared, un póster amarillento. La salida está al oeste.", "en": "STOREROOM. Shelves of unlabelled cartridges. A yellowed poster hangs on the wall. The exit is to the west.", "de": "LAGER. Regale mit unbeschrifteten Modulen. An der Wand hängt ein vergilbtes Poster. Der Ausgang liegt im Westen.", "fr": "RÉSERVE. Des étagères de cartouches sans étiquette. Une affiche jaunie au mur. La sortie est à l'ouest." } } ],
+      "exits": { "w": "basement" },
+      "scenery": {
+        "poster": [ { "text": { "es": "El póster dice: «COLOSSAL CAVE ADVENTURE · Creada en 1976 · El origen de todo». Alguien ha subrayado el año con rotulador.", "en": "The poster says: \"COLOSSAL CAVE ADVENTURE · Created in 1976 · Where it all began\". Someone has underlined the year in marker.", "de": "Auf dem Poster steht: „COLOSSAL CAVE ADVENTURE · Entstanden 1976 · Wo alles begann“. Jemand hat die Jahreszahl unterstrichen.", "fr": "L'affiche indique : « COLOSSAL CAVE ADVENTURE · Créé en 1976 · Là où tout a commencé ». Quelqu'un a souligné l'année au feutre." } } ],
+        "shelves": [ { "text": { "es": "Cientos de cartuchos sin etiqueta. Encontrar algo aquí llevaría otra vida.", "en": "Hundreds of unlabelled cartridges. Finding anything here would take another lifetime.", "de": "Hunderte unbeschriftete Module. Hier etwas zu finden, würde ein zweites Leben dauern.", "fr": "Des centaines de cartouches sans étiquette. Y trouver quoi que ce soit prendrait une autre vie." } } ]
+      }
+    },
+    "archive": {
+      "darkUnless": ["has:lamp", "lampOn"],
+      "dark": { "es": "Está oscurísimo. Oyes algo que respira cerca de tus tobillos. Mejor no quedarse mucho rato sin luz. La salida está al este.", "en": "It is pitch black. Something is breathing near your ankles. Better not stay long without a light. The exit is to the east.", "de": "Es ist stockdunkel. Etwas atmet in der Nähe deiner Knöchel. Ohne Licht bleibst du besser nicht lange. Der Ausgang liegt im Osten.", "fr": "Il fait noir comme dans un four. Quelque chose respire près de vos chevilles. Mieux vaut ne pas rester longtemps sans lumière. La sortie est à l'est." },
+      "desc": [ { "text": { "es": "ARCHIVO. La luz de la lámpara revela vitrinas polvorientas y cajas de manuales. La salida está al este.", "en": "ARCHIVE. The lamplight reveals dusty display cases and boxes of manuals. The exit is to the east.", "de": "ARCHIV. Das Lampenlicht zeigt staubige Vitrinen und Kisten voller Handbücher. Der Ausgang liegt im Osten.", "fr": "ARCHIVES. La lumière de la lampe révèle des vitrines poussiéreuses et des caisses de manuels. La sortie est à l'est." } } ],
+      "exits": { "e": "basement" },
+      "scenery": {
+        "cabinet": [ { "text": { "es": "Las vitrinas guardan manuales y mapas dibujados a mano por jugadores de los ochenta.", "en": "The cases hold manuals and maps hand-drawn by players in the eighties.", "de": "In den Vitrinen liegen Handbücher und Karten, die Spieler in den Achtzigern von Hand gezeichnet haben.", "fr": "Les vitrines contiennent des manuels et des cartes dessinées à la main par des joueurs des années 80." } } ]
+      }
+    }
+  },
+
+  "rules": [
+    { "verb": "drop", "noun": "lamp", "if": ["has:lamp"], "do": ["drop:lamp", "unset:lampOn"], "say": { "es": "Dejas la lámpara y se apaga.", "en": "You put the lamp down and it goes out.", "de": "Du stellst die Lampe ab, und sie erlischt.", "fr": "Vous posez la lampe et elle s'éteint." } },
+
+    { "verb": ["light", "open"], "noun": "lamp", "if": ["!has:lamp"], "say": { "es": "No tienes nada que encender.", "en": "You have nothing to light.", "de": "Du hast nichts zum Anzünden.", "fr": "Vous n'avez rien à allumer." } },
+    { "verb": "light", "if": ["!has:lamp"], "say": { "es": "No tienes nada que encender.", "en": "You have nothing to light.", "de": "Du hast nichts zum Anzünden.", "fr": "Vous n'avez rien à allumer." } },
+    { "verb": ["light", "open"], "noun": ["lamp", null], "if": ["lampOn"], "say": { "es": "Ya está encendida.", "en": "It's already lit.", "de": "Sie brennt schon.", "fr": "Elle est déjà allumée." } },
+    { "verb": ["light", "open"], "noun": ["lamp", null], "room": "archive", "do": ["set:lampOn", "look"], "say": { "es": "Prendes la lámpara. Una luz cálida te rodea.", "en": "You light the lamp. A warm glow surrounds you.", "de": "Du zündest die Lampe an. Warmes Licht umgibt dich.", "fr": "Vous allumez la lampe. Une lueur chaude vous entoure." } },
+    { "verb": ["light", "open"], "noun": ["lamp", null], "do": ["set:lampOn"], "say": { "es": "Prendes la lámpara. Una luz cálida te rodea.", "en": "You light the lamp. A warm glow surrounds you.", "de": "Du zündest die Lampe an. Warmes Licht umgibt dich.", "fr": "Vous allumez la lampe. Une lueur chaude vous entoure." } },
+    { "verb": "extinguish", "if": ["lampOn"], "do": ["unset:lampOn"], "say": { "es": "Apagas la lámpara.", "en": "You put out the lamp.", "de": "Du löschst die Lampe.", "fr": "Vous éteignez la lampe." } },
+    { "verb": "extinguish", "say": { "es": "No hay nada encendido.", "en": "Nothing is lit.", "de": "Nichts brennt.", "fr": "Rien n'est allumé." } },
+
+    { "verb": "type", "if": ["!room:basement"], "say": { "es": "Aquí no hay ningún teclado.", "en": "There is no keypad here.", "de": "Hier gibt es kein Zahlenfeld.", "fr": "Il n'y a pas de clavier ici." } },
+    { "verb": "type", "if": ["westOpen"], "say": { "es": "La puerta ya está abierta.", "en": "The door is already open.", "de": "Die Tür ist schon offen.", "fr": "La porte est déjà ouverte." } },
+    { "verb": "type", "arg": "none", "say": { "es": "¿Qué código quieres teclear? Por ejemplo: TECLEAR 1234", "en": "Which code? For example: TYPE 1234", "de": "Welcher Code? Zum Beispiel: TIPPE 1234", "fr": "Quel code ? Par exemple : TAPER 1234" } },
+    { "verb": "type", "arg": "1976", "do": ["set:westOpen", "sound:open"], "say": { "es": "Bip, bip, bip, bip... ¡CLONK! La puerta metálica se abre hacia el oeste.", "en": "Beep, beep, beep, beep... CLONK! The metal door swings open to the west.", "de": "Piep, piep, piep, piep … KLONK! Die Metalltür im Westen springt auf.", "fr": "Bip, bip, bip, bip… CLONK ! La porte métallique s'ouvre à l'ouest." } },
+    { "verb": "type", "do": ["sound:bad"], "say": { "es": "El teclado pita con desprecio. Código incorrecto.", "en": "The keypad beeps contemptuously. Wrong code.", "de": "Das Zahlenfeld piept verächtlich. Falscher Code.", "fr": "Le clavier bipe avec mépris. Code incorrect." } },
+
+    { "verb": ["open", "use", "push"], "noun": ["hatch", "crowbar"], "room": "basement", "if": ["hatchOpen"], "say": { "es": "Ya está abierta.", "en": "It's already open.", "de": "Sie ist schon offen.", "fr": "Elle est déjà ouverte." } },
+    { "verb": ["open", "use", "push"], "noun": ["hatch", "crowbar"], "room": "basement", "if": ["!has:crowbar"], "say": { "es": "Empujas con todas tus fuerzas. Nada. Está atascada.", "en": "You push with all your might. Nothing. It's stuck.", "de": "Du drückst mit aller Kraft. Nichts. Sie klemmt.", "fr": "Vous poussez de toutes vos forces. Rien. Elle est coincée." } },
+    { "verb": ["open", "use", "push"], "noun": ["hatch", "crowbar"], "room": "basement", "do": ["set:hatchOpen", "sound:open"], "say": { "es": "Metes la palanca en la ranura y... ¡CRAC! La trampilla se abre. Al norte, la escalera sube a la sala principal.", "en": "You wedge the crowbar into the gap and... CRACK! The hatch opens. To the north, the stairs lead up to the main hall.", "de": "Du setzt die Brechstange an und … KRACH! Die Falltür springt auf. Im Norden führt die Treppe zur Haupthalle.", "fr": "Vous glissez le pied-de-biche dans la fente et… CRAC ! La trappe s'ouvre. Au nord, l'escalier mène à la grande salle." } },
+    { "verb": ["open", "push"], "noun": ["door", "keypad"], "room": "basement", "if": ["westOpen"], "say": { "es": "Ya está abierta.", "en": "It's already open.", "de": "Sie ist schon offen.", "fr": "Elle est déjà ouverte." } },
+    { "verb": ["open", "push"], "noun": ["door", "keypad"], "room": "basement", "say": { "es": "No tiene pomo. Solo un teclado numérico.", "en": "It has no handle. Only a keypad.", "de": "Sie hat keine Klinke. Nur ein Zahlenfeld.", "fr": "Elle n'a pas de poignée. Juste un digicode." } },
+
+    { "verb": "go", "noun": "n", "room": "basement", "if": ["!hatchOpen"], "say": { "es": "La trampilla no cede. Está atascada; necesitarías hacer palanca.", "en": "The hatch won't budge. It's stuck; you'd need to pry it open.", "de": "Die Falltür gibt nicht nach. Sie klemmt; du müsstest sie aufhebeln.", "fr": "La trappe ne cède pas. Elle est coincée ; il faudrait faire levier." } },
+    { "verb": "go", "noun": "n", "room": "basement", "if": ["!has:floppy"], "say": { "es": "No puedes irte sin el disquete perdido. El conservador cuenta contigo.", "en": "You can't leave without the lost floppy. The curator is counting on you.", "de": "Ohne die verlorene Diskette kannst du nicht gehen. Der Kurator zählt auf dich.", "fr": "Vous ne pouvez pas partir sans la disquette perdue. Le conservateur compte sur vous." } },
+    { "verb": "go", "noun": "n", "room": "basement", "do": ["win"], "say": { "es": "Subes a la sala principal con el disquete. El conservador lo mete en un viejo PC y en pantalla aparece el título de una aventura perdida desde 1987.", "en": "You climb up to the main hall with the floppy. The curator slides it into an old PC and the title of an adventure lost since 1987 appears on screen.", "de": "Du steigst mit der Diskette in die Haupthalle. Der Kurator schiebt sie in einen alten PC, und auf dem Bildschirm erscheint der Titel eines seit 1987 verschollenen Adventures.", "fr": "Vous montez dans la grande salle avec la disquette. Le conservateur l'insère dans un vieux PC et le titre d'une aventure perdue depuis 1987 apparaît à l'écran." } },
+
+    { "verb": "magic", "do": ["award:eggXyzzy"], "say": { "es": "Una voz hueca susurra: «Ese truco era de otra cueva». Aun así, te sientes un poco más sabio.", "en": "A hollow voice whispers: \"That trick belonged to another cave.\" Still, you feel a little wiser.", "de": "Eine hohle Stimme flüstert: „Der Trick gehörte zu einer anderen Höhle.“ Trotzdem fühlst du dich etwas klüger.", "fr": "Une voix caverneuse murmure : « Ce tour-là appartenait à une autre grotte. » Vous vous sentez quand même un peu plus sage." } },
+    { "verb": "talk", "say": { "es": "Saludas a las cajas. Las cajas no contestan. Es lo normal.", "en": "You greet the boxes. The boxes don't answer. As usual.", "de": "Du grüßt die Kisten. Die Kisten antworten nicht. Wie üblich.", "fr": "Vous saluez les caisses. Les caisses ne répondent pas. Comme d'habitude." } },
+    { "verb": "eat", "say": { "es": "No tienes hambre. Bueno, un poco, pero no de eso.", "en": "You're not hungry. Well, a bit, but not for that.", "de": "Du hast keinen Hunger. Na gut, ein bisschen, aber nicht darauf.", "fr": "Vous n'avez pas faim. Enfin, un peu, mais pas de ça." } }
+  ],
+
+  "messages": {
+    "intro": {
+      "es": ["EL SÓTANO DEL MUSEO", "Una aventura conversacional para el Point and Click Museum.", "", "El conservador te ha pedido un favor: un disquete con un prototipo perdido se quedó en el archivo del sótano. Bajas por la escalera... y la trampilla se cierra de golpe a tu espalda."],
+      "en": ["THE MUSEUM BASEMENT", "A text adventure for the Point and Click Museum.", "", "The curator asked you a favour: a floppy disk with a lost prototype was left in the basement archive. You go down the stairs... and the hatch slams shut behind you."],
+      "de": ["DER MUSEUMSKELLER", "Ein Textadventure für das Point and Click Museum.", "", "Der Kurator hat dich um einen Gefallen gebeten: Eine Diskette mit einem verschollenen Prototyp liegt noch im Kellerarchiv. Du steigst die Treppe hinab … und die Falltür knallt hinter dir zu."],
+      "fr": ["LE SOUS-SOL DU MUSÉE", "Une fiction interactive pour le Point and Click Museum.", "", "Le conservateur vous a demandé un service : une disquette contenant un prototype perdu est restée aux archives du sous-sol. Vous descendez l'escalier… et la trappe se referme derrière vous."] },
+    "dontUnderstand": { "es": "No entiendo «{input}». Escribe AYUDA si te atascas.", "en": "I don't understand \"{input}\". Type HELP if you're stuck.", "de": "Ich verstehe „{input}“ nicht. Tippe HILFE, wenn du feststeckst.", "fr": "Je ne comprends pas « {input} ». Tapez AIDE si vous êtes bloqué." },
+    "cantGo": { "es": "No puedes ir en esa dirección.", "en": "You can't go that way.", "de": "In diese Richtung geht es nicht.", "fr": "Vous ne pouvez pas aller par là." },
+    "goWhere": { "es": "¿Hacia dónde? Prueba NORTE, SUR, ESTE u OESTE.", "en": "Which way? Try NORTH, SOUTH, EAST or WEST.", "de": "Wohin? Probiere NORDEN, SÜDEN, OSTEN oder WESTEN.", "fr": "Dans quelle direction ? Essayez NORD, SUD, EST ou OUEST." },
+    "notHere": { "es": "No lo veo por aquí.", "en": "You don't see that here.", "de": "Das siehst du hier nicht.", "fr": "Vous ne voyez pas cela ici." },
+    "alreadyHave": { "es": "Ya lo tienes.", "en": "You already have it.", "de": "Das hast du schon.", "fr": "Vous l'avez déjà." },
+    "taken": { "es": "Cogido: {item}.", "en": "Taken: {item}.", "de": "Genommen: {item}.", "fr": "Pris : {item}." },
+    "dropped": { "es": "Dejado.", "en": "Dropped.", "de": "Abgelegt.", "fr": "Posé." },
+    "dontHave": { "es": "No llevas eso.", "en": "You're not carrying that.", "de": "Das trägst du nicht bei dir.", "fr": "Vous n'avez pas ça sur vous." },
+    "invEmpty": { "es": "No llevas nada. Solo pelusa en los bolsillos.", "en": "You're carrying nothing but pocket fluff.", "de": "Du trägst nichts bei dir außer Fusseln in den Taschen.", "fr": "Vous ne portez rien, à part des peluches dans les poches." },
+    "invList": { "es": "Llevas: {items}.", "en": "You are carrying: {items}.", "de": "Du trägst: {items}.", "fr": "Vous portez : {items}." },
+    "seeHere": { "es": "Ves aquí: {items}.", "en": "You can see: {items}.", "de": "Du siehst hier: {items}.", "fr": "Vous voyez ici : {items}." },
+    "nothingSpecial": { "es": "No ves nada especial.", "en": "You see nothing special.", "de": "Du siehst nichts Besonderes.", "fr": "Vous ne voyez rien de spécial." },
+    "takeWhat": { "es": "¿Coger qué?", "en": "Take what?", "de": "Was nehmen?", "fr": "Prendre quoi ?" },
+    "cantTake": { "es": "No puedes coger eso.", "en": "You can't take that.", "de": "Das kannst du nicht nehmen.", "fr": "Vous ne pouvez pas prendre ça." },
+    "darkTake": { "es": "A oscuras no encuentras nada. Algo te roza el tobillo.", "en": "You can't find anything in the dark. Something brushes your ankle.", "de": "Im Dunkeln findest du nichts. Etwas streift deinen Knöchel.", "fr": "Dans le noir, vous ne trouvez rien. Quelque chose vous frôle la cheville." },
+    "cantDo": { "es": "No sabes cómo hacer eso.", "en": "You don't know how to do that.", "de": "Du weißt nicht, wie das gehen soll.", "fr": "Vous ne savez pas comment faire ça." },
+    "gameOver": { "es": "La aventura ha terminado. Escribe REINICIAR.", "en": "The adventure is over. Type RESTART.", "de": "Das Abenteuer ist vorbei. Tippe NEUSTART.", "fr": "L'aventure est terminée. Tapez RECOMMENCER." },
+    "won": { "es": "*** HAS GANADO en {moves} movimientos ***  (escribe REINICIAR para jugar otra vez)", "en": "*** YOU WON in {moves} moves ***  (type RESTART to play again)", "de": "*** GEWONNEN in {moves} Zügen ***  (tippe NEUSTART für ein neues Spiel)", "fr": "*** GAGNÉ en {moves} coups ***  (tapez RECOMMENCER pour rejouer)" },
+    "help": { "es": "Verbos útiles: MIRAR, EXAMINAR, COGER, DEJAR, ENCENDER, TECLEAR <código>, ABRIR, INVENTARIO y direcciones (NORTE, SUR, ESTE, OESTE). Objetivo: encontrar el disquete perdido y salir por la trampilla.", "en": "Useful verbs: LOOK, EXAMINE, TAKE, DROP, LIGHT, TYPE <code>, OPEN, INVENTORY and directions (NORTH, SOUTH, EAST, WEST). Goal: find the lost floppy and leave through the hatch.", "de": "Nützliche Verben: SCHAU, UNTERSUCHE, NIMM, LEG, ZÜNDE, TIPPE <Code>, ÖFFNE, INVENTAR und Richtungen (NORDEN, SÜDEN, OSTEN, WESTEN). Ziel: die verlorene Diskette finden und durch die Falltür verschwinden.", "fr": "Verbes utiles : REGARDER, EXAMINER, PRENDRE, POSER, ALLUMER, TAPER <code>, OUVRIR, INVENTAIRE et directions (NORD, SUD, EST, OUEST). But : trouver la disquette perdue et sortir par la trappe." }
+  }
+}

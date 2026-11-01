@@ -1,0 +1,42 @@
+<section class="room-page" id="room-techniques" aria-labelledby="page-title">
+  <div class="wrap">
+    {{raw:pageHeader}}
+    <p class="lead">{{t:techniquesLead}}</p>
+    <div class="techs">
+      <div class="px tech wide">
+        <h3>{{t:interfaceTitle}}</h3>
+        <div class="row" id="uiTabs" role="group" aria-label="{{t:interfaceTitle}}">{{raw:uiTabs}}</div>
+        <div class="ui-mock" id="uiMock"></div>
+        <p id="uiDesc"></p>
+      </div>
+      <div class="px tech">
+        <h3>{{raw:cycleTitle}}</h3>
+        <canvas id="cycleCanvas" width="160" height="96" role="img" aria-label="{{raw:cycleTitle}}"></canvas>
+        <div class="row"><button class="pbtn small" id="cycleBtn" type="button" aria-pressed="true">{{t:cycleOn}}</button><label for="cycleSpeed">{{t:speed}}</label><input type="range" id="cycleSpeed" min="1" max="12" value="5"></div>
+        <p>{{raw:cycleBody}}</p>
+      </div>
+      <div class="px tech">
+        <h3>{{raw:ditherTitle}}</h3>
+        <canvas id="ditherCanvas" width="160" height="96" role="img" aria-label="{{raw:ditherTitle}}"></canvas>
+        <div class="row"><label for="ditherLevels">{{t:colors}}</label><input type="range" id="ditherLevels" min="2" max="8" value="3"><button class="pbtn small" id="ditherBtn" type="button" aria-pressed="true">{{t:bayerOn}}</button></div>
+        <p>{{raw:ditherBody}}</p>
+      </div>
+      <div class="px tech">
+        <h3>{{raw:parallaxTitle}}</h3>
+        <canvas id="paraCanvas" class="clickable" width="160" height="96" role="img" aria-label="{{raw:parallaxTitle}}"></canvas>
+        <div class="row"><span>{{t:parallaxHint}}</span></div>
+        <p>{{raw:parallaxBody}}</p>
+      </div>
+      <div class="px tech">
+        <h3>{{raw:musicTitle}}</h3>
+        <canvas id="musCanvas" width="160" height="40" role="img" aria-label="{{raw:musicTitle}}"></canvas>
+        <div class="row"><button class="pbtn small" id="musPlay" type="button">{{t:play}}</button><button class="pbtn small" id="musA" type="button" aria-pressed="true">{{t:calm}}</button><button class="pbtn small" id="musB" type="button" aria-pressed="false">{{t:danger}}</button></div>
+        <p id="musInfo">{{raw:musicBody}}</p>
+      </div>
+      <div class="px tech wide">
+        <h3>{{t:ideasTitle}}</h3>
+        <ul class="ideas">{{raw:ideas}}</ul>
+      </div>
+    </div>
+  </div>
+</section>

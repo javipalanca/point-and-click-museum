@@ -1,0 +1,229 @@
+{
+ "engines": [
+  {
+   "id": "z-machine",
+   "name": "Z-machine",
+   "year": 1979,
+   "color": "#4fd6c8",
+   "by": "Infocom",
+   "text": {
+    "es": "Máquina virtual para aventuras de texto. El juego se compilaba una vez desde ZIL y bastaba un intérprete por ordenador.\n\nJUEGOS: Zork, Planetfall, The Hitchhiker's Guide to the Galaxy.\nHOY: Inform 7 sigue compilando para Z-machine y Glulx.",
+    "en": "A virtual machine for text adventures. Each game was compiled once from ZIL and only needed an interpreter per computer.\n\nGAMES: Zork, Planetfall, The Hitchhiker's Guide to the Galaxy.\nTODAY: Inform 7 still compiles to Z-machine and Glulx.",
+    "de": "Eine virtuelle Maschine für Textadventures. Das Spiel wurde einmal aus ZIL kompiliert, pro Computer brauchte es nur einen Interpreter.\n\nSPIELE: Zork, Planetfall, The Hitchhiker's Guide to the Galaxy.\nHEUTE: Inform 7 kompiliert weiterhin für Z-machine und Glulx.",
+    "fr": "Une machine virtuelle pour les jeux d'aventure textuels. Le jeu était compilé une fois depuis ZIL ; il suffisait d'un interpréteur par ordinateur.\n\nJEUX : Zork, Planetfall, The Hitchhiker's Guide to the Galaxy.\nAUJOURD'HUI : Inform 7 compile toujours pour Z-machine et Glulx."
+   },
+   "links": [
+    {
+     "label": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/Z-machine"
+    },
+    {
+     "label": "Inform 7",
+     "url": "https://ganelson.github.io/inform-website/"
+    }
+   ]
+  },
+  {
+   "id": "agi",
+   "name": "AGI",
+   "year": 1984,
+   "color": "#5fc46a",
+   "by": "Sierra On-Line",
+   "text": {
+    "es": "Adventure Game Interpreter. 160 × 200 píxeles, 16 colores, personaje animado y parser de texto.\n\nJUEGOS: King's Quest I-III, Space Quest I-II, Leisure Suit Larry, Police Quest.\nCURIOSIDAD: la profundidad se gestionaba con un mapa de prioridades dibujado bajo cada pantalla.",
+    "en": "Adventure Game Interpreter. 160 × 200 pixels, 16 colours, an animated character and a text parser.\n\nGAMES: King's Quest I-III, Space Quest I-II, Leisure Suit Larry, Police Quest.\nTRIVIA: depth was handled by a priority map drawn beneath each screen.",
+    "de": "Adventure Game Interpreter. 160 × 200 Pixel, 16 Farben, animierte Figur und Textparser.\n\nSPIELE: King's Quest I–III, Space Quest I–II, Leisure Suit Larry, Police Quest.\nKURIOSUM: Die Tiefe regelte eine Prioritätenkarte unter jedem Bildschirm.",
+    "fr": "Adventure Game Interpreter. 160 × 200 pixels, 16 couleurs, un personnage animé et un parser.\n\nJEUX : King's Quest I-III, Space Quest I-II, Leisure Suit Larry, Police Quest.\nANECDOTE : la profondeur était gérée par une carte de priorités dessinée sous chaque écran."
+   },
+   "links": [
+    {
+     "label": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/Adventure_Game_Interpreter"
+    }
+   ]
+  },
+  {
+   "id": "scumm",
+   "name": "SCUMM",
+   "year": 1987,
+   "color": "#ffb547",
+   "by": "Ron Gilbert · Aric Wilmunder · Lucasfilm Games",
+   "text": {
+    "es": "Script Creation Utility for Maniac Mansion. Un lenguaje de scripts y un intérprete con verbos, inventario y control de cámara.\n\nJUEGOS: Maniac Mansion, Monkey Island 1-3, Day of the Tentacle, Sam & Max, Full Throttle.\nCURIOSIDAD: ejecutaba varios scripts a la vez, algo poco común en 1987.",
+    "en": "Script Creation Utility for Maniac Mansion. A scripting language plus an interpreter with verbs, inventory and camera control.\n\nGAMES: Maniac Mansion, Monkey Island 1-3, Day of the Tentacle, Sam & Max, Full Throttle.\nTRIVIA: it ran several scripts at once, rare in 1987.",
+    "de": "Script Creation Utility for Maniac Mansion. Eine Skriptsprache und ein Interpreter mit Verben, Inventar und Kamerasteuerung.\n\nSPIELE: Maniac Mansion, Monkey Island 1–3, Day of the Tentacle, Sam & Max, Full Throttle.\nKURIOSUM: Mehrere Skripte liefen gleichzeitig – 1987 selten.",
+    "fr": "Script Creation Utility for Maniac Mansion. Un langage de script et un interpréteur avec verbes, inventaire et contrôle de caméra.\n\nJEUX : Maniac Mansion, Monkey Island 1-3, Day of the Tentacle, Sam & Max, Full Throttle.\nANECDOTE : il exécutait plusieurs scripts à la fois, chose rare en 1987."
+   },
+   "links": [
+    {
+     "label": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/SCUMM"
+    },
+    {
+     "label": "ScummVM",
+     "url": "https://www.scummvm.org/"
+    }
+   ]
+  },
+  {
+   "id": "daad",
+   "name": "DAAD",
+   "year": 1988,
+   "color": "#e07a2e",
+   "by": "Aventuras AD",
+   "text": {
+    "es": "Diseñador de Aventuras AD. Base de datos y «condactos» para escribir una aventura y llevarla a Spectrum, Amstrad, MSX, Atari ST, Amiga y PC.\n\nJUEGOS: La Aventura Original, Jabato, La Diosa de Cozumel.\nHOY: la comunidad lo recuperó y se sigue usando en concursos retro.",
+    "en": "Aventuras AD's adventure designer. A database and \"condacts\" to write an adventure and ship it on Spectrum, Amstrad, MSX, Atari ST, Amiga and PC.\n\nGAMES: La Aventura Original, Jabato, La Diosa de Cozumel.\nTODAY: the community revived it and still uses it in retro competitions.",
+    "de": "Der Adventure-Designer von Aventuras AD. Eine Datenbank und „Condacts“, um ein Adventure für Spectrum, Amstrad, MSX, Atari ST, Amiga und PC zu schreiben.\n\nSPIELE: La Aventura Original, Jabato, La Diosa de Cozumel.\nHEUTE: Die Community hat es wiederbelebt und nutzt es bei Retro-Wettbewerben.",
+    "fr": "Le concepteur d'aventures d'Aventuras AD. Une base de données et des « condacts » pour écrire une aventure et la publier sur Spectrum, Amstrad, MSX, Atari ST, Amiga et PC.\n\nJEUX : La Aventura Original, Jabato, La Diosa de Cozumel.\nAUJOURD'HUI : la communauté l'a ressuscité et l'utilise dans des concours rétro."
+   },
+   "links": [
+    {
+     "label": "Wikipedia (es)",
+     "url": "https://es.wikipedia.org/wiki/Aventuras_AD"
+    }
+   ]
+  },
+  {
+   "id": "sci",
+   "name": "SCI",
+   "year": 1988,
+   "color": "#8a8cff",
+   "by": "Sierra On-Line",
+   "text": {
+    "es": "Sierra's Creative Interpreter. Orientado a objetos, con más resolución y sonido. Con SCI1 (1990) Sierra abandonó el parser y pasó a iconos con ratón.\n\nJUEGOS: King's Quest IV-VII, Gabriel Knight, Quest for Glory, Space Quest IV-VI.",
+    "en": "Sierra's Creative Interpreter. Object-oriented, with higher resolution and better sound. With SCI1 (1990) Sierra dropped the parser for mouse-driven icons.\n\nGAMES: King's Quest IV-VII, Gabriel Knight, Quest for Glory, Space Quest IV-VI.",
+    "de": "Sierra's Creative Interpreter. Objektorientiert, mit höherer Auflösung und besserem Sound. Mit SCI1 (1990) ersetzte Sierra den Parser durch Maus-Icons.\n\nSPIELE: King's Quest IV–VII, Gabriel Knight, Quest for Glory, Space Quest IV–VI.",
+    "fr": "Sierra's Creative Interpreter. Orienté objet, avec plus de résolution et un meilleur son. Avec SCI1 (1990), Sierra a remplacé le parser par des icônes à la souris.\n\nJEUX : King's Quest IV-VII, Gabriel Knight, Quest for Glory, Space Quest IV-VI."
+   },
+   "links": [
+    {
+     "label": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/Sierra%27s_Creative_Interpreter"
+    }
+   ]
+  },
+  {
+   "id": "virtual-theatre",
+   "name": "Virtual Theatre",
+   "year": 1992,
+   "color": "#ef5d8a",
+   "by": "Revolution Software",
+   "text": {
+    "es": "Los personajes no jugadores seguían rutinas propias: caminaban, trabajaban y reaccionaban sin esperar al jugador.\n\nJUEGOS: Lure of the Temptress, Beneath a Steel Sky, Broken Sword 1-2.",
+    "en": "Non-player characters followed their own routines: they walked, worked and reacted without waiting for the player.\n\nGAMES: Lure of the Temptress, Beneath a Steel Sky, Broken Sword 1-2.",
+    "de": "Nicht-Spieler-Figuren folgten eigenen Abläufen: Sie liefen, arbeiteten und reagierten, ohne auf den Spieler zu warten.\n\nSPIELE: Lure of the Temptress, Beneath a Steel Sky, Broken Sword 1–2.",
+    "fr": "Les personnages non joueurs suivaient leurs propres routines : ils marchaient, travaillaient et réagissaient sans attendre le joueur.\n\nJEUX : Lure of the Temptress, Beneath a Steel Sky, Broken Sword 1-2."
+   },
+   "links": [
+    {
+     "label": "Revolution Software",
+     "url": "https://revolution.co.uk/"
+    }
+   ]
+  },
+  {
+   "id": "ags",
+   "name": "AGS",
+   "year": 1997,
+   "color": "#5fc46a",
+   "by": "Chris Jones",
+   "text": {
+    "es": "Adventure Game Studio. Editor gratuito, hoy de código abierto, pensado para aventuras de estilo clásico.\n\nJUEGOS: Blackwell, Gemini Rue, Resonance, Unavowed, The Excavation of Hob's Barrow.\nCOMUNIDAD: miles de juegos gratuitos publicados por aficionados.",
+    "en": "Adventure Game Studio. A free, now open-source editor designed for classic-style adventures.\n\nGAMES: Blackwell, Gemini Rue, Resonance, Unavowed, The Excavation of Hob's Barrow.\nCOMMUNITY: thousands of free games released by hobbyists.",
+    "de": "Adventure Game Studio. Ein kostenloser, heute quelloffener Editor für Adventures im klassischen Stil.\n\nSPIELE: Blackwell, Gemini Rue, Resonance, Unavowed, The Excavation of Hob's Barrow.\nCOMMUNITY: Tausende kostenlose Spiele von Fans.",
+    "fr": "Adventure Game Studio. Un éditeur gratuit, aujourd'hui open source, conçu pour l'aventure classique.\n\nJEUX : Blackwell, Gemini Rue, Resonance, Unavowed, The Excavation of Hob's Barrow.\nCOMMUNAUTÉ : des milliers de jeux gratuits publiés par des amateurs."
+   },
+   "links": [
+    {
+     "label": "adventuregamestudio.co.uk",
+     "url": "https://www.adventuregamestudio.co.uk/"
+    }
+   ]
+  },
+  {
+   "id": "grime",
+   "name": "GrimE",
+   "year": 1998,
+   "color": "#d9455f",
+   "by": "LucasArts",
+   "text": {
+    "es": "Grim Engine. Personajes 3D sobre fondos prerrenderizados y scripts en Lua, uno de los primeros grandes usos del lenguaje en videojuegos.\n\nJUEGOS: Grim Fandango, Escape from Monkey Island.\nHOY: ScummVM lo reimplementa.",
+    "en": "Grim Engine. 3D characters over pre-rendered backgrounds with Lua scripts, one of the first big uses of the language in games.\n\nGAMES: Grim Fandango, Escape from Monkey Island.\nTODAY: ScummVM reimplements it.",
+    "de": "Grim Engine. 3D-Figuren vor vorgerenderten Hintergründen mit Lua-Skripten, einer der ersten großen Einsätze der Sprache in Spielen.\n\nSPIELE: Grim Fandango, Escape from Monkey Island.\nHEUTE: ScummVM implementiert sie nach.",
+    "fr": "Grim Engine. Personnages 3D sur décors précalculés et scripts en Lua, l'un des premiers grands usages du langage dans le jeu vidéo.\n\nJEUX : Grim Fandango, Escape from Monkey Island.\nAUJOURD'HUI : ScummVM le réimplémente."
+   },
+   "links": [
+    {
+     "label": "Wikipedia",
+     "url": "https://en.wikipedia.org/wiki/GrimE"
+    }
+   ]
+  },
+  {
+   "id": "scummvm",
+   "name": "ScummVM",
+   "year": 2001,
+   "color": "#4fd6c8",
+   "by": "Ludvig Strigeus",
+   "text": {
+    "es": "No sirve para crear juegos: reimplementa decenas de motores antiguos para jugar a los originales en sistemas modernos.\n\nSOPORTA: SCUMM, AGI, SCI, Virtual Theatre, GrimE, AGS y muchos más.\nPRESERVACIÓN: algunos estudios publican sus clásicos con ScummVM incluido.",
+    "en": "Not a tool for making games: it reimplements dozens of old engines so the originals run on modern systems.\n\nSUPPORTS: SCUMM, AGI, SCI, Virtual Theatre, GrimE, AGS and many more.\nPRESERVATION: some studios ship their classics with ScummVM bundled.",
+    "de": "Kein Werkzeug zum Erstellen: Es implementiert Dutzende alte Engines nach, damit die Originale auf modernen Systemen laufen.\n\nUNTERSTÜTZT: SCUMM, AGI, SCI, Virtual Theatre, GrimE, AGS und viele mehr.\nBEWAHRUNG: Manche Studios liefern ihre Klassiker mit ScummVM aus.",
+    "fr": "Pas un outil de création : il réimplémente des dizaines de vieux moteurs pour faire tourner les originaux sur les systèmes modernes.\n\nPREND EN CHARGE : SCUMM, AGI, SCI, Virtual Theatre, GrimE, AGS et bien d'autres.\nPRÉSERVATION : certains studios livrent leurs classiques avec ScummVM."
+   },
+   "links": [
+    {
+     "label": "scummvm.org",
+     "url": "https://www.scummvm.org/"
+    }
+   ]
+  },
+  {
+   "id": "visionaire",
+   "name": "Visionaire Studio",
+   "year": 2003,
+   "color": "#8a4fd8",
+   "by": "Visionaire Studio",
+   "text": {
+    "es": "Editor visual para aventuras en alta resolución con scripts en Lua.\n\nJUEGOS: Deponia, Edna & Harvey, The Whispered World, Anna's Quest.",
+    "en": "A visual editor for high-resolution adventures with Lua scripting.\n\nGAMES: Deponia, Edna & Harvey, The Whispered World, Anna's Quest.",
+    "de": "Ein visueller Editor für hochauflösende Adventures mit Lua-Skripten.\n\nSPIELE: Deponia, Edna bricht aus, The Whispered World, Anna's Quest.",
+    "fr": "Un éditeur visuel pour aventures en haute résolution, scriptées en Lua.\n\nJEUX : Deponia, Edna & Harvey, The Whispered World, Anna's Quest."
+   },
+   "links": [
+    {
+     "label": "visionaire-studio.net",
+     "url": "https://www.visionaire-studio.net/"
+    }
+   ]
+  },
+  {
+   "id": "general-engines",
+   "name": "Unity · Godot",
+   "year": 2010,
+   "color": "#f3e6c8",
+   "by": "Adventure Creator · Escoria",
+   "text": {
+    "es": "Hoy muchos estudios usan motores generalistas con extensiones como Adventure Creator (Unity) o Escoria (Godot).\n\nJUEGOS: Kentucky Route Zero, The Case of the Golden Idol, Kathy Rain 2.\nTENDENCIA: herramientas libres y pixel art en alta resolución.",
+    "en": "Many studios now use general-purpose engines with add-ons such as Adventure Creator (Unity) or Escoria (Godot).\n\nGAMES: Kentucky Route Zero, The Case of the Golden Idol, Kathy Rain 2.\nTREND: open tools and high-resolution pixel art.",
+    "de": "Viele Studios nutzen heute Allzweck-Engines mit Erweiterungen wie Adventure Creator (Unity) oder Escoria (Godot).\n\nSPIELE: Kentucky Route Zero, The Case of the Golden Idol, Kathy Rain 2.\nTREND: freie Werkzeuge und hochauflösende Pixel-Art.",
+    "fr": "De nombreux studios utilisent désormais des moteurs généralistes avec des extensions comme Adventure Creator (Unity) ou Escoria (Godot).\n\nJEUX : Kentucky Route Zero, The Case of the Golden Idol, Kathy Rain 2.\nTENDANCE : outils libres et pixel art en haute résolution."
+   },
+   "links": [
+    {
+     "label": "Godot",
+     "url": "https://godotengine.org/"
+    },
+    {
+     "label": "Adventure Creator",
+     "url": "https://adventurecreator.org/"
+    },
+    {
+     "label": "Unity",
+     "url": "https://unity.com/"
+    }
+   ]
+  }
+ ]
+}

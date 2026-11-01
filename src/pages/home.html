@@ -1,0 +1,28 @@
+<section class="hero" id="entrance" aria-labelledby="page-title">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 class="title" id="page-title">Point and Click Museum<small>{{t:subtitle}}</small></h1>
+      <p class="tagline">{{t:tagline}}</p>
+      <p class="row hero-cta"><a class="pbtn" href="{{raw:firstRoomUrl}}">{{t:startVisit}} ▶</a><a class="pbtn ghost" href="{{raw:arcadeUrl}}">{{t:arcadeTitle}}</a></p>
+    </div>
+    <div class="hero-stage">
+      <div class="px stage-frame">
+        <canvas id="heroCanvas" class="clickable" width="320" height="150" role="img" aria-label="{{t:heroCanvasLabel}}"></canvas>
+      </div>
+      <div class="scene-line" id="heroLine">{{t:walkTo}}</div>
+      <div class="say" id="heroSay" aria-live="polite">{{t:heroHint}}</div>
+    </div>
+  </div>
+</section>
+<section class="map" aria-labelledby="h-map">
+  <div class="wrap">
+    <h2 id="h-map">{{t:mapTitle}}</h2>
+    <p class="lead">{{t:mapLead}}</p>
+    <div class="room-cards">{{raw:roomCards}}</div>
+    <div class="hero-intro">
+      <div class="px"><b>{{t:introRoomTitle}}</b><p>{{t:introRoom}}</p></div>
+      <div class="px"><b>{{t:introVisitTitle}}</b><p>{{t:introVisit}}</p></div>
+      <div class="px"><b>{{t:introPlayTitle}}</b><p>{{t:introPlay}}</p></div>
+    </div>
+  </div>
+</section>

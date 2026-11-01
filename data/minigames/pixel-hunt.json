@@ -1,0 +1,111 @@
+{
+ "id": "pixel-hunt",
+ "title": {
+  "es": "Caza del píxel",
+  "en": "Pixel Hunt",
+  "de": "Pixeljagd",
+  "fr": "Chasse au pixel"
+ },
+ "how": {
+  "es": "Encuentra el disquete dorado escondido en el desván. Cada ronda hay menos luz; en la última solo tienes una linterna.",
+  "en": "Find the golden floppy hidden in the attic. Each round gets darker; in the last one you only have a torch.",
+  "de": "Finde die goldene Diskette auf dem Dachboden. Jede Runde wird dunkler; in der letzten hast du nur eine Taschenlampe.",
+  "fr": "Trouvez la disquette dorée cachée dans le grenier. Chaque manche est plus sombre ; à la dernière, vous n'avez qu'une lampe torche."
+ },
+ "award": "hunt",
+ "size": [
+  320,
+  180
+ ],
+ "rounds": 3,
+ "baseTime": 30,
+ "timeStepPerRound": 3,
+ "hintCost": 5,
+ "clutter": {
+  "base": 14,
+  "perRound": 6,
+  "decoys": 6,
+  "decoysPerRound": 5
+ },
+ "hitTolerance": 3,
+ "messages": {
+  "start": {
+   "es": "Pulsa EMPEZAR. El disquete dorado mide 7 × 7 píxeles; cuidado con las monedas y las llaves.",
+   "en": "Press START. The golden floppy is 7 × 7 pixels; watch out for coins and keys.",
+   "de": "Drücke START. Die goldene Diskette ist 7 × 7 Pixel groß; Vorsicht vor Münzen und Schlüsseln.",
+   "fr": "Appuyez sur COMMENCER. La disquette dorée fait 7 × 7 pixels ; attention aux pièces et aux clés."
+  },
+  "round": {
+   "es": "Ronda {round}: encuentra el disquete dorado.",
+   "en": "Round {round}: find the golden floppy.",
+   "de": "Runde {round}: Finde die goldene Diskette.",
+   "fr": "Manche {round} : trouvez la disquette dorée."
+  },
+  "found": {
+   "es": "¡Encontrado!",
+   "en": "Found it!",
+   "de": "Gefunden!",
+   "fr": "Trouvé !"
+  },
+  "timeUp": {
+   "es": "¡Tiempo! Estaba ahí, marcado. Pulsa EMPEZAR para intentarlo otra vez.",
+   "en": "Time's up! It was there, marked. Press START to try again.",
+   "de": "Zeit abgelaufen! Dort war sie, markiert. Drücke START für einen neuen Versuch.",
+   "fr": "Temps écoulé ! Elle était là, signalée. Appuyez sur COMMENCER pour réessayer."
+  },
+  "won": {
+   "es": "¡Tres de tres! Ojo de halcón: {misses} fallos.",
+   "en": "Three out of three! Eagle eye: {misses} misses.",
+   "de": "Drei von drei! Adlerauge: {misses} Fehlklicks.",
+   "fr": "Trois sur trois ! Œil de lynx : {misses} erreurs."
+  },
+  "hint": {
+   "es": "Pista: un destello de medio segundo. Te ha costado 5 segundos.",
+   "en": "Hint: a half-second flash. It cost you 5 seconds.",
+   "de": "Tipp: ein halbsekündiges Aufblitzen. Kostet 5 Sekunden.",
+   "fr": "Indice : un éclair d'une demi-seconde. Ça vous coûte 5 secondes."
+  },
+  "quips": {
+   "es": [
+    "Ahí no hay nada interesante.",
+    "Es una caja. Muy bonita, pero una caja.",
+    "Eso es un píxel normal y corriente.",
+    "Frío, frío.",
+    "Ni rastro del disquete."
+   ],
+   "en": [
+    "Nothing interesting there.",
+    "That's a box. A lovely box, but a box.",
+    "That's a perfectly ordinary pixel.",
+    "Cold, cold.",
+    "No sign of the floppy."
+   ],
+   "de": [
+    "Da ist nichts Interessantes.",
+    "Das ist eine Kiste. Hübsch, aber eine Kiste.",
+    "Das ist ein ganz gewöhnlicher Pixel.",
+    "Kalt, kalt.",
+    "Keine Spur von der Diskette."
+   ],
+   "fr": [
+    "Rien d'intéressant ici.",
+    "C'est une caisse. Jolie, mais une caisse.",
+    "C'est un pixel tout ce qu'il y a de plus banal.",
+    "Froid, froid.",
+    "Aucune trace de la disquette."
+   ]
+  },
+  "torch": {
+   "es": "Ronda {round}: se ha ido la luz. Mueve la linterna con el ratón o el dedo.",
+   "en": "Round {round}: the lights are out. Move the torch with your mouse or finger.",
+   "de": "Runde {round}: Stromausfall. Bewege die Taschenlampe mit Maus oder Finger.",
+   "fr": "Manche {round} : plus de lumière. Déplacez la lampe avec la souris ou le doigt."
+  }
+ },
+ "darkness": [
+  0,
+  0.4,
+  0.88
+ ],
+ "torchRadius": 36
+}

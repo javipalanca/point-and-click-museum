@@ -1,0 +1,14 @@
+<section class="room-page" id="room-text-adventure" aria-labelledby="page-title">
+  <div class="wrap">
+    {{raw:pageHeader}}
+      <article class="px game" id="g-text">
+        <p class="how">{{raw:taHow}}</p>
+        <div class="term" id="term" aria-live="polite"></div>
+        <form class="term-form" id="termForm" autocomplete="off">
+          <label for="termIn">&gt;</label>
+          <input id="termIn" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="send" placeholder="{{raw:taPlaceholder}}">
+          <button class="pbtn small" type="submit">ENTER</button>
+        </form>
+      </article>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+<section class="room-page" id="room-restoration-room" aria-labelledby="page-title">
+  <div class="wrap">
+    {{raw:pageHeader}}
+      <article class="px game" id="g-room">
+        <p class="how">{{raw:roomHow}}</p>
+        <canvas id="roomCanvas" class="clickable scene" width="320" height="150" role="img" aria-label="{{raw:roomTitle}}"></canvas>
+        <div class="room-ui">
+          <div class="room-sentence" id="roomSentence"></div>
+          <div class="verbgrid" id="verbs" role="group" aria-label="{{t:verbs}}"></div>
+          <div class="inv" id="inv" role="group" aria-label="{{t:inventory}}"></div>
+        </div>
+        <div class="room-msg" id="roomMsg" aria-live="polite"></div>
+        <button class="pbtn small" id="roomReset" type="button">{{t:resetRoom}}</button>
+      </article>
+  </div>
+</section>

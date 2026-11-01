@@ -128,3 +128,39 @@ if (document.getElementById("dosHost")) (() => {
     } else { err.textContent = t("byoBadType"); sfx("bad"); }
   });
 })();
+
+/* ---------- catalogue: search, company, A–Z index, sort ---------- */
+if (document.getElementById("catList")) (() => {
+  const { $, $$, t, sfx } = PCM;
+  const list = $("#catList"), items = $$(".dos-game", list), count = $("#catCount"), empty = $("#catEmpty");
+  const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button");
+  if (!search) return; // few games: no filters
+  const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  items.forEach(el => { el._text = norm(el.querySelector("h3").textContent + " " + el.dataset.studio); });
+  let letter = "";
+  function apply() {
+    const q = norm(search.value.trim()), st = studio.value;
+    let n = 0;
+    items.forEach(el => {
+      const show = (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) && (!letter || el.dataset.letter === letter);
+      el.hidden = !show; if (show) n++;
+    });
+    count.textContent = t("catCount", { n, total: items.length });
+    empty.hidden = n > 0;
+  }
+  function reorder() {
+    const by = sort.value;
+    items.slice().sort((a, b) => by === "year" ? (+a.dataset.year - +b.dataset.year) || a.dataset.key.localeCompare(b.dataset.key) : a.dataset.key.localeCompare(b.dataset.key))
+      .forEach(el => list.appendChild(el));
+  }
+  search.addEventListener("input", apply);
+  studio.addEventListener("change", () => { sfx("click"); apply(); });
+  sort.addEventListener("change", () => { sfx("click"); reorder(); });
+  letters.forEach(b => b.addEventListener("click", () => {
+    letter = b.dataset.l; letters.forEach(x => x.setAttribute("aria-pressed", String(x === b))); sfx("click"); apply(); list.scrollTop = 0;
+  }));
+  document.addEventListener("keydown", e => {
+    if (e.key === "/" && document.activeElement === document.body) { e.preventDefault(); search.focus(); }
+  });
+  apply();
+})();

@@ -168,5 +168,15 @@
  "page_arcade_meta": "Jouez à des aventures MS-DOS dans le navigateur avec DOSBox (js-dos), avec capture de la souris et vos propres copies.",
  "page_home_title": "Point and Click Museum · Histoire des jeux d'aventure",
  "page_home_meta": "Un musée interactif en pixel art sur l'histoire des jeux d'aventure : de Colossal Cave et Zork à Monkey Island et aux sorties actuelles. Chronologie, studios, moteurs, techniques, mini-jeux et DOSBox dans le navigateur.",
- "navHere_home": "Vous êtes à l'entrée"
+ "navHere_home": "Vous êtes à l'entrée",
+ "catTitle": "Catalogue",
+ "catSearch": "Chercher un jeu ou une société",
+ "catAllStudios": "Toutes les sociétés",
+ "catSortTitle": "Tri : A–Z",
+ "catSortYear": "Tri : année",
+ "catLetters": "Index alphabétique",
+ "catAllLetters": "Toutes",
+ "catCount": "{n} jeux sur {total}",
+ "catEmpty": "Aucun jeu ne correspond à la recherche.",
+ "catLocal": "LOCAL"
 }

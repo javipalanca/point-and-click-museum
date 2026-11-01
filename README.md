@@ -76,11 +76,28 @@ python3 tools/fetch_jsdos.py
 
 Si `vendor/js-dos/` no existe, la página carga js-dos desde jsDelivr.
 
-Para añadir un juego, empaquétalo y regístralo en `data/arcade.json` con `"bundle": "games/<nombre>.jsdos"`:
+### Añadir juegos desde el zip descargado
 
 ```bash
-python3 tools/make_jsdos_bundle.py ruta/al/juego --exe JUEGO.EXE --out assets/games/juego.jsdos
+python3 tools/add_game.py ~/Downloads/juego.zip                       # detecta el ejecutable; pregunta si duda
+python3 tools/add_game.py ~/Downloads/*.zip --yes                     # muchos a la vez, sin preguntas
+python3 tools/add_game.py juego.zip --title "Título" --year 1993 --studio "Estudio" --exe JUEGO/START.BAT
+python3 tools/add_game.py --list                                      # ver la colección local
+python3 tools/add_game.py --remove titulo                             # quitar uno
+python3 build.py
 ```
+
+El script abre el zip (también un zip dentro de otro), elige el programa que arranca el juego descartando instaladores
+y utilidades (`INSTALL`, `SETUP`, `DOS4GW`…), crea `assets/games/<id>.jsdos` y apunta el juego en
+`data/arcade.local.json`. **Ninguno de los dos se versiona** (están en `.gitignore`), así que tu colección no llega al
+repositorio ni a GitHub. Para una versión pública sin tus juegos: `python3 build.py --no-local`
+(`tools/export_artifact.py` ya lo hace).
+
+Con 8 juegos o más, la sala DOSBox muestra un catálogo compacto con buscador (título o compañía), filtro por compañía,
+índice alfabético (ignora «The», «El», «La»…) y orden por título o año. Pulsa `/` para ir al buscador.
+
+Para juegos que **sí** se pueden redistribuir y quieres versionar, añádelos a `data/arcade.json`
+(usa `tools/make_jsdos_bundle.py` y quita su ruta del `.gitignore`).
 
 Todo lo que hay en `assets/` se copia tal cual a `dist/`. Solo empaqueta juegos que tengas derecho a redistribuir
 (freeware, dominio público o con permiso). Los visitantes también pueden cargar su propia copia (`.jsdos` o `.zip`)
@@ -111,6 +128,7 @@ vendor/js-dos/      js-dos alojado localmente (opcional)
 ```bash
 npm install && npx playwright install chromium   # una vez
 python3 build.py && npm test
+python3 -m unittest discover -s tests            # pruebas de tools/add_game.py
 ```
 
 `tests/site.test.js` comprueba las 44 páginas (errores, desbordamiento en móvil y tableta, enlaces internos), resuelve la

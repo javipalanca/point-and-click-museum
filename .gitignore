@@ -3,3 +3,11 @@ __pycache__/
 *.pyc
 node_modules/
 .DS_Store
+
+# Juegos locales añadidos con tools/add_game.py (no se versionan)
+assets/games/
+data/arcade.local.json
+# Descargas sin procesar, por si las guardas dentro del proyecto
+downloads/
+*.zip
+*.jsdos

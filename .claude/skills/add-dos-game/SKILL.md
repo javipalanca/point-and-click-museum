@@ -5,6 +5,22 @@ description: Empaqueta un juego o programa de MS-DOS como bundle de js-dos y lo 
 
 # Añadir un juego a la sala DOSBox
 
+## Colección personal (lo normal): desde el zip descargado
+
+```bash
+python3 tools/add_game.py ~/Downloads/juego.zip [--title --year --studio --exe --cycles --icon --desc]
+python3 tools/add_game.py ~/Downloads/*.zip --yes      # en lote
+python3 tools/add_game.py --list | --remove <id>
+python3 build.py
+```
+
+Escribe `assets/games/<id>.jsdos` y `data/arcade.local.json`, ambos en `.gitignore`. Nunca los añadas al repositorio
+ni los publiques: los builds públicos (`tools/export_artifact.py`, `build.py --no-local`) los excluyen.
+Si el ejecutable elegido no es el correcto, repite con `--exe RUTA/PROGRAMA.EXE --force`. Si el juego necesita
+instalarse, instálalo antes en DOSBox de escritorio y comprime la carpeta instalada.
+
+## Juegos versionados (solo redistribuibles)
+
 1. **Licencia primero.** Solo software redistribuible: freeware con permiso de distribución, dominio público o propio.
    Nunca abandonware ni juegos comerciales. Si no está claro, pregunta al usuario y no lo incluyas.
 2. Empaqueta los ficheros DOS (carpeta o zip) indicando el ejecutable:

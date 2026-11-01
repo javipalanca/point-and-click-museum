@@ -33,7 +33,8 @@
         "en": "Two tiny DOS programs made for this museum. MUSEUM.COM checks that the emulator boots; PAINT.COM is a small drawing program to test the mouse: left button draws, right button changes colour.",
         "de": "Zwei winzige DOS-Programme für dieses Museum. MUSEUM.COM prüft, ob der Emulator startet; PAINT.COM ist ein kleines Malprogramm zum Testen der Maus: Links malt, rechts wechselt die Farbe.",
         "fr": "Deux minuscules programmes DOS créés pour ce musée. MUSEUM.COM vérifie que l'émulateur démarre ; PAINT.COM est un petit logiciel de dessin pour tester la souris : clic gauche pour dessiner, clic droit pour changer de couleur."
-      }
+      },
+      "pinned": true
     },
     {
       "id": "beneath-a-steel-sky",
@@ -99,5 +100,8 @@
         "fr": "Les débuts de Virtual Theatre, aujourd'hui freeware. Nécessite les fichiers DOS d'origine."
       }
     }
-  ]
+  ],
+  "catalogue": {
+    "filtersFrom": 8
+  }
 }

@@ -18,6 +18,9 @@ python3 -m http.server -d dist 8000   # http://localhost:8000/es/
 npm install && npx playwright install chromium   # una vez, para las pruebas
 npm test                         # pruebas de humo sobre dist/ (requiere build previo)
 python3 tools/export_artifact.py --out /tmp/artifact   # copia para publicar como Artifact de claude.ai
+python3 tools/add_game.py ~/Downloads/*.zip [--yes]   # añade juegos DOS locales (no versionados)
+python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
+python3 build.py --no-local      # build público sin la colección local
 python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/games/x.jsdos
 python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
 nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el programa DOS de prueba
@@ -35,7 +38,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `data/i18n/<lang>.json` | textos de interfaz; claves `page_<id>_title` y `page_<id>_meta` por página |
 | `data/timeline.json`, `studios.json`, `engines.json`, `techniques.json`, `hero.json` | contenido de las salas |
 | `data/minigames/*.json` | los cuatro minijuegos (reglas, escenas, textos, parámetros) |
-| `data/arcade.json` | emulador y lista de juegos DOS |
+| `data/arcade.json` | emulador y juegos DOS versionados; `catalogue.filtersFrom` = nº de juegos a partir del que aparecen los filtros |
+| `data/arcade.local.json` + `assets/games/` | colección local creada por `tools/add_game.py` (**ignorada por git**, nunca la añadas) |
 | `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos |
 | `src/layout.html` | plantilla común; `src/pages/<id>.html` contenido de cada página |
 | `src/js/core.js` | datos, i18n `t()`, sonido, puntuación `award()`, modal, utilidades |
@@ -60,8 +64,9 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 6. **Estética:** pixel art, `image-rendering: pixelated`, paleta de tokens en `:root` de `style.css`,
    fuentes Press Start 2P (títulos) y VT323 (texto). Nada de emoji como iconos. Respeta `prefers-reduced-motion`.
 7. **Responsive:** ninguna página puede desbordar en horizontal (iPhone SE incluido). `npm test` lo comprueba.
-8. **Legalidad:** nada de juegos comerciales ni recreaciones de juegos existentes. Solo freeware/dominio público
-   redistribuible en `assets/games/`. Los minijuegos y gráficos son originales.
+8. **Legalidad:** nada de juegos comerciales ni recreaciones de juegos existentes en el repositorio. La colección
+   personal del usuario va en `assets/games/` y `data/arcade.local.json`, que están en `.gitignore`: no los fuerces
+   con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos son originales.
 9. **Enlaces externos:** a Wikipedia o a webs oficiales; `target="_blank" rel="noopener"`. Verifica que existen.
 10. **SEO:** cada página nueva necesita título, descripción, entrada en `site.json → pages` y queda en el sitemap.
 

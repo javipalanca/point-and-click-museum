@@ -71,11 +71,41 @@ def load_all() -> dict:
             "hunt": load("minigames/pixel-hunt.json"),
             "chronology": load("minigames/chronology.json"),
         },
-        "arcade": load("arcade.json"),
+        "arcade": load_arcade(),
         "sprites": load("sprites.json"),
         "characters": load("characters.json"),
         "font": load("pixelfont.json"),
     }
+
+
+LOCAL_ARCADE = DATA / "arcade.local.json"   # games added with tools/add_game.py (not versioned)
+INCLUDE_LOCAL = True                         # switched off by --no-local
+
+
+def load_arcade() -> dict:
+    """data/arcade.json plus, if present, the local catalogue written by tools/add_game.py."""
+    arcade = load("arcade.json")
+    if INCLUDE_LOCAL and LOCAL_ARCADE.exists():
+        ids = {g["id"] for g in arcade["games"]}
+        for g in json.loads(LOCAL_ARCADE.read_text("utf-8")).get("games", []):
+            if g["id"] in ids:
+                print(f"warning: arcade.local.json: id {g['id']} already exists, skipped", file=sys.stderr)
+            elif not (ROOT / "assets" / g["bundle"]).exists():
+                print(f"warning: arcade.local.json: {g['id']} has no bundle at assets/{g['bundle']}, skipped", file=sys.stderr)
+            else:
+                arcade["games"].append(dict(g, local=True))
+                ids.add(g["id"])
+    return arcade
+
+
+ARTICLES = re.compile(r"^(the|a|an|el|la|los|las|le|les|l'|der|die|das)\s+", re.I)
+
+
+def sort_key(title: str) -> str:
+    """'The Secret of Monkey Island' -> 'secret of monkey island' (for sorting and the A–Z index)"""
+    import unicodedata
+    t = unicodedata.normalize("NFKD", title).encode("ascii", "ignore").decode().strip()
+    return ARTICLES.sub("", t).lower()
 
 
 def is_localized(v, langs) -> bool:
@@ -171,7 +201,7 @@ def validate(d: dict) -> list[str]:
 
     for g in d["arcade"]["games"]:
         b = g.get("bundle")
-        if b and not b.startswith("http") and b != "games/museum-demo.jsdos" and not (ROOT / "assets" / b).exists():
+        if b and not g.get("local") and not b.startswith("http") and b != "games/museum-demo.jsdos" and not (ROOT / "assets" / b).exists():
             errors.append(f"arcade: {g['id']} bundle not found at assets/{b}")
 
     ids = [p["id"] for p in site["pages"]]
@@ -458,17 +488,44 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
 
     A = L["arcade"]
     b["arcadeIntro"] = E(A["intro"])
+    games = sorted(A["games"], key=lambda g: (0 if g.get("pinned") else 1, sort_key(g["title"])))
     items = []
-    for g in A["games"]:
+    for g in games:
+        key = sort_key(g["title"])
+        letter = key[:1].upper() if key[:1].isalpha() else "#"
         action = (f'<button class="pbtn small dos-play" type="button" data-id="{E(g["id"])}">{E(ui["arcadePlay"])}</button>' if g.get("bundle")
                   else f'<span class="chip warn">{E(ui["arcadeNeedsBundle"])}</span>')
         if g.get("source"):
             action += f' <a class="ext" href="{E(g["source"])}" rel="noopener" target="_blank">{E(ui["arcadeSource"])} ↗</a>'
+        meta = " · ".join(x for x in (str(g["year"]) if g.get("year") else "", E(g.get("studio") or "")) if x)
+        chips = (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") else "")
         items.append(
-            f'<article class="px dos-game"><img src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">'
-            f'<h3>{E(g["title"])}</h3><div class="meta">{g["year"]} · {E(g["studio"])} <span class="chip">{E(g["license"])}</span></div>'
+            f'<article class="px dos-game" data-id="{E(g["id"])}" data-key="{E(key)}" data-letter="{letter}" '
+            f'data-studio="{E(g.get("studio") or "")}" data-year="{g.get("year") or 9999}">'
+            f'<img src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">'
+            f'<h3>{E(g["title"])}</h3><div class="meta">{meta} {chips}</div>'
             f'<p>{E(g["desc"])}</p><div class="row">{action}</div></article>')
     b["arcadeGames"] = "".join(items)
+    b["arcadeCount"] = E(ui["catCount"].format(n=len(games), total=len(games)))
+    tools = ""
+    if len(games) >= A.get("catalogue", {}).get("filtersFrom", 8):
+        studios = sorted({g.get("studio") for g in games if g.get("studio") and g.get("studio") != "—"}, key=str.lower)
+        letters = {(k[:1].upper() if k[:1].isalpha() else "#") for k in (sort_key(g["title"]) for g in games)}
+        tools = (
+            '<div class="cat-tools">'
+            f'<label class="vh" for="catSearch">{E(ui["catSearch"])}</label>'
+            f'<input type="search" id="catSearch" placeholder="{E(ui["catSearch"])}" autocomplete="off">'
+            '<div class="row">'
+            f'<label class="vh" for="catStudio">{E(ui["catAllStudios"])}</label><select id="catStudio"><option value="">{E(ui["catAllStudios"])}</option>'
+            + "".join(f'<option value="{E(st)}">{E(st)}</option>' for st in studios) + "</select>"
+            f'<label class="vh" for="catSort">{E(ui["catSortTitle"])}</label><select id="catSort">'
+            f'<option value="title">{E(ui["catSortTitle"])}</option><option value="year">{E(ui["catSortYear"])}</option></select></div>'
+            f'<nav class="letters" aria-label="{E(ui["catLetters"])}"><button type="button" data-l="" aria-pressed="true">{E(ui["catAllLetters"])}</button>'
+            + "".join(f'<button type="button" data-l="{c}" aria-pressed="false"{"" if c in letters else " disabled"}>{c}</button>'
+                      for c in ["#"] + [chr(x) for x in range(65, 91)])
+            + "</nav></div>")
+    b["arcadeTools"] = tools
+    b["catClass"] = "cat-list compact" if tools else "cat-list"
 
     # structured data
     page_url = S.abs(lang, pid)
@@ -571,9 +628,13 @@ def main() -> int:
                     help="'dir' links to es/timeline/, 'file' links to es/timeline/index.html")
     ap.add_argument("--inline-bundles", action="store_true",
                     help="also pack local .jsdos bundles into games/bundles.js (for hosts that refuse .zip files)")
+    ap.add_argument("--no-local", action="store_true",
+                    help="leave out the games in data/arcade.local.json (use it for public builds)")
     ap.add_argument("--check", action="store_true", help="only validate the data")
     args = ap.parse_args()
 
+    global INCLUDE_LOCAL
+    INCLUDE_LOCAL = not args.no_local
     d = load_all()
     args.base_url = args.base_url or d["site"]["baseUrl"]
     errors = validate(d)
@@ -595,7 +656,11 @@ def main() -> int:
     if vendored:
         shutil.copytree(ROOT / "vendor/js-dos", out / "vendor/js-dos")
     if (ROOT / "assets").exists():
-        shutil.copytree(ROOT / "assets", out, dirs_exist_ok=True)
+        keep = {g["bundle"] for g in d["arcade"]["games"] if g.get("bundle")}
+        def skip(folder, names):  # never copy bundles that are not in the catalogue (e.g. local games with --no-local)
+            rel = Path(folder).relative_to(ROOT / "assets").as_posix()
+            return [n for n in names if n.endswith(".jsdos") and f"{rel}/{n}".lstrip("./") not in keep]
+        shutil.copytree(ROOT / "assets", out, dirs_exist_ok=True, ignore=skip)
     (out / "games").mkdir(exist_ok=True)
     (out / "games/museum-demo.jsdos").write_bytes(museum_demo_bundle())
     write_images(d, out)

@@ -168,5 +168,15 @@
  "page_arcade_meta": "Juega aventuras de MS-DOS en el navegador con DOSBox (js-dos), con captura de ratón y carga de tus propias copias.",
  "page_home_title": "Point and Click Museum · Historia de las aventuras gráficas",
  "page_home_meta": "Museo interactivo en pixel art sobre la historia de las aventuras gráficas: de Colossal Cave y Zork a Monkey Island y las novedades actuales. Línea temporal, estudios, motores, técnicas, minijuegos y DOSBox en el navegador.",
- "navHere_home": "Estás en la entrada"
+ "navHere_home": "Estás en la entrada",
+ "catTitle": "Catálogo",
+ "catSearch": "Buscar juego o compañía",
+ "catAllStudios": "Todas las compañías",
+ "catSortTitle": "Orden: A–Z",
+ "catSortYear": "Orden: año",
+ "catLetters": "Índice alfabético",
+ "catAllLetters": "Todas",
+ "catCount": "{n} de {total} juegos",
+ "catEmpty": "No hay juegos que coincidan con la búsqueda.",
+ "catLocal": "LOCAL"
 }

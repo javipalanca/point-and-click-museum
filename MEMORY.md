@@ -55,6 +55,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **2026-11-02 · Skills de terceros vendorizadas** desde repositorios de skills.sh (Anthropic, Vercel, Corey Haines),
   fijadas a un commit y revisadas; `web-design-guidelines` usa una copia local de las reglas en vez de descargarlas.
   skills.sh no era accesible desde la sesión en la nube: se clonaron los repositorios de GitHub.
+- **2026-11-02 · Navegación rediseñada** (petición del usuario: «tosca, burda y estática»). Sustituye la barra
+  de verbos fija abajo y la barra de estado de papel:
+  cabecera fija como un pasillo de puertas (icono + «Sala n» + nombre; la puerta de la sala actual está encendida con
+  luz ámbar), en dos filas en todos los anchos de escritorio/tableta (seis salas más las herramientas no caben en una
+  ni a 1820 px) y compacta al hacer scroll; submenú de minijuegos (hover en escritorio, botón en táctil);
+  puntuación con barra de progreso; menú de idioma; «Plano del museo» como plano arquitectónico (rejilla de
+  3 columnas con paredes y puertas, 2 columnas en tableta y un pasillo vertical en móvil) con «Estás aquí» y salas
+  visitadas; en móvil las puertas, idiomas y ajustes viven en el plano. Franja fija «En esta sala» con scroll-spy en
+  la cronología (épocas) y en técnicas (demos). Pie con directorio de salas, minijuegos e idiomas.
 - **2026-11-01 · Catálogo de la sala DOSBox** con buscador, filtro por compañía, índice A–Z (sin artículos iniciales)
   y orden por título/año, visible a partir de 8 juegos (`arcade.json → catalogue.filtersFrom`); tarjetas compactas.
 
@@ -88,3 +97,4 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - 2026-11-01 · v5: `tools/add_game.py` para añadir juegos desde zips, colección local ignorada por git y catálogo con filtros.
 - 2026-11-01 · v6: soporte de ScummVM web (script de compilación, reproductor, detección de motor, freeware en el catálogo).
 - 2026-11-02 · v7: paleta más luminosa, transiciones clásicas entre páginas y skills de terceros.
+- 2026-11-02 · v8: navegación nueva (pasillo de puertas, plano del museo, franja «En esta sala», pie con directorio).

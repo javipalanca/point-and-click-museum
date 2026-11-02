@@ -69,12 +69,19 @@ window.PCM = (() => {
     else if (kind === "win") [392, 523, 659, 784, 659, 1047].forEach((f, i) => tone(f, 0.14, "triangle", 0.08, i * 0.11));
     else if (kind === "type") tone(1200 + Math.random() * 300, 0.015, "square", 0.015);
   }
-  const sndBtn = $("#sndBtn"), crtBtn = $("#crtBtn");
-  sndBtn.setAttribute("aria-pressed", soundOn);
-  sndBtn.addEventListener("click", () => { soundOn = !soundOn; store("snd", soundOn); sndBtn.setAttribute("aria-pressed", soundOn); sfx("click"); });
+  /* sound and CRT switches: every [data-toggle] button on the page (header and map panel) */
   let crtOn = store("crt") !== false;
-  document.body.classList.toggle("crt", crtOn); crtBtn.setAttribute("aria-pressed", crtOn);
-  crtBtn.addEventListener("click", () => { crtOn = !crtOn; store("crt", crtOn); document.body.classList.toggle("crt", crtOn); crtBtn.setAttribute("aria-pressed", crtOn); sfx("click"); });
+  function renderToggles() {
+    $$('[data-toggle="sound"]').forEach(b => b.setAttribute("aria-pressed", soundOn));
+    $$('[data-toggle="crt"]').forEach(b => b.setAttribute("aria-pressed", crtOn));
+    document.body.classList.toggle("crt", crtOn);
+  }
+  $$("[data-toggle]").forEach(b => b.addEventListener("click", () => {
+    if (b.dataset.toggle === "sound") { soundOn = !soundOn; store("snd", soundOn); }
+    else { crtOn = !crtOn; store("crt", crtOn); }
+    renderToggles(); sfx("click");
+  }));
+  renderToggles();
 
   /* ---------- typewriter ---------- */
   function typeText(el, text, speed = 18, done) {
@@ -91,7 +98,11 @@ window.PCM = (() => {
   const awarded = new Set(store("awarded") || []);
   const scoreOf = () => [...awarded].reduce((sum, id) => { const a = SC.awards[id.split(":")[0]]; return sum + (a ? a.points : 0); }, 0);
   let score = Math.min(SC.total, scoreOf());
-  function renderScore() { $("#score").textContent = t("scoreFmt", { score, total: SC.total }); }
+  function renderScore() {
+    $("#score").textContent = t("scoreShort", { score, total: SC.total });
+    const bar = $("#scoreBar"); if (bar) bar.style.width = (100 * score / SC.total) + "%";
+    const chip = $(".score-chip"); if (chip) chip.title = t("scoreFmt", { score, total: SC.total });
+  }
   function toast(msg) { const d = document.createElement("div"); d.textContent = msg; $("#toast").appendChild(d); setTimeout(() => d.remove(), 2700); }
   /* award("timeline", "zork", "Zork") — key must exist in site.json score.awards */
   function award(key, uid, label) {

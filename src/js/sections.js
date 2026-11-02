@@ -396,15 +396,4 @@
     $("#musA").onclick = pick("A"); $("#musB").onclick = pick("B");
   })();
 
-  /* ================= Verb navigation ================= */
-  (() => {
-    const line = $("#navLine"), links = $$(".verbnav a"), here = line.textContent;
-    links.forEach(a => {
-      a.addEventListener("mouseenter", () => { line.textContent = a.dataset.s; });
-      a.addEventListener("focus", () => { line.textContent = a.dataset.s; });
-      a.addEventListener("mouseleave", () => { line.textContent = here; });
-      a.addEventListener("blur", () => { line.textContent = here; });
-      a.addEventListener("click", () => sfx("click"));
-    });
-  })();
 })();

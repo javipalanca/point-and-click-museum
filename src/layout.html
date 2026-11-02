@@ -40,15 +40,27 @@
 <body class="crt page-{{v:pageId}}">
 <a class="skip" href="#main">{{t:skip}}</a>
 
-<header class="status">
-  <a class="brand" href="{{v:homeUrl}}"><img src="{{v:root}}img/favicon-32.png" width="16" height="16" alt="">POINT AND CLICK MUSEUM</a>
-  <span class="score" id="score" aria-live="polite">{{raw:scoreInitial}}</span>
-  <span class="right">
-    <nav class="langs" aria-label="{{t:language}}">{{raw:langLinks}}</nav>
-    <button id="sndBtn" type="button" aria-pressed="true" title="{{t:soundTitle}}">{{t:sound}}</button>
-    <button id="crtBtn" type="button" aria-pressed="true" title="{{t:crtTitle}}">CRT</button>
-  </span>
+<header class="site-header" id="siteHeader">
+  <div class="hd-bar">
+    <a class="brand" href="{{v:homeUrl}}" aria-label="Point and Click Museum · {{t:breadcrumbHome}}">
+      <img src="{{v:root}}img/icon-192.png" width="36" height="36" alt="">
+      <span class="brand-name">Point and Click <b>Museum</b></span>
+    </a>
+    <nav class="doors" aria-label="{{t:roomsNav}}"><ul>{{raw:primaryNav}}</ul></nav>
+    <div class="hd-tools">
+      <a class="score-chip" href="{{v:homeUrl}}" title="{{raw:scoreTitle}}">
+        <img src="{{v:root}}img/sprites/coin.png" width="20" height="20" alt="">
+        <span id="score" aria-live="polite">{{raw:scoreInitial}}</span>
+        <span class="score-bar" aria-hidden="true"><span id="scoreBar"></span></span>
+      </a>
+      {{raw:langMenu}}
+      <button class="tool" type="button" data-toggle="sound" aria-pressed="true" title="{{t:soundTitle}}" aria-label="{{t:soundOnLabel}}"><img src="{{v:root}}img/sprites/speaker.png" width="22" height="22" alt=""></button>
+      <button class="tool" type="button" data-toggle="crt" aria-pressed="true" title="{{t:crtTitle}}" aria-label="{{t:crtLabel}}"><img src="{{v:root}}img/sprites/crt.png" width="22" height="22" alt=""></button>
+      <button class="map-btn" type="button" id="mapBtn" aria-controls="mapPanel" aria-expanded="false"><img src="{{v:root}}img/sprites/map.png" width="22" height="22" alt=""><span>{{t:mapOpen}}</span></button>
+    </div>
+  </div>
 </header>
+{{raw:subnav}}
 <div class="lang-hint" id="langHint" hidden></div>
 
 <main id="main">
@@ -58,17 +70,32 @@
 </main>
 
 <footer class="site-footer">
-  <div class="wrap">
-    <nav class="footer-map" aria-label="{{t:mapTitle}}">{{raw:footerMap}}</nav>
-    <p>{{t:footer}}</p>
-    <div class="row">{{raw:footerLangs}}</div>
+  <div class="wrap footer-grid">
+    <nav aria-labelledby="ft-rooms"><h2 id="ft-rooms">{{t:footerRooms}}</h2><ul>{{raw:footerRooms}}</ul></nav>
+    <nav aria-labelledby="ft-games"><h2 id="ft-games">{{t:footerGames}}</h2><ul>{{raw:footerGames}}</ul></nav>
+    <nav aria-labelledby="ft-langs"><h2 id="ft-langs">{{t:language}}</h2><ul>{{raw:footerLangs}}</ul></nav>
+    <div class="ft-about"><h2>{{t:footerAbout}}</h2><p>{{t:footer}}</p></div>
   </div>
 </footer>
 
-<nav class="verbnav" aria-label="{{t:roomsNav}}">
-  <div class="line" id="navLine">{{v:navHere}}</div>
-  <ul>{{raw:verbnav}}</ul>
-</nav>
+<div class="map-panel" id="mapPanel" role="dialog" aria-modal="true" aria-labelledby="mapTitle" hidden>
+  <div class="map-inner">
+    <div class="map-head">
+      <h2 id="mapTitle">{{t:mapTitle}}</h2>
+      <p class="map-visited" id="mapVisited"></p>
+      <button class="map-close" type="button" id="mapClose" aria-label="{{t:mapClose}}">×</button>
+    </div>
+    <nav class="plan" aria-label="{{t:mapTitle}}">{{raw:mapPlan}}</nav>
+    <div class="map-settings">
+      <h3>{{t:settings}}</h3>
+      <div class="row">{{raw:mapLangs}}</div>
+      <div class="row">
+        <button class="pbtn small" type="button" data-toggle="sound" aria-pressed="true">{{t:soundOnLabel}}</button>
+        <button class="pbtn small" type="button" data-toggle="crt" aria-pressed="true">{{t:crtLabel}}</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-labelledby="mTitle">
   <div class="px pmodal" id="modal"></div>
@@ -78,6 +105,7 @@
 <script id="pcm-data" type="application/json">{{raw:data}}</script>
 <script src="{{v:root}}js/core.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/transitions.js?v={{v:build}}" defer></script>
+<script src="{{v:root}}js/nav.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/characters.js?v={{v:build}}" defer></script>
 {{raw:scripts}}
 </body>

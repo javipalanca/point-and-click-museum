@@ -49,11 +49,13 @@ La aventura de texto y la sala de verbos comparten un motor de reglas (`src/js/r
 Condiciones: `flag`, `!flag`, `has:objeto`, `room:sala`, `count:contador>=2`.
 Efectos: `set:`, `unset:`, `give:`, `remove:`, `drop:`, `inc:`, `award:`, `sound:`, `look`, `win`.
 
-## Páginas
+## Páginas y navegación
 
 Cada sala es una página propia (`/es/timeline/`, `/es/studios/`, `/es/engines/`, `/es/techniques/`, `/es/arcade/`) y cada
-minijuego también (`/es/games/pixel-hunt/`…). Hay migas de pan, sala anterior/siguiente, plano del museo en la portada y
-la barra de verbos enlaza las salas. Para añadir una página: entrada en `site.json` → `pages`, plantilla en
+minijuego también (`/es/games/pixel-hunt/`…). La cabecera es un pasillo de puertas (la de la sala actual está
+encendida) con la puntuación, el idioma y los ajustes; el botón «Plano» abre el plano del museo con las salas
+visitadas y «Estás aquí». Las páginas largas tienen una franja «En esta sala» que marca la sección que lees, y todas
+tienen migas de pan y sala anterior/siguiente. En móvil las salas, idiomas y ajustes están dentro del plano. Para añadir una página: entrada en `site.json` → `pages`, plantilla en
 `src/pages/<id>.html` y textos `page_<id>_title` / `page_<id>_meta` en cada `data/i18n/<idioma>.json`.
 
 La escena de la sala de restauración se describe con primitivas (`r`, `stripes`, `grad`, `books`, `sprite`, `glow`, `px`);

@@ -108,6 +108,36 @@ function serve() {
     await page.close();
   }
 
+  console.log("Navigation: doors, games submenu, museum map, in-this-room strip");
+  {
+    const page = await ctx.newPage(); const errs = [];
+    page.on("pageerror", e => errs.push(e.message));
+    await page.goto(`${base}/es/techniques/`);
+    (await page.getAttribute(".door.here .door-link", "aria-current")) === "page" ? ok("current room's door is lit") : fail("no current door");
+    await page.click(".sub-toggle");
+    (await page.isVisible("#sub-games a")) ? ok("games submenu opens with its button") : fail("games submenu");
+    await page.keyboard.press("Escape");
+    await page.mouse.move(5, 700);   // on desktop the submenu also opens on hover
+    (await page.isHidden("#sub-games")) ? ok("Escape closes the submenu") : fail("submenu stays open");
+    await page.click('.subnav a[href="#tech-music"]');
+    await page.waitForTimeout(900);
+    (await page.getAttribute('.subnav a[href="#tech-music"]', "aria-current")) === "true" ? ok("strip highlights the section in view") : fail("subnav scroll-spy");
+    await page.click("#mapBtn");
+    (await page.isVisible("#mapPanel")) ? ok("map opens") : fail("map does not open");
+    (await page.textContent(".plan-room.here .plan-room-name")).length ? ok("map shows where you are") : fail("no here marker");
+    /\d/.test(await page.textContent("#mapVisited")) ? ok("map counts visited rooms") : fail("visited count");
+    await page.keyboard.press("Escape");
+    (await page.isHidden("#mapPanel")) ? ok("Escape closes the map") : fail("map stays open");
+    errs.length ? fail("navigation errors: " + errs.join(" | ")) : ok("no errors");
+    await page.close();
+    const phone = await (await browser.newContext({ ...devices["iPhone SE"] })).newPage();
+    await phone.goto(`${base}/fr/timeline/`);
+    (await phone.isHidden(".doors")) && (await phone.isVisible("#mapBtn")) ? ok("phones: doors move into the map") : fail("phone header");
+    await phone.click("#mapBtn");
+    (await phone.isVisible('.map-settings [data-toggle="sound"]')) ? ok("phones: settings inside the map") : fail("phone map settings");
+    await phone.close();
+  }
+
   console.log("Screen transitions between pages");
   {
     const page = await ctx.newPage(); const errs = [];

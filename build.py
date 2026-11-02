@@ -372,25 +372,80 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
     eras = {e["id"]: e for e in tl["eras"]}
     u = lambda target: S.url(lang, target, depth)
     b = {}
-    b["langLinks"] = "".join(
-        f'<a href="{E(S.url(l["code"], pid, depth))}" hreflang="{l["code"]}" lang="{l["code"]}" title="{E(l["name"])}"'
-        + (' aria-current="true"' if l["code"] == lang else "") + f'>{E(l["label"])}</a>' for l in site["languages"])
-    b["footerLangs"] = E(ui["otherLanguages"]) + " " + " · ".join(
-        f'<a href="{E(S.url(l["code"], pid, depth))}" hreflang="{l["code"]}" lang="{l["code"]}">{E(l["name"])}</a>'
-        for l in site["languages"] if l["code"] != lang)
+    lang_url = lambda code: S.url(code, pid, depth)
+    current = next(l for l in site["languages"] if l["code"] == lang)
+    b["langMenu"] = (
+        f'<details class="lang-menu"><summary aria-label="{E(ui["language"])}: {E(current["name"])}">'
+        f'<img src="{root}img/sprites/globe.png" width="20" height="20" alt=""><span>{E(current["label"])}</span></summary><ul>'
+        + "".join(f'<li><a href="{E(lang_url(l["code"]))}" hreflang="{l["code"]}" lang="{l["code"]}"'
+                  + (' aria-current="true"' if l["code"] == lang else "") + f'>{E(l["name"])}</a></li>' for l in site["languages"])
+        + "</ul></details>")
+    b["mapLangs"] = "".join(
+        f'<a class="pbtn small" href="{E(lang_url(l["code"]))}" hreflang="{l["code"]}" lang="{l["code"]}"'
+        + (' aria-current="true"' if l["code"] == lang else "") + f'>{E(l["name"])}</a>' for l in site["languages"])
+    b["footerLangs"] = "".join(
+        f'<li><a href="{E(lang_url(l["code"]))}" hreflang="{l["code"]}" lang="{l["code"]}"'
+        + (' aria-current="true"' if l["code"] == lang else "") + f'>{E(l["name"])}</a></li>' for l in site["languages"])
     b["alternates"] = "\n".join(
         [f'<link rel="alternate" hreflang="{l}" href="{S.abs(l, pid)}">' for l in langs]
         + [f'<link rel="alternate" hreflang="x-default" href="{S.abs(site["defaultLanguage"], pid)}">'])
     locales = {l["code"]: l["locale"] for l in site["languages"]}
     b["ogAlternates"] = "\n".join(f'<meta property="og:locale:alternate" content="{locales[l]}">' for l in langs if l != lang)
-    b["scoreInitial"] = E(ui["scoreFmt"].format(score=0, total=site["score"]["total"]))
+    b["scoreInitial"] = E(ui["scoreShort"].format(score=0, total=site["score"]["total"]))
 
     active = page.get("parent", pid)
-    b["verbnav"] = "".join(
-        f'<li><a href="{E(u(n))}" data-s="{E(ui["navS_" + n])}"' + (' class="here" aria-current="page"' if n == active else "")
-        + f'>{E(ui["nav_" + n])}</a></li>' for n in site["nav"])
-    b["footerMap"] = "".join(f'<a href="{E(u(p["id"]))}">{E(page_title(ui, p["id"]) if p["id"] != "home" else ui["breadcrumbHome"])}</a>'
-                             for p in S.pages)
+    games = [p for p in S.pages if p.get("parent") == "games"]
+    room_label = lambda n: ui["roomFmt"].format(n=S.by_id[n]["room"]) if S.by_id[n].get("room") else ""
+
+    def door(n):
+        here = n == active
+        link = (f'<a class="door-link" href="{E(u(n))}"' + (' aria-current="page"' if here else "") + ">"
+                f'<img src="{root}img/sprites/{S.by_id[n]["icon"]}.png" width="24" height="24" alt="">'
+                f'<span class="door-text"><span class="door-room">{E(room_label(n))}</span>'
+                f'<span class="door-name">{E(ui["navLabel_" + n])}</span></span></a>')
+        if n != "games":
+            return f'<li class="door{" here" if here else ""}">{link}</li>'
+        sub = "".join(
+            f'<li><a href="{E(u(g["id"]))}"' + (' aria-current="page"' if g["id"] == pid else "") + ">"
+            f'<img src="{root}img/sprites/{g["icon"]}.png" width="24" height="24" alt="">'
+            f'<span><b>{E(page_title(ui, g["id"]))}</b><small>{E(ui["page_" + g["id"] + "_meta"])}</small></span></a></li>'
+            for g in games)
+        return (f'<li class="door has-sub{" here" if here else ""}">{link}'
+                f'<button class="sub-toggle" type="button" aria-expanded="false" aria-controls="sub-{n}" '
+                f'aria-label="{E(ui["submenuFor"].format(name=ui["navLabel_" + n]))}"><span aria-hidden="true">▾</span></button>'
+                f'<div class="sub" id="sub-{n}"><ul>{sub}</ul></div></li>')
+    b["primaryNav"] = "".join(door(n) for n in site["nav"])
+
+    # floor plan of the museum (map panel)
+    def tile(n, extra=""):
+        here = n == active or (n == "home" and pid == "home")
+        title = ui["breadcrumbHome"] if n == "home" else page_title(ui, n)
+        caption = ui["mapHomeCaption"] if n == "home" else ui["navS_" + n]
+        return (f'<div class="plan-room plan-{n}{" here" if here else ""}" data-page="{n}">'
+                f'<a href="{E(u(n))}"' + (' aria-current="page"' if here else "") + ">"
+                f'<img src="{root}img/sprites/{S.by_id[n]["icon"]}.png" width="32" height="32" alt="">'
+                f'<span class="plan-room-no">{E(room_label(n)) if n != "home" else ""}</span>'
+                f'<span class="plan-room-name">{E(title)}</span><span class="plan-caption">{E(caption)}</span>'
+                f'<span class="plan-flags"><span class="here-pin">{E(ui["youAreHere"])}</span>'
+                f'<span class="visited-mark">{E(ui["visited"])}</span></span></a>{extra}</div>')
+    games_list = '<ul class="plan-sub">' + "".join(
+        f'<li><a href="{E(u(g["id"]))}"' + (' aria-current="page"' if g["id"] == pid else "") + ">"
+        f'<img src="{root}img/sprites/{g["icon"]}.png" width="20" height="20" alt="">{E(page_title(ui, g["id"]))}</a></li>' for g in games) + "</ul>"
+    b["mapPlan"] = "".join(tile(n, games_list if n == "games" else "") for n in site["nav"]) + tile("home")
+    b["footerRooms"] = "".join(f'<li><a href="{E(u(n))}">{E(page_title(ui, n) if n != "home" else ui["breadcrumbHome"])}</a></li>'
+                               for n in ["home"] + site["nav"])
+    b["footerGames"] = "".join(f'<li><a href="{E(u(g["id"]))}">{E(page_title(ui, g["id"]))}</a></li>' for g in games)
+    b["scoreTitle"] = E(ui["scoreFmt"].format(score=0, total=site["score"]["total"]))
+
+    # "in this room": jump links to the sections of long pages
+    sections = []
+    if pid == "timeline":
+        sections = [(f"era-{e['id']}", e["name"]) for e in tl["eras"]]
+    elif pid == "techniques":
+        T0 = L["techniques"]
+        sections = [("tech-interface", ui["interfaceTitle"])] + [(f"tech-{k}", T0["demos"][k]["title"]) for k in ("cycle", "dither", "parallax", "music")] + [("tech-ideas", ui["ideasTitle"])]
+    b["subnav"] = (f'<nav class="subnav" aria-label="{E(ui["onThisPage"])}"><div class="subnav-inner"><span class="subnav-label">{E(ui["onThisPage"])}</span><ul>'
+                   + "".join(f'<li><a href="#{a}">{E(t)}</a></li>' for a, t in sections) + "</ul></div></nav>") if sections else ""
 
     # header of every room page: breadcrumb + room number + h1
     crumbs = [("home", ui["breadcrumbHome"])]
@@ -402,7 +457,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         + "".join(f'<li><a href="{E(u(c))}">{E(n)}</a></li>' for c, n in crumbs)
         + f'<li aria-current="page">{E(page_title(ui, pid))}</li></ol></nav>'
         + f'<div class="page-head"><img src="{root}img/sprites/{page["icon"]}.png" width="48" height="48" alt="">'
-        + (f'<span class="room">{E(ui["room"])} {room}</span>' if room else "")
+        + (f'<span class="room">{E(ui["roomFmt"].format(n=room))}</span>' if room else "")
         + f'<h1 id="page-title">{E(page_title(ui, pid))}</h1></div>')
 
     # previous / next room
@@ -426,7 +481,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
 
     def card(target, label, desc, icon, cta, number=None):
         return (f'<a class="px room-card" href="{E(u(target))}"><img src="{root}img/sprites/{icon}.png" width="48" height="48" alt="">'
-                + (f'<span class="room">{E(ui["room"])} {number}</span>' if number else "")
+                + (f'<span class="room">{E(ui["roomFmt"].format(n=number))}</span>' if number else "")
                 + f'<h3>{E(label)}</h3><p>{E(desc)}</p><span class="go">{E(cta)} ▶</span></a>')
     b["roomCards"] = "".join(card(n, page_title(ui, n), ui[f"page_{n}_meta"], S.by_id[n]["icon"], ui["enterRoom"], S.by_id[n].get("room")) for n in site["nav"])
     b["gameCards"] = "".join(card(p["id"], page_title(ui, p["id"]), ui[f"page_{p['id']}_meta"], p["icon"], ui["playGame"])
@@ -582,6 +637,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     blocks = render_blocks(S, page, lang, L, ui, depth)
     data = {
         "lang": lang, "root": root, "isRoot": is_root, "page": pid, "ui": ui,
+        "nav": site["nav"], "gamePages": [p["id"] for p in S.pages if p.get("parent") == "games"],
         "site": {"score": site["score"]}, "transitions": site.get("transitions", {}), "sprites": d["sprites"], "font": d["font"], "characters": d["characters"],
         "arcadeVendored": vendored,
         "svm": dict(svm or {"available": False}, base=f"{'../' * Site.depth(page, is_root)}scummvm/"),
@@ -621,7 +677,6 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
         "homeUrl": S.url(lang, "home", depth), "build": build_id, "pageId": pid,
         "title": ui["metaTitle"] if pid == "home" else f'{page_title(ui, pid)} · {site["name"]}',
         "description": ui[f"page_{pid}_meta"],
-        "navHere": ui["navHereFmt"].format(place=ui["breadcrumbHome"] if pid == "home" else page_title(ui, pid)),
     }
     pat = re.compile(r"\{\{(t|v|raw):([\w-]+)\}\}")
     content = pat.sub(lambda m: sub(m, vars_), (SRC / "pages" / f"{pid}.html").read_text("utf-8"))

@@ -48,6 +48,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/rules.js` | motor de reglas de los minijuegos |
 | `src/js/scene.js` | primitivas de escena y desván procedural de la caza del píxel |
 | `src/js/characters.js` | personajes animados |
+| `src/js/nav.js` | navegación: cabecera de puertas, submenú de minijuegos, menú de idioma, plano del museo, salas visitadas y franja «En esta sala» |
 | `src/js/transitions.js` | transiciones entre páginas (iris, estrella, disolución, fundido tramado…); config en `site.json → transitions` |
 | `src/js/sections.js`, `games.js`, `arcade.js` | lógica de cada página (cada bloque se activa solo si existe su elemento) |
 | `src/scummvm/player.*` | reproductor de ScummVM (iframe): copia datos y juego al sistema de ficheros de Emscripten |
@@ -77,6 +78,10 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
    con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos son originales.
 9. **Enlaces externos:** a Wikipedia o a webs oficiales; `target="_blank" rel="noopener"`. Verifica que existen.
 10. **SEO:** cada página nueva necesita título, descripción, entrada en `site.json → pages` y queda en el sitemap.
+11. **Navegación:** las salas salen de `site.json → nav` (puertas de la cabecera, plano del museo y pie) con su etiqueta
+    corta `navLabel_<id>`; los minijuegos cuelgan de `games` (`parent`). Para una sala larga, añade sus anclas a la
+    franja «En esta sala» en `render_blocks()` de `build.py` (bloque `subnav`). Etiquetas en minúsculas de frase,
+    sin versalitas decorativas.
 
 ## Convenciones de commits
 

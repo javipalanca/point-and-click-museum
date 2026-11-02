@@ -41,6 +41,11 @@
   "flashlightOn": ["...........y", "..........y.", "............", "..sss......y", ".sddsssssssy", ".sdyyyyssssy", ".sddssssssy.", "..sss.....y.", "..........y.", "...........y", "............", "............"],
   "remote": ["............", "....kkkk....", "....krrk....", "....kkkk....", "....kwwk....", "....kwwk....", "....kkkk....", "....kwwk....", "....kwwk....", "....kkkk....", "............", "............"],
   "batteries": ["............", "............", "...k..k.....", "..ggg.ggg...", "..ggg.ggg...", "..ggg.ggg...", "..kkk.kkk...", "..kkk.kkk...", "..kkk.kkk...", "..kkk.kkk...", "............", "............"],
-  "key": ["............", "............", "..yyy.......", ".y...y......", ".y...yyyyyy.", ".y...y..y.y.", "..yyy...y.y.", "............", "............", "............", "............", "............"]
+  "key": ["............", "............", "..yyy.......", ".y...y......", ".y...yyyyyy.", ".y...y..y.y.", "..yyy...y.y.", "............", "............", "............", "............", "............"],
+  "speaker": ["............", ".....w......", "....ww...y..", ".wwwyw..y...", ".wyyyw.y..y.", ".wyyyw.y..y.", ".wyyyw.y..y.", ".wwwyw..y...", "....ww...y..", ".....w......", "............", "............"],
+  "crt": ["............", ".wwwwwwwwww.", ".wkkkkkkkkw.", ".wkcckkkkkw.", ".wkkkkkkkkw.", ".wkkkkkkkkw.", ".wkkkkkkckw.", ".wwwwwwwwww.", "....wwww....", "..wwwwwwww..", "............", "............"],
+  "map": ["............", ".www.yyy.ww.", ".wwwyyyyyww.", ".wrwyyyyyww.", ".wwwyyryyww.", ".wwwyyyyyrw.", ".wwwyyyyyww.", ".wwryyyyyww.", ".wwwyyyyyww.", ".ww.yyy.www.", "............", "............"],
+  "coin": ["............", "...yyyyyy...", "..yywwyyyy..", ".yywyyyyoyy.", ".yywyyyyoyy.", ".yyyyyyyoyy.", ".yyyyyyyoyy.", ".yyyyyyoyyy.", "..yyyooyyy..", "...yyyyyy...", "............", "............"],
+  "globe": ["............", "...cccccc...", "..cgggcccc..", ".cgggggcgcc.", ".ccgggccggc.", ".cccggcccgc.", ".cccgccccgc.", ".ccccccggcc.", "..cccccgcc..", "...cccccc...", "............", "............"]
  }
 }

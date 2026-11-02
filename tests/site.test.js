@@ -108,6 +108,27 @@ function serve() {
     await page.close();
   }
 
+  console.log("Screen transitions between pages");
+  {
+    const page = await ctx.newPage(); const errs = [];
+    page.on("pageerror", e => errs.push(e.message));
+    await page.goto(`${base}/es/`);
+    await page.click(".room-card >> nth=0");
+    await page.waitForTimeout(250);
+    (await page.$(".pcm-wipe.on")) ? ok("closing effect shown when leaving") : fail("no transition when leaving the page");
+    await page.waitForURL(/\/es\/timeline\//);
+    await page.waitForTimeout(1200);
+    !(await page.$(".pcm-wipe.on")) && !(await page.evaluate(() => document.documentElement.classList.contains("pcm-wipe-in")))
+      ? ok("next page opens and the overlay goes away") : fail("overlay stuck after arriving");
+    errs.length ? fail("transition errors: " + errs.join(" | ")) : ok("no errors");
+    await page.close();
+    const rm = await browser.newPage({ reducedMotion: "reduce" });
+    await rm.goto(`${base}/es/`);
+    await rm.click(".room-card >> nth=1");
+    await rm.waitForURL(/\/es\/studios\//, { timeout: 2000 }).then(() => ok("reduced motion: immediate navigation"), () => fail("reduced motion navigation"));
+    await rm.close();
+  }
+
   await browser.close(); srv.close();
   console.log(failures ? `\n${failures} failure(s)` : "\nAll checks passed");
   process.exit(failures ? 1 : 0);

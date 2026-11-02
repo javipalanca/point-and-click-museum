@@ -22,14 +22,14 @@
   /* ================= Hero scene ================= */
   if ($("#heroCanvas")) (() => {
     const cv = $("#heroCanvas"), x = cv.getContext("2d"), W = 320, H = 150;
-    const r = rng(3), stars = Array.from({ length: 90 }, () => ({ x: Math.floor(r() * W), y: Math.floor(r() * 72), p: r() * 6 }));
+    const r = rng(3), stars = Array.from({ length: 70 }, () => ({ x: Math.floor(r() * W), y: Math.floor(r() * 46), p: r() * 6 }));
     const spots = D.hero.hotspots;
     const visitor = PCM.Chars.actor("visitor", 52, 138, 1);
     let hover = null, pending = null, tick = 0, running = false, shoot = -1;
     // static background, drawn once
     const bg = document.createElement("canvas"); bg.width = W; bg.height = H;
     (() => {
-      const b = bg.getContext("2d"), bands = ["#0e0a20", "#140f2e", "#1b1240", "#241857", "#2f1f66"];
+      const b = bg.getContext("2d"), bands = ["#2a2266", "#3a2c7a", "#573a8e", "#8a4f98", "#d6789a"];
       for (let y = 0; y < 112; y++) for (let i = 0; i < W; i++) {
         const k = y / 112 * (bands.length - 1), lo = Math.floor(k), f = k - lo;
         const th = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]][y % 4][i % 4] / 16;
@@ -39,14 +39,14 @@
       const rr = rng(11);
       for (let i = 0; i < W; i += 6 + Math.floor(rr() * 8)) {
         const w = 6 + Math.floor(rr() * 10), h = 10 + Math.floor(rr() * 26);
-        b.fillStyle = "#1c1544"; b.fillRect(i, 104 - h, w, h + 10);
-        b.fillStyle = "#3d2a70"; for (let k = 0; k < 4; k++) if (rr() > 0.5) b.fillRect(i + 1 + Math.floor(rr() * (w - 2)), 104 - h + 2 + Math.floor(rr() * (h - 4)), 1, 1);
+        b.fillStyle = "#3a2c6e"; b.fillRect(i, 104 - h, w, h + 10);
+        b.fillStyle = "#ffcf7a"; for (let k = 0; k < 4; k++) if (rr() > 0.5) b.fillRect(i + 1 + Math.floor(rr() * (w - 2)), 104 - h + 2 + Math.floor(rr() * (h - 4)), 1, 1);
       }
       // hills and trees
-      b.fillStyle = "#150f33"; for (let i = 0; i < W; i++) { const h = 102 - Math.abs(Math.sin(i / 38)) * 12 - Math.sin(i / 9) * 2; b.fillRect(i, Math.round(h), 1, 140); }
+      b.fillStyle = "#2e2462"; for (let i = 0; i < W; i++) { const h = 102 - Math.abs(Math.sin(i / 38)) * 12 - Math.sin(i / 9) * 2; b.fillRect(i, Math.round(h), 1, 140); }
       const tree = (tx, ty, s) => {
-        b.fillStyle = "#0b1f1a"; b.fillRect(tx - 1, ty, 2, 10 * s);
-        for (let j = 0; j < 14 * s; j++) { const w = Math.round((j / (14 * s)) * 9 * s) + 1; b.fillStyle = j % 3 ? "#123a2c" : "#0f2e24"; b.fillRect(tx - Math.floor(w / 2), ty - 14 * s + j, w, 1); }
+        b.fillStyle = "#1f2a3a"; b.fillRect(tx - 1, ty, 2, 10 * s);
+        for (let j = 0; j < 14 * s; j++) { const w = Math.round((j / (14 * s)) * 9 * s) + 1; b.fillStyle = j % 3 ? "#1f5a48" : "#18493b"; b.fillRect(tx - Math.floor(w / 2), ty - 14 * s + j, w, 1); }
       };
       [[14, 118, 1.2], [66, 120, 1], [258, 120, 1], [304, 116, 1.3]].forEach(t => tree(...t));
       // museum body
@@ -61,9 +61,9 @@
       // steps
       for (let k = 0; k < 4; k++) { b.fillStyle = k % 2 ? "#a8a4c4" : "#d8d2ea"; b.fillRect(bx - 8 - k * 3, 129 + k * 2, bw + 16 + k * 6, 2); }
       // ground and pavement
-      b.fillStyle = "#231b47"; b.fillRect(0, 137, W, 13);
-      b.fillStyle = "#2f2559"; for (let i = 0; i < W; i += 14) b.fillRect(i + ((i / 14) % 2) * 7, 140, 13, 1);
-      b.fillStyle = "#1a1438"; for (let i = 0; i < W; i += 14) b.fillRect(i, 141, 1, 9);
+      b.fillStyle = "#3a2f6a"; b.fillRect(0, 137, W, 13);
+      b.fillStyle = "#4a3d82"; for (let i = 0; i < W; i += 14) b.fillRect(i + ((i / 14) % 2) * 7, 140, 13, 1);
+      b.fillStyle = "#2c2458"; for (let i = 0; i < W; i += 14) b.fillRect(i, 141, 1, 9);
       b.fillStyle = "#3a335f"; b.fillRect(0, 137, W, 1);
       // bushes
       [[84, 132], [228, 132]].forEach(([px, py]) => { for (let j = 0; j < 7; j++) { b.fillStyle = j < 2 ? "#2f7d46" : "#1f5a33"; b.fillRect(px - 6 + Math.abs(3 - j), py - j, 13 - Math.abs(3 - j) * 2, 1); } });
@@ -141,7 +141,7 @@
     function act(s) {
       typeText($("#heroSay"), s.text); sfx("open"); visitor.say(Math.min(4000, s.text.length * 45));
       award("hero", s.id, s.verb + " " + s.name);
-      if (s.go && D.pageUrls[s.go]) setTimeout(() => { location.href = D.pageUrls[s.go]; }, 1800);
+      if (s.go && D.pageUrls[s.go]) setTimeout(() => (PCM.go ? PCM.go(D.pageUrls[s.go], { kind: "iris", x: cv.getBoundingClientRect().left + (s.rect[0] + s.rect[2] / 2) / W * cv.clientWidth, y: cv.getBoundingClientRect().top + (s.rect[1] + s.rect[3] / 2) / H * cv.clientHeight }) : (location.href = D.pageUrls[s.go])), 1600);
     }
     const spotAt = (px, py) => spots.find(s => px >= s.rect[0] && px <= s.rect[0] + s.rect[2] && py >= s.rect[1] && py <= s.rect[1] + s.rect[3]);
     cv.addEventListener("pointermove", e => {

@@ -44,6 +44,17 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **2026-11-01 · `add_game.py` elige motor:** ScummVM si reconoce los datos (firmas de ficheros por motor, juegos AGS
   dentro de un `.exe` de Windows), DOSBox si hay programa DOS (descarta ejecutables PE de Windows). Si ScummVM no está
   compilado y hay `.exe` DOS, usa DOSBox. Los zips oficiales de los freeware rellenan su ficha de `arcade.json`.
+- **2026-11-02 · Paleta «atardecer» en lugar de noche** (petición del usuario: «menos oscuro, más luminoso»):
+  fondo violeta más claro con degradado hacia un horizonte cálido, superficies hundidas en `--well`, CRT más suave y
+  cielo de la fachada al anochecer. Las pantallas (DOSBox, terminales, lienzos) siguen oscuras.
+- **2026-11-02 · Transiciones clásicas entre páginas** (`src/js/transitions.js`): se dibujan en un canvas de baja
+  resolución (pixeladas, 20 pasos). Iris hacia el punto del clic (como LucasArts), estrella, rombo, reloj, persianas,
+  disolución aleatoria y fundido a negro tramado (Bayer 8×8). La página de destino abre con el mismo efecto
+  (`sessionStorage`), un script en `<head>` tapa la pantalla antes del primer pintado y `pageshow` evita volver a una
+  pantalla negra con el botón Atrás. Sin transición con `prefers-reduced-motion`.
+- **2026-11-02 · Skills de terceros vendorizadas** desde repositorios de skills.sh (Anthropic, Vercel, Corey Haines),
+  fijadas a un commit y revisadas; `web-design-guidelines` usa una copia local de las reglas en vez de descargarlas.
+  skills.sh no era accesible desde la sesión en la nube: se clonaron los repositorios de GitHub.
 - **2026-11-01 · Catálogo de la sala DOSBox** con buscador, filtro por compañía, índice A–Z (sin artículos iniciales)
   y orden por título/año, visible a partir de 8 juegos (`arcade.json → catalogue.filtersFrom`); tarjetas compactas.
 
@@ -76,3 +87,4 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - 2026-11-01 · v4: repositorio git, AGENTS.md, MEMORY.md, skills y pruebas automatizadas (`npm test`).
 - 2026-11-01 · v5: `tools/add_game.py` para añadir juegos desde zips, colección local ignorada por git y catálogo con filtros.
 - 2026-11-01 · v6: soporte de ScummVM web (script de compilación, reproductor, detección de motor, freeware en el catálogo).
+- 2026-11-02 · v7: paleta más luminosa, transiciones clásicas entre páginas y skills de terceros.

@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{if(sessionStorage.getItem("pcm-wipe")&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("pcm-wipe-in")}catch(e){}</script>
 <title>{{v:title}}</title>
 <meta name="description" content="{{v:description}}">
 <meta name="author" content="{{v:siteName}}">
@@ -76,6 +77,7 @@
 
 <script id="pcm-data" type="application/json">{{raw:data}}</script>
 <script src="{{v:root}}js/core.js?v={{v:build}}" defer></script>
+<script src="{{v:root}}js/transitions.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/characters.js?v={{v:build}}" defer></script>
 {{raw:scripts}}
 </body>

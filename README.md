@@ -145,6 +145,13 @@ tools/              bundles de js-dos, descarga del emulador y programas DOS de 
 vendor/js-dos/      js-dos alojado localmente (opcional)
 ```
 
+## Transiciones entre páginas
+
+Al cambiar de sala la pantalla se cierra con un efecto clásico y la siguiente se abre con el mismo: iris hacia el
+punto donde hiciste clic, estrella, rombo, reloj, persianas, disolución o fundido a negro tramado. Se configuran en
+`data/site.json → transitions` (`pool` de efectos, `byTarget` para fijar uno por página, `duration`, `pixel`).
+No se reproducen si el sistema pide reducir el movimiento.
+
 ## Pruebas
 
 ```bash

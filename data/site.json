@@ -28,7 +28,7 @@
       "locale": "fr_FR"
     }
   ],
-  "themeColor": "#120d24",
+  "themeColor": "#2e2560",
   "fonts": "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap",
   "score": {
     "total": 100,
@@ -225,5 +225,24 @@
     "techniques",
     "games",
     "arcade"
-  ]
+  ],
+  "transitions": {
+    "duration": 700,
+    "pixel": 6,
+    "pool": [
+      "iris",
+      "star",
+      "dissolve",
+      "fade",
+      "blinds",
+      "diamond",
+      "clock"
+    ],
+    "byTarget": {
+      "home": "iris",
+      "arcade": "dissolve",
+      "games": "star"
+    },
+    "languageSwitch": "fade"
+  }
 }

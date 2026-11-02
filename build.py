@@ -387,7 +387,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
 
     active = page.get("parent", pid)
     b["verbnav"] = "".join(
-        f'<li><a href="{E(u(n))}" data-s="{E(ui["navS_" + n])}"' + (' class="cur" aria-current="page"' if n == active else "")
+        f'<li><a href="{E(u(n))}" data-s="{E(ui["navS_" + n])}"' + (' class="here" aria-current="page"' if n == active else "")
         + f'>{E(ui["nav_" + n])}</a></li>' for n in site["nav"])
     b["footerMap"] = "".join(f'<a href="{E(u(p["id"]))}">{E(page_title(ui, p["id"]) if p["id"] != "home" else ui["breadcrumbHome"])}</a>'
                              for p in S.pages)
@@ -582,7 +582,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     blocks = render_blocks(S, page, lang, L, ui, depth)
     data = {
         "lang": lang, "root": root, "isRoot": is_root, "page": pid, "ui": ui,
-        "site": {"score": site["score"]}, "sprites": d["sprites"], "font": d["font"], "characters": d["characters"],
+        "site": {"score": site["score"]}, "transitions": site.get("transitions", {}), "sprites": d["sprites"], "font": d["font"], "characters": d["characters"],
         "arcadeVendored": vendored,
         "svm": dict(svm or {"available": False}, base=f"{'../' * Site.depth(page, is_root)}scummvm/"),
         "pageUrls": {p["id"]: S.url(lang, p["id"], depth) for p in S.pages},

@@ -14,11 +14,23 @@
   if ("ResizeObserver" in window) new ResizeObserver(measure).observe(header);
   addEventListener("resize", measure);
 
-  /* compact header once the page scrolls */
-  let ticking = false;
+  /* compact header once the page scrolls. The header is sticky (in the flow), so compacting it shortens the page and
+     moves the scroll position: without a margin it would flip back and forth (flicker) near the threshold or on
+     short pages. Hysteresis: compact past ON px only if the page still scrolls after losing the header's extra
+     height; expand again near the top (OFF px). */
+  const ON = 96, OFF = 8;
+  let ticking = false, lost = 0;  // height the header loses when compact (measured while it is full)
+  function compactHeader() {
+    ticking = false;
+    const compact = header.classList.contains("compact");
+    if (!compact) lost = Math.max(header.offsetHeight - 60, 0);
+    const room = document.documentElement.scrollHeight - innerHeight - (compact ? 0 : lost);  // scroll left once compact
+    if (!compact && scrollY > ON && room > ON) header.classList.add("compact");
+    else if (compact && scrollY < OFF) header.classList.remove("compact");
+  }
   addEventListener("scroll", () => {
     if (ticking) return; ticking = true;
-    requestAnimationFrame(() => { header.classList.toggle("compact", scrollY > 24); ticking = false; });
+    requestAnimationFrame(compactHeader);
   }, { passive: true });
 
   /* games submenu: hover on desktop (CSS), button for touch and keyboard */

@@ -174,6 +174,13 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   (se deja de enviar si el servidor responde 400/422 mencionándolo), el log mide cada ronda y
   `server/murray.py --probe "pregunta"` mide una pregunta. Pendiente: medir con el Qwen real del usuario.
 
+- **2026-11-05 · Cabecera sin parpadeo y panel de Murray siempre alcanzable** (petición del usuario). La cabecera es
+  `sticky` (en el flujo): al compactarse pierde la fila de puertas, la página se acorta y `scrollY` volvía a cruzar el
+  umbral (24 px), así que alternaba sin parar en páginas cortas. Ahora hay histéresis (compacta a partir de 96 px y
+  solo si después aún queda recorrido; se expande por debajo de 8 px) y `overflow-anchor: none`. En el panel de Murray,
+  solo la conversación encoge (el resto `flex: none`); las sugerencias se reparten en filas con su propio scroll, la
+  altura máxima descuenta el botón y el panel tiene scroll como último recurso.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

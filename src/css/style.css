@@ -544,7 +544,7 @@ html.pcm-wipe-in::after { content: ""; position: fixed; inset: 0; z-index: 9001;
 [id] { scroll-margin-top: calc(var(--hd-h) + var(--sub-h) + 16px); }
 
 .site-header {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 80;
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 80; overflow-anchor: none;
   background: var(--well); border-bottom: 4px solid var(--panel2); box-shadow: 0 4px 0 rgba(19,28,30,.35);
 }
 .hd-bar {
@@ -738,7 +738,7 @@ html.map-open { overflow: hidden; }
 .murray-fab:hover, .murray-fab:focus-visible { transform: translateY(-3px); }
 .murray-fab:focus-visible { outline: 3px dashed var(--teal); outline-offset: 10px; }
 .murray-fab.on { box-shadow: 0 0 0 4px var(--teal), 0 0 0 8px var(--shade); }
-.murray-panel { width: min(400px, calc(100vw - 32px)); max-height: min(72vh, 640px); display: flex; flex-direction: column; gap: 8px; padding: 10px;
+.murray-panel { width: min(400px, calc(100vw - 32px)); max-height: min(640px, calc(100vh - 140px), calc(100dvh - 140px)); display: flex; flex-direction: column; gap: 8px; padding: 10px;
   background: var(--well); box-shadow: 0 0 0 4px var(--panel2), 0 0 0 8px var(--shade), 0 14px 30px rgba(5,9,7,.6); }
 .murray-panel[hidden] { display: none; }
 .murray-top { display: grid; grid-template-columns: 86px minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
@@ -748,7 +748,11 @@ html.map-open { overflow: hidden; }
 .murray-x { all: unset; cursor: pointer; width: 28px; height: 28px; display: grid; place-items: center; font-size: 22px; color: var(--paper); background: var(--panel); box-shadow: 0 0 0 2px var(--panel2); }
 .murray-x:hover, .murray-x:focus-visible { color: var(--amber); }
 .murray-x:focus-visible { outline: 2px dashed var(--teal); }
-.murray-log { list-style: none; margin: 0; padding: 0 4px 0 0; flex: 1; min-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 19px; }
+/* only the conversation shrinks and scrolls: the header, the suggestions and the form always stay visible */
+.murray-panel > * { flex: none; }
+.murray-panel > .murray-log { flex: 1 1 auto; min-height: 72px; }
+.murray-panel { overflow-y: auto; overscroll-behavior: contain; }  /* last resort on very short screens */
+.murray-log { list-style: none; margin: 0; padding: 0 4px 0 0; flex: 1; min-height: 72px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 19px; }
 .murray-log li { max-width: 92%; }
 .murray-log .who { font-family: var(--display); font-size: 7px; display: block; margin-bottom: 3px; }
 .murray-log p { margin: 0; line-height: 1.2; overflow-wrap: anywhere; }
@@ -760,8 +764,8 @@ html.map-open { overflow: hidden; }
 .murray-log .src { font-size: 16px; color: var(--dim); margin-top: 4px; }
 .murray-log .src span { font-family: var(--display); font-size: 6px; color: var(--amber); }
 .murray-log .src a { color: var(--teal); }
-.murray-sugg { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
-.murray-sugg .pbtn { flex: none; font-size: 7px; }
+.murray-sugg { display: flex; flex-wrap: wrap; gap: 4px; max-height: 118px; overflow-y: auto; padding: 3px 4px 3px 3px; }
+.murray-sugg .pbtn { flex: 0 1 auto; max-width: 100%; min-height: 30px; margin: 2px; padding: 5px 8px; white-space: normal; text-align: left; line-height: 1.5; font-size: 7px; }
 .murray-form { display: flex; gap: 6px; }
 .murray-form input { flex: 1; min-width: 0; background: var(--shade); color: var(--paper); border: 0; box-shadow: inset 0 0 0 2px var(--panel2); font: inherit; font-size: 19px; padding: 4px 8px; }
 .murray-form input:focus-visible { outline: 3px dashed var(--teal); }
@@ -770,7 +774,7 @@ html.map-open { overflow: hidden; }
 .murray-privacy figcaption { margin: 0; font-size: 13px; }
 @media (max-width: 560px) {
   .murray-fab { width: 62px; height: 62px; }
-  .murray-panel { width: calc(100vw - 24px); max-height: calc(100dvh - 120px); }
+  .murray-panel { width: calc(100vw - 24px); max-height: calc(100vh - 110px); max-height: calc(100dvh - 110px); }
   .murray-widget { right: 12px; bottom: 12px; }
 }
 

@@ -159,6 +159,13 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   La puntuación BM25 se descartó como señal: «receta de paella» o «capital de Francia» puntuaban alto por el catálogo.
   Calibrado: ningún mensaje fuera de tema de la batería pasa las reglas. `MURRAY_GUARD=strict|rules|off`.
 
+- **2026-11-05 · Guardarraíles menos estrictos** (petición del usuario: «¿qué es un pollo de goma?» se rechazaba).
+  Vocabulario de objetos, personajes y bromas del género en 4 idiomas (`guard.py → TRIVIA`: pollo de goma, grog, mono de
+  tres cabezas, duelo de insultos…). Nuevo veredicto «likely»: el mensaje comparte un par de palabras con las fichas o
+  `history.json` (no con el catálogo ni Wikipedia). No se acepta directamente porque frases genéricas como «guerra
+  mundial» o «United States» también aparecen; lo decide el clasificador, y sin modelo pasa. El clasificador recibe
+  las 3 fichas más relacionadas y la instrucción «en caso de duda, ON».
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

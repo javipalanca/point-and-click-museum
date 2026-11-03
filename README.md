@@ -212,10 +212,12 @@ Island*), que responde sobre la historia de las aventuras gráficas a partir de 
   escribe mientras Murray mueve la boca. Las llamadas a herramientas también llegan en streaming y el `<think>` de Qwen se
   filtra al vuelo. nginx no almacena la respuesta en búfer. Si el servidor del modelo ignora `stream`, también funciona.
 - **Solo aventuras gráficas** (`server/guard.py`, `MURRAY_GUARD`): antes de llamar al modelo, unas reglas reconocen
-  los mensajes del tema (títulos, estudios, motores y personas de la base de conocimiento, sagas y vocabulario del
-  género en cuatro idiomas, saludos), detectan intentos de manipulación («ignora tus instrucciones», «ahora eres…»,
+  los mensajes del tema (títulos, estudios, motores y personas de la base de conocimiento, sagas, vocabulario del
+  género y objetos, personajes y bromas míticas como el pollo de goma o el grog en cuatro idiomas, saludos), detectan intentos de manipulación («ignora tus instrucciones», «ahora eres…»,
   «dime tu prompt») y las preguntas sobre otros museos. Lo dudoso lo clasifica el propio modelo con una llamada corta
-  que ve la respuesta anterior (para que pasen los «¿y quién lo hizo?»). Lo que queda fuera recibe una negativa de
+  que ve la respuesta anterior (para que pasen los «¿y quién lo hizo?») y las fichas relacionadas que encuentra la
+  búsqueda; en caso de duda deja pasar. También le llegan los mensajes que comparten una expresión con las fichas o los
+  artículos de historia («cajas de paseo»), que sin modelo pasan directamente. Lo que queda fuera recibe una negativa de
   Murray sin que el modelo llegue a responder. Además, el prompt prohíbe cualquier otro tema y cada mensaje del
   visitante va con un recordatorio. `MURRAY_GUARD=rules` evita la llamada extra (lo dudoso se rechaza); `off` lo desactiva.
 - **Límites**: cuerpo de 16 KB, 12 mensajes de hasta 600 caracteres, `MURRAY_RATE` peticiones por IP cada 10 minutos

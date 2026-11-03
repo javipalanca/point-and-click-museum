@@ -28,10 +28,10 @@
       path.push({ x: tx, y: ty, box: tb }); sfx("click");
     }
     function draw() {
-      x.fillStyle = "#2a2046"; x.fillRect(0, 0, W, H);
-      x.fillStyle = "#3d3078"; x.fillRect(0, 0, W, 50);
-      x.fillStyle = "#55489a"; for (let i = 0; i < W; i += 24) x.fillRect(i, 0, 2, 50);
-      x.fillStyle = "#120d24"; x.fillRect(84, 26, 16, 26);                          // far doorway
+      x.fillStyle = "#2a393d"; x.fillRect(0, 0, W, H);
+      x.fillStyle = "#426066"; x.fillRect(0, 0, W, 50);
+      x.fillStyle = "#5d7f85"; for (let i = 0; i < W; i += 24) x.fillRect(i, 0, 2, 50);
+      x.fillStyle = "#131c1e"; x.fillRect(84, 26, 16, 26);                          // far doorway
       // floor in perspective
       x.fillStyle = "#6d4a35"; x.beginPath(); x.moveTo(84, 40); x.lineTo(100, 40); x.lineTo(192, 106); x.lineTo(192, 108); x.lineTo(0, 108); x.lineTo(0, 106); x.closePath(); x.fill();
       x.strokeStyle = "#5d3e2c"; for (let k = 0; k < 8; k++) { const xb = k * 192 / 7; x.beginPath(); x.moveTo(84 + k * 16 / 7, 40); x.lineTo(xb, 108); x.stroke(); }
@@ -137,17 +137,33 @@
       ega: ["#000000", "#0000aa", "#00aa00", "#00aaaa", "#aa0000", "#aa00aa", "#aa5500", "#aaaaaa", "#555555", "#5555ff", "#55ff55", "#55ffff", "#ff5555", "#ff55ff", "#ffff55", "#ffffff"].map(hex),
     };
     const img = new Image(); let orig = null;
-    img.onload = () => { cv.width = img.naturalWidth; cv.height = img.naturalHeight; x.drawImage(img, 0, 0); orig = x.getImageData(0, 0, cv.width, cv.height); };
+    img.onload = () => {  // work at the games' real 320-pixel width so each dither dot is one original pixel
+      cv.width = 320; cv.height = Math.round(img.naturalHeight * 320 / img.naturalWidth);
+      x.imageSmoothingEnabled = true; x.drawImage(img, 0, 0, cv.width, cv.height); orig = x.getImageData(0, 0, cv.width, cv.height);
+    };
     img.src = P.media.src;
+    // perceptual colour distance ("redmean")
+    const dist = (r, g, b, p) => { const rm = (r + p[0]) / 2, dr = r - p[0], dg = g - p[1], db = b - p[2]; return (2 + rm / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rm) / 256) * db * db; };
+    // EGA releases (Sierra's SCI0, LucasArts' EGA versions) faked in-between colours with two-colour checkerboards:
+    // the 16 colours give 136 pairs; very contrasting pairs are penalised because artists avoided them.
+    const PAIRS = [];
+    PAL.ega.forEach((a, i) => PAL.ega.slice(i).forEach(b => PAIRS.push({ a, b, m: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2],
+      spread: Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]) })));
     function render(mode) {
       if (!orig) return;
       if (mode === "vga") { x.putImageData(orig, 0, 0); return; }
-      const pal = PAL[mode], out = new ImageData(new Uint8ClampedArray(orig.data), orig.width, orig.height), d = out.data, cache = new Map();
+      const w = orig.width, out = new ImageData(new Uint8ClampedArray(orig.data), w, orig.height), d = out.data, cache = new Map();
       for (let i = 0; i < d.length; i += 4) {
         const key = (d[i] >> 2) << 12 | (d[i + 1] >> 2) << 6 | d[i + 2] >> 2;
         let c = cache.get(key);
-        if (!c) { let best = 1e9; for (const p of pal) { const e = (d[i] - p[0]) ** 2 * 0.3 + (d[i + 1] - p[1]) ** 2 * 0.59 + (d[i + 2] - p[2]) ** 2 * 0.11; if (e < best) { best = e; c = p; } } cache.set(key, c); }
-        d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2];
+        if (!c) {
+          let best = Infinity;
+          if (mode === "ega") for (const p of PAIRS) { const e = dist(d[i], d[i + 1], d[i + 2], p.m) + p.spread * p.spread * 0.02; if (e < best) { best = e; c = p; } }
+          else for (const p of PAL[mode]) { const e = dist(d[i], d[i + 1], d[i + 2], p); if (e < best) { best = e; c = { a: p, b: p }; } }
+          cache.set(key, c);
+        }
+        const k = i >> 2, col = ((k % w) + ((k / w) | 0)) & 1 ? c.b : c.a;
+        d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2];
       }
       x.putImageData(out, 0, 0);
     }

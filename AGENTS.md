@@ -25,6 +25,7 @@ python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
 python3 build.py --no-local      # build público sin la colección local
 python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/games/x.jsdos
 python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
+python3 tools/fetch_media.py     # descarga portadas, capturas y logos de data/media.json (--check, --only grupo/id)
 nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el programa DOS de prueba
 ```
 
@@ -42,7 +43,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `data/minigames/*.json` | los cuatro minijuegos (reglas, escenas, textos, parámetros) |
 | `data/arcade.json` | emulador y juegos DOS versionados; `catalogue.filtersFrom` = nº de juegos a partir del que aparecen los filtros |
 | `data/arcade.local.json` + `assets/games/` | colección local creada por `tools/add_game.py` (**ignorada por git**, nunca la añadas) |
-| `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos |
+| `data/media.json` + `assets/media/` | imágenes reales (portadas, capturas, logos) con su fuente exacta; `refs` reutiliza imágenes entre fichas |
+| `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos de la interfaz y los minijuegos |
 | `src/layout.html` | plantilla común; `src/pages/<id>.html` contenido de cada página |
 | `src/js/core.js` | datos, i18n `t()`, sonido, puntuación `award()`, modal, utilidades |
 | `src/js/rules.js` | motor de reglas de los minijuegos |
@@ -75,7 +77,11 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 7. **Responsive:** ninguna página puede desbordar en horizontal (iPhone SE incluido). `npm test` lo comprueba.
 8. **Legalidad:** nada de juegos comerciales ni recreaciones de juegos existentes en el repositorio. La colección
    personal del usuario va en `assets/games/`, `assets/scummvm/` y `data/arcade.local.json`, que están en `.gitignore`: no los fuerces
-   con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos son originales.
+   con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos de interfaz son originales.
+12. **Rigor e imágenes reales.** Juegos, estudios y motores reales se ilustran con imágenes reales (portada, captura,
+    logotipo), nunca con sprites inventados. Cada imagen va en `data/media.json` con su fuente fijada (commit de GitHub o
+    fichero de Wikimedia) y se muestra con su crédito; revisa que sea del juego y edición correctos (no un port posterior).
+    Sin logo descargado, el estudio lleva un monograma tipográfico. Solo hechos verificables; ante la duda, pregunta.
 9. **Enlaces externos:** a Wikipedia o a webs oficiales; `target="_blank" rel="noopener"`. Verifica que existen.
 10. **SEO:** cada página nueva necesita título, descripción, entrada en `site.json → pages` y queda en el sitemap.
 11. **Navegación:** las salas salen de `site.json → nav` (puertas de la cabecera, plano del museo y pie) con su etiqueta

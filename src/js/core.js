@@ -29,15 +29,13 @@ window.PCM = (() => {
   }
   function hash(str) { let h = 2166136261; for (const ch of str) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
   function rng(seed) { let s = seed >>> 0 || 1; return () => (s = (Math.imul(s ^ (s >>> 15), 2246822519) + 0x9e3779b9) >>> 0, s / 4294967296); }
-  function badge(canvas, name) {
-    const x = canvas.getContext("2d"), r = rng(hash(name)), cols = ["#ffb547", "#ef5d8a", "#4fd6c8", "#8a8cff", "#5fc46a", "#e07a2e"];
-    const fg = cols[Math.floor(r() * cols.length)], fg2 = cols[Math.floor(r() * cols.length)];
-    canvas.width = 16; canvas.height = 16; x.fillStyle = "#2f2559"; x.fillRect(0, 0, 16, 16);
-    x.fillStyle = "#120d24"; x.fillRect(1, 1, 14, 14);
-    for (let j = 0; j < 12; j++) for (let i = 0; i < 6; i++) {
-      const v = r(); if (v < 0.5) continue; x.fillStyle = v > 0.82 ? fg2 : fg;
-      x.fillRect(2 + i, 2 + j, 1, 1); x.fillRect(13 - i, 2 + j, 1, 1);
-    }
+  /* Real image with its credit line (data from data/media.json, prepared by build.py). */
+  function mediaFigure(m, alt, cls, caption) {
+    if (!m) return "";
+    const rights = m.licenseUrl ? '<a href="' + esc(m.licenseUrl) + '" target="_blank" rel="noopener">' + esc(m.rights) + "</a>" : esc(m.rights);
+    return '<figure class="media ' + (cls || "") + " media-" + m.role + '"><img src="' + esc(m.src) + '" width="' + m.w + '" height="' + m.h + '" alt="' + esc(alt) + '" loading="lazy" decoding="async">' +
+      "<figcaption>" + (caption ? '<span class="media-cap">' + esc(caption) + "</span> " : "") + (m.label ? "<cite>" + esc(m.label) + "</cite> · " : "") + rights + " · " + esc(t("via")) +
+      ' <a href="' + esc(m.url) + '" target="_blank" rel="noopener">' + esc(m.via) + " ↗</a></figcaption></figure>";
   }
   function pixelText(ctx, str, x0, y0, col) {
     const G = D.font.glyphs; ctx.fillStyle = col; let cx = x0;
@@ -143,10 +141,10 @@ window.PCM = (() => {
     sfx("win");
     $("#resetAll").onclick = () => {
       awarded.clear(); score = 0; store("awarded", []); store("seen", []); store("talked", []); renderScore(); closeModal();
-      $$(".card.seen").forEach(c => c.classList.remove("seen"));
+      $$(".tl-item.seen").forEach(c => c.classList.remove("seen"));
     };
   }
 
-  return { D, $, $$, t, fmt, esc, store, spriteURL, drawSprite, hash, rng, badge, pixelText, pixelTextWidth, canvasPoint,
+  return { D, $, $$, t, fmt, esc, store, spriteURL, drawSprite, hash, rng, mediaFigure, pixelText, pixelTextWidth, canvasPoint,
     tone, sfx, ac, get soundOn() { return soundOn; }, typeText, award, toast, openModal, closeModal, reduceMotion };
 })();

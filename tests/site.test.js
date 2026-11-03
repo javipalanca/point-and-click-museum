@@ -11,7 +11,7 @@ const DIST = path.join(__dirname, "..", "dist");
 const LANGS = ["es", "en", "de", "fr"];
 const PAGES = ["", "timeline/", "studios/", "engines/", "techniques/", "games/", "games/text-adventure/",
   "games/restoration-room/", "games/pixel-hunt/", "games/chronology/", "arcade/"];
-const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".json": "application/json",
+const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".gif": "image/gif", ".jpg": "image/jpeg", ".json": "application/json",
   ".wasm": "application/wasm", ".jsdos": "application/zip", ".xml": "application/xml", ".txt": "text/plain", ".webmanifest": "application/manifest+json" };
 const SOLUTIONS = {
   es: ["e", "coger lampara", "o", "teclear 1976", "o", "encender lampara", "coger palanca", "coger disquete", "e", "abrir trampilla", "norte"],
@@ -58,6 +58,27 @@ function serve() {
   }
   for (const u of links) { const r = await ctx.request.get(u); if (r.status() !== 200) fail("broken link " + u); }
   ok(`${LANGS.length * PAGES.length} pages, ${links.size} internal links checked`);
+
+  console.log("Timeline and rooms: real images with their sources");
+  {
+    const page = await ctx.newPage();
+    await page.goto(`${base}/es/timeline/`);
+    const covers = await page.$$eval(".tl-cover", im => im.map(i => i.getAttribute("src")));
+    covers.length >= 20 ? ok(`${covers.length} real covers on the timeline`) : fail(`only ${covers.length} covers`);
+    for (const c of covers) { const r = await ctx.request.get(new URL(c, `${base}/es/timeline/`).href); if (r.status() !== 200) fail("missing cover " + c); }
+    (await page.$$(".tl-sign")).length === 6 ? ok("one sign per era") : fail("era signs");
+    await page.click("#monkey-island .tl-entry");
+    const cap = await page.$$eval(".pmodal figcaption a", as => as.map(a => a.href));
+    cap.some(h => /github\.com\/libretro-thumbnails\//.test(h)) ? ok("record credits the exact image file") : fail("no image credit in the record: " + cap);
+    const loaded = await page.$eval(".pmodal .sheet-cover img", i => i.decode().then(() => i.naturalWidth > 0, () => false));
+    loaded ? ok("cover loads in the record") : fail("cover did not load");
+    await page.goto(`${base}/en/engines/`);
+    const logo = await page.$eval(".cart img.logo", i => i.decode().then(() => i.naturalWidth > 0, () => false)).catch(() => false);
+    logo ? ok("engine logo loads") : fail("engine logo");
+    await page.goto(`${base}/de/studios/`);
+    (await page.$$(".studio .logo, .studio .monogram")).length === 12 ? ok("every studio has a logo or a monogram") : fail("studio marks");
+    await page.close();
+  }
 
   console.log("Mobile and tablet: no horizontal overflow");
   for (const dev of ["iPhone SE", "iPhone 13", "iPad Mini"]) {

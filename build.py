@@ -39,6 +39,7 @@ import shutil
 import struct
 import sys
 import time
+import urllib.parse
 import zlib
 from pathlib import Path
 
@@ -73,10 +74,61 @@ def load_all() -> dict:
             "chronology": load("minigames/chronology.json"),
         },
         "arcade": load_arcade(),
+        "media": load_media(),
         "sprites": load("sprites.json"),
         "characters": load("characters.json"),
         "font": load("pixelfont.json"),
     }
+
+
+MEDIA_DIR = ROOT / "assets" / "media"
+
+
+def load_media() -> dict:
+    """data/media.json -> {group: {id: {role: item}}}, only for images already downloaded by tools/fetch_media.py.
+
+    `refs` reuse another entry's image (e.g. the SCUMM engine shows a screenshot of Monkey Island)."""
+    doc = load("media.json")
+    idx: dict = {"_pending": [], "_items": doc["items"]}
+    for it in doc["items"]:
+        if it.get("file") and (MEDIA_DIR / it["file"]).exists():
+            idx.setdefault(it["group"], {}).setdefault(it["id"], {})[it["role"]] = it
+        else:
+            idx["_pending"].append(f"{it['group']}/{it['id']} ({it['role']})")
+    for group, refs in doc.get("refs", {}).items():
+        for id_, ref in refs.items():
+            g, i, role = ref.split("/")
+            it = idx.get(g, {}).get(i, {}).get(role)
+            if it:
+                idx.setdefault(group, {}).setdefault(id_, {}).setdefault(role, dict(it, ref=f"{g}/{i}"))
+    return idx
+
+
+def source_name(url: str) -> str:
+    if "libretro-thumbnails" in url:
+        return "libretro-thumbnails"
+    if "wikimedia.org" in url:
+        return "Wikimedia Commons"
+    if "wikipedia.org" in url:
+        return "Wikipedia"
+    m = re.match(r"https://github.com/([^/]+)/([^/]+)", url)
+    return f"{m.group(1)}/{m.group(2)} (GitHub)" if m else urllib.parse.urlsplit(url).netloc
+
+
+def media_view(it: dict, root: str, ui: dict) -> dict:
+    """What a page needs to show an image honestly: file, size, alt text and a credit line with its source."""
+    page = it.get("page", "")
+    label = ""
+    if "libretro-thumbnails" in page:  # the file name says which edition the image shows
+        label = urllib.parse.unquote(page.rsplit("/", 1)[-1]).rsplit(".", 1)[0].replace("_ ", ": ")
+    if it.get("license"):
+        rights = " · ".join(x for x in (it.get("author"), it["license"]) if x)
+        if it.get("nonFree"):
+            rights += " · " + ui["rightsFairUse"]
+    else:
+        rights = ui["rights_" + it["rights"]]
+    return {"src": f"{root}media/{it['file']}", "w": it["w"], "h": it["h"], "role": it["role"], "label": label,
+            "rights": rights, "via": source_name(page), "url": page, "licenseUrl": it.get("licenseUrl", "")}
 
 
 LOCAL_ARCADE = DATA / "arcade.local.json"   # games added with tools/add_game.py (not versioned)
@@ -170,7 +222,7 @@ def validate(d: dict) -> list[str]:
     eras = {e["id"] for e in d["timeline"]["eras"]}
     seen = set()
     for g in d["timeline"]["games"]:
-        for f in ("id", "year", "title", "studio", "engine", "era", "icon", "text"):
+        for f in ("id", "year", "title", "studio", "engine", "era", "text"):
             if f not in g:
                 errors.append(f"timeline: {g.get('id', '?')} has no {f!r}")
         if g["id"] in seen:
@@ -178,13 +230,25 @@ def validate(d: dict) -> list[str]:
         seen.add(g["id"])
         if g["era"] not in eras:
             errors.append(f"timeline: {g['id']} uses unknown era {g['era']}")
-        if g["icon"] not in sprites:
-            errors.append(f"timeline: {g['id']} uses unknown icon {g['icon']}")
 
     for sec in ("studios", "engines"):
         ids = [x["id"] for x in d[sec]]
         if len(ids) != len(set(ids)):
             errors.append(f"{sec}: duplicate ids")
+
+    for st in d["studios"]:
+        for gid in st.get("games", []):
+            if gid not in seen:
+                errors.append(f"studios: {st['id']} lists unknown timeline game {gid}")
+
+    known = {"games": seen, "studios": {x["id"] for x in d["studios"]}, "engines": {x["id"] for x in d["engines"]}}
+    for it in d["media"]["_items"]:
+        if it.get("id") not in known.get(it.get("group"), ()):
+            errors.append(f"media.json: unknown {it.get('group')}/{it.get('id')}")
+        if it.get("rights") not in ("boxart", "screenshot", "logo"):
+            errors.append(f"media.json: {it.get('group')}/{it.get('id')} needs rights boxart|screenshot|logo")
+        if it.get("file") and not it.get("page"):
+            errors.append(f"media.json: {it['group']}/{it['id']} has no source page")
 
     # award keys referenced by minigames and rules
     for gname, g in d["games"].items():
@@ -493,30 +557,71 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
     b["eras"] = "".join(
         f'<button class="pbtn small" type="button" data-era="{e["id"]}" aria-pressed="false" style="color:{e["color"]}">'
         f'{E(e["name"])} <span class="era-range">{E(e["range"])}</span></button>' for e in tl["eras"])
-    groups = []
+    # the timeline: one axis, era "station signs" and a stop per game (cover thumbnail only if a real one exists)
+    media = S.d["media"]
+    groups, side, decade = [], 0, None
     for e in tl["eras"]:
-        cards = []
+        items = []
         for i, g in enumerate(tl["games"]):
             if g["era"] != e["id"]:
                 continue
-            cards.append(
-                f'<article class="card" id="{g["id"]}" data-i="{i}" data-era="{g["era"]}" style="--ec:{e["color"]}">'
-                f'<span class="yr">{g["year"]}</span>'
-                f'<img class="ic" src="{root}img/sprites/{g["icon"]}.png" width="48" height="48" alt="" loading="lazy">'
-                f'<h3><button class="card-btn" type="button" data-i="{i}" aria-haspopup="dialog">{E(g["title"])}</button></h3>'
-                f'<p class="st">{E(g["studio"].split(" · ")[0])}</p>'
+            dec = g["year"] // 10 * 10
+            if dec != decade:
+                decade = dec
+                items.append(f'<li class="tl-decade" aria-hidden="true"><span>{E(ui["decadeFmt"].format(n=dec))}</span></li>')
+            cover = media.get("games", {}).get(g["id"], {}).get("cover")
+            img = (f'<img class="tl-cover" src="{root}media/{cover["file"]}" width="{cover["w"]}" height="{cover["h"]}" '
+                   f'alt="{E(ui["coverOf"].format(title=g["title"]))}" loading="lazy" decoding="async">') if cover else ""
+            people = g["studio"].split(" · ")
+            items.append(
+                f'<li class="tl-item {"r" if side % 2 else "l"}{" has-cover" if cover else ""}" id="{g["id"]}" data-i="{i}">'
+                f'<span class="tl-node" aria-hidden="true"></span>'
+                f'<time class="tl-year" datetime="{g["year"]}">{g["year"]}</time>'
+                f'<button class="tl-entry" type="button" data-i="{i}" aria-haspopup="dialog">{img}'
+                f'<span class="tl-text"><span class="tl-title">{E(g["title"])}</span>'
+                f'<span class="tl-meta">{E(people[0])} · {E(g["engine"])}</span></span></button>'
                 f'<div class="vh"><p>{E(ui["studio"])}: {E(g["studio"])}. {E(ui["engine"])}: {E(g["engine"])}.</p>'
                 f'<p>{E(g["text"]["d"])}</p><p>{E(g["text"]["f"])}</p>'
-                + (f'<a href="{E(g["link"])}">{E(ui["moreAbout"])}</a>' if g.get("link") else "") + "</div></article>")
-        groups.append(f'<section class="era-group" data-era="{e["id"]}" aria-labelledby="era-{e["id"]}" style="--ec:{e["color"]}">'
-                      f'<h2 class="era-title" id="era-{e["id"]}">{E(e["name"])} <small>{E(e["range"])}</small></h2>'
-                      f'<div class="cards">{"".join(cards)}</div></section>')
-    b["eraGroups"] = '<div id="eraGroups">' + "".join(groups) + "</div>"
+                + (f'<a href="{E(g["link"])}">{E(ui["moreAbout"])}</a>' if g.get("link") else "") + "</div></li>")
+            side += 1
+        n = sum(1 for g in tl["games"] if g["era"] == e["id"])
+        groups.append(
+            f'<section class="tl-era" data-era="{e["id"]}" aria-labelledby="era-{e["id"]}" style="--ec:{e["color"]}">'
+            f'<header class="tl-sign"><span class="tl-range">{E(e["range"])}</span>'
+            f'<h2 id="era-{e["id"]}">{E(e["name"])}</h2>'
+            + (f'<p>{E(e["summary"])}</p>' if e.get("summary") else "")
+            + f'<span class="tl-n">{E(ui["gamesCount"].format(n=n))}</span></header>'
+            f'<ol class="tl-list">{"".join(items)}</ol></section>')
+    b["eraGroups"] = '<div class="tl" id="eraGroups">' + "".join(groups) + "</div>"
+
+    def logo_or_monogram(group, x):
+        it = media.get(group, {}).get(x["id"], {}).get("logo")
+        if it:
+            return (f'<img class="logo" src="{root}media/{it["file"]}" width="{it["w"]}" height="{it["h"]}" '
+                    f'alt="{E(ui["logoOf"].format(name=x["name"]))}" loading="lazy">')
+        words = [w for w in re.sub(r"[^\w ]", " ", x["name"]).split()
+                 if w.lower() not in ("the", "of", "and", "de", "games", "studio", "studios", "software", "entertainment", "design")]
+        mono = (words[0][0] + words[1][0]) if len(words) > 1 else (words[0] if words else x["name"])[:2]
+        return f'<span class="monogram" aria-hidden="true">{E(mono.upper())}</span>'
+
+    titles = {g["id"]: g for g in tl["games"]}
+    tl_url = u("timeline")
+
+    def studio_covers(st):
+        out = []
+        for gid in st.get("games", []):
+            g, cover = titles[gid], media.get("games", {}).get(gid, {}).get("cover")
+            inner = (f'<img src="{root}media/{cover["file"]}" width="{cover["w"]}" height="{cover["h"]}" alt="" loading="lazy">'
+                     if cover else f'<span class="nc">{E(g["title"])}</span>')
+            out.append(f'<li><a href="{E(tl_url)}#{gid}" title="{E(g["title"])} ({g["year"]})">{inner}'
+                       f'<span class="vh">{E(g["title"])} ({g["year"]})</span></a></li>')
+        return (f'<div class="st-games"><span class="st-games-h">{E(ui["studioGames"])}</span><ul>' + "".join(out) + "</ul></div>") if out else ""
 
     b["studios"] = "".join(
-        f'<article class="px studio" data-i="{i}"><div class="top"><canvas width="16" height="16" aria-hidden="true"></canvas>'
+        f'<article class="px studio" data-i="{i}"><div class="top">{logo_or_monogram("studios", s)}'
         f'<div><h3>{E(s["name"])}</h3><div class="yrs">{E(s["years"])}</div></div></div>'
-        f'<div class="row studio-actions"><button class="pbtn small talk" type="button">{E(ui["talk"])}</button>'
+        + studio_covers(s)
+        + f'<div class="row studio-actions"><button class="pbtn small talk" type="button">{E(ui["talk"])}</button>'
         + (f'<a class="ext" href="{E(s["link"])}" target="_blank" rel="noopener">{E(ui["moreAbout"])} ↗</a>' if s.get("link") else "")
         + '</div><span class="talked"></span>'
         f'<dl class="vh">' + "".join(f"<dt>{E(q)}</dt><dd>{E(a)}</dd>" for q, a in s["dialog"]) + "</dl></article>"
@@ -524,12 +629,33 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
 
     b["carts"] = "".join(
         f'<button class="cart" type="button" data-i="{i}" aria-pressed="false" style="--cc:{en["color"]}">'
-        f'<span class="lbl">{E(en["name"])}<span class="yr2">{en["year"]}</span></span></button>'
+        f'<span class="lbl">' + (logo_or_monogram("engines", en) if media.get("engines", {}).get(en["id"], {}).get("logo") else "")
+        + f'{E(en["name"])}<span class="yr2">{en["year"]}</span></span></button>'
         for i, en in enumerate(L["engines"]))
     b["enginesList"] = '<dl class="eng-list">' + "".join(
         f'<dt>{E(en["name"])} <small>{en["year"]} · {E(en["by"])}</small></dt><dd><p>{E(en["text"])}</p><p>'
         + " ".join(f'<a class="ext" href="{E(l["url"])}" target="_blank" rel="noopener">{E(l["label"])} ↗</a>' for l in en.get("links", []))
         + "</p></dd>" for en in L["engines"]) + "</dl>"
+
+    # image credits: every real image on the page, with the exact file it comes from
+    def credit_li(name, it):
+        m = media_view(it, root, ui)
+        rights = (f'<a href="{E(m["licenseUrl"])}" target="_blank" rel="noopener">{E(m["rights"])}</a>' if m["licenseUrl"] else E(m["rights"]))
+        return (f'<li><b>{E(name)}</b> · {E(ui["role_" + it["role"]])}: ' + (f'<cite>{E(m["label"])}</cite> · ' if m["label"] else "")
+                + f'{rights} · {E(ui["via"])} <a href="{E(m["url"])}" target="_blank" rel="noopener">{E(m["via"])} ↗</a></li>')
+    groups_for = {"timeline": [("games", tl["games"], "title")], "studios": [("studios", L["studios"], "name"), ("games", tl["games"], "title")],
+                  "engines": [("engines", L["engines"], "name")]}.get(pid, [])
+    lis = []
+    for group, things, key in groups_for:
+        for x in things:
+            if group == "games" and pid == "studios" and not any(x["id"] in st.get("games", []) for st in L["studios"]):
+                continue
+            for role in ("logo", "cover", "screenshot"):
+                it = media.get(group, {}).get(x["id"], {}).get(role)
+                if it and not (pid == "studios" and role == "screenshot"):
+                    lis.append(credit_li(x[key], it))
+    b["mediaCredits"] = (f'<details class="px list-details credits"><summary>{E(ui["mediaCreditsTitle"])}</summary>'
+                         f'<p>{E(ui["mediaCreditsLead"])}</p><ul>{"".join(lis)}</ul></details>') if lis else ""
 
     T = L["techniques"]
     b["uiTabs"] = "".join(
@@ -608,7 +734,8 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
             {"@type": "ListItem", "position": i + 1, "url": f"{page_url}#{g['id']}",
              "item": dict({"@type": "VideoGame", "name": g["title"], "datePublished": str(g["year"]), "genre": "Adventure",
                            "description": g["text"]["d"], "author": {"@type": "Organization", "name": g["studio"].split(" · ")[0]}},
-                          **({"sameAs": g["link"]} if g.get("link") else {}))}
+                          **({"sameAs": g["link"]} if g.get("link") else {}),
+                          **({"image": f"{S.base}/media/{cv['file']}"} if (cv := S.d["media"].get("games", {}).get(g["id"], {}).get("cover")) else {}))}
             for i, g in enumerate(tl["games"])]}
     if pid == "engines":
         graph[1]["mainEntity"] = {"@type": "ItemList", "itemListElement": [
@@ -634,6 +761,9 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     pid = page["id"]
     depth = Site.depth(page, is_root)
     root = "../" * depth
+    for group, items in (("games", L["timeline"]["games"]), ("studios", L["studios"]), ("engines", L["engines"])):
+        for x in items:  # real images (covers, screenshots, logos) with their credits
+            x["media"] = {r: media_view(it, root, ui) for r, it in d["media"].get(group, {}).get(x["id"], {}).items()}
     blocks = render_blocks(S, page, lang, L, ui, depth)
     data = {
         "lang": lang, "root": root, "isRoot": is_root, "page": pid, "ui": ui,

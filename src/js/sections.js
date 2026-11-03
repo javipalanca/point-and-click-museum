@@ -1,7 +1,7 @@
 /* Point and Click Museum · hero, timeline, studios, engines, techniques, navigation. */
 "use strict";
 (() => {
-  const { D, $, $$, t, esc, store, spriteURL, rng, badge, pixelText, pixelTextWidth, canvasPoint, sfx, tone, ac, typeText, award, openModal, reduceMotion } = PCM;
+  const { D, $, $$, t, esc, store, spriteURL, rng, mediaFigure, pixelText, pixelTextWidth, canvasPoint, sfx, tone, ac, typeText, award, openModal, reduceMotion } = PCM;
   const smooth = reduceMotion ? "auto" : "smooth";
 
   /* ================= Language hint (root page only) ================= */
@@ -163,32 +163,33 @@
   if ($("#eraGroups")) (() => {
     const games = D.timeline.games, eras = D.timeline.eras;
     const seen = new Set(store("seen") || []);
-    const cards = $$(".card");
-    cards.forEach(c => { if (seen.has(games[+c.dataset.i].id)) c.classList.add("seen"); });
+    $$(".tl-item").forEach(c => { if (seen.has(games[+c.dataset.i].id)) c.classList.add("seen"); });
     const updCount = () => { $("#tlCount").textContent = t("seenCount", { n: games.filter(g => seen.has(g.id)).length, total: games.length }); };
     updCount();
-    let eraFilter = null;
-    $$("#eras button").forEach(b => b.addEventListener("click", () => {
-      const id = b.dataset.era; eraFilter = eraFilter === id ? null : id; sfx("click");
-      $$("#eras button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.era === eraFilter)));
-      $$(".era-group").forEach(g => { g.hidden = !!eraFilter && g.dataset.era !== eraFilter; });
-    }));
     function openGame(i) {
-      const g = games[i], er = eras.find(e => e.id === g.era);
-      openModal('<div class="mh"><img src="' + spriteURL(g.icon) + '" alt="" width="72" height="72"><div><div class="m-year" style="color:' + er.color + '">' + g.year + '</div><h3 id="mTitle">' + esc(g.title) + "</h3></div></div>" +
-        '<dl class="meta"><dt>' + esc(t("studio")) + "</dt><dd>" + esc(g.studio) + "</dd><dt>" + esc(t("engine")) + "</dt><dd>" + esc(g.engine) + "</dd><dt>" + esc(t("era")) + "</dt><dd>" + esc(er.name) + " (" + er.range + ")</dd></dl>" +
-        "<p>" + esc(g.text.d) + '</p><p class="fact">' + esc(g.text.f) + "</p>" +
-        (g.link ? '<p class="m-link">' + linkHtml(g.link, t("moreAbout") + " · " + linkLabel(g.link)) + "</p>" : "") +
-        '<div class="nav"><button class="pbtn small" id="mPrev" type="button"' + (i === 0 ? " disabled" : "") + ">◀ " + esc(t("prev")) + '</button><button class="pbtn small" id="mNext" type="button"' + (i === games.length - 1 ? " disabled" : "") + ">" + esc(t("next")) + " ▶</button></div>",
+      const g = games[i], er = eras.find(e => e.id === g.era), m = g.media || {};
+      openModal('<article class="sheet' + (m.cover ? "" : " no-cover") + '" style="--ec:' + er.color + '">' +
+        '<header class="sheet-head"><span class="m-year">' + g.year + '</span><span class="sheet-era">' + esc(er.name) + " · " + esc(er.range) + '</span><h3 id="mTitle">' + esc(g.title) + "</h3></header>" +
+        '<div class="sheet-body">' + mediaFigure(m.cover, t("coverOf", { title: g.title }), "sheet-cover") +
+        '<div class="sheet-info"><dl class="meta"><dt>' + esc(t("studio")) + "</dt><dd>" + esc(g.studio) + "</dd><dt>" + esc(t("engine")) + "</dt><dd>" + esc(g.engine) + "</dd></dl>" +
+        "<p>" + esc(g.text.d) + '</p><p class="fact">' + esc(g.text.f) + "</p></div></div>" +
+        mediaFigure(m.screenshot, t("screenshotOf", { title: g.title }), "sheet-shot", t("screenshotLabel")) +
+        (g.link ? '<p class="m-link"><span class="sheet-src">' + esc(t("sourcesTitle")) + ":</span> " + linkHtml(g.link, linkLabel(g.link) + " · " + g.title) + "</p>" : "") +
+        '<div class="nav"><button class="pbtn small" id="mPrev" type="button"' + (i === 0 ? " disabled" : "") + ">◀ " + esc(t("prev")) + '</button><button class="pbtn small" id="mNext" type="button"' + (i === games.length - 1 ? " disabled" : "") + ">" + esc(t("next")) + " ▶</button></div></article>",
         d => { const j = i + d; if (j >= 0 && j < games.length) openGame(j); });
       $("#mPrev").onclick = () => openGame(i - 1); $("#mNext").onclick = () => openGame(i + 1);
       if (!seen.has(g.id)) {
-        seen.add(g.id); store("seen", [...seen]); const c = $('.card[data-i="' + i + '"]'); if (c) c.classList.add("seen"); updCount();
+        seen.add(g.id); store("seen", [...seen]); const c = $('.tl-item[data-i="' + i + '"]'); if (c) c.classList.add("seen"); updCount();
         award("timeline", g.id, g.title);
       }
     }
-    $$(".card-btn").forEach(b => b.addEventListener("click", () => openGame(+b.dataset.i)));
+    $$(".tl-entry").forEach(b => b.addEventListener("click", () => openGame(+b.dataset.i)));
     const deep = location.hash.slice(1); if (deep) { const i = games.findIndex(g => g.id === deep); if (i >= 0) openGame(i); }
+    /* the stops light up as they scroll into view */
+    if ("IntersectionObserver" in window && !reduceMotion) {
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
+      $$(".tl-item").forEach(el => { el.classList.add("pre"); io.observe(el); });
+    }
   })();
 
   /* ================= Studios ================= */
@@ -196,13 +197,12 @@
     const talked = new Set(store("talked") || []), box = $("#dialog");
     $$(".studio").forEach(el => {
       const s = D.studios[+el.dataset.i];
-      badge($("canvas", el), s.name);
       if (talked.has(s.id)) $(".talked", el).textContent = t("talkedAlready");
       $(".talk", el).addEventListener("click", () => talk(+el.dataset.i));
     });
     function talk(i) {
       const s = D.studios[i], asked = new Set(), el = $$(".studio")[i];
-      box.hidden = false; badge($("#dlgFace"), s.name); $("#dlgName").textContent = t("guideAbout", { name: s.name });
+      box.hidden = false; $("#dlgFace").innerHTML = $(".top", el).firstElementChild.outerHTML; $("#dlgName").textContent = t("guideAbout", { name: s.name });
       $("#dlgLink").innerHTML = s.link ? linkHtml(s.link, t("moreAbout") + " · " + linkLabel(s.link)) : "";
       const render = () => {
         const ul = $("#dlgOpts"); ul.innerHTML = "";
@@ -238,6 +238,8 @@
       $("#led").classList.add("on"); $("#slot").textContent = en.name.toUpperCase();
       const scr = $("#screen");
       $("#engLinks").innerHTML = (en.links || []).map(l => linkHtml(l.url, l.label)).join(" ");
+      const mm = en.media || {};
+      $("#engMedia").innerHTML = mediaFigure(mm.screenshot, t("engineShot") + ": " + en.name, "eng-shot", t("engineShot")) || mediaFigure(mm.logo, t("logoOf", { name: en.name }), "eng-logo");
       typeText(scr, "> " + t("loading") + " " + en.name.toUpperCase() + "...\n> " + en.year + " · " + en.by + "\n\n" + en.text, 8, () => scr.insertAdjacentHTML("beforeend", '<span class="cur">█</span>'));
       award("engines", en.id, en.name);
     }));

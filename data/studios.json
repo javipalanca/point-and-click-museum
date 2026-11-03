@@ -4,6 +4,9 @@
    "id": "infocom",
    "name": "Infocom",
    "years": "1979–1989",
+   "games": [
+    "zork"
+   ],
    "dialog": {
     "es": [
      [
@@ -68,6 +71,13 @@
    "id": "sierra",
    "name": "Sierra On-Line",
    "years": "1979–2008",
+   "games": [
+    "mystery-house",
+    "kings-quest",
+    "space-quest",
+    "leisure-suit-larry",
+    "gabriel-knight"
+   ],
    "dialog": {
     "es": [
      [
@@ -132,6 +142,17 @@
    "id": "lucasarts",
    "name": "LucasArts",
    "years": "1982–2013",
+   "games": [
+    "maniac-mansion",
+    "zak-mckracken",
+    "loom",
+    "monkey-island",
+    "fate-of-atlantis",
+    "day-of-the-tentacle",
+    "full-throttle",
+    "curse-of-monkey-island",
+    "grim-fandango"
+   ],
    "dialog": {
     "es": [
      [
@@ -196,6 +217,10 @@
    "id": "revolution",
    "name": "Revolution Software",
    "years": "1990–",
+   "games": [
+    "beneath-a-steel-sky",
+    "broken-sword"
+   ],
    "dialog": {
     "es": [
      [
@@ -260,6 +285,10 @@
    "id": "westwood",
    "name": "Westwood Studios",
    "years": "1985–2003",
+   "games": [
+    "kyrandia",
+    "blade-runner"
+   ],
    "dialog": {
     "es": [
      [
@@ -324,6 +353,9 @@
    "id": "cyan",
    "name": "Cyan",
    "years": "1987–",
+   "games": [
+    "myst"
+   ],
    "dialog": {
     "es": [
      [
@@ -388,6 +420,11 @@
    "id": "pendulo",
    "name": "Pendulo Studios",
    "years": "1993–",
+   "games": [
+    "igor",
+    "hollywood-monsters",
+    "runaway"
+   ],
    "dialog": {
     "es": [
      [
@@ -452,6 +489,10 @@
    "id": "telltale",
    "name": "Telltale Games",
    "years": "2004–2018 · 2018–",
+   "games": [
+    "sam-max-save-the-world",
+    "walking-dead"
+   ],
    "dialog": {
     "es": [
      [
@@ -516,6 +557,11 @@
    "id": "wadjet-eye",
    "name": "Wadjet Eye Games",
    "years": "2006–",
+   "games": [
+    "blackwell-legacy",
+    "unavowed",
+    "old-skies"
+   ],
    "dialog": {
     "es": [
      [
@@ -580,6 +626,9 @@
    "id": "daedalic",
    "name": "Daedalic Entertainment",
    "years": "2007–",
+   "games": [
+    "deponia"
+   ],
    "dialog": {
     "es": [
      [
@@ -644,6 +693,9 @@
    "id": "amanita",
    "name": "Amanita Design",
    "years": "2003–",
+   "games": [
+    "machinarium"
+   ],
    "dialog": {
     "es": [
      [
@@ -708,6 +760,10 @@
    "id": "terrible-toybox",
    "name": "Terrible Toybox",
    "years": "2014–",
+   "games": [
+    "thimbleweed-park",
+    "return-to-monkey-island"
+   ],
    "dialog": {
     "es": [
      [

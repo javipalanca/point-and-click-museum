@@ -3,9 +3,9 @@
 Memoria de trabajo compartida entre personas y agentes. Añade entradas al final de cada sección con fecha
 (AAAA-MM-DD). No borres decisiones antiguas: márcalas como «sustituida por…».
 
-## Estado actual (2026-11-01)
+## Estado actual (2026-11-03)
 
-- 11 páginas × 4 idiomas = 44 páginas: portada, línea temporal (41 juegos), estudios (12), motores (11),
+- 11 páginas × 4 idiomas = 44 páginas: portada, línea temporal (42 juegos, 27 con portada real), estudios (12), motores (11),
   técnicas, minijuegos (índice + 4 juegos) y sala DOSBox.
 - Publicado como Artifact privado de claude.ai: https://claude.ai/artifact/RSUfNBGmo8D3XLvqDvXbjY
   (se regenera con `tools/export_artifact.py`).
@@ -21,6 +21,7 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **2026-11-01 · Multipágina en lugar de una sola página larga** (petición del usuario: «hazla navegable»).
   Rutas neutras en inglés (`/es/timeline/`) para todos los idiomas.
 - **2026-11-01 · Línea temporal agrupada por épocas en cuadrícula**, sustituyendo al pasillo con scroll horizontal.
+  Sustituida por el eje vertical del 2026-11-03.
 - **2026-11-01 · Personajes híbridos:** cabeza y torso dibujados a mano (16 px de ancho) + piernas procedurales para
   un ciclo de paso fluido. Sustituye a los personajes hechos con rectángulos.
 - **2026-11-01 · Caza del píxel procedural:** desván distinto en cada ronda, oscuridad creciente y linterna en la última.
@@ -67,6 +68,22 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **2026-11-01 · Catálogo de la sala DOSBox** con buscador, filtro por compañía, índice A–Z (sin artículos iniciales)
   y orden por título/año, visible a partir de 8 juegos (`arcade.json → catalogue.filtersFrom`); tarjetas compactas.
 
+- **2026-11-03 · Línea temporal como eje vertical** (petición del usuario: «cajas cuadradas tan grandes, muy fea»).
+  Un eje de píxeles discontinuo; cada época es un cartel con rango, nombre y resumen (`eras[].summary`); marcas de
+  década; cada juego es una parada (nodo + año + portada pequeña + título y estudio · motor) alternando a izquierda y
+  derecha en escritorio, y con el eje a la izquierda en móvil (< 900 px). Se conservan anclas `era-<id>` y `#<juego>`.
+  La ficha (modal) muestra portada, captura, créditos y fuente.
+- **2026-11-03 · Imágenes reales en lugar de sprites inventados** (petición del usuario: «imágenes reales, rigor»).
+  `data/media.json` registra cada imagen con su fuente fijada a un commit o fichero; `tools/fetch_media.py` (stdlib,
+  con decodificador/reductor PNG y cuantización a 256 colores) las guarda en `assets/media/` (versionado, ~2 MB).
+  Fuente principal: libretro-thumbnails en GitHub (portadas `Named_Boxarts` y capturas `Named_Snaps`); su nombre de
+  fichero indica la edición y se muestra en el crédito. Logos de motores desde sus repositorios oficiales (ScummVM GPL,
+  AGS, Godot CC BY 4.0). Estudios sin logo: monograma tipográfico, nunca un emblema inventado. Los motores internos
+  (SCUMM, AGI, SCI…) no tienen logo: se ilustran con una captura de un juego hecho con ellos (`refs`).
+  Se descartó la portada de Colossal Cave de libretro: es un port de C64 de los 80, no el original de 1976.
+  Portadas y capturas tienen copyright de sus editores: se muestran a baja resolución, con crédito y enlace al fichero.
+- **2026-11-03 · Cada estudio lista sus juegos** (`studios.json → games`) y muestra sus portadas enlazadas a la línea temporal.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,
@@ -77,6 +94,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   esqueleto, admite `.wasm`, `.js`, `.png`, `.xml`, `.txt`, `.webmanifest` pero no `.zip`.
 
 ## Pendiente / ideas
+
+- **Imágenes pendientes (27):** logos de los 12 estudios, logo de Visionaire y portadas de 14 juegos modernos
+  (Runaway, Hollywood Monsters, Sam & Max Save the World, Blackwell, Machinarium, Deponia, The Walking Dead, Kentucky
+  Route Zero, Broken Age, Return to Monkey Island, Golden Idol, Hob's Barrow, Old Skies, Kathy Rain 2). Están declaradas
+  en `data/media.json` como `wikipedia:` pero Wikipedia/Wikimedia/Wikidata estaban bloqueados en la sesión en la nube.
+  Ejecuta `python3 tools/fetch_media.py` en local (o permite esos dominios en el entorno) y revisa cada imagen; la
+  parte de Wikimedia de la herramienta no se ha podido probar contra la API real. `--check` lista lo que falta.
+- Verificar fechas, estudios y motores contra Wikidata (P577, P178, P408) cuando haya acceso: la portada de Myst es
+  la Masterpiece Edition y la de Mystery House una reedición SierraVenture (así lo dice su crédito).
 
 - Verificar los enlaces externos (Wikipedia y webs oficiales): no se pudieron comprobar desde el entorno en la nube.
 - Probar la captura del ratón con un juego DOS real en un navegador de escritorio.
@@ -98,3 +124,4 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - 2026-11-01 · v6: soporte de ScummVM web (script de compilación, reproductor, detección de motor, freeware en el catálogo).
 - 2026-11-02 · v7: paleta más luminosa, transiciones clásicas entre páginas y skills de terceros.
 - 2026-11-02 · v8: navegación nueva (pasillo de puertas, plano del museo, franja «En esta sala», pie con directorio).
+- 2026-11-03 · v9: línea temporal como eje con carteles de época, imágenes reales con créditos (portadas, capturas, logos).

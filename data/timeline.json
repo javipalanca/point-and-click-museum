@@ -9,6 +9,12 @@
     "en": "Text",
     "de": "Text",
     "fr": "Texte"
+   },
+   "summary": {
+    "es": "Sin gráficos: el jugador escribe órdenes y el parser intenta entenderlas. Nacen en ordenadores universitarios y llegan a casa con Infocom.",
+    "en": "No graphics: the player types commands and a parser tries to understand them. Born on university mainframes, brought home by Infocom.",
+    "de": "Keine Grafik: Man tippt Befehle, ein Parser versucht sie zu verstehen. Entstanden auf Universitätsrechnern, von Infocom in die Wohnzimmer gebracht.",
+    "fr": "Pas de graphismes : le joueur tape des ordres qu'un parser tente de comprendre. Nés sur les ordinateurs des universités, popularisés par Infocom."
    }
   },
   {
@@ -20,6 +26,12 @@
     "en": "Graphic parser",
     "de": "Grafischer Parser",
     "fr": "Parser graphique"
+   },
+   "summary": {
+    "es": "Llegan los gráficos y un protagonista que camina por la pantalla, pero las acciones aún se escriben. Al final de la época, SCUMM pone los verbos a la vista.",
+    "en": "Graphics arrive, with a hero walking across the screen, but actions are still typed. By the end of the era SCUMM puts the verbs on screen.",
+    "de": "Grafik kommt hinzu, eine Figur läuft über den Bildschirm, doch Befehle werden noch getippt. Am Ende der Epoche bringt SCUMM die Verben auf den Bildschirm.",
+    "fr": "Les graphismes arrivent, avec un héros qui marche à l'écran, mais les actions se tapent encore. En fin d'époque, SCUMM affiche les verbes à l'écran."
    }
   },
   {
@@ -31,6 +43,12 @@
     "en": "Golden age",
     "de": "Goldenes Zeitalter",
     "fr": "Âge d'or"
+   },
+   "summary": {
+    "es": "VGA, ratón, CD-ROM y voces: LucasArts, Sierra, Revolution y los estudios europeos viven su mejor momento.",
+    "en": "VGA, the mouse, CD-ROM and voice acting: LucasArts, Sierra, Revolution and European studios are at their peak.",
+    "de": "VGA, Maus, CD-ROM und Sprachausgabe: LucasArts, Sierra, Revolution und die europäischen Studios auf ihrem Höhepunkt.",
+    "fr": "VGA, souris, CD-ROM et voix : LucasArts, Sierra, Revolution et les studios européens sont à leur apogée."
    }
   },
   {
@@ -42,6 +60,12 @@
     "en": "The jump to 3D",
     "de": "Der Sprung ins 3D",
     "fr": "Le passage à la 3D"
+   },
+   "summary": {
+    "es": "Personajes en 3D y fondos prerrenderizados. Las grandes editoras abandonan el género, pero Europa lo mantiene vivo.",
+    "en": "3D characters and pre-rendered backgrounds. Big publishers abandon the genre, but Europe keeps it alive.",
+    "de": "3D-Figuren und vorgerenderte Hintergründe. Große Publisher geben das Genre auf, Europa hält es am Leben.",
+    "fr": "Personnages en 3D et décors précalculés. Les grands éditeurs abandonnent le genre, l'Europe le maintient en vie."
    }
   },
   {
@@ -53,6 +77,12 @@
     "en": "Revival",
     "de": "Renaissance",
     "fr": "Renaissance"
+   },
+   "summary": {
+    "es": "Distribución digital, episodios y financiación colectiva: el género vuelve de la mano de estudios independientes y de Telltale.",
+    "en": "Digital distribution, episodes and crowdfunding: the genre returns through independent studios and Telltale.",
+    "de": "Digitaler Vertrieb, Episoden und Crowdfunding: Das Genre kehrt mit Indie-Studios und Telltale zurück.",
+    "fr": "Distribution numérique, épisodes et financement participatif : le genre revient grâce aux studios indépendants et à Telltale."
    }
   },
   {
@@ -64,6 +94,12 @@
     "en": "Present day",
     "de": "Gegenwart",
     "fr": "Aujourd'hui"
+   },
+   "summary": {
+    "es": "Los creadores clásicos vuelven, el pixel art se reivindica y aparecen nuevas formas: deducción, viajes en el tiempo, narrativa ramificada.",
+    "en": "Classic creators return, pixel art is embraced and new forms appear: deduction, time travel, branching stories.",
+    "de": "Die Klassiker-Macher kehren zurück, Pixel-Art erlebt eine Renaissance, neue Formen entstehen: Deduktion, Zeitreisen, verzweigte Geschichten.",
+    "fr": "Les créateurs historiques reviennent, le pixel art est revendiqué et de nouvelles formes apparaissent : déduction, voyages dans le temps, récits à embranchements."
    }
   }
  ],
@@ -75,7 +111,6 @@
    "studio": "Will Crowther · Don Woods",
    "engine": "FORTRAN · PDP-10",
    "era": "text",
-   "icon": "terminal",
    "text": {
     "es": {
      "d": "Will Crowther, programador y espeleólogo, recreó en texto la Mammoth Cave de Kentucky. Don Woods la amplió en 1977 con tesoros y fantasía. Es el antepasado directo de todo el género.",
@@ -103,7 +138,6 @@
    "studio": "MIT · Infocom",
    "engine": "MDL · Z-machine",
    "era": "text",
-   "icon": "book",
    "text": {
     "es": {
      "d": "Cuatro estudiantes del MIT crearon un mundo subterráneo con un parser capaz de entender frases completas. En 1979 fundaron Infocom y lo vendieron en tres partes a partir de 1980.",
@@ -131,7 +165,6 @@
    "studio": "On-Line Systems",
    "engine": "Apple II",
    "era": "text",
-   "icon": "house",
    "text": {
     "es": {
      "d": "Roberta Williams escribió un misterio a lo Agatha Christie y Ken Williams lo programó con dibujos de líneas. Se considera la primera aventura con gráficos.",
@@ -159,7 +192,6 @@
    "studio": "Sierra On-Line",
    "engine": "AGI",
    "era": "parser",
-   "icon": "crown",
    "text": {
     "es": {
      "d": "Encargo de IBM para su PCjr. Por primera vez el protagonista caminaba por escenarios animados con profundidad, aunque las acciones aún se escribían.",
@@ -187,7 +219,6 @@
    "studio": "ICOM Simulations",
    "engine": "MacVenture",
    "era": "parser",
-   "icon": "cursor",
    "text": {
     "es": {
      "d": "Un detective amnésico en el Chicago de los años 40. En el Macintosh se jugaba solo con el ratón: verbos en botones y objetos que se arrastraban.",
@@ -215,7 +246,6 @@
    "studio": "Sierra · Mark Crowe, Scott Murphy",
    "engine": "AGI",
    "era": "parser",
-   "icon": "robot",
    "text": {
     "es": {
      "d": "Roger Wilco, conserje espacial, salva la galaxia por accidente. Los «Two Guys from Andromeda» llevaron la parodia de ciencia ficción a Sierra.",
@@ -243,7 +273,6 @@
    "studio": "Lucasfilm Games · Ron Gilbert, Gary Winnick",
    "engine": "SCUMM",
    "era": "parser",
-   "icon": "house",
    "text": {
     "es": {
      "d": "Siete estudiantes posibles, tres elegidos, varios finales. Para crearlo, Ron Gilbert y Aric Wilmunder programaron SCUMM y los verbos pasaron del teclado a la pantalla.",
@@ -271,7 +300,6 @@
    "studio": "Sierra · Al Lowe",
    "engine": "AGI",
    "era": "parser",
-   "icon": "heart",
    "text": {
     "es": {
      "d": "Comedia picante con un perdedor entrañable. Al empezar hacía preguntas de cultura general para comprobar que el jugador era adulto.",
@@ -299,7 +327,6 @@
    "studio": "Lucasfilm Games · David Fox",
    "engine": "SCUMM",
    "era": "parser",
-   "icon": "eye",
    "text": {
     "es": {
      "d": "Un periodista sensacionalista descubre que unos alienígenas quieren atontar a la humanidad. Viajes por todo el mundo y cuatro personajes jugables.",
@@ -327,7 +354,6 @@
    "studio": "Aventuras AD",
    "engine": "DAAD",
    "era": "parser",
-   "icon": "book",
    "text": {
     "es": {
      "d": "Versión española de Colossal Cave con gráficos para Spectrum, Amstrad, MSX y PC. Aventuras AD, de Andrés Samudio, fue la gran casa de la aventura conversacional en España.",
@@ -355,7 +381,6 @@
    "studio": "Lucasfilm Games · Brian Moriarty",
    "engine": "SCUMM",
    "era": "golden",
-   "icon": "note",
    "text": {
     "es": {
      "d": "Sin inventario ni verbos: Bobbin teje hechizos tocando secuencias de cuatro notas con su bastón. Una fábula melancólica con música de Chaikovski.",
@@ -383,7 +408,6 @@
    "studio": "Lucasfilm Games · Ron Gilbert, Tim Schafer, Dave Grossman",
    "engine": "SCUMM",
    "era": "golden",
-   "icon": "palm",
    "text": {
     "es": {
      "d": "Guybrush Threepwood quiere ser pirata. Humor, duelos de insultos y un diseño en el que no se puede morir ni quedar atascado.",
@@ -411,7 +435,6 @@
    "studio": "Westwood Studios",
    "engine": "Westwood",
    "era": "golden",
-   "icon": "gear",
    "text": {
     "es": {
      "d": "Fantasía colorista con una interfaz de un solo clic: sin verbos, el juego decide qué hacer con cada objeto.",
@@ -439,7 +462,6 @@
    "studio": "LucasArts · Hal Barwood, Noah Falstein",
    "engine": "SCUMM",
    "era": "golden",
-   "icon": "magnifier",
    "text": {
     "es": {
      "d": "Una aventura original de Indy en busca de la Atlántida, con tres caminos: en equipo con Sophia, de ingenio o a puñetazos.",
@@ -467,7 +489,6 @@
    "studio": "LucasArts · Tim Schafer, Dave Grossman",
    "engine": "SCUMM · iMUSE",
    "era": "golden",
-   "icon": "cd",
    "text": {
     "es": {
      "d": "Tres personajes en tres épocas que se pasan objetos a través de inodoros que viajan en el tiempo. Animación de dibujo animado y voces completas en CD.",
@@ -495,7 +516,6 @@
    "studio": "Sierra · Jane Jensen",
    "engine": "SCI",
    "era": "golden",
-   "icon": "skull",
    "text": {
     "es": {
      "d": "Un librero de Nueva Orleans investiga asesinatos vudú. Guion adulto, oscuro y muy documentado.",
@@ -523,7 +543,6 @@
    "studio": "Cyan · Rand & Robyn Miller",
    "engine": "HyperCard",
    "era": "golden",
-   "icon": "eye",
    "text": {
     "es": {
      "d": "Imágenes renderizadas, silencio, una isla vacía y puzles mecánicos. Vendió millones de copias y popularizó el CD-ROM.",
@@ -551,7 +570,6 @@
    "studio": "Pendulo Studios",
    "engine": "Pendulo",
    "era": "golden",
-   "icon": "palm",
    "text": {
     "es": {
      "d": "Un estudiante quiere apuntarse a una excursión a una isla tropical para conquistar a una chica. Primer juego de Pendulo y punto de partida de la aventura gráfica española de los 90.",
@@ -579,7 +597,6 @@
    "studio": "Revolution Software",
    "engine": "Virtual Theatre",
    "era": "golden",
-   "icon": "robot",
    "text": {
     "es": {
      "d": "Ciberpunk australiano con arte de Dave Gibbons, el dibujante de Watchmen. Los personajes seguían rutinas propias por la ciudad.",
@@ -607,7 +624,6 @@
    "studio": "LucasArts · Tim Schafer",
    "engine": "SCUMM · INSANE",
    "era": "golden",
-   "icon": "skull",
    "text": {
     "es": {
      "d": "Ben, líder de una banda de moteros, es acusado de asesinato. Corta, cinematográfica y con un menú radial de acciones: ojo, mano, boca y bota.",
@@ -635,7 +651,6 @@
    "studio": "Revolution Software · Charles Cecil",
    "engine": "Virtual Theatre",
    "era": "golden",
-   "icon": "sword",
    "text": {
     "es": {
      "d": "George Stobbart y Nico Collard persiguen a los templarios por París, Irlanda, Siria y España. Animación dibujada a mano de calidad cinematográfica.",
@@ -663,7 +678,6 @@
    "studio": "LucasArts · Larry Ahern, Jonathan Ackley",
    "engine": "SCUMM",
    "era": "golden",
-   "icon": "palm",
    "text": {
     "es": {
      "d": "Alta resolución, dibujos animados a mano y una moneda de verbos que aparece al mantener pulsado el botón.",
@@ -691,7 +705,6 @@
    "studio": "Pendulo Studios",
    "engine": "Pendulo",
    "era": "golden",
-   "icon": "skull",
    "text": {
     "es": {
      "d": "Dos periodistas investigan la desaparición de un monstruo en la fiesta de las estrellas del cine de terror. Doblaje de lujo y enorme éxito en España.",
@@ -719,7 +732,6 @@
    "studio": "Westwood Studios",
    "engine": "Voxels",
    "era": "golden",
-   "icon": "eye",
    "text": {
     "es": {
      "d": "Una historia paralela a la película. Los personajes eran voxels y quién era replicante se decidía al azar en cada partida.",
@@ -747,7 +759,6 @@
    "studio": "LucasArts · Tim Schafer",
    "engine": "GrimE · Lua",
    "era": "3d",
-   "icon": "skull",
    "text": {
     "es": {
      "d": "Manny Calavera, agente de viajes del Mundo de los Muertos, en un cine negro con estética del Día de Muertos. Personajes 3D sobre fondos prerrenderizados.",
@@ -775,7 +786,6 @@
    "studio": "Funcom · Ragnar Tørnquist",
    "engine": "Funcom",
    "era": "3d",
-   "icon": "book",
    "text": {
     "es": {
      "d": "April Ryan descubre que puede viajar entre dos mundos, uno tecnológico y otro mágico. Una narrativa extensa y madura.",
@@ -803,7 +813,6 @@
    "studio": "Pendulo Studios",
    "engine": "Pendulo",
    "era": "3d",
-   "icon": "heart",
    "text": {
     "es": {
      "d": "Brian y Gina huyen de la mafia por Estados Unidos. Modelos 3D renderizados con aspecto de dibujo animado.",
@@ -831,7 +840,6 @@
    "studio": "Microïds · Benoît Sokal",
    "engine": "Virtools",
    "era": "3d",
-   "icon": "gear",
    "text": {
     "es": {
      "d": "La abogada Kate Walker viaja hacia el este en un tren de cuerda tras la pista de un inventor de autómatas. Melancolía y fondos preciosos.",
@@ -859,7 +867,6 @@
    "studio": "Telltale Games",
    "engine": "Telltale Tool",
    "era": "revival",
-   "icon": "cd",
    "text": {
     "es": {
      "d": "Los personajes de Steve Purcell vuelven en formato episódico, con capítulos mensuales y descarga digital.",
@@ -887,7 +894,6 @@
    "studio": "Wadjet Eye Games · Dave Gilbert",
    "engine": "AGS",
    "era": "revival",
-   "icon": "magnifier",
    "text": {
     "es": {
      "d": "Rosa Blackwell descubre que es médium y ayuda a los fantasmas a pasar al otro lado. El inicio de una saga independiente en Nueva York.",
@@ -915,7 +921,6 @@
    "studio": "Amanita Design",
    "engine": "Flash",
    "era": "revival",
-   "icon": "robot",
    "text": {
     "es": {
      "d": "Un pequeño robot en una ciudad de chatarra. Sin texto: los diálogos son viñetas dibujadas y todo está pintado a mano.",
@@ -943,7 +948,6 @@
    "studio": "Daedalic Entertainment",
    "engine": "Visionaire Studio",
    "era": "revival",
-   "icon": "gear",
    "text": {
     "es": {
      "d": "Rufus vive en un planeta vertedero y sueña con escapar. Humor ácido y dibujo animado en alta resolución desde Hamburgo.",
@@ -971,7 +975,6 @@
    "studio": "Telltale Games",
    "engine": "Telltale Tool",
    "era": "revival",
-   "icon": "heart",
    "text": {
     "es": {
      "d": "Lee cuida de Clementine durante el apocalipsis zombi. Menos puzles y más decisiones con consecuencias y peso emocional.",
@@ -999,7 +1002,6 @@
    "studio": "Cardboard Computer",
    "engine": "Unity",
    "era": "revival",
-   "icon": "eye",
    "text": {
     "es": {
      "d": "Una carretera secreta bajo Kentucky. Realismo mágico, teatro y diálogos poéticos, publicados en cinco actos entre 2013 y 2020.",
@@ -1027,7 +1029,6 @@
    "studio": "Double Fine · Tim Schafer",
    "engine": "Moai",
    "era": "revival",
-   "icon": "star",
    "text": {
     "es": {
      "d": "Nació de la campaña de Kickstarter de 2012, que pidió 400 000 dólares y recaudó más de 3,3 millones. Dos protagonistas y dos mundos.",
@@ -1055,7 +1056,6 @@
    "studio": "Terrible Toybox · Ron Gilbert, Gary Winnick",
    "engine": "Terrible Toybox",
    "era": "now",
-   "icon": "cursor",
    "text": {
     "es": {
      "d": "Cinco personajes, un cadáver y un pueblo muy raro. Pixel art y verbos clásicos, financiado por Kickstarter en 2014.",
@@ -1083,7 +1083,6 @@
    "studio": "Wadjet Eye Games",
    "engine": "AGS",
    "era": "now",
-   "icon": "book",
    "text": {
     "es": {
      "d": "Fantasía urbana en Nueva York con un grupo de compañeros y decisiones de rol. Pixel art en alta resolución.",
@@ -1111,7 +1110,6 @@
    "studio": "Terrible Toybox · Ron Gilbert, Dave Grossman",
    "engine": "Terrible Toybox",
    "era": "now",
-   "icon": "palm",
    "text": {
     "es": {
      "d": "Los creadores originales vuelven a la isla tres décadas después, con estilo de libro ilustrado y un sistema de pistas integrado.",
@@ -1139,7 +1137,6 @@
    "studio": "Color Gray Games",
    "engine": "Unity",
    "era": "now",
-   "icon": "magnifier",
    "text": {
     "es": {
      "d": "Escenas congeladas de crímenes. El jugador examina y rellena un texto con nombres, motivos y armas. La deducción sustituye al inventario.",
@@ -1167,7 +1164,6 @@
    "studio": "Cloak and Dagger Games",
    "engine": "AGS",
    "era": "now",
-   "icon": "skull",
    "text": {
     "es": {
      "d": "Terror folk en los páramos ingleses del siglo XIX. Pixel art clásico con una atmósfera inquietante.",
@@ -1195,7 +1191,6 @@
    "studio": "Wadjet Eye Games",
    "engine": "Wadjet Eye",
    "era": "now",
-   "icon": "star",
    "text": {
     "es": {
      "d": "Una agente de viajes en el tiempo puede repetir cada escena hasta que todo salga bien. Pixel art en alta resolución.",
@@ -1223,7 +1218,6 @@
    "studio": "Clifftop Games",
    "engine": "Unity",
    "era": "now",
-   "icon": "magnifier",
    "text": {
     "es": {
      "d": "La detective motera vuelve con el caso de un asesino que anuncia sus crímenes. Investigación noventera con interfaz de un solo clic.",

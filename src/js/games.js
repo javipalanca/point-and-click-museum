@@ -288,7 +288,7 @@
       set.forEach(g => {
         const b = document.createElement("button"), k = picks.indexOf(g); b.type = "button";
         b.className = "ord" + (k >= 0 ? " picked" : "") + (checked ? " reveal " + (sorted.indexOf(g) === k ? "ok" : "bad") : "");
-        b.innerHTML = '<span class="slot">' + (k + 1) + '</span><img alt="" width="40" height="40" src="' + spriteURL(g.icon) + '"><span><span style="display:block">' + esc(g.title) + '</span><span class="yr3">' + g.year + "</span></span>";
+        b.innerHTML = '<span class="slot">' + (k + 1) + '</span>' + (g.media && g.media.cover ? '<img class="ord-cover" alt="" width="' + g.media.cover.w + '" height="' + g.media.cover.h + '" src="' + esc(g.media.cover.src) + '">' : "") + '<span><span style="display:block">' + esc(g.title) + '</span><span class="yr3">' + g.year + "</span></span>";
         b.onclick = () => { if (checked) return; sfx("click"); if (k >= 0) picks.splice(k, 1); else picks.push(g); render(); };
         el.appendChild(b);
       });

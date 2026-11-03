@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import threading
+import time
 import unittest
 import urllib.error
 import urllib.request
@@ -22,17 +23,22 @@ SECRET = "sk-test-THIS-MUST-NEVER-LEAK"
 
 class FakeLLM(BaseHTTPRequestHandler):
     """OpenAI-compatible /v1/chat/completions. Behaviour is set by FakeLLM.mode."""
-    mode, requests, verdict, classified = "tools", [], "OFF", 0
+    mode, requests, verdict, classified, delay = "tools", [], "OFF", 0, 0.0
 
     def log_message(self, *a):
         pass
 
     def do_POST(self):
         body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-        FakeLLM.requests.append({"path": self.path, "auth": self.headers.get("Authorization"), "body": body})
+        is_classifier = "You are a topic filter" in body["messages"][0]["content"]
+        FakeLLM.requests.append({"path": self.path, "auth": self.headers.get("Authorization"), "body": body,
+                                 "at": time.monotonic(), "classifier": is_classifier})
         if FakeLLM.mode == "down":
             return self.reply(503, {"error": "overloaded"})
-        if "You are a topic filter" in body["messages"][0]["content"]:  # the guard's classifier call
+        if FakeLLM.mode == "strict-params" and "chat_template_kwargs" in body:  # e.g. a hosted API that rejects extras
+            return self.reply(400, {"error": {"message": "Unrecognized request argument supplied: chat_template_kwargs"}})
+        if is_classifier:  # the guard's classifier call
+            time.sleep(FakeLLM.delay)
             FakeLLM.classified += 1
             return self.reply(200, {"choices": [{"message": {"role": "assistant", "content": "<think>hmm</think>" + FakeLLM.verdict}}]})
         if FakeLLM.mode == "no-tools" and "tools" in body:
@@ -58,13 +64,18 @@ class FakeLLM(BaseHTTPRequestHandler):
             deltas = [{"content": p} for p in ("¡Vamos a la vitrina de LucasArts! [", "[go:studio:", "lucasarts]]")]
         else:
             deltas = [{"content": p} for p in ("<thi", "nk>The visitor asks about SCUMM.</th", "ink>\n¡SCUMM", ", mortal! El motor ", "de Maniac Mansion.")]
+        if FakeLLM.mode == "reasoning":  # vLLM / Ollama send the thinking apart, in reasoning_content
+            deltas = [{"reasoning_content": "The visitor asks about SCUMM. " * 20}, {"content": "¡SCUMM, mortal!"}]
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream")
         self.end_headers()
-        for d in deltas:
-            self.wfile.write(b"data: " + json.dumps({"choices": [{"index": 0, "delta": d}]}).encode() + b"\n\n")
-            self.wfile.flush()
-        self.wfile.write(b"data: [DONE]\n\n")
+        try:
+            for d in deltas:
+                self.wfile.write(b"data: " + json.dumps({"choices": [{"index": 0, "delta": d}]}).encode() + b"\n\n")
+                self.wfile.flush()
+            self.wfile.write(b"data: [DONE]\n\n")
+        except (BrokenPipeError, ConnectionResetError):  # Murray stopped reading (answer refused by the guard)
+            pass
 
     def reply(self, code, obj):
         data = json.dumps(obj).encode()
@@ -113,10 +124,12 @@ class AnswerTests(unittest.TestCase):
         cls.llm.shutdown()
 
     def setUp(self):
-        FakeLLM.mode, FakeLLM.requests, FakeLLM.verdict, FakeLLM.classified = "tools", [], "OFF", 0
+        FakeLLM.mode, FakeLLM.requests, FakeLLM.verdict, FakeLLM.classified, FakeLLM.delay = "tools", [], "OFF", 0, 0.0
+        murray.NO_THINK["rejected"] = False
 
     def tearDown(self):
-        for k in ("MURRAY_LLM_BASE_URL", "MURRAY_LLM_MODEL", "MURRAY_LLM_API_KEY", "MURRAY_LLM_TOOLS", "MURRAY_GUARD"):
+        for k in ("MURRAY_LLM_BASE_URL", "MURRAY_LLM_MODEL", "MURRAY_LLM_API_KEY", "MURRAY_LLM_TOOLS", "MURRAY_GUARD",
+                  "MURRAY_LLM_THINK"):
             os.environ.pop(k, None)
 
     def configure(self, **extra):
@@ -210,7 +223,7 @@ class AnswerTests(unittest.TestCase):
         self.assertTrue(self.refused(r))
         self.assertIn(r["reply"], murray.loc(murray.TEXTS["errors"]["offTopic"], "es"))
         self.assertEqual(FakeLLM.classified, 1)
-        self.assertEqual(len(FakeLLM.requests), 1)          # the answer itself never reached the model
+        self.assertNotIn("SCUMM", r["reply"])                 # the answer generated in parallel never reached the visitor
 
     def test_follow_up_passes_with_context(self):
         self.configure()
@@ -219,16 +232,47 @@ class AnswerTests(unittest.TestCase):
                                                       {"role": "assistant", "content": "Una aventura de Lucasfilm de 1990."},
                                                       {"role": "user", "content": "¿Y quién la dirigió?"}]})
         self.assertFalse(self.refused(r))
-        self.assertIn("Una aventura de Lucasfilm", FakeLLM.requests[0]["body"]["messages"][0]["content"])  # classifier saw context
+        prompt = next(q for q in FakeLLM.requests if q["classifier"])["body"]["messages"][0]["content"]
+        self.assertIn("Una aventura de Lucasfilm", prompt)  # classifier saw context
 
     def test_classifier_sees_related_records_and_is_lenient(self):
         self.configure()
         FakeLLM.verdict = "ON"
         r = self.ask("¿Para qué servía la polea?")
         self.assertFalse(self.refused(r))
-        prompt = FakeLLM.requests[0]["body"]["messages"][0]["content"]
+        prompt = next(q for q in FakeLLM.requests if q["classifier"])["body"]["messages"][0]["content"]
         self.assertIn("When in doubt, answer ON", prompt)
         self.assertIn("polea", prompt.split("Related records")[1].split("Previous answer")[0])
+
+    def test_classifier_runs_alongside_the_answer(self):
+        self.configure()
+        FakeLLM.verdict, FakeLLM.delay = "ON", 0.4
+        t0 = time.monotonic()
+        r = self.ask("¿Para qué servía la polea?")
+        self.assertFalse(self.refused(r))
+        answer_req = next(q for q in FakeLLM.requests if not q["classifier"])
+        self.assertEqual(FakeLLM.classified, 1)
+        self.assertLess(answer_req["at"] - t0, 0.3)           # the answer did not wait for the classifier
+
+    def test_thinking_off_by_default_and_dropped_if_rejected(self):
+        self.configure()
+        self.ask()
+        self.assertEqual(FakeLLM.requests[-1]["body"]["chat_template_kwargs"], {"enable_thinking": False})
+        FakeLLM.requests = []
+        os.environ["MURRAY_LLM_THINK"] = "1"
+        self.ask()
+        self.assertNotIn("chat_template_kwargs", FakeLLM.requests[-1]["body"])
+        del os.environ["MURRAY_LLM_THINK"]
+        FakeLLM.mode = "strict-params"
+        r = self.ask()
+        self.assertEqual(r["mode"], "llm")
+        self.assertTrue(murray.NO_THINK["rejected"])
+        self.assertNotIn("chat_template_kwargs", FakeLLM.requests[-1]["body"])
+
+    def test_reasoning_content_is_hidden(self):
+        self.configure(MURRAY_LLM_TOOLS="0")
+        FakeLLM.mode = "reasoning"
+        self.assertEqual(self.ask()["reply"], "¡SCUMM, mortal!")
 
     def test_injection_and_other_museums_need_no_model(self):
         self.configure()

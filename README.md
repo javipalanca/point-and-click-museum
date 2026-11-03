@@ -211,6 +211,11 @@ Island*), que responde sobre la historia de las aventuras gráficas a partir de 
   Server-Sent Events (`data: {"delta": …}` y al final `data: {"done": true, "sources": …}`), así que la respuesta se
   escribe mientras Murray mueve la boca. Las llamadas a herramientas también llegan en streaming y el `<think>` de Qwen se
   filtra al vuelo. nginx no almacena la respuesta en búfer. Si el servidor del modelo ignora `stream`, también funciona.
+- **Rapidez**: el clasificador de tema corre en paralelo con la respuesta (que se retiene hasta su veredicto) y, por
+  defecto, se pide al modelo que no «piense» antes de contestar (`MURRAY_LLM_THINK=0` →
+  `chat_template_kwargs.enable_thinking=false`; si el servidor lo rechaza, deja de enviarse). El log indica, por cada
+  llamada, los segundos hasta la primera palabra visible, el pensamiento oculto y las herramientas usadas; para medir
+  una pregunta: `python3 server/murray.py --probe "¿Qué es SCUMM?"` (en Docker, con `docker compose exec murray`).
 - **Solo aventuras gráficas** (`server/guard.py`, `MURRAY_GUARD`): antes de llamar al modelo, unas reglas reconocen
   los mensajes del tema (títulos, estudios, motores y personas de la base de conocimiento, sagas, vocabulario del
   género y objetos, personajes y bromas míticas como el pollo de goma o el grog en cuatro idiomas, saludos), detectan intentos de manipulación («ignora tus instrucciones», «ahora eres…»,

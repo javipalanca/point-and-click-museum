@@ -166,6 +166,14 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   mundial» o «United States» también aparecen; lo decide el clasificador, y sin modelo pasa. El clasificador recibe
   las 3 fichas más relacionadas y la instrucción «en caso de duda, ON».
 
+- **2026-11-05 · Murray contesta antes** (petición del usuario: «tarda mucho; ¿seguro que va en stream?»). El stream
+  funcionaba de punta a punta; el retraso estaba antes de la primera palabra: el clasificador de tema se esperaba
+  entero, el pensamiento de Qwen (`<think>` o `reasoning_content`) se ocultaba sin mostrar nada, y la ronda de
+  herramientas. Ahora el clasificador corre en un hilo a la vez que la respuesta (retenida hasta el veredicto; si es
+  OFF se corta el stream del modelo), `MURRAY_LLM_THINK=0` por defecto envía `chat_template_kwargs.enable_thinking=false`
+  (se deja de enviar si el servidor responde 400/422 mencionándolo), el log mide cada ronda y
+  `server/murray.py --probe "pregunta"` mide una pregunta. Pendiente: medir con el Qwen real del usuario.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,
@@ -196,7 +204,9 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **Generar la parte de Wikipedia de Murray:** `python3 tools/build_murray_kb.py wikipedia` en local o en el servidor
   (en la nube Wikipedia estaba bloqueada) y hacer commit de `data/murray_kb/wikipedia-*.jsonl`.
 - **Probar Murray con el modelo real** (Qwen 3.8 en el servidor del usuario): en la sesión solo se probó con un
-  servidor falso compatible con OpenAI. Revisar el tono, la latencia y si su servidor admite *function calling*.
+  servidor falso compatible con OpenAI. Revisar el tono, la latencia (`--probe`, líneas «model round» del log), si su
+  servidor admite *function calling* y si respeta `enable_thinking=false` (en Ollama puede que haya que desactivar el
+  pensamiento en el propio servidor).
 - Verificar los enlaces externos (Wikipedia y webs oficiales): no se pudieron comprobar desde el entorno en la nube.
 - Probar la captura del ratón con un juego DOS real en un navegador de escritorio.
 - **Compilar ScummVM de verdad** (`tools/build_scummvm.sh`) y probar los freeware: en la sesión en la nube se bloqueó la

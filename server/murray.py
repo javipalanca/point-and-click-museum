@@ -28,6 +28,9 @@ Environment:
   MURRAY_LLM_TEMPERATURE  default 0.7
   MURRAY_LLM_MAX_TOKENS   default 900
   MURRAY_LLM_TIMEOUT      seconds, default 90
+  MURRAY_LLM_THINK        0 (default) = ask the server not to "think" before answering (Qwen and other reasoning
+                          models spend seconds writing a hidden reasoning before the first visible word); it sends
+                          chat_template_kwargs.enable_thinking=false and drops it if the server rejects it. 1 = let it think
   MURRAY_LLM_EXTRA        JSON merged into every request body, e.g. {"chat_template_kwargs": {"enable_thinking": false}}
   MURRAY_GUARD            strict (default: rules + the model classifies doubtful messages), rules (no extra model
                           call; doubtful messages are refused) or off. See server/guard.py
@@ -179,7 +182,7 @@ def llm_config() -> dict | None:
     return {"url": base.rstrip("/") + "/chat/completions", "model": model, "key": os.environ.get("MURRAY_LLM_API_KEY", "").strip(),
             "tools": os.environ.get("MURRAY_LLM_TOOLS", "1") != "0", "temperature": float(os.environ.get("MURRAY_LLM_TEMPERATURE", "0.7")),
             "max_tokens": int(os.environ.get("MURRAY_LLM_MAX_TOKENS", "900")), "timeout": float(os.environ.get("MURRAY_LLM_TIMEOUT", "90")),
-            "extra": extra if isinstance(extra, dict) else {}}
+            "think": os.environ.get("MURRAY_LLM_THINK", "0") == "1", "extra": extra if isinstance(extra, dict) else {}}
 
 
 class LLMError(Exception):
@@ -188,9 +191,15 @@ class LLMError(Exception):
         self.status, self.detail = status, detail
 
 
+NO_THINK = {"rejected": False}  # becomes True if the server refuses chat_template_kwargs (then it is not sent again)
+
+
 def _request(cfg: dict, messages: list[dict], tools: list | None, stream: bool):
     body = {"model": cfg["model"], "messages": messages, "temperature": cfg["temperature"], "max_tokens": cfg["max_tokens"],
             "stream": stream, **cfg["extra"]}
+    no_think = not cfg.get("think") and not NO_THINK["rejected"] and "chat_template_kwargs" not in cfg["extra"]
+    if no_think:  # vLLM, SGLang and llama.cpp pass it to Qwen's chat template: answer straight away, no hidden reasoning
+        body["chat_template_kwargs"] = {"enable_thinking": False}
     if tools:
         body["tools"], body["tool_choice"] = tools, "auto"
     headers = {"Content-Type": "application/json", "Accept": "text/event-stream" if stream else "application/json"}
@@ -200,12 +209,17 @@ def _request(cfg: dict, messages: list[dict], tools: list | None, stream: bool):
     try:
         return urllib.request.urlopen(req, timeout=cfg["timeout"])
     except urllib.error.HTTPError as e:
-        raise LLMError(e.code, e.read(2000).decode("utf-8", "replace")) from None
+        detail = e.read(2000).decode("utf-8", "replace")
+        if no_think and e.code in (400, 422) and "chat_template_kwargs" in detail:
+            log.info("model server rejects chat_template_kwargs; not sending it again")
+            NO_THINK["rejected"] = True
+            return _request(cfg, messages, tools, stream)
+        raise LLMError(e.code, detail) from None
 
 
 def chat_stream(cfg: dict, messages: list[dict], tools: list | None):
     """Streams one OpenAI-compatible /chat/completions call (stdlib HTTP, no SDK).
-    Yields ("text", str) as the model writes, then ("tool_calls", [calls]) with the accumulated calls (maybe empty).
+    Yields ("text", str) as the model writes (and ("reasoning", str) for hidden thinking), then ("tool_calls", [calls]) with the accumulated calls (maybe empty).
     Servers that ignore "stream" and answer with plain JSON are handled too."""
     calls: dict[int, dict] = {}
     with _request(cfg, messages, tools, stream=True) as r:
@@ -228,6 +242,9 @@ def chat_stream(cfg: dict, messages: list[dict], tools: list | None):
             except ValueError:
                 continue
             delta = ((chunk.get("choices") or [{}])[0].get("delta")) or {}
+            reasoning = delta.get("reasoning_content") or delta.get("reasoning")  # thinking sent apart (vLLM, Ollama…)
+            if reasoning:
+                yield "reasoning", reasoning
             if delta.get("content"):
                 yield "text", delta["content"]
             for tc in delta.get("tool_calls") or []:  # tool calls arrive in pieces, keyed by index
@@ -297,24 +314,7 @@ def llm_classify(cfg: dict, previous: str, message: str, records: str = "") -> s
     return parse_verdict(((data.get("choices") or [{}])[0].get("message") or {}).get("content") or "")
 
 
-def guard_check(history: list[dict], lang: str, cfg: dict | None) -> str | None:
-    """None if the message may go on; otherwise the refusal Murray says (no model call for the answer)."""
-    mode = os.environ.get("MURRAY_GUARD", "strict")
-    if mode == "off":
-        return None
-    msg = history[-1]["content"]
-    previous = next((m["content"] for m in reversed(history[:-1]) if m["role"] == "assistant"), "")
-    verdict = GUARD.classify(msg, bool(previous))
-    if verdict in ("unsure", "likely"):
-        verdict = None
-        if cfg and mode == "strict" and LIMITS.allow_llm():
-            try:
-                hits = [d for d in MUSEUM.search(msg, lang, 6) if d.kind != "catalogue"][:3]
-                records = " | ".join(f"{d.title}: {d.text[:160]}" for d in hits)
-                verdict = llm_classify(cfg, previous, msg, records)
-            except Exception as e:  # classifier unavailable: fall back to the rules
-                log.info("topic classifier failed (%s); using rules", type(e).__name__)
-        verdict = verdict or GUARD.rules_verdict(msg, bool(previous))
+def refusal_for(verdict: str | None, msg: str, lang: str) -> str | None:
     E = TEXTS["errors"]
     if verdict == "injection":
         return loc(E["injection"], lang)
@@ -324,6 +324,52 @@ def guard_check(history: list[dict], lang: str, cfg: dict | None) -> str | None:
         options = loc(E["offTopic"], lang)
         return options[len(msg) % len(options)]
     return None
+
+
+class Classifier(threading.Thread):
+    """Runs the topic classifier while the answer is already being generated (it no longer delays the first word)."""
+    def __init__(self, cfg: dict, history: list[dict], lang: str, previous: str):
+        super().__init__(daemon=True)
+        self.cfg, self.history, self.lang, self.previous = cfg, history, lang, previous
+        self.verdict, self.seconds = None, 0.0
+        self.start()
+
+    def run(self):
+        msg, t0 = self.history[-1]["content"], time.monotonic()
+        try:
+            hits = [d for d in MUSEUM.search(msg, self.lang, 6) if d.kind != "catalogue"][:3]
+            records = " | ".join(f"{d.title}: {d.text[:160]}" for d in hits)
+            self.verdict = llm_classify(self.cfg, self.previous, msg, records)
+        except Exception as e:  # classifier unavailable: fall back to the rules
+            log.info("topic classifier failed (%s); using rules", type(e).__name__)
+        self.seconds = time.monotonic() - t0
+
+    def result(self) -> str:
+        self.join(self.cfg["timeout"])
+        msg, ctx = self.history[-1]["content"], bool(self.previous)
+        log.info("topic classifier: %s in %.1fs", self.verdict or "no answer", self.seconds)
+        return self.verdict or GUARD.rules_verdict(msg, ctx)
+
+
+def guard_start(history: list[dict], lang: str, cfg: dict | None) -> tuple[str | None, Classifier | None]:
+    """-> (refusal now, None) | (None, None) when the rules decide, or (None, classifier) still deciding in parallel."""
+    mode = os.environ.get("MURRAY_GUARD", "strict")
+    if mode == "off":
+        return None, None
+    msg = history[-1]["content"]
+    previous = next((m["content"] for m in reversed(history[:-1]) if m["role"] == "assistant"), "")
+    verdict = GUARD.classify(msg, bool(previous))
+    if verdict in ("unsure", "likely"):
+        if cfg and mode == "strict" and LIMITS.allow_llm():
+            return None, Classifier(cfg, history, lang, previous)
+        verdict = GUARD.rules_verdict(msg, bool(previous))
+    return refusal_for(verdict, msg, lang), None
+
+
+def guard_check(history: list[dict], lang: str, cfg: dict | None) -> str | None:
+    """None if the message may go on; otherwise the refusal Murray says (waits for the classifier if needed)."""
+    refusal, pending = guard_start(history, lang, cfg)
+    return refusal_for(pending.result(), history[-1]["content"], lang) if pending else refusal
 
 
 class GoMarker:
@@ -374,15 +420,20 @@ def llm_events(history: list[dict], lang: str, cfg: dict, page: str = ""):
     used: list = []  # records the model looked up first, then the ones given as context
     tools = OPENAI_TOOLS if cfg["tools"] else None
     wrote, navigate, marker = False, None, GoMarker()
-    for _ in range(MAX_TOOL_ROUNDS + 1):
+    for round_no in range(1, MAX_TOOL_ROUNDS + 2):
         think, text, calls = ThinkFilter(), "", []
+        t0, first, hidden = time.monotonic(), None, 0
         try:
             for kind, value in chat_stream(cfg, messages, tools):
-                if kind == "text":
+                if kind == "reasoning":
+                    hidden += len(value)
+                elif kind == "text":
                     text += value
                     shown = marker.feed(think.feed(value))
+                    hidden += len(value) - len(shown)
                     if shown:
                         wrote = True
+                        first = first or time.monotonic() - t0
                         yield "delta", shown
                 else:
                     calls = value
@@ -393,6 +444,10 @@ def llm_events(history: list[dict], lang: str, cfg: dict, page: str = ""):
                 continue
             raise
         tail = marker.feed(think.flush()) + marker.flush()
+        log.info("model round %d: %s to the first visible word, %.1fs in all, %d characters of hidden thinking, %d tool calls",
+                 round_no, f"{first:.1f}s" if first else "no text", time.monotonic() - t0, hidden, len(calls))
+        if hidden > 200:
+            log.info("the model is thinking before it answers: set MURRAY_LLM_THINK=0 or turn thinking off in its server")
         if tail.strip():
             wrote = True
             yield "delta", tail
@@ -458,26 +513,53 @@ def answer_events(body: dict):
     lang, history = validate(body)
     page = body.get("page") if body.get("page") in MUSEUM.pages else ""
     cfg = llm_config()
-    refusal = guard_check(history, lang, cfg)
-    if refusal:
+    refusal, pending = guard_start(history, lang, cfg)
+
+    def refuse(text):
         log.info("guard: message refused")
-        yield "delta", refusal
+        yield "delta", text
         yield "done", {"sources": [], "mode": "llm" if cfg else "offline", "guard": True}
+
+    if refusal:
+        yield from refuse(refusal)
         return
     if cfg and LIMITS.allow_llm():
-        wrote = False
+        wrote, held = False, []  # while the classifier decides, the answer is generated but held back
+        events = llm_events(history, lang, cfg, page)
         try:
-            for ev in llm_events(history, lang, cfg, page):
+            for ev in events:
+                if pending and (not pending.is_alive() or ev[0] == "done"):
+                    refusal = refusal_for(pending.result(), history[-1]["content"], lang)
+                    pending = None
+                    if refusal:
+                        events.close()  # stops the model's stream
+                        yield from refuse(refusal)
+                        return
+                    yield from held
+                    wrote, held = wrote or bool(held), []
+                if pending:
+                    held.append(ev)
+                    continue
                 wrote = wrote or ev[0] == "delta"
                 yield ev
             return
         except Exception as e:  # model server down, timeout, bad JSON…: never leave the visitor without an answer
             log.warning("LLM call failed (%s); %s", e if isinstance(e, LLMError) else type(e).__name__,
                         "answer cut short" if wrote else "answering offline")
+            if pending:
+                refusal = refusal_for(pending.result(), history[-1]["content"], lang)
+                if refusal:
+                    yield from refuse(refusal)
+                    return
             if wrote:
                 yield "delta", "\n\n" + loc(TEXTS["errors"]["failed"], lang)
                 yield "done", {"sources": [], "mode": "llm"}
                 return
+    if pending:
+        refusal = refusal_for(pending.result(), history[-1]["content"], lang)
+        if refusal:
+            yield from refuse(refusal)
+            return
     r = offline_reply(history[-1]["content"], lang)
     yield "delta", r["reply"]
     yield "done", {"sources": r["sources"], "mode": r["mode"]}
@@ -571,12 +653,31 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(500, {"error": "internal error"})
 
 
+def probe(question: str, lang: str = "es"):
+    """python3 server/murray.py --probe "¿Qué es SCUMM?" [lang]: one question, with the time each piece takes."""
+    t0, first = time.monotonic(), None
+    for kind, value in answer_events({"lang": lang, "messages": [{"role": "user", "content": question}]}):
+        if kind == "delta":
+            if first is None:
+                first = time.monotonic() - t0
+                print(f"\n[first word after {first:.1f}s]\n", file=sys.stderr)
+            print(value, end="", flush=True)
+        else:
+            print(f"\n\n[done after {time.monotonic() - t0:.1f}s · mode {value.get('mode')}"
+                  f"{' · refused by the guard' if value.get('guard') else ''}]", file=sys.stderr)
+
+
 def main():
+    if len(sys.argv) >= 3 and sys.argv[1] == "--probe":
+        logging.basicConfig(level=logging.INFO, format="%(name)s: %(message)s")
+        return probe(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "es")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
     port = int(os.environ.get("MURRAY_PORT", "8080"))
     srv = ThreadingHTTPServer(("0.0.0.0", port), Handler)
     cfg = llm_config()
     mode = f"LLM {cfg['model']} via OpenAI-compatible API" if cfg else "offline (no MURRAY_LLM_BASE_URL / MURRAY_LLM_MODEL)"
+    if cfg:
+        mode += " · thinking " + ("allowed" if cfg["think"] else "off (MURRAY_LLM_THINK=0)")
     log.info("Murray listening on :%d · %s · %d records", port, mode, len(MUSEUM.docs["es"]))
     srv.serve_forever()
 

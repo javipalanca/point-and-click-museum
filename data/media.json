@@ -1,0 +1,852 @@
+{
+ "_doc": "Imágenes reales del museo y su procedencia. Edita group/id/role/src/rights y ejecuta tools/fetch_media.py, que rellena file, w, h, page y (Wikimedia) license, licenseUrl, author. Las entradas sin 'file' aún no se han descargado y no se muestran.",
+ "refs": {
+  "engines": {
+   "z-machine": "games/zork/screenshot",
+   "agi": "games/kings-quest/screenshot",
+   "scumm": "games/monkey-island/screenshot",
+   "daad": "games/la-aventura-original/screenshot",
+   "sci": "games/gabriel-knight/screenshot",
+   "virtual-theatre": "games/beneath-a-steel-sky/screenshot",
+   "ags": "games/unavowed/screenshot",
+   "grime": "games/grim-fandango/screenshot",
+   "scummvm": "games/day-of-the-tentacle/screenshot"
+  }
+ },
+ "items": [
+  {
+   "group": "games",
+   "id": "colossal-cave",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Colossal Cave Adventure (aka Adventure).png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Colossal%20Cave%20Adventure%20%28aka%20Adventure%29.png",
+   "file": "games/colossal-cave-screenshot.png",
+   "w": 400,
+   "h": 299
+  },
+  {
+   "group": "games",
+   "id": "zork",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Zork I_ The Great Underground Empire.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Zork%20I_%20The%20Great%20Underground%20Empire.png",
+   "file": "games/zork-cover.png",
+   "w": 198,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "zork",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Zork I_ The Great Underground Empire.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Zork%20I_%20The%20Great%20Underground%20Empire.png",
+   "file": "games/zork-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "mystery-house",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Hi-Res Adventure #1_ Mystery House.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Hi-Res%20Adventure%20%231_%20Mystery%20House.png",
+   "file": "games/mystery-house-cover.png",
+   "w": 182,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "mystery-house",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Hi-Res Adventure #1_ Mystery House.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Hi-Res%20Adventure%20%231_%20Mystery%20House.png",
+   "file": "games/mystery-house-screenshot.png",
+   "w": 400,
+   "h": 274
+  },
+  {
+   "group": "games",
+   "id": "kings-quest",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/King's Quest I_ Quest for the Crown.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/King%27s%20Quest%20I_%20Quest%20for%20the%20Crown.png",
+   "file": "games/kings-quest-cover.png",
+   "w": 160,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "kings-quest",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/King's Quest I_ Quest for the Crown.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/King%27s%20Quest%20I_%20Quest%20for%20the%20Crown.png",
+   "file": "games/kings-quest-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "deja-vu",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Deja Vu 1_ A Nightmare Comes True.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Deja%20Vu%201_%20A%20Nightmare%20Comes%20True.png",
+   "file": "games/deja-vu-cover.png",
+   "w": 206,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "deja-vu",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Deja Vu 1_ A Nightmare Comes True.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Deja%20Vu%201_%20A%20Nightmare%20Comes%20True.png",
+   "file": "games/deja-vu-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "space-quest",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Space Quest I_ The Sarien Encounter.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Space%20Quest%20I_%20The%20Sarien%20Encounter.png",
+   "file": "games/space-quest-cover.png",
+   "w": 192,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "space-quest",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Space Quest I_ The Sarien Encounter.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Space%20Quest%20I_%20The%20Sarien%20Encounter.png",
+   "file": "games/space-quest-screenshot.jpg",
+   "w": 284,
+   "h": 177
+  },
+  {
+   "group": "games",
+   "id": "maniac-mansion",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Maniac Mansion.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Maniac%20Mansion.png",
+   "file": "games/maniac-mansion-cover.png",
+   "w": 188,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "maniac-mansion",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Maniac Mansion (V1_DOS_English).png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Maniac%20Mansion.png",
+   "file": "games/maniac-mansion-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "leisure-suit-larry",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Leisure Suit Larry 1_ In the Land of the Lounge Lizards.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Leisure%20Suit%20Larry%201_%20In%20the%20Land%20of%20the%20Lounge%20Lizards.png",
+   "file": "games/leisure-suit-larry-cover.png",
+   "w": 189,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "leisure-suit-larry",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Leisure Suit Larry 1_ In the Land of the Lounge Lizards.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Leisure%20Suit%20Larry%201_%20In%20the%20Land%20of%20the%20Lounge%20Lizards.png",
+   "file": "games/leisure-suit-larry-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "zak-mckracken",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Zak McKracken and the Alien Mindbenders.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Zak%20McKracken%20and%20the%20Alien%20Mindbenders.png",
+   "file": "games/zak-mckracken-cover.png",
+   "w": 198,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "zak-mckracken",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Zak McKracken and the Alien Mindbenders.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Zak%20McKracken%20and%20the%20Alien%20Mindbenders.png",
+   "file": "games/zak-mckracken-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "la-aventura-original",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/Amstrad_-_CPC@bb480529a5112aab2f95c7c6abc77463fdd3a7f8/Named_Boxarts/Aventura Original, La (1989)(Aventuras AD)(es)[CPM Version].png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/Amstrad_-_CPC/blob/bb480529a5112aab2f95c7c6abc77463fdd3a7f8/Named_Boxarts/Aventura%20Original%2C%20La%20%281989%29%28Aventuras%20AD%29%28es%29%5BCPM%20Version%5D.png",
+   "file": "games/la-aventura-original-cover.png",
+   "w": 177,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "la-aventura-original",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/Amstrad_-_CPC@bb480529a5112aab2f95c7c6abc77463fdd3a7f8/Named_Snaps/Aventura Original, La (1989)(Aventuras AD)(es)[CPM Version].png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/Amstrad_-_CPC/blob/bb480529a5112aab2f95c7c6abc77463fdd3a7f8/Named_Snaps/Aventura%20Original%2C%20La%20%281989%29%28Aventuras%20AD%29%28es%29%5BCPM%20Version%5D.png",
+   "file": "games/la-aventura-original-screenshot.png",
+   "w": 320,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "loom",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Loom.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Loom.png",
+   "file": "games/loom-cover.png",
+   "w": 184,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "loom",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Loom (EGA_DOS_English).png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Loom.png",
+   "file": "games/loom-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "monkey-island",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Secret of Monkey Island, The.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Secret%20of%20Monkey%20Island%2C%20The.png",
+   "file": "games/monkey-island-cover.png",
+   "w": 180,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "monkey-island",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Secret of Monkey Island, The.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Secret%20of%20Monkey%20Island%2C%20The.png",
+   "file": "games/monkey-island-screenshot.png",
+   "w": 256,
+   "h": 192
+  },
+  {
+   "group": "games",
+   "id": "kyrandia",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Legend of Kyrandia Book 1.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Legend%20of%20Kyrandia%20Book%201.png",
+   "file": "games/kyrandia-cover.png",
+   "w": 214,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "kyrandia",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Legend of Kyrandia Book 1.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Legend%20of%20Kyrandia%20Book%201.png",
+   "file": "games/kyrandia-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "fate-of-atlantis",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Indiana Jones and the Fate of Atlantis.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Indiana%20Jones%20and%20the%20Fate%20of%20Atlantis.png",
+   "file": "games/fate-of-atlantis-cover.png",
+   "w": 188,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "fate-of-atlantis",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Indiana Jones and the Fate of Atlantis.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Indiana%20Jones%20and%20the%20Fate%20of%20Atlantis.png",
+   "file": "games/fate-of-atlantis-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "day-of-the-tentacle",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Day of the Tentacle.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Day%20of%20the%20Tentacle.png",
+   "file": "games/day-of-the-tentacle-cover.png",
+   "w": 191,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "day-of-the-tentacle",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Day of the Tentacle.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Day%20of%20the%20Tentacle.png",
+   "file": "games/day-of-the-tentacle-screenshot.png",
+   "w": 320,
+   "h": 180
+  },
+  {
+   "group": "games",
+   "id": "gabriel-knight",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Gabriel Knight_ Sins of the Fathers.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Gabriel%20Knight_%20Sins%20of%20the%20Fathers.png",
+   "file": "games/gabriel-knight-cover.png",
+   "w": 194,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "gabriel-knight",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Gabriel Knight_ Sins of the Fathers.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Gabriel%20Knight_%20Sins%20of%20the%20Fathers.png",
+   "file": "games/gabriel-knight-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "myst",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Myst (Masterpiece Edition_Windows_English).png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Myst.png",
+   "file": "games/myst-cover.png",
+   "w": 208,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "myst",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Myst (Masterpiece Edition_Windows_English).png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Myst.png",
+   "file": "games/myst-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "igor",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Igor_ Objective Uikokahonia.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Igor_%20Objective%20Uikokahonia.png",
+   "file": "games/igor-cover.png",
+   "w": 195,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "igor",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Igor_ Objective Uikokahonia.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Igor_%20Objective%20Uikokahonia.png",
+   "file": "games/igor-screenshot.gif",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "beneath-a-steel-sky",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Beneath a Steel Sky.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Beneath%20a%20Steel%20Sky.png",
+   "file": "games/beneath-a-steel-sky-cover.png",
+   "w": 187,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "beneath-a-steel-sky",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Beneath a Steel Sky.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Beneath%20a%20Steel%20Sky.png",
+   "file": "games/beneath-a-steel-sky-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "full-throttle",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Full Throttle.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Full%20Throttle.png",
+   "file": "games/full-throttle-cover.png",
+   "w": 190,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "full-throttle",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Full Throttle.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Snaps/Full%20Throttle.png",
+   "file": "games/full-throttle-screenshot.png",
+   "w": 320,
+   "h": 200
+  },
+  {
+   "group": "games",
+   "id": "broken-sword",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Broken Sword_ The Shadow of the Templars.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Broken%20Sword_%20The%20Shadow%20of%20the%20Templars.png",
+   "file": "games/broken-sword-cover.png",
+   "w": 180,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "broken-sword",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Broken Sword_ The Shadow of the Templars.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Broken%20Sword_%20The%20Shadow%20of%20the%20Templars.png",
+   "file": "games/broken-sword-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "curse-of-monkey-island",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Curse of Monkey Island, The.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Curse%20of%20Monkey%20Island%2C%20The.png",
+   "file": "games/curse-of-monkey-island-cover.png",
+   "w": 170,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "curse-of-monkey-island",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Curse of Monkey Island, The.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Curse%20of%20Monkey%20Island%2C%20The.png",
+   "file": "games/curse-of-monkey-island-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "blade-runner",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/DOS@2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Blade Runner.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/DOS/blob/2f6336592694d29272b0c0c343abbd6418827f8f/Named_Boxarts/Blade%20Runner.png",
+   "file": "games/blade-runner-cover.png",
+   "w": 203,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "blade-runner",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Blade Runner.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Blade%20Runner.png",
+   "file": "games/blade-runner-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "grim-fandango",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Grim Fandango.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Grim%20Fandango.png",
+   "file": "games/grim-fandango-cover.png",
+   "w": 191,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "grim-fandango",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Grim Fandango.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Grim%20Fandango.png",
+   "file": "games/grim-fandango-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "longest-journey",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/The Longest Journey.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/The%20Longest%20Journey.png",
+   "file": "games/longest-journey-cover.png",
+   "w": 182,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "longest-journey",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Longest Journey, The (GOG.com_Windows_English).png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Longest%20Journey%2C%20The%20%28GOG.com_Windows_English%29.png",
+   "file": "games/longest-journey-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "syberia",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Syberia.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Syberia.png",
+   "file": "games/syberia-cover.png",
+   "w": 167,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "syberia",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Syberia.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Syberia.png",
+   "file": "games/syberia-screenshot.png",
+   "w": 400,
+   "h": 300
+  },
+  {
+   "group": "games",
+   "id": "thimbleweed-park",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Thimbleweed Park.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Thimbleweed%20Park.png",
+   "file": "games/thimbleweed-park-cover.png",
+   "w": 189,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "thimbleweed-park",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Thimbleweed Park.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Thimbleweed%20Park.png",
+   "file": "games/thimbleweed-park-screenshot.png",
+   "w": 400,
+   "h": 250
+  },
+  {
+   "group": "games",
+   "id": "unavowed",
+   "role": "cover",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Unavowed.png",
+   "rights": "boxart",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Boxarts/Unavowed.png",
+   "file": "games/unavowed-cover.png",
+   "w": 188,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "unavowed",
+   "role": "screenshot",
+   "src": "github:libretro-thumbnails/ScummVM@849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Unavowed.png",
+   "rights": "screenshot",
+   "page": "https://github.com/libretro-thumbnails/ScummVM/blob/849d3cc7dc639b80148afde31a9dc05f11e7a899/Named_Snaps/Unavowed.png",
+   "file": "games/unavowed-screenshot.png",
+   "w": 400,
+   "h": 225
+  },
+  {
+   "group": "games",
+   "id": "hollywood-monsters",
+   "role": "cover",
+   "src": "wikipedia:es:Hollywood Monsters",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "runaway",
+   "role": "cover",
+   "src": "wikipedia:en:Runaway: A Road Adventure",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "sam-max-save-the-world",
+   "role": "cover",
+   "src": "wikipedia:en:Sam & Max Save the World",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "blackwell-legacy",
+   "role": "cover",
+   "src": "wikipedia:en:The Blackwell Legacy",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "machinarium",
+   "role": "cover",
+   "src": "wikipedia:en:Machinarium",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "deponia",
+   "role": "cover",
+   "src": "wikipedia:en:Deponia (video game)",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "walking-dead",
+   "role": "cover",
+   "src": "wikipedia:en:The Walking Dead (video game)",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "kentucky-route-zero",
+   "role": "cover",
+   "src": "wikipedia:en:Kentucky Route Zero",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "broken-age",
+   "role": "cover",
+   "src": "wikipedia:en:Broken Age",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "return-to-monkey-island",
+   "role": "cover",
+   "src": "wikipedia:en:Return to Monkey Island",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "golden-idol",
+   "role": "cover",
+   "src": "wikipedia:en:The Case of the Golden Idol",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "hobs-barrow",
+   "role": "cover",
+   "src": "wikipedia:en:The Excavation of Hob's Barrow",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "old-skies",
+   "role": "cover",
+   "src": "wikipedia:en:Old Skies",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "kathy-rain-2",
+   "role": "cover",
+   "src": "wikipedia:en:Kathy Rain 2: Soothsayer",
+   "rights": "boxart"
+  },
+  {
+   "group": "studios",
+   "id": "infocom",
+   "role": "logo",
+   "src": "wikipedia:en:Infocom",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "sierra",
+   "role": "logo",
+   "src": "wikipedia:en:Sierra Entertainment",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "lucasarts",
+   "role": "logo",
+   "src": "wikipedia:en:LucasArts",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "revolution",
+   "role": "logo",
+   "src": "wikipedia:en:Revolution Software",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "westwood",
+   "role": "logo",
+   "src": "wikipedia:en:Westwood Studios",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "cyan",
+   "role": "logo",
+   "src": "wikipedia:en:Cyan Worlds",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "pendulo",
+   "role": "logo",
+   "src": "wikipedia:en:Pendulo Studios",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "telltale",
+   "role": "logo",
+   "src": "wikipedia:en:Telltale Games",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "wadjet-eye",
+   "role": "logo",
+   "src": "wikipedia:en:Wadjet Eye Games",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "daedalic",
+   "role": "logo",
+   "src": "wikipedia:en:Daedalic Entertainment",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "amanita",
+   "role": "logo",
+   "src": "wikipedia:en:Amanita Design",
+   "rights": "logo"
+  },
+  {
+   "group": "studios",
+   "id": "terrible-toybox",
+   "role": "logo",
+   "src": "wikipedia:en:Terrible Toybox",
+   "rights": "logo"
+  },
+  {
+   "group": "engines",
+   "id": "scummvm",
+   "role": "logo",
+   "src": "github:scummvm/scummvm@28803606e9fadaefeeddc24ed947697490b72696/gui/themes/common-svg/logo.svg",
+   "rights": "logo",
+   "license": "GPL-2.0-or-later",
+   "author": "ScummVM Team",
+   "page": "https://github.com/scummvm/scummvm/blob/28803606e9fadaefeeddc24ed947697490b72696/gui/themes/common-svg/logo.svg",
+   "file": "engines/scummvm-logo.svg",
+   "w": 1547,
+   "h": 453
+  },
+  {
+   "group": "engines",
+   "id": "ags",
+   "role": "logo",
+   "src": "github:adventuregamestudio/ags@10994b4d6fcbda188a753c2e85d8df7365b27386/OSX/ags.iconset/icon_256x256.png",
+   "rights": "logo",
+   "license": "Artistic-2.0",
+   "author": "Adventure Game Studio",
+   "page": "https://github.com/adventuregamestudio/ags/blob/10994b4d6fcbda188a753c2e85d8df7365b27386/OSX/ags.iconset/icon_256x256.png",
+   "file": "engines/ags-logo.png",
+   "w": 256,
+   "h": 256
+  },
+  {
+   "group": "engines",
+   "id": "general-engines",
+   "role": "logo",
+   "src": "github:godotengine/godot@b251066fb5b5654a6cf9c1bb284fac53d20a10d2/misc/logo/logo.svg",
+   "rights": "logo",
+   "license": "CC BY 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+   "author": "Andrea Calabró",
+   "page": "https://github.com/godotengine/godot/blob/b251066fb5b5654a6cf9c1bb284fac53d20a10d2/misc/logo/logo.svg",
+   "file": "engines/general-engines-logo.svg",
+   "w": 1024,
+   "h": 414
+  },
+  {
+   "group": "engines",
+   "id": "visionaire",
+   "role": "logo",
+   "src": "wikipedia:en:Visionaire Studio",
+   "rights": "logo"
+  }
+ ]
+}

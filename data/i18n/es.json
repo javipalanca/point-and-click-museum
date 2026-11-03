@@ -210,5 +210,10 @@
  "logoRecreation": "recreación vectorial del logotipo",
  "labDoorAward": "Abrir la puerta del laboratorio",
  "labLabel": "Reconstrucción jugable",
- "labNote": "Escena original del museo; los verbos, su disposición y la forma de usarlos son los del juego."
+ "labNote": "Escena original del museo; los verbos, su disposición y la forma de usarlos son los del juego.",
+ "rights_sprite": "© LucasArts; sprite del juego, con fines documentales",
+ "murrayTitle": "Murray, la calavera parlante",
+ "murrayOpen": "Hablar con Murray",
+ "murrayClose": "Cerrar el chat",
+ "murrayReset": "Nueva conversación"
 }

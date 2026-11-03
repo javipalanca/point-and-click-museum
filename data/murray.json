@@ -1,0 +1,129 @@
+{
+ "_doc": "Murray, the talking skull: texts for the chat room (data/murray.json). The persona prompt lives in server/murray.py; these are the visitor-facing strings and the offline replies used when no LLM is configured.",
+ "greeting": {
+  "es": "¡Contempla a Murray, la todopoderosa calavera demoníaca! Pregúntame lo que quieras sobre aventuras gráficas, mortal. Me lo sé todo. Bueno, todo lo que hay en este museo.",
+  "en": "Behold Murray, the all-powerful demonic skull! Ask me anything about graphic adventures, mortal. I know everything. Well, everything in this museum.",
+  "de": "Erzittere vor Murray, dem allmächtigen dämonischen Schädel! Frag mich alles über Grafik-Adventures, Sterblicher. Ich weiß alles. Na ja, alles, was in diesem Museum steht.",
+  "fr": "Contemple Murray, le tout-puissant crâne démoniaque ! Demande-moi ce que tu veux sur les jeux d'aventure, mortel. Je sais tout. Enfin, tout ce qu'il y a dans ce musée."
+ },
+ "suggestions": {
+  "es": [
+   "¿Qué es SCUMM?",
+   "¿Qué aventuras salieron en 1993?",
+   "¿Quién era Tim Schafer?",
+   "¿Por qué Sierra dejó el parser?",
+   "Recomiéndame una aventura moderna"
+  ],
+  "en": [
+   "What is SCUMM?",
+   "Which adventures came out in 1993?",
+   "Who is Tim Schafer?",
+   "Why did Sierra drop the parser?",
+   "Recommend me a modern adventure"
+  ],
+  "de": [
+   "Was ist SCUMM?",
+   "Welche Adventures erschienen 1993?",
+   "Wer ist Tim Schafer?",
+   "Warum gab Sierra den Parser auf?",
+   "Empfiehl mir ein modernes Adventure"
+  ],
+  "fr": [
+   "Qu'est-ce que SCUMM ?",
+   "Quelles aventures sont sorties en 1993 ?",
+   "Qui est Tim Schafer ?",
+   "Pourquoi Sierra a-t-il abandonné l'analyseur ?",
+   "Conseille-moi une aventure récente"
+  ]
+ },
+ "offline": {
+  "intro": {
+   "es": "Mi cerebro demoníaco está desconectado del gran oráculo, así que te leo lo que pone en las vitrinas:",
+   "en": "My demonic brain is cut off from the great oracle, so I'll read you what the display cases say:",
+   "de": "Mein dämonisches Hirn ist vom großen Orakel getrennt, also lese ich dir vor, was in den Vitrinen steht:",
+   "fr": "Mon cerveau démoniaque est coupé du grand oracle, alors je te lis ce qui est écrit dans les vitrines :"
+  },
+  "none": {
+   "es": "Nada en las vitrinas sobre eso. Y eso que soy una calavera muy bien informada. Prueba con un título, un estudio o un año.",
+   "en": "Nothing in the display cases about that. And I'm a very well-informed skull. Try a title, a studio or a year.",
+   "de": "Dazu steht nichts in den Vitrinen. Dabei bin ich ein sehr gut informierter Schädel. Versuch's mit einem Titel, Studio oder Jahr.",
+   "fr": "Rien dans les vitrines là-dessus. Et pourtant je suis un crâne très bien informé. Essaie un titre, un studio ou une année."
+  },
+  "outro": {
+   "es": "¡Tiembla ante mi sabiduría!",
+   "en": "Tremble before my wisdom!",
+   "de": "Erzittere vor meiner Weisheit!",
+   "fr": "Tremble devant ma sagesse !"
+  }
+ },
+ "errors": {
+  "offlineSite": {
+   "es": "Murray no está conectado: esta copia del museo no tiene servidor. Con Docker Compose (ver README) despierta.",
+   "en": "Murray isn't connected: this copy of the museum has no server. Run it with Docker Compose (see README) to wake him up.",
+   "de": "Murray ist nicht verbunden: Diese Museumskopie hat keinen Server. Mit Docker Compose (siehe README) wacht er auf.",
+   "fr": "Murray n'est pas connecté : cette copie du musée n'a pas de serveur. Avec Docker Compose (voir README), il se réveille."
+  },
+  "busy": {
+   "es": "Demasiadas preguntas, mortal. Hasta las calaveras demoníacas necesitan un respiro. Vuelve en unos minutos.",
+   "en": "Too many questions, mortal. Even demonic skulls need a breather. Come back in a few minutes.",
+   "de": "Zu viele Fragen, Sterblicher. Selbst dämonische Schädel brauchen eine Pause. Komm in ein paar Minuten wieder.",
+   "fr": "Trop de questions, mortel. Même les crânes démoniaques ont besoin de souffler. Reviens dans quelques minutes."
+  },
+  "failed": {
+   "es": "Algo ha fallado en el inframundo. Inténtalo otra vez.",
+   "en": "Something went wrong in the underworld. Try again.",
+   "de": "In der Unterwelt ist etwas schiefgegangen. Versuch's noch einmal.",
+   "fr": "Quelque chose a mal tourné aux enfers. Réessaie."
+  }
+ },
+ "ui": {
+  "placeholder": {
+   "es": "Pregúntale algo a Murray…",
+   "en": "Ask Murray something…",
+   "de": "Frag Murray etwas…",
+   "fr": "Pose une question à Murray…"
+  },
+  "send": {
+   "es": "Preguntar",
+   "en": "Ask",
+   "de": "Fragen",
+   "fr": "Demander"
+  },
+  "you": {
+   "es": "Tú",
+   "en": "You",
+   "de": "Du",
+   "fr": "Toi"
+  },
+  "sources": {
+   "es": "Vitrinas consultadas",
+   "en": "Display cases consulted",
+   "de": "Befragte Vitrinen",
+   "fr": "Vitrines consultées"
+  },
+  "thinking": {
+   "es": "Murray cavila…",
+   "en": "Murray ponders…",
+   "de": "Murray grübelt…",
+   "fr": "Murray réfléchit…"
+  },
+  "offlineBadge": {
+   "es": "modo vitrina (sin LLM)",
+   "en": "display-case mode (no LLM)",
+   "de": "Vitrinenmodus (ohne LLM)",
+   "fr": "mode vitrine (sans LLM)"
+  },
+  "llmBadge": {
+   "es": "conectado al oráculo",
+   "en": "connected to the oracle",
+   "de": "mit dem Orakel verbunden",
+   "fr": "connecté à l'oracle"
+  },
+  "privacy": {
+   "es": "Las preguntas van al servidor del museo, que busca en su base de datos y, si está configurado, consulta un modelo de lenguaje. No se guardan conversaciones.",
+   "en": "Questions go to the museum's server, which searches its database and, if configured, asks a language model. Conversations are not stored.",
+   "de": "Fragen gehen an den Museumsserver, der seine Datenbank durchsucht und, falls eingerichtet, ein Sprachmodell fragt. Gespräche werden nicht gespeichert.",
+   "fr": "Les questions vont au serveur du musée, qui cherche dans sa base de données et, s'il est configuré, interroge un modèle de langage. Les conversations ne sont pas conservées."
+  }
+ }
+}

@@ -102,11 +102,34 @@
 </div>
 <div class="ptoast" id="toast"></div>
 
+<div class="murray-widget" id="murrayWidget">
+  <section class="murray-panel" id="murrayPanel" role="dialog" aria-modal="false" aria-labelledby="murrayHead" hidden>
+    <header class="murray-top">
+      <canvas id="murrayFace" width="171" height="97" aria-hidden="true"></canvas>
+      <div><h2 id="murrayHead">{{t:murrayTitle}}</h2><p class="murray-mode" id="murrayMode" aria-live="polite"></p></div>
+      <button class="murray-x" type="button" id="murrayReset" title="{{t:murrayReset}}" aria-label="{{t:murrayReset}}">↺</button>
+      <button class="murray-x" type="button" id="murrayClose" aria-label="{{t:murrayClose}}">×</button>
+    </header>
+    <ol class="murray-log" id="murrayLog" aria-live="polite"></ol>
+    <div class="murray-sugg" id="murraySugg"></div>
+    <form class="murray-form" id="murrayForm" autocomplete="off">
+      <label class="vh" for="murrayIn">{{t:murrayTitle}}</label>
+      <input id="murrayIn" maxlength="600" required>
+      <button class="pbtn small" type="submit" id="murraySend"></button>
+    </form>
+    <p class="murray-privacy" id="murrayPrivacy"></p>
+  </section>
+  <button class="murray-fab" type="button" id="murrayFab" aria-expanded="false" aria-controls="murrayPanel" aria-label="{{t:murrayOpen}}" title="{{t:murrayOpen}}">
+    <img src="{{v:root}}media/murray/murray-talk0.png" width="171" height="97" alt="">
+  </button>
+</div>
+
 <script id="pcm-data" type="application/json">{{raw:data}}</script>
 <script src="{{v:root}}js/core.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/transitions.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/nav.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/characters.js?v={{v:build}}" defer></script>
+<script src="{{v:root}}js/murray.js?v={{v:build}}" defer></script>
 {{raw:scripts}}
 </body>
 </html>

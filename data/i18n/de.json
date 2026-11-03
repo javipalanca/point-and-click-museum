@@ -210,5 +210,10 @@
  "logoRecreation": "Vektor-Nachbildung des Logos",
  "labDoorAward": "Die Labortür öffnen",
  "labLabel": "Spielbare Rekonstruktion",
- "labNote": "Eine eigene Museumsszene; Verben, Anordnung und Bedienung entsprechen dem Spiel."
+ "labNote": "Eine eigene Museumsszene; Verben, Anordnung und Bedienung entsprechen dem Spiel.",
+ "rights_sprite": "© LucasArts; Sprite aus dem Spiel, zu Dokumentationszwecken",
+ "murrayTitle": "Murray, der sprechende Schädel",
+ "murrayOpen": "Mit Murray reden",
+ "murrayClose": "Chat schließen",
+ "murrayReset": "Neues Gespräch"
 }

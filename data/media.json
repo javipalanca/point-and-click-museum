@@ -2251,6 +2251,105 @@
    "role": "cover",
    "src": "wikipedia:en:The Case of the Golden Idol",
    "rights": "boxart"
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk0",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_0.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_0.png",
+   "file": "murray/murray-talk0.png",
+   "w": 171,
+   "h": 95
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk1",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_1.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_1.png",
+   "file": "murray/murray-talk1.png",
+   "w": 171,
+   "h": 95
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk2",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_2.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_2.png",
+   "file": "murray/murray-talk2.png",
+   "w": 171,
+   "h": 95
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk3",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_3.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_3.png",
+   "file": "murray/murray-talk3.png",
+   "w": 171,
+   "h": 95
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk4",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_4.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_4.png",
+   "file": "murray/murray-talk4.png",
+   "w": 171,
+   "h": 97
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk5",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_5.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_5.png",
+   "file": "murray/murray-talk5.png",
+   "w": 171,
+   "h": 95
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk6",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_6.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_6.png",
+   "file": "murray/murray-talk6.png",
+   "w": 171,
+   "h": 97
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk7",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_7.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_7.png",
+   "file": "murray/murray-talk7.png",
+   "w": 171,
+   "h": 97
+  },
+  {
+   "group": "murray",
+   "id": "murray",
+   "role": "talk8",
+   "src": "github:JeanxPereira/CMI-Sprites@fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_8.png",
+   "rights": "sprite",
+   "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_8.png",
+   "file": "murray/murray-talk8.png",
+   "w": 171,
+   "h": 95
   }
  ]
 }

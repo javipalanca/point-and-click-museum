@@ -92,6 +92,25 @@ function serve() {
     const [px, py] = await at(Math.min(223, 256 - 40) + 16, Math.max(28, Math.min(128 - 28, 95))); await page.mouse.move(px, py); await page.mouse.up();
     const talked = await page.waitForFunction(() => /locked for years/.test(document.getElementById("uiSay").textContent), null, { timeout: 6000 }).then(() => true, () => false);
     talked ? ok("lab: verb coin parrot talks to the curator") : fail("lab: verb coin");
+    // Murray: chat widget on every page, talking to /api/murray/chat (mocked here)
+    let asked = null;
+    await page.route("**/api/murray/chat", async route => {
+      asked = JSON.parse(route.request().postData());
+      await route.fulfill({ json: { reply: "¡Tiembla, mortal! SCUMM.", sources: [{ title: "SCUMM", url: "engines/" }], mode: "llm" } });
+    });
+    await page.goto(`${base}/es/engines/`);
+    await page.click("#murrayFab");
+    (await page.isVisible("#murrayPanel")) ? ok("Murray: the button opens the chat") : fail("Murray panel");
+    await page.fill("#murrayIn", "¿Qué es SCUMM?"); await page.press("#murrayIn", "Enter");
+    const answered = await page.waitForFunction(() => /Tiembla/.test(document.getElementById("murrayLog").textContent), null, { timeout: 5000 }).then(() => true, () => false);
+    answered && asked && asked.lang === "es" && asked.messages.at(-1).content === "¿Qué es SCUMM?" ? ok("Murray: question sent, answer and sources shown") : fail("Murray chat");
+    await page.goto(`${base}/en/timeline/`);
+    const kept = await page.$$eval("#murrayLog li", l => l.length);
+    kept >= 3 ? ok("Murray: conversation follows the visitor between rooms") : fail("Murray conversation lost: " + kept);
+    await page.keyboard.press("Escape"); await page.focus("#murrayIn").catch(() => {});
+    await page.unroute("**/api/murray/chat");
+    const js = fs.readdirSync(path.join(DIST, "js")).map(f => fs.readFileSync(path.join(DIST, "js", f), "utf8")).join("\n");
+    /MURRAY_LLM|api_key|Authorization|sk-[A-Za-z0-9]/.test(js) ? fail("model configuration found in public JS") : ok("no model URL or key in the public JS");
     await page.goto(`${base}/de/studios/`);
     (await page.$$(".studio .logo, .studio .monogram")).length === 12 ? ok("every studio has a logo or a monogram") : fail("studio marks");
     await page.close();

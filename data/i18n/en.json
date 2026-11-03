@@ -210,5 +210,10 @@
  "logoRecreation": "vector recreation of the logo",
  "labDoorAward": "Open the lab door",
  "labLabel": "Playable reconstruction",
- "labNote": "An original museum scene; the verbs, their layout and how they work match the game."
+ "labNote": "An original museum scene; the verbs, their layout and how they work match the game.",
+ "rights_sprite": "© LucasArts; in-game sprite, for documentation",
+ "murrayTitle": "Murray, the talking skull",
+ "murrayOpen": "Talk to Murray",
+ "murrayClose": "Close the chat",
+ "murrayReset": "New conversation"
 }

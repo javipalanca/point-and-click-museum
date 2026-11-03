@@ -210,5 +210,10 @@
  "logoRecreation": "recréation vectorielle du logo",
  "labDoorAward": "Ouvrir la porte du labo",
  "labLabel": "Reconstitution jouable",
- "labNote": "Une scène originale du musée ; les verbes, leur disposition et leur fonctionnement sont ceux du jeu."
+ "labNote": "Une scène originale du musée ; les verbes, leur disposition et leur fonctionnement sont ceux du jeu.",
+ "rights_sprite": "© LucasArts ; sprite du jeu, à des fins documentaires",
+ "murrayTitle": "Murray, le crâne qui parle",
+ "murrayOpen": "Parler à Murray",
+ "murrayClose": "Fermer le chat",
+ "murrayReset": "Nouvelle conversation"
 }

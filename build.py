@@ -74,6 +74,7 @@ def load_all() -> dict:
             "chronology": load("minigames/chronology.json"),
         },
         "arcade": load_arcade(),
+        "murray": load("murray.json"),
         "media": load_media(),
         "sprites": load("sprites.json"),
         "characters": load("characters.json"),
@@ -203,7 +204,7 @@ def validate(d: dict) -> list[str]:
             for i, x in enumerate(v):
                 walk(x, f"{path}[{i}]")
 
-    for key in ("timeline", "studios", "engines", "techniques", "hero", "games", "arcade"):
+    for key in ("timeline", "studios", "engines", "techniques", "hero", "games", "arcade", "murray"):
         walk(d[key], key)
 
     base_keys = set(d["i18n"][site["defaultLanguage"]])
@@ -243,11 +244,11 @@ def validate(d: dict) -> list[str]:
             if gid not in seen:
                 errors.append(f"studios: {st['id']} lists unknown timeline game {gid}")
 
-    known = {"techniques": {x["id"] for x in d["techniques"]["interfaces"]}, "games": seen, "studios": {x["id"] for x in d["studios"]}, "engines": {x["id"] for x in d["engines"]}}
+    known = {"murray": {"murray"}, "techniques": {x["id"] for x in d["techniques"]["interfaces"]}, "games": seen, "studios": {x["id"] for x in d["studios"]}, "engines": {x["id"] for x in d["engines"]}}
     for it in d["media"]["_items"]:
         if it.get("id") not in known.get(it.get("group"), ()):
             errors.append(f"media.json: unknown {it.get('group')}/{it.get('id')}")
-        if it.get("rights") not in ("boxart", "screenshot", "logo"):
+        if it.get("rights") not in ("boxart", "screenshot", "logo", "sprite"):
             errors.append(f"media.json: {it.get('group')}/{it.get('id')} needs rights boxart|screenshot|logo")
         if it.get("file") and not it.get("page"):
             errors.append(f"media.json: {it['group']}/{it['id']} has no source page")
@@ -759,7 +760,7 @@ def pick(obj, path):
 
 def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=None) -> str:
     d, site, langs, default = S.d, S.d["site"], S.d["langs"], S.d["site"]["defaultLanguage"]
-    L = {k: localize(d[k], lang, langs, default) for k in ("timeline", "studios", "engines", "techniques", "hero", "games", "arcade")}
+    L = {k: localize(d[k], lang, langs, default) for k in ("timeline", "studios", "engines", "techniques", "hero", "games", "arcade", "murray")}
     L["timeline"]["games"].sort(key=lambda g: g["year"])
     ui = dict(d["i18n"][default], **d["i18n"][lang])
     pid = page["id"]
@@ -768,6 +769,8 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     for group, items in (("games", L["timeline"]["games"]), ("studios", L["studios"]), ("engines", L["engines"])):
         for x in items:  # real images (covers, screenshots, logos) with their credits
             x["media"] = {r: media_view(it, root, ui) for r, it in d["media"].get(group, {}).get(x["id"], {}).items()}
+    frames = d["media"].get("murray", {}).get("murray", {})
+    L["murray"]["frames"] = [media_view(frames[f"talk{i}"], root, ui) for i in range(9) if f"talk{i}" in frames]
     pal = L["techniques"]["demos"]["palette"]
     if isinstance(pal.get("media"), str):
         g, i, r = pal["media"].split("/")
@@ -779,7 +782,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
         x["media"] = media_view(it, root, ui) if it else None
     blocks = render_blocks(S, page, lang, L, ui, depth)
     data = {
-        "lang": lang, "root": root, "isRoot": is_root, "page": pid, "ui": ui,
+        "lang": lang, "root": root, "isRoot": is_root, "page": pid, "ui": ui, "murray": L["murray"],
         "nav": site["nav"], "gamePages": [p["id"] for p in S.pages if p.get("parent") == "games"],
         "site": {"score": site["score"]}, "transitions": site.get("transitions", {}), "sprites": d["sprites"], "font": d["font"], "characters": d["characters"],
         "arcadeVendored": vendored,

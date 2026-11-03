@@ -728,3 +728,48 @@ html.map-open { overflow: hidden; }
 .ft-about p { max-width: 60ch; }
 @media (max-width: 899px) { .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ft-about { grid-column: 1 / -1; } }
 @media (max-width: 559px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+
+/* Murray, the talking skull: chat widget, bottom-right on every page */
+.murray-widget { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 95; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
+.murray-widget > * { pointer-events: auto; }
+.murray-fab { width: 76px; height: 76px; padding: 0; border: 0; border-radius: 50%; background: #000; overflow: hidden; display: grid; place-items: center;
+  box-shadow: 0 0 0 4px var(--amber), 0 0 0 8px var(--shade), 0 8px 18px rgba(5,9,7,.55); transition: transform .12s steps(2); }
+.murray-fab img { width: 150%; max-width: none; height: auto; image-rendering: pixelated; transform: translate(-3%, 10%); }
+.murray-fab:hover, .murray-fab:focus-visible { transform: translateY(-3px); }
+.murray-fab:focus-visible { outline: 3px dashed var(--teal); outline-offset: 10px; }
+.murray-fab.on { box-shadow: 0 0 0 4px var(--teal), 0 0 0 8px var(--shade); }
+.murray-panel { width: min(400px, calc(100vw - 32px)); max-height: min(72vh, 640px); display: flex; flex-direction: column; gap: 8px; padding: 10px;
+  background: var(--well); box-shadow: 0 0 0 4px var(--panel2), 0 0 0 8px var(--shade), 0 14px 30px rgba(5,9,7,.6); }
+.murray-panel[hidden] { display: none; }
+.murray-top { display: grid; grid-template-columns: 86px minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+.murray-top canvas { width: 86px; height: auto; image-rendering: pixelated; background: #000; box-shadow: 0 0 0 2px var(--panel2); }
+.murray-top h2 { font-size: 10px; line-height: 1.5; color: var(--amber); }
+.murray-mode { font-family: var(--display); font-size: 7px; color: var(--teal); min-height: 1em; margin: 4px 0 0; }
+.murray-x { all: unset; cursor: pointer; width: 28px; height: 28px; display: grid; place-items: center; font-size: 22px; color: var(--paper); background: var(--panel); box-shadow: 0 0 0 2px var(--panel2); }
+.murray-x:hover, .murray-x:focus-visible { color: var(--amber); }
+.murray-x:focus-visible { outline: 2px dashed var(--teal); }
+.murray-log { list-style: none; margin: 0; padding: 0 4px 0 0; flex: 1; min-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 19px; }
+.murray-log li { max-width: 92%; }
+.murray-log .who { font-family: var(--display); font-size: 7px; display: block; margin-bottom: 3px; }
+.murray-log p { margin: 0; line-height: 1.2; overflow-wrap: anywhere; }
+.m-murray .who { color: #b7d98a; }
+.m-murray > p:first-of-type { color: #e6f0c8; }
+.m-you { align-self: flex-end; text-align: right; }
+.m-you .who { color: var(--amber); }
+.murray-log .waiting p { color: var(--dim); animation: blink 1s steps(2) infinite; }
+.murray-log .src { font-size: 16px; color: var(--dim); margin-top: 4px; }
+.murray-log .src span { font-family: var(--display); font-size: 6px; color: var(--amber); }
+.murray-log .src a { color: var(--teal); }
+.murray-sugg { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.murray-sugg .pbtn { flex: none; font-size: 7px; }
+.murray-form { display: flex; gap: 6px; }
+.murray-form input { flex: 1; min-width: 0; background: var(--shade); color: var(--paper); border: 0; box-shadow: inset 0 0 0 2px var(--panel2); font: inherit; font-size: 19px; padding: 4px 8px; }
+.murray-form input:focus-visible { outline: 3px dashed var(--teal); }
+.murray-privacy { font-size: 14px; line-height: 1.15; color: var(--dim); margin: 0; }
+.murray-privacy figure { margin: 4px 0 0; }
+.murray-privacy figcaption { margin: 0; font-size: 13px; }
+@media (max-width: 560px) {
+  .murray-fab { width: 62px; height: 62px; }
+  .murray-panel { width: calc(100vw - 24px); max-height: calc(100dvh - 120px); }
+  .murray-widget { right: 12px; bottom: 12px; }
+}

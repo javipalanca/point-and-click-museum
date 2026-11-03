@@ -224,8 +224,29 @@ def box_resize(w: int, h: int, px: bytearray, nw: int, nh: int) -> bytearray:
     return out
 
 
-def shrink_png(data: bytes, role: str):
+def retouch(w: int, h: int, px: bytearray, item: dict) -> bytearray:
+    """Declared, reproducible clean-ups: `replace` {"rrggbb": "rrggbb"} swaps exact colours (e.g. stray outline
+    pixels left by a sprite ripper) and `mirror: true` flips the image horizontally."""
+    for src, dst in (item.get("replace") or {}).items():
+        a, b = bytes.fromhex(src), bytes.fromhex(dst)
+        for i in range(0, len(px), 4):
+            if px[i:i + 3] == a:
+                px[i:i + 3] = b
+    if item.get("mirror"):
+        out = bytearray(len(px))
+        for y in range(h):
+            row = y * w * 4
+            for x in range(w):
+                out[row + x * 4:row + x * 4 + 4] = px[row + (w - 1 - x) * 4:row + (w - 1 - x) * 4 + 4]
+        px = out
+    return px
+
+
+def shrink_png(data: bytes, role: str, item: dict | None = None):
     w, h, px = png_read(data)
+    if item and (item.get("replace") or item.get("mirror")):
+        px = retouch(w, h, px, item)
+        data = png_write(w, h, px)
     if sum(1 for a in px[3::4] if a < 255) * 200 < w * h:  # algún píxel suelto semitransparente: es opaca
         px[3::4] = b"\xff" * (w * h)
     axis, limit = LIMITS.get(role, ("w", 640))
@@ -379,7 +400,7 @@ def fetch(item: dict) -> dict:
         raise ValueError(f"fuente desconocida: {src}")
     ext = ext_of(data, src)
     if ext == "png":
-        data, w, h = shrink_png(data, role)
+        data, w, h = shrink_png(data, role, item)
     elif ext == "svg":
         data = clean_svg(data)
         w, h = image_size(data, ext)

@@ -2261,7 +2261,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_0.png",
    "file": "murray/murray-talk0.png",
    "w": 171,
-   "h": 95
+   "h": 95,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2272,7 +2276,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_1.png",
    "file": "murray/murray-talk1.png",
    "w": 171,
-   "h": 95
+   "h": 95,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2283,7 +2291,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_2.png",
    "file": "murray/murray-talk2.png",
    "w": 171,
-   "h": 95
+   "h": 95,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2294,7 +2306,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_3.png",
    "file": "murray/murray-talk3.png",
    "w": 171,
-   "h": 95
+   "h": 95,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2305,7 +2321,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_4.png",
    "file": "murray/murray-talk4.png",
    "w": 171,
-   "h": 97
+   "h": 97,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2316,7 +2336,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_5.png",
    "file": "murray/murray-talk5.png",
    "w": 171,
-   "h": 95
+   "h": 95,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2327,7 +2351,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_6.png",
    "file": "murray/murray-talk6.png",
    "w": 171,
-   "h": 97
+   "h": 97,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2338,7 +2366,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_7.png",
    "file": "murray/murray-talk7.png",
    "w": 171,
-   "h": 97
+   "h": 97,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   },
   {
    "group": "murray",
@@ -2349,7 +2381,11 @@
    "page": "https://github.com/JeanxPereira/CMI-Sprites/blob/fcc802705e4bdacdbc22dc9a21358a2d4a9849b2/Characters/Murray/2/LFLF_0011_AKOS_0049_aframe_8.png",
    "file": "murray/murray-talk8.png",
    "w": 171,
-   "h": 95
+   "h": 95,
+   "replace": {
+    "bb3b0b": "000000"
+   },
+   "mirror": true
   }
  ]
 }

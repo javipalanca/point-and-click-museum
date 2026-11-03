@@ -72,29 +72,29 @@
   let ctx, canvas, cur;
   const px = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); };
   function drawScene() {
-    px(0, 0, W, H, "#3b2f5c");
-    for (let y = 0; y < 96; y += 8) px(0, y, W, 1, "#43366a");              // wall panels
-    for (let x = 0; x < W; x += 32) px(x, 0, 1, 96, "#33284f");
-    px(0, 88, W, 8, "#2a2046");                                              // skirting
+    px(0, 0, W, H, "#3a4d51");
+    for (let y = 0; y < 96; y += 8) px(0, y, W, 1, "#43595d");              // wall panels
+    for (let x = 0; x < W; x += 32) px(x, 0, 1, 96, "#324245");
+    px(0, 88, W, 8, "#2a393d");                                              // skirting
     px(0, 96, W, 32, "#6d4a35");                                             // wooden floor
     for (let y = 100; y < H; y += 6) px(0, y, W, 1, "#5d3e2c");
     for (let x = 8; x < W; x += 40) px(x + ((x / 40) % 2) * 12, 96, 1, 32, "#5d3e2c");
     // door
     const d = HOT.door;
     px(d.x - 3, d.y - 3, d.w + 6, d.h + 3, "#2a1d14");
-    if (S.open) { px(d.x, d.y, d.w, d.h, "#120d24"); px(d.x, d.y + d.h - 10, d.w, 10, "#1f1944"); px(d.x - 2, d.y, 4, d.h, "#8a5a36"); }
+    if (S.open) { px(d.x, d.y, d.w, d.h, "#131c1e"); px(d.x, d.y + d.h - 10, d.w, 10, "#243639"); px(d.x - 2, d.y, 4, d.h, "#8a5a36"); }
     else {
       px(d.x, d.y, d.w, d.h, "#8a5a36");
       px(d.x + 4, d.y + 4, d.w - 8, 22, "#7a4e2e"); px(d.x + 4, d.y + 30, d.w - 8, 24, "#7a4e2e");
-      px(d.x + d.w - 8, d.y + 30, 4, 4, "#e6b84a"); px(d.x + d.w - 7, d.y + 35, 2, 3, "#120d24");
+      px(d.x + d.w - 8, d.y + 30, 4, 4, "#e6b84a"); px(d.x + d.w - 7, d.y + 35, 2, 3, "#131c1e");
     }
     // painting
     const p = HOT.painting;
     px(p.x, p.y, p.w, p.h, "#c99a2e"); px(p.x + 3, p.y + 3, p.w - 6, p.h - 6, "#2e4a3a");
     px(p.x + 16, p.y + 8, 12, 12, "#e2b48c"); px(p.x + 14, p.y + 6, 16, 4, "#5a3a22");
-    px(p.x + 18, p.y + 12, 2, 2, "#120d24"); px(p.x + 24, p.y + 12, 2, 2, "#120d24");
-    px(p.x + 12, p.y + 20, 20, 8, "#3a2a5a");
-    px(p.x + 2, p.y + p.h, p.w - 4, 2, "#2a2046");
+    px(p.x + 18, p.y + 12, 2, 2, "#131c1e"); px(p.x + 24, p.y + 12, 2, 2, "#131c1e");
+    px(p.x + 12, p.y + 20, 20, 8, "#364a4e");
+    px(p.x + 2, p.y + p.h, p.w - 4, 2, "#2a393d");
     // key
     if (!S.taken) { const k = HOT.key; px(k.x + 2, k.y + 3, 3, 3, "#ffd75a"); px(k.x + 5, k.y + 4, 6, 1, "#ffd75a"); px(k.x + 8, k.y + 5, 1, 2, "#ffd75a"); px(k.x + 10, k.y + 5, 1, 1, "#ffd75a"); px(k.x + 3, k.y + 4, 1, 1, "#6d4a35"); }
     // characters
@@ -135,8 +135,8 @@
       for (let k = 0; k < 28; k++) { const a = k / 28 * Math.PI * 2, f = (k % 2 ? 3 : 6) + (Math.floor(performance.now() / 90 + k) % 3); disc(c.x + Math.round(Math.cos(a) * (Z.r - 2)), c.y + Math.round(Math.sin(a) * (Z.r - 2)), f > 6 ? 3 : 2, k % 3 ? "#ff7a1a" : "#ffcf3a"); }
       disc(c.x, c.y, Z.r - 4, "#2a1a10"); disc(c.x, c.y, Z.r - 6, "#3a2414");
       disc(c.x, c.y - 9, 9, "#efe6cf"); px(c.x - 6, c.y - 3, 13, 6, "#efe6cf");               // skull
-      px(c.x - 6, c.y - 14, 4, 4, "#120d24"); px(c.x + 3, c.y - 14, 4, 4, "#120d24");          // eyes
-      px(c.x - 4, c.y - 2, 9, 3, "#120d24"); for (let i = -3; i < 5; i += 2) px(c.x + i, c.y - 2, 1, 3, "#efe6cf");  // teeth
+      px(c.x - 6, c.y - 14, 4, 4, "#131c1e"); px(c.x + 3, c.y - 14, 4, 4, "#131c1e");          // eyes
+      px(c.x - 4, c.y - 2, 9, 3, "#131c1e"); for (let i = -3; i < 5; i += 2) px(c.x + i, c.y - 2, 1, 3, "#efe6cf");  // teeth
       icon("hand", c.x - 35, c.y - 4, "#c08850", 2); icon("boot", c.x + 19, c.y - 4, "#4a4a52", 2);
     } else {
       disc(c.x, c.y, Z.r + 1, "#7a5a10"); disc(c.x, c.y, Z.r, "#e6b84a"); disc(c.x, c.y, Z.r - 3, "#f2cf63");
@@ -157,10 +157,10 @@
     if (u.kind === "twobutton" || u.kind === "oneclick") {
       const o = S.hover && OBJ[S.hover];
       const k = !o ? "arrow" : u.kind === "oneclick" ? "hand" : o.ctx === "talk" ? "talk" : o.ctx === "look" ? "look" : "hand";
-      icon(k, m.x, m.y, k === "hand" ? "#e2b48c" : "#120d24");
+      icon(k, m.x, m.y, k === "hand" ? "#e2b48c" : "#131c1e");
       return;
     }
-    const c = u.style === "mm" ? "#f3e6c8" : u.style === "mi2" ? "#d6cff3" : "#4fd6c8";
+    const c = u.style === "mm" ? "#f3e6c8" : u.style === "mi2" ? "#e9e4d9" : "#4fd6c8";
     px(m.x - 4, m.y, 3, 1, c); px(m.x + 2, m.y, 3, 1, c); px(m.x, m.y - 4, 1, 3, c); px(m.x, m.y + 2, 1, 3, c);
   }
   function drawBubble() {  // Machinarium: pictures instead of words
@@ -168,7 +168,7 @@
     const x = Math.max(4, Math.min(W - 8 - b.icons.length * 10, Math.round(P.x) - b.icons.length * 5)), y = 34;
     px(x - 3, y - 3, b.icons.length * 10 + 4, 14, "#f3e6c8"); px(x - 2, y - 4, b.icons.length * 10 + 2, 1, "#f3e6c8");
     px(Math.round(P.x) - 1, y + 11, 3, 3, "#f3e6c8");
-    b.icons.forEach((n, i) => icon(n, x + i * 10, y, n === "key" ? "#c99a2e" : n === "door" ? "#8a5a36" : "#120d24"));
+    b.icons.forEach((n, i) => icon(n, x + i * 10, y, n === "key" ? "#c99a2e" : n === "door" ? "#8a5a36" : "#131c1e"));
   }
 
   /* ---------------------------------------------------------------- the panel under the scene */

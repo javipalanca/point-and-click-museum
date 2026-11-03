@@ -3,7 +3,7 @@
   {
    "id": "text",
    "range": "1976–1983",
-   "color": "#4fd6c8",
+   "color": "#74c2a2",
    "name": {
     "es": "Texto",
     "en": "Text",
@@ -20,7 +20,7 @@
   {
    "id": "parser",
    "range": "1984–1989",
-   "color": "#5fc46a",
+   "color": "#9cc25a",
    "name": {
     "es": "Parser gráfico",
     "en": "Graphic parser",
@@ -37,7 +37,7 @@
   {
    "id": "golden",
    "range": "1990–1997",
-   "color": "#ffb547",
+   "color": "#e8b04a",
    "name": {
     "es": "Edad de oro",
     "en": "Golden age",
@@ -54,7 +54,7 @@
   {
    "id": "3d",
    "range": "1998–2005",
-   "color": "#ef5d8a",
+   "color": "#d9693f",
    "name": {
     "es": "Salto al 3D",
     "en": "The jump to 3D",
@@ -71,7 +71,7 @@
   {
    "id": "revival",
    "range": "2006–2016",
-   "color": "#8a8cff",
+   "color": "#5fa3c4",
    "name": {
     "es": "Renacimiento",
     "en": "Revival",
@@ -88,7 +88,7 @@
   {
    "id": "now",
    "range": "2017–",
-   "color": "#f3e6c8",
+   "color": "#f1e2bf",
    "name": {
     "es": "Presente",
     "en": "Present day",

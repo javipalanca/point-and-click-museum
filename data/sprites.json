@@ -1,22 +1,22 @@
 {
  "size": 12,
  "palette": {
-  "k": "#14101f",
+  "k": "#141a1b",
   "w": "#f3e6c8",
   "y": "#ffb547",
   "o": "#e07a2e",
   "r": "#d9455f",
   "m": "#ef5d8a",
   "c": "#4fd6c8",
-  "b": "#3f6fd8",
+  "b": "#65a5b2",
   "g": "#5fc46a",
   "G": "#2f7d46",
   "n": "#8a5a35",
   "N": "#5a3820",
-  "s": "#a8a4c4",
-  "d": "#4a4470",
-  "p": "#8a4fd8",
-  "B": "#1b2a6b"
+  "s": "#bbb6ad",
+  "d": "#4f6165",
+  "p": "#b29e75",
+  "B": "#2f5057"
  },
  "sprites": {
   "terminal": ["............", ".dddddddddd.", ".dkkkkkkkkd.", ".dkgkkkkkkd.", ".dkkgkkkkkd.", ".dkgkkggkkd.", ".dkkkkkkkkd.", ".dddddddddd.", "....dddd....", "..ssssssss..", ".ssssssssss.", "............"],

@@ -211,7 +211,7 @@
       // light shaft from the round window + dust motes
       x.save(); x.globalCompositeOperation = "lighter";
       const g = x.createLinearGradient(wx, wy, wx + 30, H);
-      g.addColorStop(0, "rgba(120,150,255,.16)"); g.addColorStop(1, "rgba(120,150,255,0)");
+      g.addColorStop(0, "rgba(218,198,157,.16)"); g.addColorStop(1, "rgba(218,198,157,0)");
       x.fillStyle = g; x.beginPath(); x.moveTo(wx - 9, wy); x.lineTo(wx + 9, wy); x.lineTo(wx + 70, H); x.lineTo(wx + 10, H); x.closePath(); x.fill();
       motes.forEach(m => {
         if (!reduceMotion) { m.y += m.v; if (m.y > 1) m.y = 0; }

@@ -45,7 +45,7 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **2026-11-01 · `add_game.py` elige motor:** ScummVM si reconoce los datos (firmas de ficheros por motor, juegos AGS
   dentro de un `.exe` de Windows), DOSBox si hay programa DOS (descarta ejecutables PE de Windows). Si ScummVM no está
   compilado y hay `.exe` DOS, usa DOSBox. Los zips oficiales de los freeware rellenan su ficha de `arcade.json`.
-- **2026-11-02 · Paleta «atardecer» en lugar de noche** (petición del usuario: «menos oscuro, más luminoso»):
+- **2026-11-02 · Paleta «atardecer» en lugar de noche** (sustituida por la paleta «museo de época» del 2026-11-05) (petición del usuario: «menos oscuro, más luminoso»):
   fondo violeta más claro con degradado hacia un horizonte cálido, superficies hundidas en `--well`, CRT más suave y
   cielo de la fachada al anochecer. Las pantallas (DOSBox, terminales, lienzos) siguen oscuras.
 - **2026-11-02 · Transiciones clásicas entre páginas** (`src/js/transitions.js`): se dibujan en un canvas de baja
@@ -101,6 +101,12 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   `tools/find_media.py` las indexa y la skill `find-media` explica el proceso y la verificación.
   Las capturas de pixel art se reducen por un factor entero.
 - **2026-11-03 · Cada estudio lista sus juegos** (`studios.json → games`) y muestra sus portadas enlazadas a la línea temporal.
+
+- **2026-11-05 · Paleta «museo de época», sin morados** (petición del usuario: «el morado típico de las webs hechas con
+  IA»). Paredes verde botella (`--ink #14211c`), vitrinas de nogal (`--panel`), latón (`--amber`), rojo sangre de buey
+  (`--rose`), verdín (`--teal`) y pergamino: los colores de cajas y manuales de los 80–90. Los morados de lienzos y
+  sprites se pasaron a azul noche o gris pergamino; se conservan los colores exactos de las interfaces reproducidas
+  (EGA/CGA, verbos de Monkey Island 2). Épocas: verdín, musgo, latón, bermellón, azul acero y pergamino.
 
 ## Datos técnicos útiles
 

@@ -1,20 +1,22 @@
 /* Point and Click Museum
-   Layout idea: a pixel museum at dusk. One room per page (timeline, studios, engines,
-   techniques, minigames, arcade), navigated by an adventure-game verb bar pinned to the
-   bottom, with classic screen transitions between rooms. Single dusk theme by design. */
+   Layout idea: a period museum in pixel art. One room per page (timeline, studios, engines,
+   techniques, minigames, arcade), a corridor of doors as navigation and classic screen
+   transitions between rooms. Single theme by design: green walls, walnut, brass, parchment. */
 :root {
-  --ink: #2e2560;        /* dusk background */
-  --sky: #3d3078;        /* top of the page gradient */
-  --glow: #5a3a78;       /* warm horizon at the bottom of the page */
-  --panel: #41357a;      /* panel fill */
-  --panel2: #55489a;     /* raised panel */
-  --well: #1f1944;       /* recessed surfaces: verb bar, terminals, inputs */
-  --shade: #120d24;      /* deepest tone: text shadows, screen bezels */
-  --paper: #f3e6c8;      /* parchment text */
-  --amber: #ffb547;      /* accent: lamplight */
-  --rose: #ef5d8a;       /* secondary accent */
-  --teal: #4fd6c8;       /* interactive / hover */
-  --dim: #d6cff3;        /* muted text */
+  /* "Period museum" palette: bottle-green walls, walnut cabinets, brass, oxblood, verdigris and parchment,
+     the colours of 80s and 90s adventure boxes and manuals. Screens stay black. No purple. */
+  --ink: #14211c;        /* bottle-green wall: page background */
+  --sky: #1b2d26;        /* top of the page gradient */
+  --glow: #3a2616;       /* lamplight on the floor: bottom of the page */
+  --panel: #2c1e14;      /* walnut cabinet */
+  --panel2: #43301f;     /* raised walnut */
+  --well: #0b1310;       /* recessed surfaces: terminals, inputs */
+  --shade: #050907;      /* deepest tone: text shadows, screen bezels */
+  --paper: #f1e2bf;      /* parchment text */
+  --amber: #e8b04a;      /* brass */
+  --rose: #c8553d;       /* oxblood red */
+  --teal: #74c2a2;       /* verdigris: interactive / hover */
+  --dim: #c9b896;        /* aged paper: muted text */
   --verb: #6ad16a;       /* classic verb green */
   --display: "Press Start 2P", "Courier New", monospace;
   --body: "VT323", "Courier New", monospace;
@@ -68,7 +70,7 @@ button { font: inherit; color: inherit; }
               inset -3px -3px 0 0 rgba(0,0,0,.35), inset 3px 3px 0 0 rgba(255,255,255,.12);
   color: var(--paper); margin: 3px; line-height: 1.4; text-decoration: none;
 }
-.pbtn:hover { background: #3d3170; color: var(--amber); }
+.pbtn:hover { background: #415b60; color: var(--amber); }
 .pbtn:active { transform: translateY(2px); }
 .pbtn[aria-pressed="true"] { background: var(--amber); color: var(--ink); }
 .pbtn:disabled { opacity: .45; cursor: not-allowed; }
@@ -107,7 +109,7 @@ section { padding-block: 56px 24px; scroll-margin-top: 56px; }
 .tl-ctrl { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: var(--dim); font-size: 19px; }
 
 /* Modal */
-.modal-bg { position: fixed; inset: 0; background: rgba(24,18,56,.78); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; padding-top: max(16px, env(safe-area-inset-top, 0px)); padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); }
+.modal-bg { position: fixed; inset: 0; background: rgba(27,43,46,.78); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; padding-top: max(16px, env(safe-area-inset-top, 0px)); padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)); }
 .modal-bg.open { display: flex; }
 .pmodal { max-width: 720px; width: 100%; max-height: 88vh; max-height: 88dvh; overflow: auto; padding: 22px; position: relative; --c: var(--amber); }
 .pmodal .mh { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; padding-right: 44px; }
@@ -255,8 +257,8 @@ section { padding-block: 56px 24px; scroll-margin-top: 56px; }
 @keyframes pop { 0% { transform: translateX(120%); } 10%, 85% { transform: translateX(0); } 100% { transform: translateX(120%); } }
 body.crt::after {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 200;
-  background: repeating-linear-gradient(0deg, rgba(18,13,36,.12) 0 2px, transparent 2px 4px),
-              radial-gradient(ellipse at center, transparent 65%, rgba(18,13,36,.28) 100%);
+  background: repeating-linear-gradient(0deg, rgba(19,28,30,.12) 0 2px, transparent 2px 4px),
+              radial-gradient(ellipse at center, transparent 65%, rgba(19,28,30,.28) 100%);
 }
 .cert { text-align: center; }
 .cert h3 { color: var(--amber); font-size: 16px; margin: 12px 0; }
@@ -455,7 +457,7 @@ a.ext:hover { color: var(--amber); border-color: var(--amber); }
 .ui-invpop button { all: unset; cursor: pointer; display: block; }
 .ui-hint { font-size: 16px; color: var(--dim); background: var(--well); margin: 0; padding: 4px 8px; }
 /* Broken Sword / Machinarium: inventory bar at the top edge */
-.ui-invtop { position: absolute; left: 0; right: 0; top: 0; background: rgba(18,13,36,.85); padding: 4px 8px; transform: translateY(-100%); opacity: 0; transition: transform .12s steps(2), opacity .12s steps(2); }
+.ui-invtop { position: absolute; left: 0; right: 0; top: 0; background: rgba(19,28,30,.85); padding: 4px 8px; transform: translateY(-100%); opacity: 0; transition: transform .12s steps(2), opacity .12s steps(2); }
 .ui-invtop.show, .ui-invtop:hover { transform: none; opacity: 1; }
 .ui-invtop button { all: unset; cursor: pointer; color: #ffd75a; font-size: 19px; margin-right: 12px; }
 .ui-reset { margin: 10px 0 0; }
@@ -532,18 +534,18 @@ a.ext:hover { color: var(--amber); border-color: var(--amber); }
 .pcm-wipe { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 9000; pointer-events: none; display: none;
   image-rendering: pixelated; image-rendering: crisp-edges; }
 .pcm-wipe.on { display: block; pointer-events: auto; }
-html.pcm-wipe-in::after { content: ""; position: fixed; inset: 0; z-index: 9001; background: #0a0716; }
+html.pcm-wipe-in::after { content: ""; position: fixed; inset: 0; z-index: 9001; background: #0b1112; }
 
 /* ===================================================================
    Navigation: a corridor of doors (header), the museum floor plan (map
    panel), the "in this room" strip and the footer.
    =================================================================== */
-:root { --hd-h: 76px; --sub-h: 0px; --wall: #8f86c4; }
+:root { --hd-h: 76px; --sub-h: 0px; --wall: #7f9a87; }
 [id] { scroll-margin-top: calc(var(--hd-h) + var(--sub-h) + 16px); }
 
 .site-header {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 80;
-  background: var(--well); border-bottom: 4px solid var(--panel2); box-shadow: 0 4px 0 rgba(18,13,36,.35);
+  background: var(--well); border-bottom: 4px solid var(--panel2); box-shadow: 0 4px 0 rgba(19,28,30,.35);
 }
 .hd-bar {
   max-width: 1320px; margin: 0 auto; min-height: 64px;
@@ -645,7 +647,7 @@ html.pcm-wipe-in::after { content: ""; position: fixed; inset: 0; z-index: 9001;
 @media (max-width: 380px) { .brand-name { display: none; } }
 
 /* "in this room" strip */
-.subnav { position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--hd-h)); z-index: 70; background: rgba(46,37,96,.96); border-bottom: 2px solid var(--panel2); }
+.subnav { position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--hd-h)); z-index: 70; background: rgba(52,76,81,.96); border-bottom: 2px solid var(--panel2); }
 .subnav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 14px; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
 .subnav-label { color: var(--dim); font-size: 18px; white-space: nowrap; }
 .subnav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
@@ -657,7 +659,7 @@ html.pcm-wipe-in::after { content: ""; position: fixed; inset: 0; z-index: 9001;
 
 /* the museum map: a floor plan */
 html.map-open { overflow: hidden; }
-.map-panel { position: fixed; inset: 0; z-index: 300; background: rgba(18,13,36,.92); overflow-y: auto; overscroll-behavior: contain;
+.map-panel { position: fixed; inset: 0; z-index: 300; background: rgba(19,28,30,.92); overflow-y: auto; overscroll-behavior: contain;
   padding: max(16px, env(safe-area-inset-top, 0px)) var(--gutter-r) max(24px, env(safe-area-inset-bottom, 0px)) var(--gutter-l); }
 .map-panel.opening { animation: iris-open .5s steps(10) both; }
 @keyframes iris-open { from { clip-path: circle(0 at var(--ox, 90%) var(--oy, 40px)); } to { clip-path: circle(150vmax at var(--ox, 90%) var(--oy, 40px)); } }
@@ -673,7 +675,7 @@ html.map-open { overflow: hidden; }
   background-image: linear-gradient(rgba(79,214,200,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(79,214,200,.07) 1px, transparent 1px);
   background-size: 16px 16px; box-shadow: 0 0 0 4px var(--panel2);
 }
-.plan-room { position: relative; margin: -2px; border: 4px solid var(--wall); background: rgba(46,37,96,.55); display: grid; }
+.plan-room { position: relative; margin: -2px; border: 4px solid var(--wall); background: rgba(52,76,81,.55); display: grid; }
 .plan-room::after { content: ""; position: absolute; left: calc(50% - 18px); bottom: -4px; width: 36px; height: 4px; background: var(--well); } /* doorway */
 .plan-timeline { grid-area: timeline; } .plan-studios { grid-area: studios; } .plan-engines { grid-area: engines; }
 .plan-techniques { grid-area: techniques; } .plan-games { grid-area: games; } .plan-arcade { grid-area: arcade; }

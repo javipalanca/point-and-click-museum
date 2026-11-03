@@ -379,7 +379,7 @@ def write_images(d: dict, out: Path):
     # Open Graph image 1200×630
     font = d["font"]["glyphs"]
     c = Canvas(1200, 630, ink)
-    bands = [hex_rgba(x) for x in ("#120d24", "#1b1240", "#2a1d5c", "#3d2a70")]
+    bands = [hex_rgba(x) for x in ("#131c1e", "#1d3134", "#2d474c", "#3c595e")]
     for y in range(0, 630, 6):
         b = min(3, y * 4 // 630)
         for x in range(0, 1200, 6):

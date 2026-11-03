@@ -73,7 +73,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 4. **La puntuación suma 100.** Si añades premios en `site.json → score.awards`, reajusta otros. `build.py` lo valida.
 5. **Prefijos de clase CSS:** js-dos carga Tailwind/daisyUI, que define `.btn`, `.modal`, `.toast`, `.card`, `.title`.
    Por eso usamos `.pbtn`, `.pmodal`, `.ptoast`. No crees clases genéricas que choquen en la página `arcade`.
-6. **Estética:** pixel art, `image-rendering: pixelated`, paleta «atardecer» de tokens en `:root` de `style.css`
+6. **Estética:** pixel art, `image-rendering: pixelated`, paleta «museo de época» (verde botella, nogal, latón, pergamino;
+   **nada de morados**) de tokens en `:root` de `style.css`
    (`--ink`, `--panel`, `--well` para superficies hundidas, `--shade` para sombras; no uses `#000` salvo en pantallas),
    fuentes Press Start 2P (títulos) y VT323 (texto). Nada de emoji como iconos. Respeta `prefers-reduced-motion`
    (las transiciones se desactivan solas). La clase `.cur` es el cursor parpadeante: no la reutilices.

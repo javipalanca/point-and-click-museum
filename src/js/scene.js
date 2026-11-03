@@ -33,9 +33,9 @@ PCM.Scene = (() => {
       if (i + w > bx + bw) break;
       const c = colors[Math.floor(r() * colors.length)];
       if (r() < 0.12 && i + h < bx + bw) { // a book lying flat
-        x.fillStyle = "#14101f"; x.fillRect(i, by + bh - 3, h, 3); x.fillStyle = c; x.fillRect(i, by + bh - 3, h - 1, 2); i += h + 1; continue;
+        x.fillStyle = "#141a1b"; x.fillRect(i, by + bh - 3, h, 3); x.fillStyle = c; x.fillRect(i, by + bh - 3, h - 1, 2); i += h + 1; continue;
       }
-      x.fillStyle = "#14101f"; x.fillRect(i, by + bh - h, w + 1, h);
+      x.fillStyle = "#141a1b"; x.fillRect(i, by + bh - h, w + 1, h);
       x.fillStyle = c; x.fillRect(i, by + bh - h, w, h);
       x.fillStyle = "rgba(255,255,255,.18)"; x.fillRect(i, by + bh - h, 1, h);
       x.fillStyle = "rgba(0,0,0,.25)"; x.fillRect(i, by + bh - h + 2, w, 1); x.fillRect(i, by + bh - 3, w, 1);
@@ -74,48 +74,48 @@ PCM.Scene = (() => {
   /* ---------------- procedural attic for the pixel hunt ---------------- */
   function crate(x, px, py, w, h, r) {
     const wood = ["#8a5a35", "#7a4e2c", "#946640"][Math.floor(r() * 3)];
-    x.fillStyle = "#1a1022"; x.fillRect(px - 1, py - 1, w + 2, h + 2);
+    x.fillStyle = "#141c1d"; x.fillRect(px - 1, py - 1, w + 2, h + 2);
     x.fillStyle = wood; x.fillRect(px, py, w, h);
     x.fillStyle = "rgba(0,0,0,.22)"; for (let j = py + 3; j < py + h; j += 4) x.fillRect(px, j, w, 1);
     x.fillStyle = "#5a3820"; x.fillRect(px, py, 2, h); x.fillRect(px + w - 2, py, 2, h); x.fillRect(px, py, w, 2);
     x.fillStyle = "rgba(255,255,255,.14)"; x.fillRect(px + 2, py + 2, w - 4, 1);
-    if (w > 14 && r() > 0.4) { x.fillStyle = "rgba(20,16,31,.55)"; x.fillRect(px + Math.floor(w / 2) - 3, py + Math.floor(h / 2) - 1, 6, 1); x.fillRect(px + Math.floor(w / 2) - 2, py + Math.floor(h / 2) + 1, 4, 1); }
+    if (w > 14 && r() > 0.4) { x.fillStyle = "rgba(20,26,27,.55)"; x.fillRect(px + Math.floor(w / 2) - 3, py + Math.floor(h / 2) - 1, 6, 1); x.fillRect(px + Math.floor(w / 2) - 2, py + Math.floor(h / 2) + 1, 4, 1); }
     if (r() > 0.6) { x.fillStyle = "#c9b98f"; x.fillRect(px + Math.floor(w / 2) - 1, py, 3, h); }
   }
   function trunk(x, px, py) {
-    x.fillStyle = "#1a1022"; x.fillRect(px - 1, py - 1, 30, 18);
+    x.fillStyle = "#141c1d"; x.fillRect(px - 1, py - 1, 30, 18);
     x.fillStyle = "#5e1f34"; x.fillRect(px, py, 28, 16); x.fillStyle = "#8a2f4a"; x.fillRect(px, py, 28, 6);
     x.fillStyle = "#c47a1e"; x.fillRect(px, py + 6, 28, 1); x.fillRect(px + 5, py, 2, 16); x.fillRect(px + 21, py, 2, 16);
     x.fillStyle = "#ffb547"; x.fillRect(px + 13, py + 5, 3, 3);
   }
   function monitor(x, px, py, tick) {
-    x.fillStyle = "#1a1022"; x.fillRect(px - 1, py - 1, 20, 17);
+    x.fillStyle = "#141c1d"; x.fillRect(px - 1, py - 1, 20, 17);
     x.fillStyle = "#c9c4b0"; x.fillRect(px, py, 18, 15); x.fillStyle = "#a29d88"; x.fillRect(px, py + 12, 18, 3);
     x.fillStyle = "#0b2a1c"; x.fillRect(px + 2, py + 2, 14, 9);
     x.fillStyle = "#3fbf80"; x.fillRect(px + 3, py + 3, 6, 1); x.fillRect(px + 3, py + 5, 9, 1); x.fillRect(px + 3, py + 7, 4, 1);
     x.fillStyle = "#d9455f"; x.fillRect(px + 14, py + 13, 1, 1);
   }
   function bottle(x, px, py, c) {
-    x.fillStyle = "#1a1022"; x.fillRect(px - 1, py + 2, 6, 9); x.fillRect(px, py - 1, 4, 4);
+    x.fillStyle = "#141c1d"; x.fillRect(px - 1, py + 2, 6, 9); x.fillRect(px, py - 1, 4, 4);
     x.fillStyle = c; x.fillRect(px, py + 3, 4, 7); x.fillRect(px + 1, py, 2, 3);
     x.fillStyle = "rgba(255,255,255,.4)"; x.fillRect(px + 1, py + 4, 1, 4);
   }
   function frame(x, px, py, w, h, r) {
-    x.fillStyle = "#1a1022"; x.fillRect(px - 1, py - 1, w + 2, h + 2);
+    x.fillStyle = "#141c1d"; x.fillRect(px - 1, py - 1, w + 2, h + 2);
     x.fillStyle = "#c47a1e"; x.fillRect(px, py, w, h);
-    x.fillStyle = ["#2a1d5c", "#2f7d46", "#3f6fd8"][Math.floor(r() * 3)]; x.fillRect(px + 2, py + 2, w - 4, h - 4);
+    x.fillStyle = ["#2d474c", "#2f7d46", "#65a5b2"][Math.floor(r() * 3)]; x.fillRect(px + 2, py + 2, w - 4, h - 4);
     x.fillStyle = "#f3e6c8"; x.fillRect(px + w - 6, py + 4, 2, 2);
   }
   function lampProp(x, px, py) {
-    x.fillStyle = "#1a1022"; x.fillRect(px + 3, py + 8, 2, 14); x.fillRect(px, py + 22, 8, 2);
-    x.fillStyle = "#1a1022"; x.fillRect(px - 2, py - 1, 12, 10);
+    x.fillStyle = "#141c1d"; x.fillRect(px + 3, py + 8, 2, 14); x.fillRect(px, py + 22, 8, 2);
+    x.fillStyle = "#141c1d"; x.fillRect(px - 2, py - 1, 12, 10);
     x.fillStyle = "#e07a2e"; x.fillRect(px - 1, py, 10, 8); x.fillStyle = "#ffb547"; x.fillRect(px, py + 6, 8, 2);
   }
   function floppy(x, px, py) { /* the 7×7 golden floppy */
     x.fillStyle = "#6e4a10"; x.fillRect(px - 1, py - 1, 9, 9);
     x.fillStyle = "#ffb547"; x.fillRect(px, py, 7, 7);
     x.fillStyle = "#ffd27a"; x.fillRect(px, py, 7, 1);
-    x.fillStyle = "#a8a4c4"; x.fillRect(px + 2, py, 3, 2); x.fillStyle = "#14101f"; x.fillRect(px + 3, py, 1, 1);
+    x.fillStyle = "#bbb6ad"; x.fillRect(px + 2, py, 3, 2); x.fillStyle = "#141a1b"; x.fillRect(px + 3, py, 1, 1);
     x.fillStyle = "#f3e6c8"; x.fillRect(px + 1, py + 4, 5, 2);
   }
   function decoy(x, px, py, r) {
@@ -123,13 +123,13 @@ PCM.Scene = (() => {
     if (k === 0) { x.fillStyle = "#6e4a10"; x.fillRect(px - 1, py - 1, 5, 5); x.fillStyle = "#ffb547"; x.fillRect(px, py, 3, 3); }          // coin
     else if (k === 1) { x.fillStyle = "#ffb547"; x.fillRect(px, py, 3, 2); x.fillRect(px + 3, py + 1, 3, 1); }                                // key
     else if (k === 2) { x.fillStyle = "#6e4a10"; x.fillRect(px - 1, py - 1, 8, 6); x.fillStyle = "#e0b040"; x.fillRect(px, py, 6, 4); }   // brass plate
-    else { x.fillStyle = "#3f6fd8"; x.fillRect(px - 1, py - 1, 8, 8); x.fillStyle = "#1b2a6b"; x.fillRect(px, py, 6, 6); x.fillStyle = "#a8a4c4"; x.fillRect(px + 2, py, 2, 2); } // blue floppy
+    else { x.fillStyle = "#65a5b2"; x.fillRect(px - 1, py - 1, 8, 8); x.fillStyle = "#2f5057"; x.fillRect(px, py, 6, 6); x.fillStyle = "#bbb6ad"; x.fillRect(px + 2, py, 2, 2); } // blue floppy
   }
   /* returns { bg: canvas, target: {x,y}, shaft: [...] } */
   function attic(W, H, seed, round, cfg) {
     const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d"); const r = rng(seed);
     const floorY = Math.round(H * 0.66);
-    grad(x, [0, 0, W, floorY], "#231a40", "#3a2a52", 5);
+    grad(x, [0, 0, W, floorY], "#233337", "#344548", 5);
     // plank wall
     x.fillStyle = "rgba(0,0,0,.18)"; for (let i = 0; i < W; i += 18) x.fillRect(i, 0, 1, floorY);
     x.fillStyle = "rgba(255,255,255,.05)"; for (let i = 9; i < W; i += 18) for (let j = 6 + (i % 7); j < floorY; j += 23) x.fillRect(i, j, 1, 1);
@@ -140,24 +140,24 @@ PCM.Scene = (() => {
     [60, 160, 260].forEach(bx => { x.fillStyle = "#4a2e18"; x.fillRect(bx - 3, 16, 6, floorY - 16); x.fillStyle = "#5a3820"; x.fillRect(bx - 3, 16, 1, floorY - 16); });
     // round window
     const wx = 160, wy = 34;
-    for (let j = -12; j <= 12; j++) { const w = Math.floor(Math.sqrt(144 - j * j)); x.fillStyle = "#1a1022"; x.fillRect(wx - w - 2, wy + j, w * 2 + 5, 1); }
-    for (let j = -10; j <= 10; j++) { const w = Math.floor(Math.sqrt(100 - j * j)); x.fillStyle = j < 0 ? "#1b2a6b" : "#2343a0"; x.fillRect(wx - w, wy + j, w * 2 + 1, 1); }
+    for (let j = -12; j <= 12; j++) { const w = Math.floor(Math.sqrt(144 - j * j)); x.fillStyle = "#141c1d"; x.fillRect(wx - w - 2, wy + j, w * 2 + 5, 1); }
+    for (let j = -10; j <= 10; j++) { const w = Math.floor(Math.sqrt(100 - j * j)); x.fillStyle = j < 0 ? "#2f5057" : "#427681"; x.fillRect(wx - w, wy + j, w * 2 + 1, 1); }
     x.fillStyle = "#f3e6c8"; x.fillRect(wx + 3, wy - 6, 3, 3); x.fillStyle = "#5a3820"; x.fillRect(wx, wy - 10, 1, 21); x.fillRect(wx - 10, wy, 21, 1);
     // floor
     grad(x, [0, floorY, W, H - floorY], "#4a2e18", "#2a1a10", 4);
     x.fillStyle = "rgba(0,0,0,.25)"; for (let j = floorY + 4; j < H; j += 6) x.fillRect(0, j, W, 1);
     x.fillStyle = "rgba(255,255,255,.06)"; for (let j = floorY + 4; j < H; j += 6) for (let i = (j * 7) % 40; i < W; i += 40) x.fillRect(i, j - 5, 1, 5);
-    x.fillStyle = "#1a1022"; x.fillRect(0, floorY, W, 1);
+    x.fillStyle = "#141c1d"; x.fillRect(0, floorY, W, 1);
     // shelves
     const shelves = [[6, 44, 52], [6, 76, 52], [262, 52, 52]];
     const slots = [];
     shelves.forEach(([sx, sy, sw], k) => {
-      books(x, [sx, sy - 14, sw, 14], seed + k * 7, ["#d9455f", "#3f6fd8", "#2f7d46", "#8a4fd8", "#c47a1e", "#a8a4c4", "#5e1f34"]);
-      x.fillStyle = "#1a1022"; x.fillRect(sx - 1, sy, sw + 2, 4); x.fillStyle = "#8a5a35"; x.fillRect(sx, sy, sw, 2); x.fillStyle = "#5a3820"; x.fillRect(sx, sy + 2, sw, 1);
+      books(x, [sx, sy - 14, sw, 14], seed + k * 7, ["#d9455f", "#65a5b2", "#2f7d46", "#b29e75", "#c47a1e", "#bbb6ad", "#5e1f34"]);
+      x.fillStyle = "#141c1d"; x.fillRect(sx - 1, sy, sw + 2, 4); x.fillStyle = "#8a5a35"; x.fillRect(sx, sy, sw, 2); x.fillStyle = "#5a3820"; x.fillRect(sx, sy + 2, sw, 1);
       slots.push([sx + 6 + Math.floor(r() * (sw - 14)), sy - 8]);
     });
     // cobwebs
-    const web = (cx, cy, dx) => { x.fillStyle = "rgba(220,215,240,.35)"; for (let k = 0; k < 14; k++) { x.fillRect(cx + dx * k, cy + k, 1, 1); x.fillRect(cx + dx * k, cy, 1, 1); x.fillRect(cx, cy + k, 1, 1); } for (let k = 4; k < 14; k += 4) for (let q = 0; q <= k; q++) x.fillRect(cx + dx * q, cy + k - Math.round(q * 0.9), 1, 1); };
+    const web = (cx, cy, dx) => { x.fillStyle = "rgba(233,229,222,.35)"; for (let k = 0; k < 14; k++) { x.fillRect(cx + dx * k, cy + k, 1, 1); x.fillRect(cx + dx * k, cy, 1, 1); x.fillRect(cx, cy + k, 1, 1); } for (let k = 4; k < 14; k += 4) for (let q = 0; q <= k; q++) x.fillRect(cx + dx * q, cy + k - Math.round(q * 0.9), 1, 1); };
     web(70, 16, 1); web(W - 71, 16, -1);
     // props on the floor, back to front
     const n = cfg.clutter.base + round * cfg.clutter.perRound;
@@ -171,10 +171,10 @@ PCM.Scene = (() => {
       else if (it.k < 0.42) { trunk(x, it.x, h0 - 16); slots.push([it.x + 10, h0 - 24]); }
       else if (it.k < 0.48) monitor(x, it.x, h0 - 15, 0);
       else if (it.k < 0.58) { const s = sprites[Math.floor(r() * sprites.length)]; drawSprite(x, s, it.x, h0 - 12, 1); }
-      else if (it.k < 0.68) bottle(x, it.x, h0 - 11, ["#2f7d46", "#3f6fd8", "#8a4fd8", "#d9455f"][Math.floor(r() * 4)]);
+      else if (it.k < 0.68) bottle(x, it.x, h0 - 11, ["#2f7d46", "#65a5b2", "#b29e75", "#d9455f"][Math.floor(r() * 4)]);
       else if (it.k < 0.76) frame(x, it.x, h0 - 18, 14 + Math.floor(r() * 8), 16, r);
       else if (it.k < 0.8) lampProp(x, it.x, h0 - 24);
-      else { books(x, [it.x, h0 - 10, 18, 10], Math.floor(r() * 1e6), ["#d9455f", "#3f6fd8", "#2f7d46", "#c47a1e", "#a8a4c4"]); slots.push([it.x + 4, h0 - 18]); }
+      else { books(x, [it.x, h0 - 10, 18, 10], Math.floor(r() * 1e6), ["#d9455f", "#65a5b2", "#2f7d46", "#c47a1e", "#bbb6ad"]); slots.push([it.x + 4, h0 - 18]); }
       slots.push([it.x + Math.floor(r() * 20), h0 + 1]);
     });
     for (let k = 0; k < cfg.clutter.decoys + round * cfg.clutter.decoysPerRound; k++) {

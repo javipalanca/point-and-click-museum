@@ -1,0 +1,44 @@
+# Point and Click Museum · `docker compose up -d --build`, then open http://localhost:8080/
+# Settings come from .env (copy .env.example). Only the web container publishes a port.
+services:
+  web:
+    build:
+      context: .
+      dockerfile: deploy/web.Dockerfile
+      args:
+        BASE_URL: ${BASE_URL:-http://localhost:8080}
+        PUBLIC: ${PUBLIC:-1}
+    ports:
+      - "${PORT:-8080}:80"
+    depends_on:
+      murray:
+        condition: service_healthy
+    restart: unless-stopped
+
+  murray:
+    build:
+      context: .
+      dockerfile: deploy/murray.Dockerfile
+    environment:
+      # Any OpenAI-compatible chat completions API (vLLM, Ollama, llama.cpp, LM Studio, OpenRouter…).
+      # Leave the URL or the model empty and Murray answers from the museum database only.
+      MURRAY_LLM_BASE_URL: ${MURRAY_LLM_BASE_URL:-}
+      MURRAY_LLM_API_KEY: ${MURRAY_LLM_API_KEY:-}
+      MURRAY_LLM_MODEL: ${MURRAY_LLM_MODEL:-}
+      MURRAY_LLM_TOOLS: ${MURRAY_LLM_TOOLS:-1}
+      MURRAY_LLM_TEMPERATURE: ${MURRAY_LLM_TEMPERATURE:-0.7}
+      MURRAY_LLM_MAX_TOKENS: ${MURRAY_LLM_MAX_TOKENS:-900}
+      MURRAY_LLM_EXTRA: ${MURRAY_LLM_EXTRA:-}
+      MURRAY_RATE: ${MURRAY_RATE:-30}
+      MURRAY_DAILY_LIMIT: ${MURRAY_DAILY_LIMIT:-2000}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # lets you point MURRAY_LLM_BASE_URL at a model server on the host
+    expose:
+      - "8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped

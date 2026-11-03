@@ -5,7 +5,7 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 
 ## Estado actual (2026-11-04)
 
-- 11 páginas × 4 idiomas = 44 páginas: portada, línea temporal (118 juegos, 85 con portada real), estudios (12, 5 con logo), motores (11),
+- 11 páginas × 4 idiomas = 44 páginas (más el chat de Murray en todas): portada, línea temporal (118 juegos, 85 con portada real), estudios (12, 5 con logo), motores (11),
   técnicas (laboratorio de 8 interfaces + 7 demos), minijuegos (índice + 4 juegos) y sala DOSBox.
 - Publicado como Artifact privado de claude.ai: https://claude.ai/artifact/RSUfNBGmo8D3XLvqDvXbjY
   (se regenera con `tools/export_artifact.py`).
@@ -108,6 +108,20 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   sprites se pasaron a azul noche o gris pergamino; se conservan los colores exactos de las interfaces reproducidas
   (EGA/CGA, verbos de Monkey Island 2). Épocas: verdín, musgo, latón, bermellón, azul acero y pergamino.
 
+- **2026-11-05 · EGA con tramado en damero.** La demo de paletas reproduce cómo los juegos EGA simulaban colores
+  intermedios: pares de los 16 colores alternados en damero (136 combinaciones) a 320 px de ancho, distancia redmean.
+- **2026-11-05 · Docker Compose para desplegar** (petición del usuario). `web`: build público con `build.py` + nginx
+  (gzip, caché, cabeceras, `/healthz`, proxy y límite de `/api/murray/`). `murray`: servicio Python sin dependencias,
+  sin puertos publicados, solo lectura, sin capacidades. Probado con Docker en la sesión (nginx → Murray → modelo
+  falso compatible con OpenAI), incluido que la clave no aparece en `dist/` ni en los logs.
+- **2026-11-05 · Murray, la calavera parlante, como chat flotante** (petición del usuario: «un icono abajo a la
+  derecha, no una sala»). Botón en todas las páginas con un sprite real de Murray (fotogramas de la animación de hablar
+  de *The Curse of Monkey Island*, de `JeanxPereira/CMI-Sprites`, con crédito); la conversación sigue al visitante entre
+  salas (`sessionStorage`). Servidor con RAG (BM25 sobre `data/` en cuatro idiomas) y herramientas de solo lectura
+  (`search_museum`, `get_record`, `list_games`) para modelos libres vía **API compatible con OpenAI** (petición del
+  usuario: él pone el modelo, Qwen 3.8): `MURRAY_LLM_BASE_URL`, `MURRAY_LLM_API_KEY`, `MURRAY_LLM_MODEL` en `.env`.
+  Sin modelo, «modo vitrina». Se descartó usar la API de Anthropic y el SDK (`pip` no hace falta).
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,
@@ -135,6 +149,8 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - Verificar fechas, estudios y motores contra Wikidata (P577, P178, P408) cuando haya acceso: la portada de Myst es
   la Masterpiece Edition y la de Mystery House una reedición SierraVenture (así lo dice su crédito).
 
+- **Probar Murray con el modelo real** (Qwen 3.8 en el servidor del usuario): en la sesión solo se probó con un
+  servidor falso compatible con OpenAI. Revisar el tono, la latencia y si su servidor admite *function calling*.
 - Verificar los enlaces externos (Wikipedia y webs oficiales): no se pudieron comprobar desde el entorno en la nube.
 - Probar la captura del ratón con un juego DOS real en un navegador de escritorio.
 - **Compilar ScummVM de verdad** (`tools/build_scummvm.sh`) y probar los freeware: en la sesión en la nube se bloqueó la
@@ -155,5 +171,6 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - 2026-11-01 · v6: soporte de ScummVM web (script de compilación, reproductor, detección de motor, freeware en el catálogo).
 - 2026-11-02 · v7: paleta más luminosa, transiciones clásicas entre páginas y skills de terceros.
 - 2026-11-02 · v8: navegación nueva (pasillo de puertas, plano del museo, franja «En esta sala», pie con directorio).
+- 2026-11-05 · v11: paleta «museo de época» sin morados, EGA con tramado, Docker Compose y Murray (chat con RAG).
 - 2026-11-04 · v10: 118 aventuras, laboratorio de interfaces, tres técnicas nuevas, logos de estudios y `find_media`.
 - 2026-11-03 · v9: línea temporal como eje con carteles de época, imágenes reales con créditos (portadas, capturas, logos).

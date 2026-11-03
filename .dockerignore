@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+dist
+.cache
+downloads
+tests
+*.zip
+.env
+.env.*
+!.env.example
+**/__pycache__

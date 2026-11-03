@@ -27,6 +27,8 @@ python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/gam
 python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
 python3 tools/fetch_media.py     # descarga portadas, capturas y logos de data/media.json (--check, --only grupo/id)
 python3 tools/find_media.py "Título" [--kind cover|screenshot|logo]   # busca imágenes en GitHub (libretro, scummvm-web, logos)
+docker compose up -d --build    # despliegue: nginx (web) + Murray; configuración en .env (ver .env.example)
+python3 server/murray.py         # Murray en local (puerto 8080); MURRAY_LLM_BASE_URL/MODEL/API_KEY en el entorno
 nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el programa DOS de prueba
 ```
 
@@ -56,6 +58,9 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/sections.js`, `games.js`, `arcade.js` | lógica de cada página (cada bloque se activa solo si existe su elemento) |
 | `src/js/interfaces.js` | laboratorio de interfaces (técnicas): parser, verbos SCUMM, menú de Full Throttle, moneda de CMI, dos botones, un clic; datos en `techniques.json → interfaces, lab` |
 | `src/js/techlab.js` | demos de cajas de paseo, pantalla de prioridad y paletas CGA/EGA/VGA |
+| `src/js/murray.js` | widget de chat de Murray (botón abajo a la derecha en todas las páginas); textos en `data/murray.json` |
+| `server/murray.py`, `server/knowledge.py` | servicio de Murray: RAG (BM25) y herramientas sobre `data/`, API compatible con OpenAI, límites |
+| `deploy/`, `docker-compose.yml`, `.env.example` | imágenes Docker (nginx + Murray), configuración de nginx y variables |
 | `src/scummvm/player.*` | reproductor de ScummVM (iframe): copia datos y juego al sistema de ficheros de Emscripten |
 | `vendor/scummvm/` | ScummVM web compilado por `tools/build_scummvm.sh` (ignorado salvo `NOTICE.md`) |
 | `tests/site.test.js` | pruebas de humo con Playwright |
@@ -86,6 +91,9 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
     logotipo), nunca con sprites inventados. Cada imagen va en `data/media.json` con su fuente fijada (commit de GitHub o
     fichero de Wikimedia) y se muestra con su crédito; revisa que sea del juego y edición correctos (no un port posterior).
     Sin logo descargado, el estudio lleva un monograma tipográfico. Solo hechos verificables; ante la duda, pregunta.
+13. **Secretos fuera del cliente.** La URL, la clave y el nombre del modelo de Murray solo viven en el entorno del
+    contenedor `murray` (`.env`, ignorado por git). Nunca en `data/`, `src/`, `dist/` ni en logs. El navegador solo
+    llama a `/api/murray/chat`. El servidor de Murray usa solo la biblioteca estándar.
 9. **Enlaces externos:** a Wikipedia o a webs oficiales; `target="_blank" rel="noopener"`. Verifica que existen.
 10. **SEO:** cada página nueva necesita título, descripción, entrada en `site.json → pages` y queda en el sitemap.
 11. **Navegación:** las salas salen de `site.json → nav` (puertas de la cabecera, plano del museo y pie) con su etiqueta

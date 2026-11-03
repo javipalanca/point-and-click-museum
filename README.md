@@ -143,9 +143,58 @@ data/               contenido (JSON)
 src/layout.html     plantilla común con marcadores {{t:clave}}, {{v:var}}, {{raw:bloque}}
 src/pages/          contenido de cada página
 src/css, src/js     estilos y scripts (sin dependencias)
+server/             Murray: chat con RAG sobre data/ y API compatible con OpenAI
+deploy/, docker-compose.yml   imágenes Docker (nginx + Murray) y configuración de nginx
 tools/              bundles de js-dos, descarga del emulador y programas DOS de prueba
 vendor/js-dos/      js-dos alojado localmente (opcional)
 ```
+
+## Despliegue con Docker Compose
+
+```bash
+cp .env.example .env            # ajusta BASE_URL, PORT y, si quieres, el modelo de Murray
+docker compose up -d --build    # http://localhost:8080/
+```
+
+Dos contenedores:
+
+| Servicio | Qué hace |
+|---|---|
+| `web` | genera el sitio con `build.py` (build público, sin tu colección local salvo `PUBLIC=0`) y lo sirve con nginx: gzip, caché de recursos, cabeceras de seguridad, `/healthz`, y proxy de `/api/murray/` con límite de peticiones |
+| `murray` | el chat de Murray (`server/murray.py`, solo biblioteca estándar). No publica puertos: solo se llega a él a través de `web`. Usuario sin privilegios, sistema de ficheros de solo lectura, sin capacidades |
+
+Detrás de un dominio con HTTPS, pon un proxy inverso (Caddy, Traefik, nginx…) delante del puerto `PORT` y define
+`BASE_URL=https://tu-dominio` para que canonical, hreflang y sitemap usen la URL buena.
+
+## Murray, la calavera parlante
+
+Un botón abajo a la derecha, en todas las páginas, abre un chat con Murray (la calavera de *The Curse of Monkey
+Island*), que responde sobre la historia de las aventuras gráficas a partir de la base de datos del museo:
+
+- **RAG**: `server/knowledge.py` indexa (BM25) los juegos, estudios, motores, épocas y técnicas de `data/*.json` en los
+  cuatro idiomas. Las fichas más relevantes van en cada petición al modelo, y Murray cita las «vitrinas consultadas».
+- **Herramientas**: si el servidor del modelo admite *function calling*, el modelo puede además buscar
+  (`search_museum`), leer una ficha (`get_record`) o listar juegos por año, estudio o motor (`list_games`). Si el
+  servidor rechaza las herramientas, se reintenta automáticamente solo con RAG.
+- **Modelo**: cualquier API compatible con OpenAI (`/v1/chat/completions`): Ollama, vLLM, llama.cpp, LM Studio,
+  LocalAI, OpenRouter… Se configura en `.env`:
+
+  ```bash
+  MURRAY_LLM_BASE_URL=http://host.docker.internal:11434/v1   # p. ej. Ollama en la misma máquina
+  MURRAY_LLM_MODEL=qwen3.8                                   # el nombre del modelo en tu servidor
+  MURRAY_LLM_API_KEY=                                        # si tu servidor lo pide
+  ```
+
+  Sin URL o sin modelo, Murray responde en «modo vitrina», citando las fichas más parecidas a la pregunta.
+  Las etiquetas `<think>…</think>` de los modelos de razonamiento (Qwen) se eliminan; con vLLM puedes desactivar el
+  razonamiento con `MURRAY_LLM_EXTRA={"chat_template_kwargs": {"enable_thinking": false}}`.
+- **La clave no se filtra**: la URL, la clave y el modelo solo existen como variables de entorno del contenedor
+  `murray`. El navegador habla únicamente con `/api/murray/chat` del propio museo; ningún HTML o JS publicado las
+  contiene (`npm test` lo comprueba) y el servicio no las registra en los logs. `.env` está en `.gitignore`.
+- **Límites**: cuerpo de 16 KB, 12 mensajes de hasta 600 caracteres, `MURRAY_RATE` peticiones por IP cada 10 minutos
+  (más el límite de nginx) y `MURRAY_DAILY_LIMIT` llamadas al modelo al día.
+- **Sin Docker**: `MURRAY_LLM_BASE_URL=… MURRAY_LLM_MODEL=… python3 server/murray.py` (puerto 8080) y un proxy de
+  `/api/murray/` hacia él. En el Artifact o en `python3 -m http.server`, Murray avisa de que no hay servidor.
 
 ## Transiciones entre páginas
 
@@ -159,7 +208,7 @@ No se reproducen si el sistema pide reducir el movimiento.
 ```bash
 npm install && npx playwright install chromium   # una vez
 python3 build.py && npm test
-python3 -m unittest discover -s tests            # pruebas de tools/add_game.py
+python3 -m unittest discover -s tests            # tools/add_game.py y el servidor de Murray (con un modelo simulado)
 npm run test:scummvm                             # sala ScummVM con un ScummVM simulado (no hace falta compilarlo)
 ```
 

@@ -19,3 +19,6 @@ vendor/scummvm/*
 # fixtures are versioned even if they are .zip
 !tests/fixtures/**
 assets/scummvm/
+
+# Secrets for Docker Compose (see .env.example)
+.env

@@ -245,23 +245,6 @@
     }));
   })();
 
-  /* ================= Techniques: interfaces ================= */
-  if ($("#uiTabs")) (() => {
-    const tabs = $$("#uiTabs button"), UI = D.techniques.interfaces;
-    function show(i) {
-      const u = UI[i], m = $("#uiMock");
-      if (u.kind === "parser") m.innerHTML = '<div class="parser">' + u.lines.map(esc).join("<br>") + '<span class="cur">█</span></div>';
-      else if (u.kind === "verbs") m.innerHTML = '<div class="sentence">' + esc(u.sentence) + '</div><div class="verbs" style="grid-template-columns:repeat(' + u.cols + ',minmax(max-content,1fr))">' + u.verbs.map(v => "<span>" + esc(v) + "</span>").join("") + "</div>";
-      else if (u.kind === "pie") m.innerHTML = '<div class="sentence">' + esc(u.sentence) + '</div><div class="pie">' + u.verbs.map(v => "<span>" + esc(v) + "</span>").join("") + "</div>";
-      $("#uiDesc").textContent = u.desc;
-    }
-    tabs.forEach(b => b.addEventListener("click", () => {
-      tabs.forEach(x => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true");
-      show(+b.dataset.i); sfx("click"); award("techUi", UI[+b.dataset.i].id, UI[+b.dataset.i].label);
-    }));
-    show(0);
-  })();
-
   /* ================= Techniques: colour cycling ================= */
   if ($("#cycleCanvas")) (() => {
     const cv = $("#cycleCanvas"), x = cv.getContext("2d"), W = 160, H = 96;

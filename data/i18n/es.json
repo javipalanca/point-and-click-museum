@@ -207,5 +207,8 @@
  "role_cover": "Portada",
  "role_screenshot": "Captura",
  "role_logo": "Logotipo",
- "logoRecreation": "recreación vectorial del logotipo"
+ "logoRecreation": "recreación vectorial del logotipo",
+ "labDoorAward": "Abrir la puerta del laboratorio",
+ "labLabel": "Reconstrucción jugable",
+ "labNote": "Escena original del museo; los verbos, su disposición y la forma de usarlos son los del juego."
 }

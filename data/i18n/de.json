@@ -207,5 +207,8 @@
  "role_cover": "Cover",
  "role_screenshot": "Screenshot",
  "role_logo": "Logo",
- "logoRecreation": "Vektor-Nachbildung des Logos"
+ "logoRecreation": "Vektor-Nachbildung des Logos",
+ "labDoorAward": "Die Labortür öffnen",
+ "labLabel": "Spielbare Rekonstruktion",
+ "labNote": "Eine eigene Museumsszene; Verben, Anordnung und Bedienung entsprechen dem Spiel."
 }

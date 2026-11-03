@@ -5,9 +5,12 @@
     <div class="techs">
       <div class="px tech wide" id="tech-interface">
         <h3>{{t:interfaceTitle}}</h3>
-        <div class="row" id="uiTabs" role="group" aria-label="{{t:interfaceTitle}}">{{raw:uiTabs}}</div>
-        <div class="ui-mock" id="uiMock"></div>
-        <p id="uiDesc"></p>
+        <div class="row ui-tabs" id="uiTabs" role="tablist" aria-label="{{t:interfaceTitle}}">{{raw:uiTabs}}</div>
+        <p id="uiDesc" class="ui-desc"></p>
+        <div class="ui-lab">
+          <div class="ui-real" id="uiReal"></div>
+          <div class="ui-play"><span class="ui-tag">{{t:labLabel}}</span><div id="uiStage"></div><p class="ui-note">{{t:labNote}}</p></div>
+        </div>
       </div>
       <div class="px tech" id="tech-cycle">
         <h3>{{raw:cycleTitle}}</h3>
@@ -32,6 +35,25 @@
         <canvas id="musCanvas" width="160" height="40" role="img" aria-label="{{raw:musicTitle}}"></canvas>
         <div class="row"><button class="pbtn small" id="musPlay" type="button">{{t:play}}</button><button class="pbtn small" id="musA" type="button" aria-pressed="true">{{t:calm}}</button><button class="pbtn small" id="musB" type="button" aria-pressed="false">{{t:danger}}</button></div>
         <p id="musInfo">{{raw:musicBody}}</p>
+      </div>
+      <div class="px tech" id="tech-walkbox">
+        <h3>{{raw:walkboxTitle}}</h3>
+        <canvas id="wbCanvas" class="clickable" width="192" height="108" role="img" aria-label="{{raw:walkboxTitle}}"></canvas>
+        <div class="row"><button class="pbtn small" id="wbBoxes" type="button" aria-pressed="true">{{raw:walkboxToggle}}</button></div>
+        <p>{{raw:walkboxBody}}</p>
+      </div>
+      <div class="px tech" id="tech-priority">
+        <h3>{{raw:priorityTitle}}</h3>
+        <canvas id="prCanvas" class="clickable" width="160" height="100" tabindex="0" role="img" aria-label="{{raw:priorityTitle}}"></canvas>
+        <div class="row"><button class="pbtn small" id="prToggle" type="button" aria-pressed="false">{{raw:priorityToggle}}</button></div>
+        <p>{{raw:priorityBody}}</p>
+      </div>
+      <div class="px tech" id="tech-palette">
+        <h3>{{raw:paletteTitle}}</h3>
+        <canvas id="palCanvas" width="320" height="200" role="img" aria-label="{{raw:paletteTitle}}"></canvas>
+        <div class="row" id="palModes" role="group" aria-label="{{raw:paletteTitle}}"><button class="pbtn small" type="button" data-mode="cga" aria-pressed="false">CGA · 4</button><button class="pbtn small" type="button" data-mode="ega" aria-pressed="false">EGA · 16</button><button class="pbtn small" type="button" data-mode="vga" aria-pressed="true">VGA · 256</button></div>
+        <p>{{raw:paletteBody}}</p>
+        <div id="palCredit"></div>
       </div>
       <div class="px tech wide" id="tech-ideas">
         <h3>{{t:ideasTitle}}</h3>

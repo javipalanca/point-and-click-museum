@@ -179,12 +179,6 @@ section { padding-block: 56px 24px; scroll-margin-top: 56px; }
 .tech canvas { width: 100%; display: block; background: #000; }
 .tech .row { font-size: 19px; color: var(--dim); }
 .tech input[type="range"] { accent-color: var(--amber); flex: 1; min-width: 120px; min-height: 32px; }
-.ui-mock { background: var(--well); min-height: 160px; padding: 12px; font-size: 20px; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; overflow-x: auto; }
-.ui-mock .sentence { color: var(--teal); text-align: center; }
-.ui-mock .verbs { display: grid; gap: 0 10px; color: var(--verb); }
-.ui-mock .parser { color: var(--paper); }
-.ui-mock .pie { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.ui-mock .pie span { width: 54px; height: 54px; display: grid; place-items: center; background: var(--panel2); font-family: var(--display); font-size: 8px; border-radius: 50%; }
 .wide { grid-column: 1 / -1; }
 .ideas { columns: 2 300px; column-gap: 28px; font-size: 21px; padding-left: 20px; margin: 0; }
 .ideas li { break-inside: avoid; margin-bottom: 10px; }
@@ -402,6 +396,74 @@ a.ext:hover { color: var(--amber); border-color: var(--amber); }
 .studio-actions { justify-content: space-between; }
 .dlg-link { margin-top: 8px; font-size: 20px; }
 .eng-media { padding: 0 14px 14px; }
+
+/* interface lab (techniques) */
+.ui-tabs { gap: 6px; }
+#palCanvas { width: 100%; height: auto; image-rendering: pixelated; }
+#palCredit figcaption { margin-top: 0; }
+#prCanvas:focus-visible { outline: 3px dashed var(--teal); }
+.ui-tabs [aria-selected="true"] { background: var(--amber); color: var(--ink); }
+.ui-desc { margin: 10px 0 14px; max-width: 75ch; }
+.ui-lab { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 18px; align-items: start; }
+@media (max-width: 899px) { .ui-lab { grid-template-columns: minmax(0, 1fr); } }
+.ui-real .media img { image-rendering: pixelated; }
+.ui-tag { font-family: var(--display); font-size: 8px; color: var(--amber); display: block; margin-bottom: 6px; }
+.ui-note { font-size: 16px; color: var(--dim); margin: 8px 0 0; }
+.ui-stage { position: relative; }
+.ui-screen { background: #000; }
+.ui-screen { position: relative; }
+.ui-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; cursor: none; touch-action: none; }
+@media (pointer: coarse) { .ui-screen canvas { cursor: auto; } }
+.ui-say { position: absolute; left: 4%; right: 4%; top: 6px; text-align: center; font-size: 21px; line-height: 1.1; color: #f3e6c8; text-shadow: 2px 2px 0 #000; pointer-events: none; opacity: 0; }
+.ui-say.on { opacity: 1; }
+.st-mm .ui-say { color: #f3e6c8; } .st-mi1 .ui-say, .st-mi2 .ui-say { color: #ffffff; }
+.st-twobutton .ui-say { top: auto; bottom: 6px; color: #f3e6c8; }
+.ui-panel { background: #000; padding: 4px 8px 8px; font-size: 20px; line-height: 1.05; }
+.ui-sentence { min-height: 1.1em; text-align: center; }
+.ui-bottom { display: flex; gap: 16px; align-items: flex-start; }
+.ui-verbs { display: grid; gap: 0 16px; }
+.ui-verbs button { all: unset; cursor: pointer; white-space: nowrap; }
+.ui-verbs button:focus-visible { outline: 2px dashed var(--teal); }
+.ui-inv { display: flex; flex-direction: column; min-width: 0; }
+.ui-inv button { all: unset; cursor: pointer; }
+/* Maniac Mansion: magenta sentence, green verbs, yellow highlight; five columns */
+.st-mm .ui-sentence { text-align: left; color: #ff55ff; }
+.st-mm .ui-bottom { flex-direction: column; gap: 4px; }
+.st-mm .ui-inv { flex-direction: row; gap: 0 18px; flex-wrap: wrap; }
+.st-mm .ui-verbs button { color: #00aa00; }
+.st-mm .ui-verbs button.on, .st-mm .ui-verbs button:hover { color: #ffff55; }
+.st-mm .ui-inv button { color: #aa00aa; }
+/* Monkey Island (EGA): cyan sentence, green verbs, magenta text inventory */
+.st-mi1 .ui-sentence { color: #00aaaa; }
+.st-mi1 .ui-verbs button { color: #00aa00; }
+.st-mi1 .ui-verbs button.on, .st-mi1 .ui-verbs button:hover { color: #55ff55; }
+.st-mi1 .ui-inv button { color: #aa00aa; }
+/* Monkey Island 2: boxed purple verbs, icon inventory */
+.st-mi2 .ui-sentence { color: #b48ad6; }
+.st-mi2 .ui-verbs { gap: 3px; }
+.st-mi2 .ui-verbs button { color: #8a5aa8; background: #1c0f24; padding: 2px 8px; text-align: center; }
+.st-mi2 .ui-verbs button.on, .st-mi2 .ui-verbs button:hover { color: #e6c4ff; }
+.st-mi2 .ui-inv { display: grid; grid-template-columns: repeat(4, 36px); gap: 3px; }
+.st-mi2 .inv-slot { display: grid; place-items: center; width: 36px; height: 30px; background: #1c0f24; }
+.st-mi2 .inv-slot canvas { width: 24px; height: 24px; image-rendering: pixelated; }
+@media (max-width: 560px) { .ui-panel { font-size: 17px; } .ui-verbs { gap: 0 8px; } .st-mi2 .ui-inv { grid-template-columns: repeat(4, 26px); } .st-mi2 .inv-slot { width: 26px; height: 24px; } }
+/* Full Throttle / Curse of Monkey Island inventory (right button) */
+.ui-invpop { position: absolute; right: 6%; top: 18%; min-width: 34%; padding: 10px 14px; font-size: 19px; }
+.st-ft .ui-invpop { background: #2a1a10; color: #efe6cf; border-radius: 40% 40% 30% 30%; box-shadow: 0 0 0 3px #ff7a1a; }
+.st-cmi .ui-invpop { background: #5a3418; color: #f2cf63; box-shadow: 0 0 0 3px #e6b84a, 0 0 0 6px #3a2010; }
+.ui-invpop span { font-family: var(--display); font-size: 8px; display: block; margin-bottom: 6px; }
+.ui-invpop button { all: unset; cursor: pointer; display: block; }
+.ui-hint { font-size: 16px; color: var(--dim); background: var(--well); margin: 0; padding: 4px 8px; }
+/* Broken Sword / Machinarium: inventory bar at the top edge */
+.ui-invtop { position: absolute; left: 0; right: 0; top: 0; background: rgba(18,13,36,.85); padding: 4px 8px; transform: translateY(-100%); opacity: 0; transition: transform .12s steps(2), opacity .12s steps(2); }
+.ui-invtop.show, .ui-invtop:hover { transform: none; opacity: 1; }
+.ui-invtop button { all: unset; cursor: pointer; color: #ffd75a; font-size: 19px; margin-right: 12px; }
+.ui-reset { margin: 10px 0 0; }
+.zork { background: #000; color: #d8d8d8; font-size: 20px; padding: 10px 12px; }
+.zork pre { margin: 0; white-space: pre-wrap; font: inherit; max-height: 260px; overflow-y: auto; }
+.zork form { display: flex; gap: 6px; margin-top: 4px; }
+.zork input { flex: 1; min-width: 0; background: transparent; border: 0; color: inherit; font: inherit; outline: none; }
+.zork input:focus-visible { outline: 1px dashed var(--teal); }
 .eng-media .eng-shot { max-width: 440px; }
 .eng-media .eng-logo img { width: auto; max-width: 100%; max-height: 120px; background: var(--paper); padding: 8px; }
 .console-links { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0 14px 12px; font-size: 20px; min-height: 1.2em; }

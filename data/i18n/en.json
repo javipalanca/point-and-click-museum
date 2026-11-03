@@ -207,5 +207,8 @@
  "role_cover": "Cover",
  "role_screenshot": "Screenshot",
  "role_logo": "Logo",
- "logoRecreation": "vector recreation of the logo"
+ "logoRecreation": "vector recreation of the logo",
+ "labDoorAward": "Open the lab door",
+ "labLabel": "Playable reconstruction",
+ "labNote": "An original museum scene; the verbs, their layout and how they work match the game."
 }

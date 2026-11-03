@@ -26,6 +26,7 @@ python3 build.py --no-local      # build público sin la colección local
 python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/games/x.jsdos
 python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
 python3 tools/fetch_media.py     # descarga portadas, capturas y logos de data/media.json (--check, --only grupo/id)
+python3 tools/find_media.py "Título" [--kind cover|screenshot|logo]   # busca imágenes en GitHub (libretro, scummvm-web, logos)
 nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el programa DOS de prueba
 ```
 
@@ -53,6 +54,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/nav.js` | navegación: cabecera de puertas, submenú de minijuegos, menú de idioma, plano del museo, salas visitadas y franja «En esta sala» |
 | `src/js/transitions.js` | transiciones entre páginas (iris, estrella, disolución, fundido tramado…); config en `site.json → transitions` |
 | `src/js/sections.js`, `games.js`, `arcade.js` | lógica de cada página (cada bloque se activa solo si existe su elemento) |
+| `src/js/interfaces.js` | laboratorio de interfaces (técnicas): parser, verbos SCUMM, menú de Full Throttle, moneda de CMI, dos botones, un clic; datos en `techniques.json → interfaces, lab` |
+| `src/js/techlab.js` | demos de cajas de paseo, pantalla de prioridad y paletas CGA/EGA/VGA |
 | `src/scummvm/player.*` | reproductor de ScummVM (iframe): copia datos y juego al sistema de ficheros de Emscripten |
 | `vendor/scummvm/` | ScummVM web compilado por `tools/build_scummvm.sh` (ignorado salvo `NOTICE.md`) |
 | `tests/site.test.js` | pruebas de humo con Playwright |
@@ -97,7 +100,7 @@ Mensajes en español, en imperativo y concretos («Añade Loom a la línea tempo
 ## Skills disponibles
 
 Propias, en `.claude/skills/`: `add-timeline-game`, `add-language`, `edit-minigame`, `pixel-art`, `add-dos-game`,
-`verify-site`, `publish-artifact`. Úsalas para las tareas que describen.
+`verify-site`, `publish-artifact`, `find-media`. Úsalas para las tareas que describen.
 
 De terceros (de skills.sh, fijadas a un commit; ver `.claude/skills/THIRD_PARTY.md`): `frontend-design` y
 `web-design-guidelines` (revisión visual y de accesibilidad), `webapp-testing` (Playwright en Python),

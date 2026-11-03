@@ -243,7 +243,7 @@ def validate(d: dict) -> list[str]:
             if gid not in seen:
                 errors.append(f"studios: {st['id']} lists unknown timeline game {gid}")
 
-    known = {"games": seen, "studios": {x["id"] for x in d["studios"]}, "engines": {x["id"] for x in d["engines"]}}
+    known = {"techniques": {x["id"] for x in d["techniques"]["interfaces"]}, "games": seen, "studios": {x["id"] for x in d["studios"]}, "engines": {x["id"] for x in d["engines"]}}
     for it in d["media"]["_items"]:
         if it.get("id") not in known.get(it.get("group"), ()):
             errors.append(f"media.json: unknown {it.get('group')}/{it.get('id')}")
@@ -400,7 +400,7 @@ def write_images(d: dict, out: Path):
 
 # --------------------------------------------------------------------------- HTML blocks
 E = html.escape
-SCRIPTS = {"rules": ["rules"], "sections": ["sections"], "games": ["rules", "scene", "games"], "arcade": ["arcade"]}
+SCRIPTS = {"rules": ["rules"], "sections": ["sections"], "interfaces": ["interfaces", "techlab"], "games": ["rules", "scene", "games"], "arcade": ["arcade"]}
 
 
 class Site:
@@ -509,7 +509,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         sections = [(f"era-{e['id']}", e["name"]) for e in tl["eras"]]
     elif pid == "techniques":
         T0 = L["techniques"]
-        sections = [("tech-interface", ui["interfaceTitle"])] + [(f"tech-{k}", T0["demos"][k]["title"]) for k in ("cycle", "dither", "parallax", "music")] + [("tech-ideas", ui["ideasTitle"])]
+        sections = [("tech-interface", ui["interfaceTitle"])] + [(f"tech-{k}", T0["demos"][k]["title"]) for k in ("cycle", "dither", "parallax", "music", "walkbox", "priority", "palette")] + [("tech-ideas", ui["ideasTitle"])]
     b["subnav"] = (f'<nav class="subnav" aria-label="{E(ui["onThisPage"])}"><div class="subnav-inner"><span class="subnav-label">{E(ui["onThisPage"])}</span><ul>'
                    + "".join(f'<li><a href="#{a}">{E(t)}</a></li>' for a, t in sections) + "</ul></div></nav>") if sections else ""
 
@@ -661,9 +661,11 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
 
     T = L["techniques"]
     b["uiTabs"] = "".join(
-        f'<button class="pbtn small" type="button" data-i="{i}" aria-pressed="{"true" if i == 0 else "false"}">{E(x["label"])}</button>'
+        f'<button class="pbtn small" type="button" role="tab" data-i="{i}" aria-selected="{"true" if i == 0 else "false"}">{E(x["label"])}</button>'
         for i, x in enumerate(T["interfaces"]))
-    for k in ("cycle", "dither", "parallax", "music"):
+    for k in ("walkbox", "priority"):
+        b[k + "Toggle"] = E(T["demos"][k]["toggle"])
+    for k in ("cycle", "dither", "parallax", "music", "walkbox", "priority", "palette"):
         b[k + "Title"] = E(T["demos"][k]["title"])
         b[k + "Body"] = E(T["demos"][k]["body"])
     b["ideas"] = "".join(f'<li><b>{E(x["title"])}.</b> {E(x["body"])}</li>' for x in T["ideas"])
@@ -766,6 +768,15 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     for group, items in (("games", L["timeline"]["games"]), ("studios", L["studios"]), ("engines", L["engines"])):
         for x in items:  # real images (covers, screenshots, logos) with their credits
             x["media"] = {r: media_view(it, root, ui) for r, it in d["media"].get(group, {}).get(x["id"], {}).items()}
+    pal = L["techniques"]["demos"]["palette"]
+    if isinstance(pal.get("media"), str):
+        g, i, r = pal["media"].split("/")
+        it = d["media"].get(g, {}).get(i, {}).get(r)
+        pal["media"] = media_view(it, root, ui) if it else None
+    for x in L["techniques"]["interfaces"]:  # each interface shows a real screenshot of the game it reproduces
+        g, i, r = x["media"].split("/")
+        it = d["media"].get(g, {}).get(i, {}).get(r)
+        x["media"] = media_view(it, root, ui) if it else None
     blocks = render_blocks(S, page, lang, L, ui, depth)
     data = {
         "lang": lang, "root": root, "isRoot": is_root, "page": pid, "ui": ui,
@@ -786,7 +797,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     names = []
     for s in page.get("scripts", []):
         names += [n for n in SCRIPTS[s] if n not in names]
-    order = ["rules", "scene", "sections", "games", "arcade"]
+    order = ["rules", "scene", "sections", "interfaces", "techlab", "games", "arcade"]
     scripts = []
     if "arcade" in names and S.args.inline_bundles:
         scripts.append(f'<script src="{root}games/bundles.js?v={build_id}" defer></script>')

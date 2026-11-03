@@ -2131,6 +2131,126 @@
    "file": "games/hobs-barrow-screenshot.png",
    "w": 400,
    "h": 225
+  },
+  {
+   "group": "techniques",
+   "id": "mi1",
+   "role": "screenshot",
+   "src": "github:scummvm/scummvm-web@48dbd4ba98ca931f7555a582ca73db8ec68c0dbe/public_html/data/screenshots/scumm/monkey/monkey_dos_en_4_2_full.png",
+   "rights": "screenshot",
+   "page": "https://github.com/scummvm/scummvm-web/blob/48dbd4ba98ca931f7555a582ca73db8ec68c0dbe/public_html/data/screenshots/scumm/monkey/monkey_dos_en_4_2_full.png",
+   "file": "techniques/mi1-screenshot.png",
+   "w": 320,
+   "h": 240
+  },
+  {
+   "group": "techniques",
+   "id": "mi2",
+   "role": "screenshot",
+   "src": "github:scummvm/scummvm-web@48dbd4ba98ca931f7555a582ca73db8ec68c0dbe/public_html/data/screenshots/scumm/monkey2/monkey2_dos_en_1_1_full.png",
+   "rights": "screenshot",
+   "page": "https://github.com/scummvm/scummvm-web/blob/48dbd4ba98ca931f7555a582ca73db8ec68c0dbe/public_html/data/screenshots/scumm/monkey2/monkey2_dos_en_1_1_full.png",
+   "file": "techniques/mi2-screenshot.png",
+   "w": 320,
+   "h": 240
+  },
+  {
+   "group": "games",
+   "id": "colossal-cave",
+   "role": "cover",
+   "src": "wikipedia:en:Colossal Cave Adventure",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "gabriel-knight-3",
+   "role": "cover",
+   "src": "wikipedia:en:Gabriel Knight 3: Blood of the Sacred, Blood of the Damned",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "sleeping-dragon",
+   "role": "cover",
+   "src": "wikipedia:en:Broken Sword: The Sleeping Dragon",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "black-mirror",
+   "role": "cover",
+   "src": "wikipedia:en:The Black Mirror (2003 video game)",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "fahrenheit",
+   "role": "cover",
+   "src": "wikipedia:en:Fahrenheit (2005 video game)",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "still-life",
+   "role": "cover",
+   "src": "wikipedia:en:Still Life (video game)",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "dreamfall",
+   "role": "cover",
+   "src": "wikipedia:en:Dreamfall: The Longest Journey",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "edna-harvey",
+   "role": "cover",
+   "src": "wikipedia:en:Edna & Harvey: The Breakout",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "whispered-world",
+   "role": "cover",
+   "src": "wikipedia:en:The Whispered World",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "hollywood-monsters-2",
+   "role": "cover",
+   "src": "wikipedia:en:The Next Big Thing (video game)",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "oxenfree",
+   "role": "cover",
+   "src": "wikipedia:en:Oxenfree",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "lamplight-city",
+   "role": "cover",
+   "src": "wikipedia:en:Lamplight City",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "beyond-a-steel-sky",
+   "role": "cover",
+   "src": "wikipedia:en:Beyond a Steel Sky",
+   "rights": "boxart"
+  },
+  {
+   "group": "games",
+   "id": "rise-of-the-golden-idol",
+   "role": "cover",
+   "src": "wikipedia:en:The Case of the Golden Idol",
+   "rights": "boxart"
   }
  ]
 }

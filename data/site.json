@@ -140,7 +140,8 @@
       "room": 4,
       "icon": "eye",
       "scripts": [
-        "sections"
+        "sections",
+        "interfaces"
       ],
       "data": [
         "techniques"

@@ -3,10 +3,10 @@
 Memoria de trabajo compartida entre personas y agentes. Añade entradas al final de cada sección con fecha
 (AAAA-MM-DD). No borres decisiones antiguas: márcalas como «sustituida por…».
 
-## Estado actual (2026-11-03)
+## Estado actual (2026-11-04)
 
-- 11 páginas × 4 idiomas = 44 páginas: portada, línea temporal (42 juegos, 27 con portada real), estudios (12), motores (11),
-  técnicas, minijuegos (índice + 4 juegos) y sala DOSBox.
+- 11 páginas × 4 idiomas = 44 páginas: portada, línea temporal (118 juegos, 85 con portada real), estudios (12, 5 con logo), motores (11),
+  técnicas (laboratorio de 8 interfaces + 7 demos), minijuegos (índice + 4 juegos) y sala DOSBox.
 - Publicado como Artifact privado de claude.ai: https://claude.ai/artifact/RSUfNBGmo8D3XLvqDvXbjY
   (se regenera con `tools/export_artifact.py`).
 - `baseUrl` en `data/site.json` es un valor provisional (`https://pointandclick.museum`): cámbialo al dominio real
@@ -82,6 +82,24 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   (SCUMM, AGI, SCI…) no tienen logo: se ilustran con una captura de un juego hecho con ellos (`refs`).
   Se descartó la portada de Colossal Cave de libretro: es un port de C64 de los 80, no el original de 1976.
   Portadas y capturas tienen copyright de sus editores: se muestran a baja resolución, con crédito y enlace al fichero.
+- **2026-11-04 · Laboratorio de interfaces** (petición del usuario: «el menú radial y el de un clic no son nada
+  precisos»). Sustituye a las maquetas de texto: cada pestaña muestra una captura real del juego y una escena original
+  jugable con su interfaz exacta: parser de Zork I (respuestas originales en inglés), 15 verbos de Maniac Mansion
+  (DOS 1987), 12 de Monkey Island (EGA 1990), 9 de Monkey Island 2 (clic derecho = verbo resaltado), menú del emblema
+  de Full Throttle (mantener pulsado; ojos, boca, puño, bota; inventario con el botón derecho), moneda de CMI (mano,
+  calavera, loro), dos botones de Broken Sword (izquierdo actúa, derecho mira; inventario arriba, verificado en el
+  código de ScummVM `engines/sword1/menu.cpp`) y clic único de Machinarium (bocadillos con dibujos). Verbos en inglés,
+  como en la versión original; las respuestas, en los cuatro idiomas. `src/js/interfaces.js`.
+- **2026-11-04 · Técnicas nuevas** (`src/js/techlab.js`): cajas de paseo con escalado (SCUMM), pantalla de prioridad
+  de Sierra (bandas 4–15 y colores de control 0–3 de AGI) y paletas CGA/EGA/VGA aplicadas a una captura real de
+  King's Quest V.
+- **2026-11-04 · 76 aventuras nuevas** (de Adventureland, 1978, a The Rise of the Golden Idol, 2024). Solo datos de
+  los que había certeza; se quitaron curiosidades dudosas (controles de Rise of the Dragon, año de Mortevielle…).
+- **2026-11-04 · Más fuentes de imágenes accesibles desde la nube (solo GitHub):** libretro-thumbnails de Amiga,
+  Atari ST, Spectrum, C64, Wii…; capturas oficiales de `scummvm/scummvm-web`; logos de editoras de
+  `HVR88/Monochrome-Gaming-Logos` (recreaciones vectoriales, marcadas como tales y sobre placa oscura).
+  `tools/find_media.py` las indexa y la skill `find-media` explica el proceso y la verificación.
+  Las capturas de pixel art se reducen por un factor entero.
 - **2026-11-03 · Cada estudio lista sus juegos** (`studios.json → games`) y muestra sus portadas enlazadas a la línea temporal.
 
 ## Datos técnicos útiles
@@ -95,9 +113,16 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 
 ## Pendiente / ideas
 
-- **Imágenes pendientes (27):** logos de los 12 estudios, logo de Visionaire y portadas de 14 juegos modernos
-  (Runaway, Hollywood Monsters, Sam & Max Save the World, Blackwell, Machinarium, Deponia, The Walking Dead, Kentucky
-  Route Zero, Broken Age, Return to Monkey Island, Golden Idol, Hob's Barrow, Old Skies, Kathy Rain 2). Están declaradas
+- **Imágenes pendientes:** logos de 7 estudios (Revolution, Cyan, Pendulo, Wadjet Eye, Daedalic, Amanita,
+  Terrible Toybox), logo de Visionaire y portadas de 15 juegos (Runaway, Hollywood Monsters, Sam & Max Save the World,
+  Blackwell, Machinarium, Deponia, The Walking Dead, Kentucky Route Zero, Broken Age, Return to Monkey Island, Golden
+  Idol, Hob's Barrow, Old Skies, Kathy Rain 2, Edna & Harvey) y de las aventuras nuevas sin fuente en GitHub (Samorost,
+  Dreamfall, Black Mirror, Sleeping Dragon, Still Life, Fahrenheit, Whispered World, Botanicula, The Next BIG Thing,
+  Oxenfree, Lamplight City, Beyond a Steel Sky, Broken Sword Reforged, Rise of the Golden Idol, Gabriel Knight 3,
+  Monkey Island SE, Grim Fandango Remastered). Todas tienen ya su fuente `wikipedia:` en `data/media.json`
+  (sacada de su enlace): basta con `python3 tools/fetch_media.py` con acceso a Wikipedia y revisar cada imagen.
+  Samorost, Botanicula, Broken Sword Reforged, Grim Fandango Remastered y Monkey Island SE no la tienen (su artículo
+  muestra otra edición o enlazan a webs oficiales): su portada se añade a mano con la skill `find-media`. Están declaradas
   en `data/media.json` como `wikipedia:` pero Wikipedia/Wikimedia/Wikidata estaban bloqueados en la sesión en la nube.
   Ejecuta `python3 tools/fetch_media.py` en local (o permite esos dominios en el entorno) y revisa cada imagen; la
   parte de Wikimedia de la herramienta no se ha podido probar contra la API real. `--check` lista lo que falta.
@@ -124,4 +149,5 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - 2026-11-01 · v6: soporte de ScummVM web (script de compilación, reproductor, detección de motor, freeware en el catálogo).
 - 2026-11-02 · v7: paleta más luminosa, transiciones clásicas entre páginas y skills de terceros.
 - 2026-11-02 · v8: navegación nueva (pasillo de puertas, plano del museo, franja «En esta sala», pie con directorio).
+- 2026-11-04 · v10: 118 aventuras, laboratorio de interfaces, tres técnicas nuevas, logos de estudios y `find_media`.
 - 2026-11-03 · v9: línea temporal como eje con carteles de época, imágenes reales con créditos (portadas, capturas, logos).

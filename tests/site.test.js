@@ -75,6 +75,23 @@ function serve() {
     await page.goto(`${base}/en/engines/`);
     const logo = await page.$eval(".cart img.logo", i => i.decode().then(() => i.naturalWidth > 0, () => false)).catch(() => false);
     logo ? ok("engine logo loads") : fail("engine logo");
+    await page.goto(`${base}/en/techniques/`);
+    await page.click("#uiTabs [role=tab] >> nth=1");  // Maniac Mansion verbs
+    const at = async (x, y) => { const r = await (await page.$("#uiCanvas")).boundingBox(); return [r.x + x * r.width / 256, r.y + y * r.height / 128]; };
+    await page.evaluate(() => document.getElementById("uiStage").scrollIntoView({ block: "center", behavior: "instant" }));
+    await page.click('#uiVerbs [data-verb="Pick up"]'); await page.mouse.click(...await at(178, 106));
+    await page.waitForSelector('#uiInv [data-item="key"]', { timeout: 6000 }).then(() => ok("lab: Pick up key"), () => fail("lab: key not picked up"));
+    await page.click('#uiVerbs [data-verb="Unlock"]'); await page.mouse.click(...await at(38, 70)); await page.click('#uiInv [data-item="key"]');
+    await page.waitForTimeout(4000);
+    await page.click('#uiVerbs [data-verb="Open"]'); await page.mouse.click(...await at(38, 70));
+    const opened = await page.waitForFunction(() => /creaks open/.test(document.getElementById("uiSay").textContent), null, { timeout: 6000 }).then(() => true, () => false);
+    opened ? ok("lab: Unlock door with key, then Open door") : fail("lab: door did not open");
+    await page.click("#uiTabs [role=tab] >> nth=5");  // verb coin: hold over the curator, release on the parrot
+    await page.evaluate(() => document.getElementById("uiStage").scrollIntoView({ block: "center", behavior: "instant" })); await page.waitForTimeout(100);
+    const [cx, cy] = await at(223, 95); await page.mouse.move(cx, cy); await page.mouse.down(); await page.waitForTimeout(450);
+    const [px, py] = await at(Math.min(223, 256 - 40) + 16, Math.max(28, Math.min(128 - 28, 95))); await page.mouse.move(px, py); await page.mouse.up();
+    const talked = await page.waitForFunction(() => /locked for years/.test(document.getElementById("uiSay").textContent), null, { timeout: 6000 }).then(() => true, () => false);
+    talked ? ok("lab: verb coin parrot talks to the curator") : fail("lab: verb coin");
     await page.goto(`${base}/de/studios/`);
     (await page.$$(".studio .logo, .studio .monogram")).length === 12 ? ok("every studio has a logo or a monogram") : fail("studio marks");
     await page.close();

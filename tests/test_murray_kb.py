@@ -17,13 +17,29 @@ import knowledge  # noqa: E402
 
 
 class FakeWiki(BaseHTTPRequestHandler):
+    lagged = set()
+
     def log_message(self, *a):
         pass
+
+    def send(self, obj):
+        data = json.dumps(obj).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(data)
 
     def do_GET(self):
         q = dict(urllib.parse.parse_qsl(urllib.parse.urlsplit(self.path).query))
         lang = self.path.split("/")[1]
         titles = q["titles"].split("|")
+        if q.get("prop") != "langlinks" and titles[0].startswith("Broken"):    # API error, HTTP 200, no "query"
+            return self.send({"error": {"code": "badvalue", "info": "Unrecognized value"}})
+        if q.get("prop") != "langlinks" and titles[0].startswith("Empty"):     # no "query" and no "error"
+            return self.send({"batchcomplete": True})
+        if q.get("prop") != "langlinks" and titles[0].startswith("Lagging") and titles[0] not in FakeWiki.lagged:
+            FakeWiki.lagged.add(titles[0])
+            return self.send({"error": {"code": "maxlag", "info": "Waiting for a database server"}})
         if q.get("prop") == "langlinks":
             pages = [{"title": t, "langlinks": [{"lang": "es", "title": t + " (es)"}]} if t != "Nope" else {"title": t, "missing": True}
                      for t in titles]
@@ -55,11 +71,14 @@ class BuilderTests(unittest.TestCase):
         threading.Thread(target=srv.serve_forever, daemon=True).start()
         os.environ["PCM_WIKI_API"] = f"http://127.0.0.1:{srv.server_address[1]}/{{lang}}/api.php"
         old = kb.TOPICS, kb.museum_titles
-        kb.TOPICS, kb.museum_titles = ["Adventure game", "Nope"], lambda: ["Loom (video game)"]
+        kb.TOPICS, kb.museum_titles = ["Adventure game", "Nope", "Broken one", "Empty one", "Lagging one"], lambda: ["Loom (video game)"]
+        old_sleep, kb.PAUSE = kb.time.sleep, 0
+        kb.time.sleep = lambda s: None
         try:
             out = kb.build_wikipedia(["es", "en"], 300)
         finally:
             kb.TOPICS, kb.museum_titles = old
+            kb.time.sleep = old_sleep
             del os.environ["PCM_WIKI_API"]
             srv.shutdown()
         self.assertTrue(out["en"] and out["es"])
@@ -67,6 +86,10 @@ class BuilderTests(unittest.TestCase):
         self.assertEqual((d["kind"], d["lang"]), ("wikipedia", "es"))
         self.assertIn("CC BY-SA", d["license"])
         self.assertFalse(any("Should be skipped" in x["text"] for x in out["en"]))
+        titles = {x["title"].split(" · ")[0] for x in out["en"]}
+        self.assertIn("Lagging one", titles)          # retried after maxlag
+        self.assertNotIn("Broken one", titles)        # skipped, the rest still built
+        self.assertNotIn("Empty one", titles)
 
 
 class KnowledgeTests(unittest.TestCase):

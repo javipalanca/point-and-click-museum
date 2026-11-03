@@ -133,6 +133,9 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   fuentes y discrepancias señaladas) y `scummvm-games.jsonl` (catálogo de scummvm-web fijado a un commit, sin demos ni
   duplicados). `tools/build_murray_kb.py wikipedia` añade Wikipedia en cuatro idiomas (probado con una API falsa;
   pendiente de ejecutar donde Wikipedia sea accesible). Ponderación: ficha del museo > historia > Wikipedia > catálogo.
+  2026-11-05: la primera ejecución del usuario abortó con `KeyError: 'query'` (la API de MediaWiki devuelve los errores
+  con HTTP 200 y un objeto `error`). Ahora se reintenta con `maxlag`/`ratelimited`, se salta y se informa el artículo
+  que falle, y hay una pausa entre peticiones (`PCM_WIKI_PAUSE`).
 
 ## Datos técnicos útiles
 

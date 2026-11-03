@@ -137,10 +137,30 @@ def _ls_remote_head() -> str:
 
 
 # ---------------------------------------------------------------------- Wikipedia
+class WikiError(Exception):
+    pass
+
+
+PAUSE = float(os.environ.get("PCM_WIKI_PAUSE", "0.2"))  # seconds between requests: be gentle with Wikipedia
+
+
 def wiki_api(lang: str, params: dict) -> dict:
+    """One MediaWiki API call. API errors come back as HTTP 200 with an "error" object (no "query"):
+    lag and rate limits are retried after a pause, anything else raises WikiError with the API's code."""
     base = os.environ.get("PCM_WIKI_API", WIKI_API).format(lang=lang)
-    params = {**params, "format": "json", "formatversion": "2"}
-    return json.loads(http_get(base + "?" + urllib.parse.urlencode(params)))
+    params = {**params, "format": "json", "formatversion": "2", "maxlag": "5"}
+    for attempt in range(5):
+        time.sleep(PAUSE)
+        d = json.loads(http_get(base + "?" + urllib.parse.urlencode(params)))
+        err = d.get("error")
+        if not err:
+            d.setdefault("query", {}).setdefault("pages", [])  # e.g. every title was invalid: no "query" at all
+            return d
+        if err.get("code") in ("maxlag", "ratelimited", "readonly") and attempt < 4:
+            time.sleep(5 * (attempt + 1))
+            continue
+        raise WikiError(f"{lang}.wikipedia: {err.get('code')}: {err.get('info', '')[:200]}")
+    raise WikiError(f"{lang}.wikipedia: gave up after retries")
 
 
 def museum_titles() -> list[str]:
@@ -185,12 +205,18 @@ def passages(text: str, max_chars: int) -> list[tuple[str, str]]:
 def build_wikipedia(langs: list[str], max_chars: int) -> dict[str, list[dict]]:
     en_titles = sorted(set(museum_titles() + TOPICS))
     by_lang: dict[str, list[dict]] = {l: [] for l in langs}
+    failed: list[str] = []
     for i in range(0, len(en_titles), 20):
         batch = en_titles[i:i + 20]
         # resolve redirects and find the same article in the other languages
-        d = wiki_api("en", {"action": "query", "titles": "|".join(batch), "redirects": 1, "prop": "langlinks", "lllimit": "max"})
+        try:
+            d = wiki_api("en", {"action": "query", "titles": "|".join(batch), "redirects": 1, "prop": "langlinks", "lllimit": "max"})
+        except (WikiError, urllib.error.URLError, ValueError) as e:
+            print(f"  ! batch {batch[0]}…: {e}", file=sys.stderr)
+            failed += batch
+            continue
         for page in d["query"]["pages"]:
-            if page.get("missing"):
+            if page.get("missing") or page.get("invalid"):
                 print(f"  missing on en.wikipedia: {page.get('title')}", file=sys.stderr)
                 continue
             titles = {"en": page["title"]}
@@ -198,16 +224,27 @@ def build_wikipedia(langs: list[str], max_chars: int) -> dict[str, list[dict]]:
                 if ll["lang"] in langs:
                     titles[ll["lang"]] = ll["title"]
             for lang, title in titles.items():
-                if lang in langs:
+                if lang not in langs:
+                    continue
+                try:
                     by_lang[lang].extend(fetch_article(lang, title, max_chars))
+                except (WikiError, urllib.error.URLError, ValueError, KeyError) as e:  # skip one article, keep going
+                    print(f"  ! {lang}:{title}: {e}", file=sys.stderr)
+                    failed.append(f"{lang}:{title}")
         print(f"  {min(i + 20, len(en_titles))}/{len(en_titles)} topics", file=sys.stderr)
+    if failed:
+        print(f"{len(failed)} articles skipped (run again later to retry): {', '.join(failed[:12])}{'…' if len(failed) > 12 else ''}",
+              file=sys.stderr)
     return by_lang
 
 
 def fetch_article(lang: str, title: str, max_chars: int) -> list[dict]:
     d = wiki_api(lang, {"action": "query", "titles": title, "redirects": 1, "prop": "extracts|info", "explaintext": 1,
                         "exsectionformat": "wiki", "inprop": "url"})
-    page = d["query"]["pages"][0]
+    pages = d["query"]["pages"]
+    if not pages or pages[0].get("missing") or pages[0].get("invalid"):
+        return []
+    page = pages[0]
     text = page.get("extract") or ""
     url = page.get("fullurl") or f"https://{lang}.wikipedia.org/wiki/" + urllib.parse.quote(title.replace(" ", "_"))
     docs = []

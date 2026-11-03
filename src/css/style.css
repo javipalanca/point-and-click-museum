@@ -126,6 +126,7 @@ section { padding-block: 56px 24px; scroll-margin-top: 56px; }
 .studio:hover { --c: var(--teal); }
 .studio .top { display: flex; gap: 12px; align-items: center; }
 .studio .logo { width: 96px; height: 56px; object-fit: contain; flex: none; image-rendering: auto; background: var(--paper); padding: 4px; box-shadow: 0 0 0 4px var(--shade); }
+.logo.plate-dark { background: var(--shade) !important; }
 .st-games-h { font-family: var(--display); font-size: 8px; color: var(--amber); display: block; margin-bottom: 6px; }
 .st-games ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .st-games a { display: block; text-decoration: none; }

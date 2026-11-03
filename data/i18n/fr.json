@@ -206,5 +206,6 @@
  "decadeFmt": "Années {n}",
  "role_cover": "Jaquette",
  "role_screenshot": "Capture",
- "role_logo": "Logo"
+ "role_logo": "Logo",
+ "logoRecreation": "recréation vectorielle du logo"
 }

@@ -121,6 +121,8 @@ def media_view(it: dict, root: str, ui: dict) -> dict:
     label = ""
     if "libretro-thumbnails" in page:  # the file name says which edition the image shows
         label = urllib.parse.unquote(page.rsplit("/", 1)[-1]).rsplit(".", 1)[0].replace("_ ", ": ")
+    if it.get("recreation"):
+        label = ui["logoRecreation"]
     if it.get("license"):
         rights = " · ".join(x for x in (it.get("author"), it["license"]) if x)
         if it.get("nonFree"):
@@ -597,7 +599,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
     def logo_or_monogram(group, x):
         it = media.get(group, {}).get(x["id"], {}).get("logo")
         if it:
-            return (f'<img class="logo" src="{root}media/{it["file"]}" width="{it["w"]}" height="{it["h"]}" '
+            return (f'<img class="logo{" plate-dark" if it.get("plate") == "dark" else ""}" src="{root}media/{it["file"]}" width="{it["w"]}" height="{it["h"]}" '
                     f'alt="{E(ui["logoOf"].format(name=x["name"]))}" loading="lazy">')
         words = [w for w in re.sub(r"[^\w ]", " ", x["name"]).split()
                  if w.lower() not in ("the", "of", "and", "de", "games", "studio", "studios", "software", "entertainment", "design")]

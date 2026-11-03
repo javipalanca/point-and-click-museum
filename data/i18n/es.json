@@ -206,5 +206,6 @@
  "decadeFmt": "Década de {n}",
  "role_cover": "Portada",
  "role_screenshot": "Captura",
- "role_logo": "Logotipo"
+ "role_logo": "Logotipo",
+ "logoRecreation": "recreación vectorial del logotipo"
 }

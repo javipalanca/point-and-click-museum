@@ -5,7 +5,9 @@
    "name": "Infocom",
    "years": "1979–1989",
    "games": [
-    "zork"
+    "zork",
+    "planetfall",
+    "hitchhikers-guide"
    ],
    "dialog": {
     "es": [
@@ -76,7 +78,18 @@
     "kings-quest",
     "space-quest",
     "leisure-suit-larry",
-    "gabriel-knight"
+    "police-quest",
+    "kings-quest-4",
+    "manhunter-ny",
+    "colonels-bequest",
+    "quest-for-glory",
+    "kings-quest-5",
+    "space-quest-4",
+    "freddy-pharkas",
+    "gabriel-knight",
+    "gabriel-knight-2",
+    "phantasmagoria",
+    "gabriel-knight-3"
    ],
    "dialog": {
     "es": [
@@ -145,13 +158,19 @@
    "games": [
     "maniac-mansion",
     "zak-mckracken",
+    "last-crusade",
     "loom",
     "monkey-island",
+    "monkey-island-2",
     "fate-of-atlantis",
     "day-of-the-tentacle",
+    "sam-and-max",
     "full-throttle",
+    "the-dig",
     "curse-of-monkey-island",
-    "grim-fandango"
+    "grim-fandango",
+    "escape-from-monkey-island",
+    "monkey-island-se"
    ],
    "dialog": {
     "es": [
@@ -218,8 +237,13 @@
    "name": "Revolution Software",
    "years": "1990–",
    "games": [
+    "lure-of-the-temptress",
     "beneath-a-steel-sky",
-    "broken-sword"
+    "broken-sword",
+    "broken-sword-2",
+    "sleeping-dragon",
+    "beyond-a-steel-sky",
+    "broken-sword-reforged"
    ],
    "dialog": {
     "es": [
@@ -354,7 +378,8 @@
    "name": "Cyan",
    "years": "1987–",
    "games": [
-    "myst"
+    "myst",
+    "riven"
    ],
    "dialog": {
     "es": [
@@ -423,7 +448,8 @@
    "games": [
     "igor",
     "hollywood-monsters",
-    "runaway"
+    "runaway",
+    "hollywood-monsters-2"
    ],
    "dialog": {
     "es": [
@@ -491,6 +517,7 @@
    "years": "2004–2018 · 2018–",
    "games": [
     "sam-max-save-the-world",
+    "tales-of-monkey-island",
     "walking-dead"
    ],
    "dialog": {
@@ -559,7 +586,14 @@
    "years": "2006–",
    "games": [
     "blackwell-legacy",
+    "gemini-rue",
+    "primordia",
+    "resonance",
+    "technobabylon",
+    "shardlight",
     "unavowed",
+    "strangeland",
+    "hobs-barrow",
     "old-skies"
    ],
    "dialog": {
@@ -627,6 +661,8 @@
    "name": "Daedalic Entertainment",
    "years": "2007–",
    "games": [
+    "edna-harvey",
+    "whispered-world",
     "deponia"
    ],
    "dialog": {
@@ -694,7 +730,9 @@
    "name": "Amanita Design",
    "years": "2003–",
    "games": [
-    "machinarium"
+    "samorost",
+    "machinarium",
+    "botanicula"
    ],
    "dialog": {
     "es": [

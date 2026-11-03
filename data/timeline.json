@@ -159,6 +159,33 @@
    "link": "https://en.wikipedia.org/wiki/Zork"
   },
   {
+   "id": "adventureland",
+   "year": 1978,
+   "title": "Adventureland",
+   "studio": "Adventure International · Scott Adams",
+   "engine": "Scott Adams",
+   "era": "text",
+   "text": {
+    "es": {
+     "d": "La primera aventura comercial para ordenadores domésticos: buscar trece tesoros con órdenes de dos palabras en 16 KB de memoria.",
+     "f": "Scott Adams la escribió en BASIC para un TRS-80 y la vendía en bolsas de plástico."
+    },
+    "en": {
+     "d": "The first commercial adventure for home computers: find thirteen treasures with two-word commands in 16 KB of memory.",
+     "f": "Scott Adams wrote it in BASIC on a TRS-80 and sold it in plastic bags."
+    },
+    "de": {
+     "d": "Das erste kommerzielle Adventure für Heimcomputer: dreizehn Schätze finden, mit Zwei-Wort-Befehlen in 16 KB Speicher.",
+     "f": "Scott Adams schrieb es in BASIC auf einem TRS-80 und verkaufte es in Plastiktüten."
+    },
+    "fr": {
+     "d": "La première aventure commerciale pour ordinateurs familiaux : trouver treize trésors avec des ordres de deux mots dans 16 Ko de mémoire.",
+     "f": "Scott Adams l'a écrite en BASIC sur un TRS-80 et la vendait dans des sachets en plastique."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Adventureland_(video_game)"
+  },
+  {
    "id": "mystery-house",
    "year": 1980,
    "title": "Mystery House",
@@ -186,6 +213,60 @@
    "link": "https://en.wikipedia.org/wiki/Mystery_House"
   },
   {
+   "id": "hobbit",
+   "year": 1982,
+   "title": "The Hobbit",
+   "studio": "Beam Software · Melbourne House",
+   "engine": "Inglish",
+   "era": "text",
+   "text": {
+    "es": {
+     "d": "Adaptación de Tolkien con ilustraciones y personajes que actuaban por su cuenta: Thorin podía sentarse a cantar sobre el oro en el peor momento.",
+     "f": "Su parser «Inglish» entendía frases completas como «dile a Thorin que me lleve»."
+    },
+    "en": {
+     "d": "A Tolkien adaptation with illustrations and characters who acted on their own: Thorin might sit down and sing about gold at the worst moment.",
+     "f": "Its “Inglish” parser understood full sentences such as “say to Thorin ‘carry me’”."
+    },
+    "de": {
+     "d": "Eine Tolkien-Umsetzung mit Bildern und Figuren, die eigenständig handelten: Thorin setzte sich gern im falschen Moment hin und sang von Gold.",
+     "f": "Der Parser „Inglish“ verstand ganze Sätze wie „sag Thorin ‚trag mich‘“."
+    },
+    "fr": {
+     "d": "Une adaptation de Tolkien illustrée, aux personnages autonomes : Thorin pouvait s'asseoir et chanter l'or au pire moment.",
+     "f": "Son analyseur « Inglish » comprenait des phrases entières comme « dis à Thorin de me porter »."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Hobbit_(1982_video_game)"
+  },
+  {
+   "id": "planetfall",
+   "year": 1983,
+   "title": "Planetfall",
+   "studio": "Infocom · Steve Meretzky",
+   "engine": "Z-machine",
+   "era": "text",
+   "text": {
+    "es": {
+     "d": "Un alférez de la Patrulla Estelar naufraga en un planeta abandonado. Su compañero es Floyd, un robot infantil y entrañable.",
+     "f": "La muerte de Floyd es uno de los primeros momentos de un videojuego que hicieron llorar a los jugadores."
+    },
+    "en": {
+     "d": "A Stellar Patrol ensign is stranded on an abandoned planet. His companion is Floyd, a childlike, endearing robot.",
+     "f": "Floyd's death is one of the first moments in a video game that made players cry."
+    },
+    "de": {
+     "d": "Ein Fähnrich der Stellar Patrol strandet auf einem verlassenen Planeten. Sein Begleiter ist Floyd, ein kindlicher, liebenswerter Roboter.",
+     "f": "Floyds Tod gehört zu den ersten Momenten eines Videospiels, die Spieler zum Weinen brachten."
+    },
+    "fr": {
+     "d": "Un enseigne de la Stellar Patrol échoue sur une planète abandonnée. Son compagnon est Floyd, un robot enfantin et attachant.",
+     "f": "La mort de Floyd est l'un des premiers moments de jeu vidéo à avoir fait pleurer les joueurs."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Planetfall"
+  },
+  {
    "id": "kings-quest",
    "year": 1984,
    "title": "King's Quest",
@@ -211,6 +292,33 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/King%27s_Quest_I"
+  },
+  {
+   "id": "hitchhikers-guide",
+   "year": 1984,
+   "title": "The Hitchhiker's Guide to the Galaxy",
+   "studio": "Infocom · Douglas Adams, Steve Meretzky",
+   "engine": "Z-machine",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "El propio Douglas Adams coescribió esta aventura de texto que se burla del jugador tanto como de la galaxia.",
+     "f": "El puzle del pez Babel es famoso por su dificultad: Infocom llegó a vender camisetas que presumían de haberlo resuelto."
+    },
+    "en": {
+     "d": "Douglas Adams himself co-wrote this text adventure, which mocks the player as much as the galaxy.",
+     "f": "The Babel fish puzzle is famous for its difficulty: Infocom even sold T-shirts boasting of having solved it."
+    },
+    "de": {
+     "d": "Douglas Adams schrieb dieses Textadventure selbst mit; es verspottet den Spieler ebenso wie die Galaxis.",
+     "f": "Das Babelfisch-Rätsel ist berüchtigt: Infocom verkaufte sogar T-Shirts für alle, die es gelöst hatten."
+    },
+    "fr": {
+     "d": "Douglas Adams a lui-même coécrit cette aventure textuelle, qui se moque du joueur autant que de la galaxie.",
+     "f": "L'énigme du poisson Babel est célèbre pour sa difficulté : Infocom a même vendu des T-shirts pour ceux qui l'avaient résolue."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy_(video_game)"
   },
   {
    "id": "deja-vu",
@@ -267,31 +375,58 @@
    "link": "https://en.wikipedia.org/wiki/Space_Quest"
   },
   {
-   "id": "maniac-mansion",
-   "year": 1987,
-   "title": "Maniac Mansion",
-   "studio": "Lucasfilm Games · Ron Gilbert, Gary Winnick",
-   "engine": "SCUMM",
+   "id": "uninvited",
+   "year": 1986,
+   "title": "Uninvited",
+   "studio": "ICOM Simulations",
+   "engine": "MacVenture",
    "era": "parser",
    "text": {
     "es": {
-     "d": "Siete estudiantes posibles, tres elegidos, varios finales. Para crearlo, Ron Gilbert y Aric Wilmunder programaron SCUMM y los verbos pasaron del teclado a la pantalla.",
-     "f": "SCUMM significa Script Creation Utility for Maniac Mansion."
+     "d": "Tras un accidente de coche, entras en una mansión encantada para buscar a tu hermano. Terror con ventanas, iconos y ratón del Macintosh.",
+     "f": "Usaba el mismo motor MacVenture que Déjà Vu y Shadowgate."
     },
     "en": {
-     "d": "Seven possible students, three chosen, several endings. To make it, Ron Gilbert and Aric Wilmunder wrote SCUMM, and verbs moved from the keyboard to the screen.",
-     "f": "SCUMM stands for Script Creation Utility for Maniac Mansion."
+     "d": "After a car crash you enter a haunted mansion to find your brother. Horror with the Macintosh's windows, icons and mouse.",
+     "f": "It ran on the same MacVenture engine as Déjà Vu and Shadowgate."
     },
     "de": {
-     "d": "Sieben mögliche Studenten, drei davon wählbar, mehrere Enden. Dafür programmierten Ron Gilbert und Aric Wilmunder SCUMM, und die Verben wanderten von der Tastatur auf den Bildschirm.",
-     "f": "SCUMM steht für Script Creation Utility for Maniac Mansion."
+     "d": "Nach einem Autounfall betrittst du ein Spukhaus, um deinen Bruder zu suchen. Horror mit Fenstern, Icons und Maus des Macintosh.",
+     "f": "Es lief auf derselben MacVenture-Engine wie Déjà Vu und Shadowgate."
     },
     "fr": {
-     "d": "Sept étudiants possibles, trois choisis, plusieurs fins. Pour le créer, Ron Gilbert et Aric Wilmunder ont écrit SCUMM, et les verbes sont passés du clavier à l'écran.",
-     "f": "SCUMM signifie Script Creation Utility for Maniac Mansion."
+     "d": "Après un accident de voiture, vous entrez dans un manoir hanté pour retrouver votre frère. L'horreur avec fenêtres, icônes et souris du Macintosh.",
+     "f": "Il utilisait le même moteur MacVenture que Déjà Vu et Shadowgate."
     }
    },
-   "link": "https://en.wikipedia.org/wiki/Maniac_Mansion"
+   "link": "https://en.wikipedia.org/wiki/Uninvited_(video_game)"
+  },
+  {
+   "id": "mortevielle",
+   "year": 1987,
+   "title": "Le Manoir de Mortevielle",
+   "studio": "Lankhor",
+   "engine": "Lankhor",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Un misterio francés en una mansión de campo: el detective interroga a los habitantes eligiendo preguntas en menús.",
+     "f": "En Atari ST fue de los primeros juegos con voz sintetizada a partir de fonemas."
+    },
+    "en": {
+     "d": "A French mystery in a country manor: the detective questions the residents by picking questions from menus.",
+     "f": "On the Atari ST it was one of the first games with speech synthesised from phonemes."
+    },
+    "de": {
+     "d": "Ein französischer Krimi in einem Landhaus: Der Detektiv befragt die Bewohner über Menüs.",
+     "f": "Auf dem Atari ST war es eines der ersten Spiele mit aus Phonemen synthetisierter Sprache."
+    },
+    "fr": {
+     "d": "Un mystère français dans un manoir de campagne : le détective interroge les habitants en choisissant ses questions dans des menus.",
+     "f": "Sur Atari ST, ce fut l'un des premiers jeux à voix synthétisée à partir de phonèmes."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Mortville_Manor"
   },
   {
    "id": "leisure-suit-larry",
@@ -321,6 +456,141 @@
    "link": "https://en.wikipedia.org/wiki/Leisure_Suit_Larry_in_the_Land_of_the_Lounge_Lizards"
   },
   {
+   "id": "maniac-mansion",
+   "year": 1987,
+   "title": "Maniac Mansion",
+   "studio": "Lucasfilm Games · Ron Gilbert, Gary Winnick",
+   "engine": "SCUMM",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Siete estudiantes posibles, tres elegidos, varios finales. Para crearlo, Ron Gilbert y Aric Wilmunder programaron SCUMM y los verbos pasaron del teclado a la pantalla.",
+     "f": "SCUMM significa Script Creation Utility for Maniac Mansion."
+    },
+    "en": {
+     "d": "Seven possible students, three chosen, several endings. To make it, Ron Gilbert and Aric Wilmunder wrote SCUMM, and verbs moved from the keyboard to the screen.",
+     "f": "SCUMM stands for Script Creation Utility for Maniac Mansion."
+    },
+    "de": {
+     "d": "Sieben mögliche Studenten, drei davon wählbar, mehrere Enden. Dafür programmierten Ron Gilbert und Aric Wilmunder SCUMM, und die Verben wanderten von der Tastatur auf den Bildschirm.",
+     "f": "SCUMM steht für Script Creation Utility for Maniac Mansion."
+    },
+    "fr": {
+     "d": "Sept étudiants possibles, trois choisis, plusieurs fins. Pour le créer, Ron Gilbert et Aric Wilmunder ont écrit SCUMM, et les verbes sont passés du clavier à l'écran.",
+     "f": "SCUMM signifie Script Creation Utility for Maniac Mansion."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Maniac_Mansion"
+  },
+  {
+   "id": "police-quest",
+   "year": 1987,
+   "title": "Police Quest: In Pursuit of the Death Angel",
+   "studio": "Sierra · Jim Walls",
+   "engine": "AGI",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Un expolicía de California diseñó esta aventura en la que hay que seguir el procedimiento al pie de la letra: revisar el coche, pedir refuerzos, esposar.",
+     "f": "Olvidarse de dar la vuelta al coche patrulla antes de salir podía acabar en una muerte absurda."
+    },
+    "en": {
+     "d": "A former California highway patrolman designed this adventure where you must follow procedure to the letter: inspect the car, call for backup, cuff.",
+     "f": "Forgetting to walk around your patrol car before driving could end in an absurd death."
+    },
+    "de": {
+     "d": "Ein ehemaliger kalifornischer Polizist entwarf dieses Adventure, in dem man Vorschriften genau befolgen muss: Auto prüfen, Verstärkung rufen, Handschellen anlegen.",
+     "f": "Wer vergaß, vor der Fahrt um den Streifenwagen zu gehen, konnte absurd sterben."
+    },
+    "fr": {
+     "d": "Un ancien policier californien a conçu cette aventure où il faut suivre la procédure à la lettre : inspecter la voiture, appeler des renforts, menotter.",
+     "f": "Oublier de faire le tour de la voiture de patrouille avant de partir pouvait finir en mort absurde."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Police_Quest:_In_Pursuit_of_the_Death_Angel"
+  },
+  {
+   "id": "shadowgate",
+   "year": 1987,
+   "title": "Shadowgate",
+   "studio": "ICOM Simulations",
+   "engine": "MacVenture",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Fantasía oscura en un castillo lleno de trampas. Se juega con verbos en pantalla y antorchas que se consumen.",
+     "f": "Su versión de NES de 1989 llevó el sistema de ventanas del Mac a las consolas."
+    },
+    "en": {
+     "d": "Dark fantasy in a castle full of traps, played with on-screen verbs and torches that burn out.",
+     "f": "Its 1989 NES version brought the Mac's window interface to consoles."
+    },
+    "de": {
+     "d": "Düstere Fantasy in einer Burg voller Fallen, gespielt mit Verben am Bildschirm und Fackeln, die herunterbrennen.",
+     "f": "Die NES-Fassung von 1989 brachte die Fensteroberfläche des Mac auf Konsolen."
+    },
+    "fr": {
+     "d": "Fantasy sombre dans un château piégé, avec verbes à l'écran et torches qui se consument.",
+     "f": "Sa version NES de 1989 a porté l'interface à fenêtres du Mac sur console."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Shadowgate"
+  },
+  {
+   "id": "kings-quest-4",
+   "year": 1988,
+   "title": "King's Quest IV: The Perils of Rosella",
+   "studio": "Sierra · Roberta Williams",
+   "engine": "SCI",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "La primera protagonista femenina de la saga y el estreno del motor SCI, con más resolución y soporte para tarjetas de sonido.",
+     "f": "Fue de los primeros juegos en aprovechar las tarjetas AdLib y Roland MT-32."
+    },
+    "en": {
+     "d": "The series' first female lead and the debut of the SCI engine, with higher resolution and sound card support.",
+     "f": "It was among the first games to make use of AdLib and Roland MT-32 sound cards."
+    },
+    "de": {
+     "d": "Die erste Heldin der Reihe und das Debüt der SCI-Engine, mit höherer Auflösung und Soundkarten-Unterstützung.",
+     "f": "Es war eines der ersten Spiele, die AdLib- und Roland-MT-32-Karten nutzten."
+    },
+    "fr": {
+     "d": "La première héroïne de la saga et les débuts du moteur SCI, avec une meilleure résolution et la prise en charge des cartes son.",
+     "f": "Ce fut l'un des premiers jeux à exploiter les cartes AdLib et Roland MT-32."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/King%27s_Quest_IV"
+  },
+  {
+   "id": "manhunter-ny",
+   "year": 1988,
+   "title": "Manhunter: New York",
+   "studio": "Evryware · Sierra",
+   "engine": "AGI",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Nueva York ocupada por alienígenas y un protagonista que espía a otros humanos para ellos. Sin parser: todo con el ratón o el joystick.",
+     "f": "Fue de los pocos juegos de AGI que prescindieron del teclado."
+    },
+    "en": {
+     "d": "New York occupied by aliens and a hero who spies on fellow humans for them. No parser: everything is done with mouse or joystick.",
+     "f": "It was one of the few AGI games that did away with typing."
+    },
+    "de": {
+     "d": "New York, von Aliens besetzt, und ein Held, der für sie Menschen ausspioniert. Kein Parser: alles per Maus oder Joystick.",
+     "f": "Es war eines der wenigen AGI-Spiele ohne Texteingabe."
+    },
+    "fr": {
+     "d": "New York occupée par des extraterrestres et un héros qui espionne les humains pour eux. Pas d'analyseur : tout se fait à la souris ou au joystick.",
+     "f": "Ce fut l'un des rares jeux AGI sans saisie de texte."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Manhunter:_New_York"
+  },
+  {
    "id": "zak-mckracken",
    "year": 1988,
    "title": "Zak McKracken and the Alien Mindbenders",
@@ -346,6 +616,33 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/Zak_McKracken_and_the_Alien_Mindbenders"
+  },
+  {
+   "id": "last-crusade",
+   "year": 1989,
+   "title": "Indiana Jones and the Last Crusade: The Graphic Adventure",
+   "studio": "Lucasfilm Games · Noah Falstein, David Fox, Ron Gilbert",
+   "engine": "SCUMM",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Adapta la película pero deja resolver muchas situaciones a puñetazos, con astucia o con diálogo. Incluye el Diario del Grial en la caja.",
+     "f": "Su «puntuación de Indy» premiaba encontrar soluciones alternativas."
+    },
+    "en": {
+     "d": "It adapts the film but lets you solve many situations with fists, cunning or talk. The Grail Diary came in the box.",
+     "f": "Its “Indy Quotient” score rewarded finding alternative solutions."
+    },
+    "de": {
+     "d": "Es setzt den Film um, lässt viele Situationen aber mit Fäusten, List oder Worten lösen. Das Gral-Tagebuch lag der Packung bei.",
+     "f": "Der „Indy Quotient“ belohnte alternative Lösungen."
+    },
+    "fr": {
+     "d": "Il adapte le film mais laisse résoudre bien des situations aux poings, par la ruse ou la parole. Le carnet du Graal était fourni dans la boîte.",
+     "f": "Son score « Indy Quotient » récompensait les solutions alternatives."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Indiana_Jones_and_the_Last_Crusade:_The_Graphic_Adventure"
   },
   {
    "id": "la-aventura-original",
@@ -375,6 +672,87 @@
    "link": "https://es.wikipedia.org/wiki/Aventuras_AD"
   },
   {
+   "id": "quest-for-glory",
+   "year": 1989,
+   "title": "Quest for Glory: So You Want to Be a Hero",
+   "studio": "Sierra · Lori Ann Cole, Corey Cole",
+   "engine": "SCI",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Mezcla aventura y rol: eliges guerrero, mago o ladrón, y cada clase resuelve los puzles a su manera.",
+     "f": "Se publicó primero como «Hero's Quest» y cambió de nombre por una marca registrada de un juego de tablero."
+    },
+    "en": {
+     "d": "It mixes adventure and role-playing: choose fighter, magic user or thief, and each class solves puzzles its own way.",
+     "f": "It first shipped as “Hero's Quest” and was renamed over a board game's trademark."
+    },
+    "de": {
+     "d": "Mischt Adventure und Rollenspiel: Kämpfer, Magier oder Dieb lösen Rätsel jeweils auf eigene Weise.",
+     "f": "Es erschien zuerst als „Hero's Quest“ und wurde wegen der Marke eines Brettspiels umbenannt."
+    },
+    "fr": {
+     "d": "Il mêle aventure et jeu de rôle : guerrier, magicien ou voleur résolvent chacun les énigmes à leur façon.",
+     "f": "Sorti d'abord sous le nom « Hero's Quest », il a été rebaptisé à cause de la marque d'un jeu de plateau."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Quest_for_Glory_I:_So_You_Want_to_Be_a_Hero"
+  },
+  {
+   "id": "colonels-bequest",
+   "year": 1989,
+   "title": "The Colonel's Bequest",
+   "studio": "Sierra · Roberta Williams",
+   "engine": "SCI",
+   "era": "parser",
+   "text": {
+    "es": {
+     "d": "Laura Bow pasa una noche de 1925 en una plantación de Luisiana donde van muriendo los herederos. Un reloj interno avanza con lo que descubres.",
+     "f": "Se puede llegar al final sin entender casi nada: la nota depende de lo que observaste."
+    },
+    "en": {
+     "d": "Laura Bow spends a 1925 night on a Louisiana plantation where the heirs start dying. An internal clock moves on as you discover things.",
+     "f": "You can reach the end understanding almost nothing: your rating depends on what you observed."
+    },
+    "de": {
+     "d": "Laura Bow verbringt 1925 eine Nacht auf einer Plantage in Louisiana, wo die Erben sterben. Eine interne Uhr läuft mit deinen Entdeckungen weiter.",
+     "f": "Man kann das Ende erreichen, ohne fast etwas zu verstehen: Die Bewertung hängt davon ab, was man beobachtet hat."
+    },
+    "fr": {
+     "d": "Laura Bow passe une nuit de 1925 dans une plantation de Louisiane où les héritiers meurent un à un. Une horloge interne avance avec vos découvertes.",
+     "f": "On peut finir sans presque rien comprendre : la note dépend de ce qu'on a observé."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Colonel%27s_Bequest"
+  },
+  {
+   "id": "kings-quest-5",
+   "year": 1990,
+   "title": "King's Quest V: Absence Makes the Heart Go Yonder!",
+   "studio": "Sierra · Roberta Williams",
+   "engine": "SCI",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Sierra abandona el parser: una barra de iconos (andar, mirar, actuar, hablar) y fondos VGA pintados a mano y digitalizados.",
+     "f": "Su edición en CD de 1991 fue de las primeras aventuras con todos los diálogos hablados."
+    },
+    "en": {
+     "d": "Sierra drops the parser: an icon bar (walk, look, act, talk) and hand-painted, digitised VGA backgrounds.",
+     "f": "Its 1991 CD edition was one of the first adventures with fully spoken dialogue."
+    },
+    "de": {
+     "d": "Sierra verabschiedet den Parser: eine Symbolleiste (Gehen, Schauen, Handeln, Reden) und handgemalte, digitalisierte VGA-Hintergründe.",
+     "f": "Die CD-Fassung von 1991 war eines der ersten Adventures mit vollständiger Sprachausgabe."
+    },
+    "fr": {
+     "d": "Sierra abandonne l'analyseur : une barre d'icônes (marcher, regarder, agir, parler) et des décors VGA peints à la main et numérisés.",
+     "f": "Son édition CD de 1991 fut l'une des premières aventures entièrement parlées."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/King%27s_Quest_V"
+  },
+  {
    "id": "loom",
    "year": 1990,
    "title": "Loom",
@@ -400,6 +778,33 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/Loom_(video_game)"
+  },
+  {
+   "id": "rise-of-the-dragon",
+   "year": 1990,
+   "title": "Rise of the Dragon",
+   "studio": "Dynamix",
+   "engine": "DGDS",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Ciberpunk en Los Ángeles de 2053 con estética de cómic y un reloj real: los acontecimientos ocurren aunque no estés.",
+     "f": "Fue el primer juego del motor DGDS de Dynamix, que reutilizó Heart of China."
+    },
+    "en": {
+     "d": "Cyberpunk in 2053 Los Angeles with a comic-book look and a real clock: events happen whether or not you are there.",
+     "f": "It was the first game on Dynamix's DGDS engine, later reused for Heart of China."
+    },
+    "de": {
+     "d": "Cyberpunk im Los Angeles des Jahres 2053, im Comic-Look und mit Echtzeit-Uhr: Ereignisse geschehen auch ohne dich.",
+     "f": "Es war das erste Spiel mit Dynamix' DGDS-Engine, die später Heart of China nutzte."
+    },
+    "fr": {
+     "d": "Cyberpunk dans le Los Angeles de 2053, style bande dessinée et horloge réelle : les événements arrivent même sans vous.",
+     "f": "Ce fut le premier jeu du moteur DGDS de Dynamix, réutilisé pour Heart of China."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Rise_of_the_Dragon"
   },
   {
    "id": "monkey-island",
@@ -429,31 +834,85 @@
    "link": "https://en.wikipedia.org/wiki/The_Secret_of_Monkey_Island"
   },
   {
-   "id": "kyrandia",
-   "year": 1992,
-   "title": "The Legend of Kyrandia",
-   "studio": "Westwood Studios",
-   "engine": "Westwood",
+   "id": "gobliiins",
+   "year": 1991,
+   "title": "Gobliiins",
+   "studio": "Coktel Vision · Pierre Gilhodes, Muriel Tramis",
+   "engine": "Gob",
    "era": "golden",
    "text": {
     "es": {
-     "d": "Fantasía colorista con una interfaz de un solo clic: sin verbos, el juego decide qué hacer con cada objeto.",
-     "f": "Westwood se haría famosa después con la estrategia de Command & Conquer."
+     "d": "Tres duendes con habilidades distintas (pegar, coger objetos, hacer magia) cooperan en pantallas que son puzles autónomos.",
+     "f": "Cada personaje tiene un único talento y hay que alternarlos con el ratón."
     },
     "en": {
-     "d": "Colourful fantasy with a single-click interface: no verbs, the game decides what to do with each object.",
-     "f": "Westwood later became famous for the strategy game Command & Conquer."
+     "d": "Three goblins with different skills (punching, picking things up, casting spells) cooperate in screens that are self-contained puzzles.",
+     "f": "Each character has one talent and you switch between them with the mouse."
     },
     "de": {
-     "d": "Farbenfrohe Fantasy mit Ein-Klick-Steuerung: keine Verben, das Spiel entscheidet, was mit jedem Objekt passiert.",
-     "f": "Westwood wurde später mit dem Strategiespiel Command & Conquer berühmt."
+     "d": "Drei Kobolde mit verschiedenen Fähigkeiten (schlagen, Dinge nehmen, zaubern) arbeiten auf Bildschirmen zusammen, die eigenständige Rätsel sind.",
+     "f": "Jede Figur hat nur ein Talent; man wechselt per Maus zwischen ihnen."
     },
     "fr": {
-     "d": "Une fantasy colorée avec une interface à un seul clic : pas de verbes, le jeu décide quoi faire de chaque objet.",
-     "f": "Westwood deviendra ensuite célèbre avec la stratégie de Command & Conquer."
+     "d": "Trois gobelins aux talents différents (frapper, prendre des objets, lancer des sorts) coopèrent dans des tableaux qui sont des énigmes autonomes.",
+     "f": "Chaque personnage n'a qu'un talent et l'on passe de l'un à l'autre à la souris."
     }
    },
-   "link": "https://en.wikipedia.org/wiki/The_Legend_of_Kyrandia"
+   "link": "https://en.wikipedia.org/wiki/Gobliiins"
+  },
+  {
+   "id": "monkey-island-2",
+   "year": 1991,
+   "title": "Monkey Island 2: LeChuck's Revenge",
+   "studio": "LucasArts · Ron Gilbert, Tim Schafer, Dave Grossman",
+   "engine": "SCUMM · iMUSE",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Guybrush busca el tesoro de Big Whoop. Fondos pintados y escaneados, un modo «Lite» para principiantes y un final que aún se discute.",
+     "f": "Estrenó iMUSE, el sistema que encadena la música sin cortes al cambiar de escena."
+    },
+    "en": {
+     "d": "Guybrush hunts for the treasure of Big Whoop. Painted, scanned backgrounds, a “Lite” mode for beginners and an ending still debated.",
+     "f": "It debuted iMUSE, the system that blends music seamlessly between scenes."
+    },
+    "de": {
+     "d": "Guybrush sucht den Schatz von Big Whoop. Gemalte, eingescannte Hintergründe, ein „Lite“-Modus für Einsteiger und ein bis heute diskutiertes Ende.",
+     "f": "Es führte iMUSE ein, das die Musik beim Szenenwechsel nahtlos überblendet."
+    },
+    "fr": {
+     "d": "Guybrush cherche le trésor de Big Whoop. Décors peints et scannés, un mode « Lite » pour débutants et une fin encore débattue.",
+     "f": "Il a inauguré iMUSE, le système qui enchaîne la musique sans coupure entre les scènes."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Monkey_Island_2:_LeChuck%27s_Revenge"
+  },
+  {
+   "id": "space-quest-4",
+   "year": 1991,
+   "title": "Space Quest IV: Roger Wilco and the Time Rippers",
+   "studio": "Sierra · Mark Crowe, Scott Murphy",
+   "engine": "SCI",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Roger Wilco viaja a secuelas y precuelas de su propia saga, incluida una tienda que vende juegos de Sierra.",
+     "f": "La versión en CD tenía como narrador a Gary Owens."
+    },
+    "en": {
+     "d": "Roger Wilco travels to sequels and prequels of his own series, including a mall that sells Sierra games.",
+     "f": "The CD version was narrated by Gary Owens."
+    },
+    "de": {
+     "d": "Roger Wilco reist in Fortsetzungen und Vorgeschichten seiner eigenen Reihe, samt Einkaufszentrum mit Sierra-Spielen.",
+     "f": "Die CD-Fassung sprach Gary Owens als Erzähler."
+    },
+    "fr": {
+     "d": "Roger Wilco voyage dans des suites et des préquelles de sa propre saga, centre commercial vendant des jeux Sierra compris.",
+     "f": "La version CD était narrée par Gary Owens."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Space_Quest_IV"
   },
   {
    "id": "fate-of-atlantis",
@@ -483,6 +942,87 @@
    "link": "https://en.wikipedia.org/wiki/Indiana_Jones_and_the_Fate_of_Atlantis"
   },
   {
+   "id": "lure-of-the-temptress",
+   "year": 1992,
+   "title": "Lure of the Temptress",
+   "studio": "Revolution Software · Charles Cecil",
+   "engine": "Virtual Theatre",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "El primer juego de Revolution: los habitantes del pueblo tienen rutinas propias y se les pueden dar órdenes.",
+     "f": "Revolution lo liberó como freeware y se juega hoy con ScummVM."
+    },
+    "en": {
+     "d": "Revolution's first game: the townsfolk follow their own routines and can be given orders.",
+     "f": "Revolution released it as freeware and it is played today with ScummVM."
+    },
+    "de": {
+     "d": "Revolutions erstes Spiel: Die Dorfbewohner folgen eigenen Tagesabläufen und nehmen Befehle entgegen.",
+     "f": "Revolution gab es als Freeware frei; heute spielt man es mit ScummVM."
+    },
+    "fr": {
+     "d": "Le premier jeu de Revolution : les villageois suivent leurs propres routines et peuvent recevoir des ordres.",
+     "f": "Revolution l'a publié en freeware et on y joue aujourd'hui avec ScummVM."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Lure_of_the_Temptress"
+  },
+  {
+   "id": "serrated-scalpel",
+   "year": 1992,
+   "title": "Sherlock Holmes: The Case of the Serrated Scalpel",
+   "studio": "Mythos Software · Electronic Arts",
+   "engine": "Mythos",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Holmes y Watson investigan un asesinato en el Londres victoriano, con un diario que registra cada pista y conversación.",
+     "f": "En Europa se publicó como «The Lost Files of Sherlock Holmes»."
+    },
+    "en": {
+     "d": "Holmes and Watson investigate a murder in Victorian London, with a journal that records every clue and conversation.",
+     "f": "In Europe it was released as “The Lost Files of Sherlock Holmes”."
+    },
+    "de": {
+     "d": "Holmes und Watson ermitteln im viktorianischen London; ein Tagebuch hält jede Spur und jedes Gespräch fest.",
+     "f": "In Europa erschien es als „The Lost Files of Sherlock Holmes“."
+    },
+    "fr": {
+     "d": "Holmes et Watson enquêtent sur un meurtre dans le Londres victorien, avec un journal qui consigne indices et conversations.",
+     "f": "En Europe, il est sorti sous le titre « The Lost Files of Sherlock Holmes »."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Lost_Files_of_Sherlock_Holmes"
+  },
+  {
+   "id": "kyrandia",
+   "year": 1992,
+   "title": "The Legend of Kyrandia",
+   "studio": "Westwood Studios",
+   "engine": "Westwood",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Fantasía colorista con una interfaz de un solo clic: sin verbos, el juego decide qué hacer con cada objeto.",
+     "f": "Westwood se haría famosa después con la estrategia de Command & Conquer."
+    },
+    "en": {
+     "d": "Colourful fantasy with a single-click interface: no verbs, the game decides what to do with each object.",
+     "f": "Westwood later became famous for the strategy game Command & Conquer."
+    },
+    "de": {
+     "d": "Farbenfrohe Fantasy mit Ein-Klick-Steuerung: keine Verben, das Spiel entscheidet, was mit jedem Objekt passiert.",
+     "f": "Westwood wurde später mit dem Strategiespiel Command & Conquer berühmt."
+    },
+    "fr": {
+     "d": "Une fantasy colorée avec une interface à un seul clic : pas de verbes, le jeu décide quoi faire de chaque objet.",
+     "f": "Westwood deviendra ensuite célèbre avec la stratégie de Command & Conquer."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Legend_of_Kyrandia"
+  },
+  {
    "id": "day-of-the-tentacle",
    "year": 1993,
    "title": "Day of the Tentacle",
@@ -508,6 +1048,33 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/Day_of_the_Tentacle"
+  },
+  {
+   "id": "freddy-pharkas",
+   "year": 1993,
+   "title": "Freddy Pharkas: Frontier Pharmacist",
+   "studio": "Sierra · Al Lowe, Josh Mandel",
+   "engine": "SCI",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Un pistolero retirado se hace farmacéutico en el Lejano Oeste. Parodia de wéstern con canción inicial cantada.",
+     "f": "La protección anticopia consistía en preparar recetas con el manual de farmacia de la caja."
+    },
+    "en": {
+     "d": "A retired gunslinger becomes a pharmacist in the Wild West. A western parody with a sung opening theme.",
+     "f": "Its copy protection had you mix prescriptions using the pharmacy manual in the box."
+    },
+    "de": {
+     "d": "Ein Revolverheld im Ruhestand wird Apotheker im Wilden Westen. Western-Parodie mit gesungenem Titellied.",
+     "f": "Der Kopierschutz verlangte, Rezepte nach dem beiliegenden Apothekenhandbuch zu mischen."
+    },
+    "fr": {
+     "d": "Un pistolero retraité devient pharmacien au Far West. Une parodie de western avec générique chanté.",
+     "f": "La protection anticopie demandait de préparer des ordonnances avec le manuel de pharmacie fourni."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Freddy_Pharkas:_Frontier_Pharmacist"
   },
   {
    "id": "gabriel-knight",
@@ -564,31 +1131,112 @@
    "link": "https://en.wikipedia.org/wiki/Myst"
   },
   {
-   "id": "igor",
-   "year": 1994,
-   "title": "Igor: Objetivo Uikokahonia",
-   "studio": "Pendulo Studios",
-   "engine": "Pendulo",
+   "id": "return-to-zork",
+   "year": 1993,
+   "title": "Return to Zork",
+   "studio": "Activision · Doug Barnett",
+   "engine": "Activision",
    "era": "golden",
    "text": {
     "es": {
-     "d": "Un estudiante quiere apuntarse a una excursión a una isla tropical para conquistar a una chica. Primer juego de Pendulo y punto de partida de la aventura gráfica española de los 90.",
-     "f": "Pendulo sigue en activo más de treinta años después."
+     "d": "El universo de Zork pasa a gráficos y vídeo digitalizado, con una interfaz que propone acciones según el objeto.",
+     "f": "Su frase «Want some rye? Course ya do!» se volvió un meme de su época."
     },
     "en": {
-     "d": "A student wants to join a field trip to a tropical island to win over a girl. Pendulo's first game and the starting point of 1990s Spanish adventure games.",
-     "f": "Pendulo is still active more than thirty years later."
+     "d": "Zork's universe moves to graphics and digitised video, with an interface that offers actions depending on the object.",
+     "f": "Its line “Want some rye? Course ya do!” became a meme of its time."
     },
     "de": {
-     "d": "Ein Student will auf eine Exkursion zu einer Tropeninsel, um ein Mädchen zu beeindrucken. Pendulos Erstling und Startpunkt des spanischen Adventures der 90er.",
-     "f": "Pendulo ist über dreißig Jahre später noch aktiv."
+     "d": "Zorks Welt wird grafisch und mit digitalisiertem Video, die Oberfläche bietet je nach Objekt passende Aktionen an.",
+     "f": "Der Satz „Want some rye? Course ya do!“ wurde zum Running Gag seiner Zeit."
     },
     "fr": {
-     "d": "Un étudiant veut participer à une excursion sur une île tropicale pour séduire une fille. Premier jeu de Pendulo et point de départ de l'aventure espagnole des années 90.",
-     "f": "Pendulo est toujours actif plus de trente ans après."
+     "d": "L'univers de Zork passe au graphisme et à la vidéo numérisée, avec une interface qui propose des actions selon l'objet.",
+     "f": "Sa réplique « Want some rye? Course ya do! » est devenue culte."
     }
    },
-   "link": "https://www.pendulostudios.com/"
+   "link": "https://en.wikipedia.org/wiki/Return_to_Zork"
+  },
+  {
+   "id": "sam-and-max",
+   "year": 1993,
+   "title": "Sam & Max Hit the Road",
+   "studio": "LucasArts · Sean Clark, Michael Stemmle, Steve Purcell, Collette Michaud",
+   "engine": "SCUMM",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "El perro y el conejo policías de los cómics de Steve Purcell recorren las atracciones de carretera de Estados Unidos.",
+     "f": "Cambió la barra de verbos por iconos que se alternan con el botón derecho."
+    },
+    "en": {
+     "d": "Steve Purcell's comic-book dog and rabbit cops tour America's roadside attractions.",
+     "f": "It replaced the verb bar with icons cycled with the right mouse button."
+    },
+    "de": {
+     "d": "Hund und Hase aus Steve Purcells Comics klappern Amerikas Straßenattraktionen ab.",
+     "f": "Die Verbleiste wich Symbolen, die man mit der rechten Maustaste durchschaltet."
+    },
+    "fr": {
+     "d": "Le chien et le lapin policiers des BD de Steve Purcell visitent les attractions routières américaines.",
+     "f": "La barre de verbes a cédé la place à des icônes que l'on fait défiler au clic droit."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Sam_%26_Max_Hit_the_Road"
+  },
+  {
+   "id": "simon-the-sorcerer",
+   "year": 1993,
+   "title": "Simon the Sorcerer",
+   "studio": "Adventure Soft",
+   "engine": "AGOS",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Un adolescente británico cae en un mundo de cuentos y se burla de todos sus tópicos. Humor a lo Monkey Island con acento inglés.",
+     "f": "En la versión en CD le pone voz Chris Barrie, de «Red Dwarf»."
+    },
+    "en": {
+     "d": "A British teenager falls into a fairy-tale world and mocks every one of its clichés. Monkey Island-style humour with an English accent.",
+     "f": "In the CD version he is voiced by Chris Barrie of “Red Dwarf”."
+    },
+    "de": {
+     "d": "Ein britischer Teenager landet in einer Märchenwelt und verspottet all ihre Klischees. Humor wie Monkey Island, mit englischem Akzent.",
+     "f": "In der CD-Fassung spricht ihn Chris Barrie aus „Red Dwarf“."
+    },
+    "fr": {
+     "d": "Un adolescent britannique tombe dans un monde de contes et se moque de tous ses clichés. L'humour de Monkey Island à l'accent anglais.",
+     "f": "Dans la version CD, il a la voix de Chris Barrie, de « Red Dwarf »."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Simon_the_Sorcerer"
+  },
+  {
+   "id": "seventh-guest",
+   "year": 1993,
+   "title": "The 7th Guest",
+   "studio": "Trilobyte · Rob Landeros, Graeme Devine",
+   "engine": "Groovie",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Una mansión en 3D prerenderizado, actores en vídeo y puzles lógicos. Ayudó a vender lectores de CD-ROM.",
+     "f": "Ocupaba dos CD cuando la mayoría de juegos cabía en disquetes."
+    },
+    "en": {
+     "d": "A pre-rendered 3D mansion, live-action actors and logic puzzles. It helped sell CD-ROM drives.",
+     "f": "It took two CDs when most games still fitted on floppies."
+    },
+    "de": {
+     "d": "Ein vorgerendertes 3D-Herrenhaus, gefilmte Schauspieler und Logikrätsel. Es verkaufte CD-ROM-Laufwerke.",
+     "f": "Es belegte zwei CDs, als die meisten Spiele noch auf Disketten passten."
+    },
+    "fr": {
+     "d": "Un manoir en 3D précalculée, des acteurs filmés et des énigmes logiques. Il a fait vendre des lecteurs de CD-ROM.",
+     "f": "Il occupait deux CD quand la plupart des jeux tenaient sur disquettes."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_7th_Guest"
   },
   {
    "id": "beneath-a-steel-sky",
@@ -618,6 +1266,168 @@
    "link": "https://en.wikipedia.org/wiki/Beneath_a_Steel_Sky"
   },
   {
+   "id": "dreamweb",
+   "year": 1994,
+   "title": "DreamWeb",
+   "studio": "Creative Reality · Neil Dodwell, David Dew",
+   "engine": "DreamWeb",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Ciberpunk sombrío visto desde arriba: un camarero recibe en sueños la orden de matar a siete personas.",
+     "f": "Sus autores lo liberaron como freeware en 2012."
+    },
+    "en": {
+     "d": "Grim top-down cyberpunk: a bartender is told in his dreams to kill seven people.",
+     "f": "Its authors released it as freeware in 2012."
+    },
+    "de": {
+     "d": "Düsterer Cyberpunk von oben: Ein Barkeeper erhält im Traum den Auftrag, sieben Menschen zu töten.",
+     "f": "Die Autoren gaben es 2012 als Freeware frei."
+    },
+    "fr": {
+     "d": "Cyberpunk sombre en vue de dessus : un barman reçoit en rêve l'ordre de tuer sept personnes.",
+     "f": "Ses auteurs l'ont publié en freeware en 2012."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/DreamWeb"
+  },
+  {
+   "id": "igor",
+   "year": 1994,
+   "title": "Igor: Objetivo Uikokahonia",
+   "studio": "Pendulo Studios",
+   "engine": "Pendulo",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Un estudiante quiere apuntarse a una excursión a una isla tropical para conquistar a una chica. Primer juego de Pendulo y punto de partida de la aventura gráfica española de los 90.",
+     "f": "Pendulo sigue en activo más de treinta años después."
+    },
+    "en": {
+     "d": "A student wants to join a field trip to a tropical island to win over a girl. Pendulo's first game and the starting point of 1990s Spanish adventure games.",
+     "f": "Pendulo is still active more than thirty years later."
+    },
+    "de": {
+     "d": "Ein Student will auf eine Exkursion zu einer Tropeninsel, um ein Mädchen zu beeindrucken. Pendulos Erstling und Startpunkt des spanischen Adventures der 90er.",
+     "f": "Pendulo ist über dreißig Jahre später noch aktiv."
+    },
+    "fr": {
+     "d": "Un étudiant veut participer à une excursion sur une île tropicale pour séduire une fille. Premier jeu de Pendulo et point de départ de l'aventure espagnole des années 90.",
+     "f": "Pendulo est toujours actif plus de trente ans après."
+    }
+   },
+   "link": "https://www.pendulostudios.com/"
+  },
+  {
+   "id": "inherit-the-earth",
+   "year": 1994,
+   "title": "Inherit the Earth: Quest for the Orb",
+   "studio": "The Dreamers Guild",
+   "engine": "SAGA",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Animales antropomorfos en un mundo sin humanos: el zorro Rif debe recuperar un orbe robado para demostrar su inocencia.",
+     "f": "Fue el primer juego con el motor SAGA, que luego usó I Have No Mouth, and I Must Scream."
+    },
+    "en": {
+     "d": "Anthropomorphic animals in a world without humans: Rif the fox must recover a stolen orb to prove his innocence.",
+     "f": "It was the first game on the SAGA engine, later used by I Have No Mouth, and I Must Scream."
+    },
+    "de": {
+     "d": "Vermenschlichte Tiere in einer Welt ohne Menschen: Fuchs Rif muss einen gestohlenen Orb zurückholen, um seine Unschuld zu beweisen.",
+     "f": "Es war das erste Spiel mit der SAGA-Engine, die später I Have No Mouth, and I Must Scream nutzte."
+    },
+    "fr": {
+     "d": "Des animaux anthropomorphes dans un monde sans humains : le renard Rif doit retrouver un orbe volé pour prouver son innocence.",
+     "f": "Ce fut le premier jeu du moteur SAGA, utilisé ensuite par I Have No Mouth, and I Must Scream."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Inherit_the_Earth:_Quest_for_the_Orb"
+  },
+  {
+   "id": "under-a-killing-moon",
+   "year": 1994,
+   "title": "Under a Killing Moon",
+   "studio": "Access Software · Chris Jones",
+   "engine": "Access",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "El detective Tex Murphy recorre en 3D libre una San Francisco posapocalíptica, con escenas de vídeo con actores.",
+     "f": "Venía en cuatro CD y tenía actores como Brian Keith y Margot Kidder."
+    },
+    "en": {
+     "d": "Detective Tex Murphy explores a post-apocalyptic San Francisco in free-roaming 3D, with live-action video scenes.",
+     "f": "It came on four CDs and featured actors such as Brian Keith and Margot Kidder."
+    },
+    "de": {
+     "d": "Detektiv Tex Murphy erkundet ein postapokalyptisches San Francisco in frei begehbarem 3D, mit gefilmten Videoszenen.",
+     "f": "Es kam auf vier CDs, mit Schauspielern wie Brian Keith und Margot Kidder."
+    },
+    "fr": {
+     "d": "Le détective Tex Murphy explore en 3D libre un San Francisco post-apocalyptique, avec des scènes filmées.",
+     "f": "Il tenait sur quatre CD, avec des acteurs comme Brian Keith et Margot Kidder."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Under_a_Killing_Moon"
+  },
+  {
+   "id": "discworld",
+   "year": 1995,
+   "title": "Discworld",
+   "studio": "Teeny Weeny Games · Perfect 10 Productions · Psygnosis",
+   "engine": "Tinsel",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Rincewind, el mago más incompetente del Mundodisco de Terry Pratchett, debe detener a un dragón. Puzles famosos por lo enrevesados.",
+     "f": "Eric Idle, de Monty Python, pone voz a Rincewind."
+    },
+    "en": {
+     "d": "Rincewind, the most inept wizard of Terry Pratchett's Discworld, must stop a dragon. Its puzzles are famously convoluted.",
+     "f": "Monty Python's Eric Idle voices Rincewind."
+    },
+    "de": {
+     "d": "Rincewind, der unfähigste Zauberer aus Terry Pratchetts Scheibenwelt, muss einen Drachen aufhalten. Die Rätsel sind berüchtigt verschachtelt.",
+     "f": "Eric Idle von Monty Python spricht Rincewind."
+    },
+    "fr": {
+     "d": "Rincewind, le mage le plus incompétent du Disque-monde de Terry Pratchett, doit arrêter un dragon. Ses énigmes sont réputées tordues.",
+     "f": "Eric Idle, des Monty Python, prête sa voix à Rincewind."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Discworld_(video_game)"
+  },
+  {
+   "id": "flight-of-the-amazon-queen",
+   "year": 1995,
+   "title": "Flight of the Amazon Queen",
+   "studio": "Interactive Binary Illusions · Warner Interactive",
+   "engine": "Queen",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Un piloto de los años 40 se estrella en el Amazonas y descubre un científico loco que convierte amazonas en dinosaurios.",
+     "f": "Se distribuye gratis desde 2004 con ScummVM."
+    },
+    "en": {
+     "d": "A 1940s pilot crash-lands in the Amazon and finds a mad scientist turning Amazon women into dinosaurs.",
+     "f": "It has been distributed for free with ScummVM since 2004."
+    },
+    "de": {
+     "d": "Ein Pilot der 40er-Jahre stürzt am Amazonas ab und entdeckt einen verrückten Wissenschaftler, der Amazonen in Dinosaurier verwandelt.",
+     "f": "Seit 2004 wird es kostenlos mit ScummVM verteilt."
+    },
+    "fr": {
+     "d": "Un pilote des années 40 s'écrase en Amazonie et découvre un savant fou qui change les Amazones en dinosaures.",
+     "f": "Il est distribué gratuitement avec ScummVM depuis 2004."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Flight_of_the_Amazon_Queen"
+  },
+  {
    "id": "full-throttle",
    "year": 1995,
    "title": "Full Throttle",
@@ -643,6 +1453,168 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/Full_Throttle_(1995_video_game)"
+  },
+  {
+   "id": "i-have-no-mouth",
+   "year": 1995,
+   "title": "I Have No Mouth, and I Must Scream",
+   "studio": "The Dreamers Guild · Cyberdreams · Harlan Ellison",
+   "engine": "SAGA",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Basado en el relato de Harlan Ellison: una superinteligencia tortura a los cinco últimos humanos, cada uno en su propia pesadilla.",
+     "f": "Ellison participó en el guion y puso voz a la máquina AM."
+    },
+    "en": {
+     "d": "Based on Harlan Ellison's story: a superintelligence tortures the last five humans, each in their own nightmare.",
+     "f": "Ellison co-wrote the script and voiced the machine AM."
+    },
+    "de": {
+     "d": "Nach Harlan Ellisons Erzählung: Eine Superintelligenz quält die letzten fünf Menschen, jeden in seinem eigenen Albtraum.",
+     "f": "Ellison schrieb am Drehbuch mit und sprach die Maschine AM."
+    },
+    "fr": {
+     "d": "D'après la nouvelle de Harlan Ellison : une superintelligence torture les cinq derniers humains, chacun dans son propre cauchemar.",
+     "f": "Ellison a coécrit le scénario et prêté sa voix à la machine AM."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/I_Have_No_Mouth,_and_I_Must_Scream_(video_game)"
+  },
+  {
+   "id": "lost-eden",
+   "year": 1995,
+   "title": "Lost Eden",
+   "studio": "Cryo Interactive",
+   "engine": "Cryo",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "El príncipe Adam debe unir a humanos y dinosaurios contra los tiranos. Escenarios en 3D prerenderizado y música de Stéphane Picq.",
+     "f": "Cryo era el estudio francés de Dune (1992) y Atlantis."
+    },
+    "en": {
+     "d": "Prince Adam must unite humans and dinosaurs against tyrants. Pre-rendered 3D sets and music by Stéphane Picq.",
+     "f": "Cryo was the French studio behind Dune (1992) and Atlantis."
+    },
+    "de": {
+     "d": "Prinz Adam muss Menschen und Dinosaurier gegen Tyrannen vereinen. Vorgerenderte 3D-Kulissen, Musik von Stéphane Picq.",
+     "f": "Cryo war das französische Studio hinter Dune (1992) und Atlantis."
+    },
+    "fr": {
+     "d": "Le prince Adam doit unir humains et dinosaures contre les tyrans. Décors en 3D précalculée et musique de Stéphane Picq.",
+     "f": "Cryo était le studio français de Dune (1992) et d'Atlantis."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Lost_Eden"
+  },
+  {
+   "id": "phantasmagoria",
+   "year": 1995,
+   "title": "Phantasmagoria",
+   "studio": "Sierra · Roberta Williams",
+   "engine": "SCI",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Terror con actores reales filmados sobre fondos generados por ordenador. Su violencia causó polémica y vetos en tiendas.",
+     "f": "Ocupaba siete CD."
+    },
+    "en": {
+     "d": "Horror with real actors filmed over computer-generated backgrounds. Its violence caused controversy and store bans.",
+     "f": "It shipped on seven CDs."
+    },
+    "de": {
+     "d": "Horror mit echten Schauspielern vor computergenerierten Hintergründen. Seine Gewalt sorgte für Kontroversen und Verkaufsverbote.",
+     "f": "Es kam auf sieben CDs."
+    },
+    "fr": {
+     "d": "De l'horreur avec de vrais acteurs filmés sur des décors en images de synthèse. Sa violence a fait scandale et l'a fait bannir de magasins.",
+     "f": "Il tenait sur sept CD."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Phantasmagoria_(video_game)"
+  },
+  {
+   "id": "teenagent",
+   "year": 1995,
+   "title": "Teenagent",
+   "studio": "Metropolis Software",
+   "engine": "Teenagent",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Un adolescente torpe es reclutado como agente secreto. Aventura polaca de humor absurdo.",
+     "f": "Hoy es freeware y funciona en ScummVM."
+    },
+    "en": {
+     "d": "A clumsy teenager is recruited as a secret agent. A Polish adventure full of absurd humour.",
+     "f": "It is freeware today and runs in ScummVM."
+    },
+    "de": {
+     "d": "Ein tollpatschiger Teenager wird als Geheimagent angeworben. Ein polnisches Adventure voller absurdem Humor.",
+     "f": "Heute ist es Freeware und läuft in ScummVM."
+    },
+    "fr": {
+     "d": "Un adolescent maladroit est recruté comme agent secret. Une aventure polonaise à l'humour absurde.",
+     "f": "C'est aujourd'hui un freeware qui tourne sous ScummVM."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Teen_Agent"
+  },
+  {
+   "id": "gabriel-knight-2",
+   "year": 1995,
+   "title": "The Beast Within: A Gabriel Knight Mystery",
+   "studio": "Sierra · Jane Jensen",
+   "engine": "SCI",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Gabriel investiga hombres lobo en Baviera y la historia de Luis II. Rodado íntegramente con actores en vídeo.",
+     "f": "Incluye una ópera original compuesta para el juego."
+    },
+    "en": {
+     "d": "Gabriel investigates werewolves in Bavaria and the history of Ludwig II, shot entirely as full-motion video.",
+     "f": "It includes an original opera composed for the game."
+    },
+    "de": {
+     "d": "Gabriel ermittelt in Bayern gegen Werwölfe und rund um Ludwig II., komplett als Realfilm gedreht.",
+     "f": "Es enthält eine eigens komponierte Oper."
+    },
+    "fr": {
+     "d": "Gabriel enquête sur des loups-garous en Bavière et sur Louis II, entièrement tourné en vidéo.",
+     "f": "Il comprend un opéra original composé pour le jeu."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Beast_Within:_A_Gabriel_Knight_Mystery"
+  },
+  {
+   "id": "the-dig",
+   "year": 1995,
+   "title": "The Dig",
+   "studio": "LucasArts · Sean Clark",
+   "engine": "SCUMM · iMUSE",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Ciencia ficción seria a partir de una idea de Steven Spielberg: tres astronautas quedan atrapados en un planeta alienígena.",
+     "f": "Tardó unos seis años en desarrollarse y pasó por varios directores."
+    },
+    "en": {
+     "d": "Serious science fiction from an idea by Steven Spielberg: three astronauts are stranded on an alien planet.",
+     "f": "It took around six years to make and went through several project leads."
+    },
+    "de": {
+     "d": "Ernsthafte Science-Fiction nach einer Idee von Steven Spielberg: Drei Astronauten stranden auf einem fremden Planeten.",
+     "f": "Die Entwicklung dauerte rund sechs Jahre und sah mehrere Projektleiter."
+    },
+    "fr": {
+     "d": "De la science-fiction sérieuse d'après une idée de Steven Spielberg : trois astronautes échouent sur une planète extraterrestre.",
+     "f": "Son développement a duré environ six ans et connu plusieurs chefs de projet."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Dig_(video_game)"
   },
   {
    "id": "broken-sword",
@@ -672,58 +1644,139 @@
    "link": "https://en.wikipedia.org/wiki/Broken_Sword:_The_Shadow_of_the_Templars"
   },
   {
-   "id": "curse-of-monkey-island",
-   "year": 1997,
-   "title": "The Curse of Monkey Island",
-   "studio": "LucasArts · Larry Ahern, Jonathan Ackley",
-   "engine": "SCUMM",
+   "id": "drascula",
+   "year": 1996,
+   "title": "Drascula: The Vampire Strikes Back",
+   "studio": "Alcachofa Soft",
+   "engine": "Drascula",
    "era": "golden",
    "text": {
     "es": {
-     "d": "Alta resolución, dibujos animados a mano y una moneda de verbos que aparece al mantener pulsado el botón.",
-     "f": "Fue el último juego de LucasArts hecho con SCUMM."
+     "d": "Aventura española de humor gamberro: John Hacker, agente inmobiliario, se enfrenta al conde Drascula en Transilvania.",
+     "f": "Alcachofa Soft la liberó como freeware y funciona en ScummVM."
     },
     "en": {
-     "d": "High resolution, hand-drawn cartoons and a verb coin that appears when you hold down the button.",
-     "f": "It was the last LucasArts game built with SCUMM."
+     "d": "A Spanish adventure with irreverent humour: estate agent John Hacker takes on Count Drascula in Transylvania.",
+     "f": "Alcachofa Soft released it as freeware and it runs in ScummVM."
     },
     "de": {
-     "d": "Hohe Auflösung, handgezeichnete Animation und eine Verbmünze, die beim Gedrückthalten der Taste erscheint.",
-     "f": "Es war das letzte LucasArts-Spiel mit SCUMM."
+     "d": "Ein spanisches Adventure mit frechem Humor: Makler John Hacker legt sich in Transsilvanien mit Graf Drascula an.",
+     "f": "Alcachofa Soft gab es als Freeware frei; es läuft in ScummVM."
     },
     "fr": {
-     "d": "Haute résolution, dessins animés à la main et une pièce de verbes qui apparaît quand on maintient le bouton.",
-     "f": "Ce fut le dernier jeu LucasArts réalisé avec SCUMM."
+     "d": "Une aventure espagnole à l'humour potache : l'agent immobilier John Hacker affronte le comte Drascula en Transylvanie.",
+     "f": "Alcachofa Soft l'a publiée en freeware et elle tourne sous ScummVM."
     }
    },
-   "link": "https://en.wikipedia.org/wiki/The_Curse_of_Monkey_Island"
+   "link": "https://en.wikipedia.org/wiki/Dr%C3%A1cula:_The_Vampire_Strikes_Back"
   },
   {
-   "id": "hollywood-monsters",
-   "year": 1997,
-   "title": "Hollywood Monsters",
-   "studio": "Pendulo Studios",
-   "engine": "Pendulo",
+   "id": "neverhood",
+   "year": 1996,
+   "title": "The Neverhood",
+   "studio": "The Neverhood, Inc. · Doug TenNapel · DreamWorks Interactive",
+   "engine": "Neverhood",
    "era": "golden",
    "text": {
     "es": {
-     "d": "Dos periodistas investigan la desaparición de un monstruo en la fiesta de las estrellas del cine de terror. Doblaje de lujo y enorme éxito en España.",
-     "f": "Su secuela espiritual, The Next BIG Thing (2011), recuperó la idea."
+     "d": "Todo está hecho de plastilina animada fotograma a fotograma: el muñeco Klaymen explora un mundo surrealista.",
+     "f": "La música de Terry Scott Taylor mezcla blues, jazz y canturreos sin letra."
     },
     "en": {
-     "d": "Two reporters investigate a monster's disappearance at a party for horror film stars. Top-notch voice acting and a huge hit in Spain.",
-     "f": "Its spiritual sequel, The Next BIG Thing (2011), revisited the idea."
+     "d": "Everything is stop-motion clay: the clay figure Klaymen explores a surreal world.",
+     "f": "Terry Scott Taylor's soundtrack mixes blues, jazz and wordless humming."
     },
     "de": {
-     "d": "Zwei Reporter untersuchen das Verschwinden eines Monsters auf einer Party der Horrorfilmstars. Erstklassige Synchronisation und ein Riesenerfolg in Spanien.",
-     "f": "Der geistige Nachfolger The Next BIG Thing (2011) griff die Idee wieder auf."
+     "d": "Alles besteht aus Knetmasse im Stop-Motion-Verfahren: Die Figur Klaymen erkundet eine surreale Welt.",
+     "f": "Terry Scott Taylors Musik mischt Blues, Jazz und Summen ohne Worte."
     },
     "fr": {
-     "d": "Deux journalistes enquêtent sur la disparition d'un monstre lors d'une fête des stars du cinéma d'horreur. Doublage de luxe et énorme succès en Espagne.",
-     "f": "Sa suite spirituelle, The Next BIG Thing (2011), a repris l'idée."
+     "d": "Tout est en pâte à modeler animée image par image : la figurine Klaymen explore un monde surréaliste.",
+     "f": "La musique de Terry Scott Taylor mêle blues, jazz et fredonnements sans paroles."
     }
    },
-   "link": "https://www.pendulostudios.com/"
+   "link": "https://en.wikipedia.org/wiki/The_Neverhood"
+  },
+  {
+   "id": "toonstruck",
+   "year": 1996,
+   "title": "Toonstruck",
+   "studio": "Burst Studios · Virgin Interactive",
+   "engine": "Burst",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Christopher Lloyd, en imagen real, queda atrapado en un mundo de dibujos animados.",
+     "f": "Gran parte de la historia prevista se dejó para una segunda parte que nunca salió."
+    },
+    "en": {
+     "d": "Christopher Lloyd, in live action, is trapped in a cartoon world.",
+     "f": "Much of the planned story was left for a sequel that never came."
+    },
+    "de": {
+     "d": "Christopher Lloyd, als echter Schauspieler, steckt in einer Zeichentrickwelt fest.",
+     "f": "Ein großer Teil der geplanten Geschichte blieb einer Fortsetzung vorbehalten, die nie erschien."
+    },
+    "fr": {
+     "d": "Christopher Lloyd, en prise de vue réelle, se retrouve piégé dans un monde de dessin animé.",
+     "f": "Une grande partie de l'histoire prévue a été laissée pour une suite jamais sortie."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Toonstruck"
+  },
+  {
+   "id": "zork-nemesis",
+   "year": 1996,
+   "title": "Zork Nemesis",
+   "studio": "Zombie LLC · Activision",
+   "engine": "Z-Vision",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Zork se vuelve oscuro: puzles mecánicos y alquímicos en templos panorámicos con vídeo integrado.",
+     "f": "Su motor Z-Vision mostraba panorámicas giratorias de 360° en primera persona."
+    },
+    "en": {
+     "d": "Zork turns dark: mechanical and alchemical puzzles in panoramic temples with embedded video.",
+     "f": "Its Z-Vision engine displayed first-person 360° rotating panoramas."
+    },
+    "de": {
+     "d": "Zork wird düster: mechanische und alchemistische Rätsel in Panorama-Tempeln mit eingebettetem Video.",
+     "f": "Die Z-Vision-Engine zeigte drehbare 360°-Panoramen aus der Ich-Perspektive."
+    },
+    "fr": {
+     "d": "Zork devient sombre : énigmes mécaniques et alchimiques dans des temples panoramiques avec vidéo intégrée.",
+     "f": "Son moteur Z-Vision affichait des panoramas rotatifs à 360° en vue subjective."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Zork_Nemesis"
+  },
+  {
+   "id": "atlantis-lost-tales",
+   "year": 1997,
+   "title": "Atlantis: The Lost Tales",
+   "studio": "Cryo Interactive",
+   "engine": "OMNI3D",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Un guardia de la reina explora la Atlántida en panorámicas de 360° con personajes animados en 3D.",
+     "f": "Su motor OMNI3D permitía mirar libremente alrededor en cada nodo."
+    },
+    "en": {
+     "d": "A queen's guard explores Atlantis in 360° panoramas with animated 3D characters.",
+     "f": "Its OMNI3D engine let you look freely around at every node."
+    },
+    "de": {
+     "d": "Ein Wächter der Königin erkundet Atlantis in 360°-Panoramen mit animierten 3D-Figuren.",
+     "f": "Die OMNI3D-Engine erlaubte an jedem Punkt freies Umsehen."
+    },
+    "fr": {
+     "d": "Un garde de la reine explore l'Atlantide en panoramas à 360° avec des personnages animés en 3D.",
+     "f": "Son moteur OMNI3D permettait de regarder librement autour de soi à chaque nœud."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Atlantis:_The_Lost_Tales"
   },
   {
    "id": "blade-runner",
@@ -753,6 +1806,168 @@
    "link": "https://en.wikipedia.org/wiki/Blade_Runner_(1997_video_game)"
   },
   {
+   "id": "broken-sword-2",
+   "year": 1997,
+   "title": "Broken Sword II: The Smoking Mirror",
+   "studio": "Revolution Software · Charles Cecil",
+   "engine": "Virtual Theatre",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "George y Nico persiguen una conspiración maya entre París, Centroamérica y el Caribe.",
+     "f": "Nico es personaje jugable en varios tramos."
+    },
+    "en": {
+     "d": "George and Nico chase a Mayan conspiracy from Paris to Central America and the Caribbean.",
+     "f": "Nico is playable in several sections."
+    },
+    "de": {
+     "d": "George und Nico jagen einer Maya-Verschwörung von Paris bis Mittelamerika und in die Karibik nach.",
+     "f": "Nico ist in mehreren Abschnitten spielbar."
+    },
+    "fr": {
+     "d": "George et Nico poursuivent une conspiration maya de Paris à l'Amérique centrale et aux Caraïbes.",
+     "f": "Nico est jouable dans plusieurs passages."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Broken_Sword_II:_The_Smoking_Mirror"
+  },
+  {
+   "id": "hollywood-monsters",
+   "year": 1997,
+   "title": "Hollywood Monsters",
+   "studio": "Pendulo Studios",
+   "engine": "Pendulo",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Dos periodistas investigan la desaparición de un monstruo en la fiesta de las estrellas del cine de terror. Doblaje de lujo y enorme éxito en España.",
+     "f": "Su secuela espiritual, The Next BIG Thing (2011), recuperó la idea."
+    },
+    "en": {
+     "d": "Two reporters investigate a monster's disappearance at a party for horror film stars. Top-notch voice acting and a huge hit in Spain.",
+     "f": "Its spiritual sequel, The Next BIG Thing (2011), revisited the idea."
+    },
+    "de": {
+     "d": "Zwei Reporter untersuchen das Verschwinden eines Monsters auf einer Party der Horrorfilmstars. Erstklassige Synchronisation und ein Riesenerfolg in Spanien.",
+     "f": "Der geistige Nachfolger The Next BIG Thing (2011) griff die Idee wieder auf."
+    },
+    "fr": {
+     "d": "Deux journalistes enquêtent sur la disparition d'un monstre lors d'une fête des stars du cinéma d'horreur. Doublage de luxe et énorme succès en Espagne.",
+     "f": "Sa suite spirituelle, The Next BIG Thing (2011), a repris l'idée."
+    }
+   },
+   "link": "https://www.pendulostudios.com/"
+  },
+  {
+   "id": "riven",
+   "year": 1997,
+   "title": "Riven",
+   "studio": "Cyan · Robyn Miller, Richard Vander Wende",
+   "engine": "Cyan",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "La secuela de Myst: un archipiélago con cultura, idioma y sistema numérico propios que hay que descifrar.",
+     "f": "Ocupaba cinco CD."
+    },
+    "en": {
+     "d": "Myst's sequel: an archipelago with its own culture, language and number system to decipher.",
+     "f": "It shipped on five CDs."
+    },
+    "de": {
+     "d": "Die Fortsetzung von Myst: ein Archipel mit eigener Kultur, Sprache und Zahlensystem, das man entschlüsseln muss.",
+     "f": "Es kam auf fünf CDs."
+    },
+    "fr": {
+     "d": "La suite de Myst : un archipel doté de sa propre culture, de sa langue et de son système de numération à déchiffrer.",
+     "f": "Il tenait sur cinq CD."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Riven"
+  },
+  {
+   "id": "curse-of-monkey-island",
+   "year": 1997,
+   "title": "The Curse of Monkey Island",
+   "studio": "LucasArts · Larry Ahern, Jonathan Ackley",
+   "engine": "SCUMM",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Alta resolución, dibujos animados a mano y una moneda de verbos que aparece al mantener pulsado el botón.",
+     "f": "Fue el último juego de LucasArts hecho con SCUMM."
+    },
+    "en": {
+     "d": "High resolution, hand-drawn cartoons and a verb coin that appears when you hold down the button.",
+     "f": "It was the last LucasArts game built with SCUMM."
+    },
+    "de": {
+     "d": "Hohe Auflösung, handgezeichnete Animation und eine Verbmünze, die beim Gedrückthalten der Taste erscheint.",
+     "f": "Es war das letzte LucasArts-Spiel mit SCUMM."
+    },
+    "fr": {
+     "d": "Haute résolution, dessins animés à la main et une pièce de verbes qui apparaît quand on maintient le bouton.",
+     "f": "Ce fut le dernier jeu LucasArts réalisé avec SCUMM."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Curse_of_Monkey_Island"
+  },
+  {
+   "id": "last-express",
+   "year": 1997,
+   "title": "The Last Express",
+   "studio": "Smoking Car Productions · Jordan Mechner",
+   "engine": "Smoking Car",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Un asesinato en el Orient Express en vísperas de la Primera Guerra Mundial, en tiempo real y con estilo Art Nouveau.",
+     "f": "Los personajes se rodaron con actores y se convirtieron en dibujo mediante rotoscopia."
+    },
+    "en": {
+     "d": "A murder on the Orient Express on the eve of the First World War, in real time and in Art Nouveau style.",
+     "f": "The characters were filmed with actors and turned into drawings by rotoscoping."
+    },
+    "de": {
+     "d": "Ein Mord im Orient-Express am Vorabend des Ersten Weltkriegs, in Echtzeit und im Jugendstil.",
+     "f": "Die Figuren wurden mit Schauspielern gefilmt und per Rotoskopie in Zeichnungen verwandelt."
+    },
+    "fr": {
+     "d": "Un meurtre dans l'Orient-Express à la veille de la Première Guerre mondiale, en temps réel et dans un style Art nouveau.",
+     "f": "Les personnages ont été filmés avec des acteurs puis transformés en dessins par rotoscopie."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Last_Express"
+  },
+  {
+   "id": "zork-grand-inquisitor",
+   "year": 1997,
+   "title": "Zork: Grand Inquisitor",
+   "studio": "Activision",
+   "engine": "Z-Vision",
+   "era": "golden",
+   "text": {
+    "es": {
+     "d": "Vuelve el humor de Infocom: un inquisidor ha prohibido la magia y hay que recuperar los artefactos del Gran Imperio Subterráneo.",
+     "f": "Sus personajes son actores en vídeo dentro de panorámicas en 3D."
+    },
+    "en": {
+     "d": "Infocom's humour returns: an inquisitor has banned magic and you must recover the artefacts of the Great Underground Empire.",
+     "f": "Its characters are video actors inside 3D panoramas."
+    },
+    "de": {
+     "d": "Der Infocom-Humor kehrt zurück: Ein Inquisitor hat die Magie verboten, und man muss die Artefakte des Großen Unterirdischen Reichs bergen.",
+     "f": "Die Figuren sind gefilmte Schauspieler in 3D-Panoramen."
+    },
+    "fr": {
+     "d": "L'humour d'Infocom revient : un inquisiteur a interdit la magie et il faut récupérer les artefacts du Grand Empire souterrain.",
+     "f": "Ses personnages sont des acteurs filmés dans des panoramas 3D."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Zork:_Grand_Inquisitor"
+  },
+  {
    "id": "grim-fandango",
    "year": 1998,
    "title": "Grim Fandango",
@@ -780,6 +1995,60 @@
    "link": "https://en.wikipedia.org/wiki/Grim_Fandango"
   },
   {
+   "id": "sanitarium",
+   "year": 1998,
+   "title": "Sanitarium",
+   "studio": "DreamForge Intertainment · ASC Games",
+   "engine": "DreamForge",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "Un hombre despierta vendado en un manicomio sin recordar quién es. Vista isométrica y episodios que saltan entre realidad y delirio.",
+     "f": "Cada capítulo cambia de mundo y a veces de personaje jugable."
+    },
+    "en": {
+     "d": "A bandaged man wakes up in an asylum with no memory of who he is. Isometric view and episodes that shift between reality and delusion.",
+     "f": "Each chapter changes world and sometimes the playable character."
+    },
+    "de": {
+     "d": "Ein bandagierter Mann erwacht ohne Erinnerung in einer Anstalt. Isometrische Sicht und Episoden zwischen Wirklichkeit und Wahn.",
+     "f": "Jedes Kapitel wechselt die Welt und manchmal die spielbare Figur."
+    },
+    "fr": {
+     "d": "Un homme bandé se réveille dans un asile sans savoir qui il est. Vue isométrique et épisodes oscillant entre réalité et délire.",
+     "f": "Chaque chapitre change de monde et parfois de personnage jouable."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Sanitarium_(video_game)"
+  },
+  {
+   "id": "gabriel-knight-3",
+   "year": 1999,
+   "title": "Gabriel Knight 3: Blood of the Sacred, Blood of the Damned",
+   "studio": "Sierra · Jane Jensen",
+   "engine": "Sierra 3D",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "La saga pasa al 3D en tiempo real con una cámara libre, en torno al misterio de Rennes-le-Château.",
+     "f": "Su puzle del bigote falso se cita a menudo como ejemplo de lógica de aventura absurda."
+    },
+    "en": {
+     "d": "The series moves to real-time 3D with a free camera, around the Rennes-le-Château mystery.",
+     "f": "Its fake moustache puzzle is often cited as an example of absurd adventure logic."
+    },
+    "de": {
+     "d": "Die Reihe wechselt zu Echtzeit-3D mit freier Kamera, rund um das Rätsel von Rennes-le-Château.",
+     "f": "Das Rätsel mit dem falschen Schnurrbart gilt oft als Beispiel absurder Adventure-Logik."
+    },
+    "fr": {
+     "d": "La saga passe à la 3D temps réel avec caméra libre, autour du mystère de Rennes-le-Château.",
+     "f": "Son énigme de la fausse moustache est souvent citée comme exemple de logique d'aventure absurde."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Gabriel_Knight_3:_Blood_of_the_Sacred,_Blood_of_the_Damned"
+  },
+  {
    "id": "longest-journey",
    "year": 1999,
    "title": "The Longest Journey",
@@ -805,6 +2074,60 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/The_Longest_Journey"
+  },
+  {
+   "id": "escape-from-monkey-island",
+   "year": 2000,
+   "title": "Escape from Monkey Island",
+   "studio": "LucasArts · Sean Clark, Michael Stemmle",
+   "engine": "GrimE",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "La cuarta entrega lleva a Guybrush al 3D con el motor de Grim Fandango y control por teclado.",
+     "f": "Incluye «Monkey Kombat», una parodia de los duelos de insultos con piedra, papel y tijera."
+    },
+    "en": {
+     "d": "The fourth instalment takes Guybrush into 3D with Grim Fandango's engine and keyboard control.",
+     "f": "It includes “Monkey Kombat”, a rock-paper-scissors parody of the insult duels."
+    },
+    "de": {
+     "d": "Der vierte Teil bringt Guybrush mit der Engine von Grim Fandango und Tastatursteuerung in 3D.",
+     "f": "Es enthält „Monkey Kombat“, eine Schere-Stein-Papier-Parodie der Beleidigungsduelle."
+    },
+    "fr": {
+     "d": "Le quatrième épisode fait passer Guybrush à la 3D avec le moteur de Grim Fandango et un contrôle au clavier.",
+     "f": "Il comprend « Monkey Kombat », une parodie pierre-feuille-ciseaux des duels d'insultes."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Escape_from_Monkey_Island"
+  },
+  {
+   "id": "myst-3",
+   "year": 2001,
+   "title": "Myst III: Exile",
+   "studio": "Presto Studios · Ubisoft",
+   "engine": "Presto",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "Un nuevo estudio continúa la saga con panorámicas de 360° y un villano, Saavedro, que busca venganza contra Atrus.",
+     "f": "Brad Dourif interpreta a Saavedro."
+    },
+    "en": {
+     "d": "A new studio continues the series with 360° panoramas and a villain, Saavedro, seeking revenge on Atrus.",
+     "f": "Brad Dourif plays Saavedro."
+    },
+    "de": {
+     "d": "Ein neues Studio setzt die Reihe mit 360°-Panoramen fort; der Schurke Saavedro sinnt auf Rache an Atrus.",
+     "f": "Brad Dourif spielt Saavedro."
+    },
+    "fr": {
+     "d": "Un nouveau studio poursuit la saga avec des panoramas à 360° et un méchant, Saavedro, qui veut se venger d'Atrus.",
+     "f": "Brad Dourif incarne Saavedro."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Myst_III:_Exile"
   },
   {
    "id": "runaway",
@@ -861,6 +2184,195 @@
    "link": "https://en.wikipedia.org/wiki/Syberia_(video_game)"
   },
   {
+   "id": "sleeping-dragon",
+   "year": 2003,
+   "title": "Broken Sword: The Sleeping Dragon",
+   "studio": "Revolution Software · Charles Cecil",
+   "engine": "Revolution 3D",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "George y Nico pasan al 3D en tiempo real, con control directo y acciones asignadas a botones.",
+     "f": "Se diseñó también para consolas: PlayStation 2 y Xbox."
+    },
+    "en": {
+     "d": "George and Nico move to real-time 3D, with direct control and actions mapped to buttons.",
+     "f": "It was also designed for consoles: PlayStation 2 and Xbox."
+    },
+    "de": {
+     "d": "George und Nico wechseln zu Echtzeit-3D, mit direkter Steuerung und Aktionen auf Tasten.",
+     "f": "Es wurde auch für Konsolen entworfen: PlayStation 2 und Xbox."
+    },
+    "fr": {
+     "d": "George et Nico passent à la 3D temps réel, avec contrôle direct et actions associées aux boutons.",
+     "f": "Il a aussi été conçu pour les consoles : PlayStation 2 et Xbox."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Broken_Sword:_The_Sleeping_Dragon"
+  },
+  {
+   "id": "samorost",
+   "year": 2003,
+   "title": "Samorost",
+   "studio": "Amanita Design · Jakub Dvorský",
+   "engine": "Flash",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "Un gnomo salva su asteroide en un juego de navegador hecho con fotografías de musgo, corteza y setas.",
+     "f": "Fue el proyecto de fin de carrera de Jakub Dvorský y el origen de Amanita Design."
+    },
+    "en": {
+     "d": "A gnome saves his asteroid in a browser game built from photographs of moss, bark and mushrooms.",
+     "f": "It was Jakub Dvorský's graduation project and the origin of Amanita Design."
+    },
+    "de": {
+     "d": "Ein Wichtel rettet seinen Asteroiden in einem Browserspiel aus Fotos von Moos, Rinde und Pilzen.",
+     "f": "Es war Jakub Dvorskýs Abschlussprojekt und der Ursprung von Amanita Design."
+    },
+    "fr": {
+     "d": "Un gnome sauve son astéroïde dans un jeu de navigateur fait de photos de mousse, d'écorce et de champignons.",
+     "f": "C'était le projet de fin d'études de Jakub Dvorský et l'origine d'Amanita Design."
+    }
+   },
+   "link": "https://amanita-design.net/games/samorost.html"
+  },
+  {
+   "id": "black-mirror",
+   "year": 2003,
+   "title": "The Black Mirror",
+   "studio": "Future Games",
+   "engine": "AGDS",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "Gótico checo: Samuel Gordon vuelve a la mansión familiar en Inglaterra tras la muerte de su abuelo.",
+     "f": "Fondos prerenderizados y personajes 3D, en la tradición clásica de dos botones."
+    },
+    "en": {
+     "d": "Czech gothic: Samuel Gordon returns to his family's English manor after his grandfather's death.",
+     "f": "Pre-rendered backgrounds and 3D characters, in the classic two-button tradition."
+    },
+    "de": {
+     "d": "Tschechische Gothic: Samuel Gordon kehrt nach dem Tod seines Großvaters auf den englischen Familiensitz zurück.",
+     "f": "Vorgerenderte Hintergründe und 3D-Figuren in klassischer Zwei-Tasten-Tradition."
+    },
+    "fr": {
+     "d": "Gothique tchèque : Samuel Gordon revient au manoir familial en Angleterre après la mort de son grand-père.",
+     "f": "Décors précalculés et personnages 3D, dans la tradition classique à deux boutons."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Black_Mirror_(2003_video_game)"
+  },
+  {
+   "id": "syberia-2",
+   "year": 2004,
+   "title": "Syberia II",
+   "studio": "Microïds · Benoît Sokal",
+   "engine": "Virtools",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "Kate Walker y Hans Voralberg siguen en tren hacia la isla de los mamuts.",
+     "f": "Benoît Sokal era autor de cómics antes de diseñar videojuegos."
+    },
+    "en": {
+     "d": "Kate Walker and Hans Voralberg continue by train towards the island of the mammoths.",
+     "f": "Benoît Sokal was a comic-book artist before designing games."
+    },
+    "de": {
+     "d": "Kate Walker und Hans Voralberg fahren mit dem Zug weiter zur Insel der Mammuts.",
+     "f": "Benoît Sokal war Comiczeichner, bevor er Spiele entwarf."
+    },
+    "fr": {
+     "d": "Kate Walker et Hans Voralberg poursuivent en train vers l'île des mammouths.",
+     "f": "Benoît Sokal était auteur de bande dessinée avant de concevoir des jeux."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Syberia_II"
+  },
+  {
+   "id": "fahrenheit",
+   "year": 2005,
+   "title": "Fahrenheit",
+   "studio": "Quantic Dream · David Cage",
+   "engine": "Quantic Dream",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "Un hombre comete un asesinato en trance y el jugador controla también a los detectives que lo persiguen.",
+     "f": "En Norteamérica se llamó «Indigo Prophecy»."
+    },
+    "en": {
+     "d": "A man commits a murder in a trance, and the player also controls the detectives chasing him.",
+     "f": "In North America it was called “Indigo Prophecy”."
+    },
+    "de": {
+     "d": "Ein Mann begeht in Trance einen Mord; der Spieler steuert auch die Ermittler, die ihn jagen.",
+     "f": "In Nordamerika hieß es „Indigo Prophecy“."
+    },
+    "fr": {
+     "d": "Un homme commet un meurtre en transe, et le joueur contrôle aussi les enquêteurs qui le traquent.",
+     "f": "En Amérique du Nord, il s'appelait « Indigo Prophecy »."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Fahrenheit_(2005_video_game)"
+  },
+  {
+   "id": "still-life",
+   "year": 2005,
+   "title": "Still Life",
+   "studio": "Microïds",
+   "engine": "Microïds",
+   "era": "3d",
+   "text": {
+    "es": {
+     "d": "Una agente del FBI investiga un asesino en serie en Chicago mientras lee el caso de su abuelo en el Praga de los años 20.",
+     "f": "Es la continuación de Post Mortem (2002)."
+    },
+    "en": {
+     "d": "An FBI agent hunts a serial killer in Chicago while reading her grandfather's case in 1920s Prague.",
+     "f": "It is the follow-up to Post Mortem (2002)."
+    },
+    "de": {
+     "d": "Eine FBI-Agentin jagt in Chicago einen Serienmörder und liest dabei den Fall ihres Großvaters im Prag der 1920er.",
+     "f": "Es ist die Fortsetzung von Post Mortem (2002)."
+    },
+    "fr": {
+     "d": "Une agente du FBI traque un tueur en série à Chicago tout en lisant l'enquête de son grand-père dans le Prague des années 20.",
+     "f": "C'est la suite de Post Mortem (2002)."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Still_Life_(video_game)"
+  },
+  {
+   "id": "dreamfall",
+   "year": 2006,
+   "title": "Dreamfall: The Longest Journey",
+   "studio": "Funcom · Ragnar Tørnquist",
+   "engine": "Funcom",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Zoë Castillo, April Ryan y Kian Alvane, tres protagonistas entre Stark y Arcadia, en 3D en tiempo real.",
+     "f": "Su final abierto se resolvió en Dreamfall Chapters (2014–2016)."
+    },
+    "en": {
+     "d": "Zoë Castillo, April Ryan and Kian Alvane: three leads between Stark and Arcadia, in real-time 3D.",
+     "f": "Its open ending was resolved in Dreamfall Chapters (2014–2016)."
+    },
+    "de": {
+     "d": "Zoë Castillo, April Ryan und Kian Alvane: drei Hauptfiguren zwischen Stark und Arcadia, in Echtzeit-3D.",
+     "f": "Das offene Ende wurde in Dreamfall Chapters (2014–2016) aufgelöst."
+    },
+    "fr": {
+     "d": "Zoë Castillo, April Ryan et Kian Alvane : trois héros entre Stark et Arcadia, en 3D temps réel.",
+     "f": "Sa fin ouverte a été résolue dans Dreamfall Chapters (2014-2016)."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Dreamfall:_The_Longest_Journey"
+  },
+  {
    "id": "sam-max-save-the-world",
    "year": 2006,
    "title": "Sam & Max Save the World",
@@ -915,6 +2427,33 @@
    "link": "https://www.wadjeteyegames.com/"
   },
   {
+   "id": "edna-harvey",
+   "year": 2008,
+   "title": "Edna & Harvey: The Breakout",
+   "studio": "Daedalic Entertainment · Jan Müller-Michaelis",
+   "engine": "Visionaire Studio",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Edna escapa de un manicomio con la ayuda de Harvey, su conejo de peluche que habla.",
+     "f": "Nació como proyecto de fin de carrera de su autor y fue el primer juego de Daedalic."
+    },
+    "en": {
+     "d": "Edna escapes an asylum with the help of Harvey, her talking stuffed rabbit.",
+     "f": "It began as its author's university thesis project and was Daedalic's first game."
+    },
+    "de": {
+     "d": "Edna flieht mit Harvey, ihrem sprechenden Stoffhasen, aus der Anstalt.",
+     "f": "Es begann als Abschlussarbeit seines Autors und war Daedalics erstes Spiel."
+    },
+    "fr": {
+     "d": "Edna s'évade d'un asile avec l'aide de Harvey, son lapin en peluche qui parle.",
+     "f": "Né comme projet de fin d'études de son auteur, ce fut le premier jeu de Daedalic."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Edna_%26_Harvey:_The_Breakout"
+  },
+  {
    "id": "machinarium",
    "year": 2009,
    "title": "Machinarium",
@@ -942,6 +2481,168 @@
    "link": "https://amanita-design.net/games/machinarium.html"
   },
   {
+   "id": "tales-of-monkey-island",
+   "year": 2009,
+   "title": "Tales of Monkey Island",
+   "studio": "Telltale Games · LucasArts",
+   "engine": "Telltale Tool",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Guybrush vuelve en cinco episodios mensuales, con LeChuck convertido en humano.",
+     "f": "Dave Grossman, coautor de Monkey Island 1 y 2, fue su diseñador principal."
+    },
+    "en": {
+     "d": "Guybrush returns in five monthly episodes, with LeChuck turned human.",
+     "f": "Dave Grossman, co-writer of Monkey Island 1 and 2, was its lead designer."
+    },
+    "de": {
+     "d": "Guybrush kehrt in fünf monatlichen Episoden zurück; LeChuck ist plötzlich ein Mensch.",
+     "f": "Dave Grossman, Mitautor von Monkey Island 1 und 2, war leitender Designer."
+    },
+    "fr": {
+     "d": "Guybrush revient en cinq épisodes mensuels, avec un LeChuck redevenu humain.",
+     "f": "Dave Grossman, coauteur de Monkey Island 1 et 2, en était le concepteur principal."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Tales_of_Monkey_Island"
+  },
+  {
+   "id": "monkey-island-se",
+   "year": 2009,
+   "title": "The Secret of Monkey Island: Special Edition",
+   "studio": "LucasArts",
+   "engine": "SCUMM",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Remasterización con arte pintado a mano en alta resolución, voces y música regrabada.",
+     "f": "Una tecla alterna en cualquier momento entre los gráficos nuevos y los originales de 1990."
+    },
+    "en": {
+     "d": "A remaster with hand-painted high-resolution art, voices and re-recorded music.",
+     "f": "A single key switches at any time between the new graphics and the original 1990 ones."
+    },
+    "de": {
+     "d": "Ein Remaster mit handgemalter HD-Grafik, Sprachausgabe und neu eingespielter Musik.",
+     "f": "Eine Taste schaltet jederzeit zwischen neuer Grafik und dem Original von 1990 um."
+    },
+    "fr": {
+     "d": "Un remaster avec des graphismes peints à la main en haute résolution, des voix et une musique réenregistrée.",
+     "f": "Une touche permet à tout moment de basculer entre les nouveaux graphismes et ceux de 1990."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Secret_of_Monkey_Island"
+  },
+  {
+   "id": "whispered-world",
+   "year": 2009,
+   "title": "The Whispered World",
+   "studio": "Daedalic Entertainment · Marco Hüllen",
+   "engine": "Visionaire Studio",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Sadwick, un payaso melancólico, sueña con el fin de su mundo. Fondos pintados a mano en alta resolución.",
+     "f": "Su autor empezó a desarrollarlo antes de unirse a Daedalic."
+    },
+    "en": {
+     "d": "Sadwick, a melancholy clown, dreams of the end of his world. Hand-painted high-resolution backgrounds.",
+     "f": "Its author started developing it before joining Daedalic."
+    },
+    "de": {
+     "d": "Sadwick, ein melancholischer Clown, träumt vom Ende seiner Welt. Handgemalte hochauflösende Hintergründe.",
+     "f": "Sein Autor begann die Entwicklung, bevor er zu Daedalic kam."
+    },
+    "fr": {
+     "d": "Sadwick, un clown mélancolique, rêve de la fin de son monde. Décors peints à la main en haute résolution.",
+     "f": "Son auteur avait commencé à le développer avant de rejoindre Daedalic."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Whispered_World"
+  },
+  {
+   "id": "gemini-rue",
+   "year": 2011,
+   "title": "Gemini Rue",
+   "studio": "Joshua Nuernberger · Wadjet Eye Games",
+   "engine": "AGS",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Noir de ciencia ficción en un planeta donde siempre llueve, con dos historias paralelas que acaban encontrándose.",
+     "f": "Su autor lo empezó como proyecto de estudiante."
+    },
+    "en": {
+     "d": "Science-fiction noir on a planet where it always rains, with two parallel stories that eventually meet.",
+     "f": "Its author began it as a student project."
+    },
+    "de": {
+     "d": "Science-Fiction-Noir auf einem Planeten, auf dem es ständig regnet, mit zwei parallelen Geschichten, die sich schließlich treffen.",
+     "f": "Sein Autor begann es als Studentenprojekt."
+    },
+    "fr": {
+     "d": "Un polar de science-fiction sur une planète où il pleut sans cesse, avec deux histoires parallèles qui finissent par se rejoindre.",
+     "f": "Son auteur l'a commencé comme projet étudiant."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Gemini_Rue"
+  },
+  {
+   "id": "hollywood-monsters-2",
+   "year": 2011,
+   "title": "The Next BIG Thing",
+   "studio": "Pendulo Studios",
+   "engine": "Pendulo",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Dos periodistas cubren una gala de monstruos de cine y destapan una conspiración. Sucesora espiritual de Hollywood Monsters.",
+     "f": "En España se publicó como «Hollywood Monsters 2»."
+    },
+    "en": {
+     "d": "Two journalists cover a movie-monster gala and uncover a conspiracy. A spiritual successor to Hollywood Monsters.",
+     "f": "In Spain it was released as “Hollywood Monsters 2”."
+    },
+    "de": {
+     "d": "Zwei Journalisten berichten von einer Gala der Filmmonster und decken eine Verschwörung auf. Geistiger Nachfolger von Hollywood Monsters.",
+     "f": "In Spanien erschien es als „Hollywood Monsters 2“."
+    },
+    "fr": {
+     "d": "Deux journalistes couvrent un gala de monstres de cinéma et découvrent une conspiration. Successeur spirituel de Hollywood Monsters.",
+     "f": "En Espagne, il est sorti sous le titre « Hollywood Monsters 2 »."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Next_Big_Thing_(video_game)"
+  },
+  {
+   "id": "botanicula",
+   "year": 2012,
+   "title": "Botanicula",
+   "studio": "Amanita Design · Jaromír Plachý",
+   "engine": "Flash",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Cinco criaturas vegetales defienden la última semilla de su árbol de unos parásitos.",
+     "f": "La banda sonora es del grupo checo DVA."
+    },
+    "en": {
+     "d": "Five little plant creatures defend their tree's last seed from parasites.",
+     "f": "The soundtrack is by the Czech band DVA."
+    },
+    "de": {
+     "d": "Fünf Pflanzenwesen verteidigen den letzten Samen ihres Baumes gegen Parasiten.",
+     "f": "Die Musik stammt von der tschechischen Band DVA."
+    },
+    "fr": {
+     "d": "Cinq petites créatures végétales défendent la dernière graine de leur arbre contre des parasites.",
+     "f": "La bande originale est du groupe tchèque DVA."
+    }
+   },
+   "link": "https://amanita-design.net/games/botanicula.html"
+  },
+  {
    "id": "deponia",
    "year": 2012,
    "title": "Deponia",
@@ -967,6 +2668,60 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/Deponia_(video_game)"
+  },
+  {
+   "id": "primordia",
+   "year": 2012,
+   "title": "Primordia",
+   "studio": "Wormwood Studios · Wadjet Eye Games",
+   "engine": "AGS",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Robots en un mundo sin humanos: Horatio Nullbuilt y su compañero Crispin buscan una pieza robada.",
+     "f": "Tiene varios finales según las decisiones morales del jugador."
+    },
+    "en": {
+     "d": "Robots in a world without humans: Horatio Nullbuilt and his sidekick Crispin look for a stolen part.",
+     "f": "It has several endings depending on the player's moral choices."
+    },
+    "de": {
+     "d": "Roboter in einer Welt ohne Menschen: Horatio Nullbuilt und sein Begleiter Crispin suchen ein gestohlenes Bauteil.",
+     "f": "Je nach moralischen Entscheidungen gibt es mehrere Enden."
+    },
+    "fr": {
+     "d": "Des robots dans un monde sans humains : Horatio Nullbuilt et son acolyte Crispin cherchent une pièce volée.",
+     "f": "Il a plusieurs fins selon les choix moraux du joueur."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Primordia_(video_game)"
+  },
+  {
+   "id": "resonance",
+   "year": 2012,
+   "title": "Resonance",
+   "studio": "XII Games · Vince Twelve · Wadjet Eye Games",
+   "engine": "AGS",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Cuatro protagonistas y un descubrimiento físico peligroso. Se pueden guardar recuerdos como temas de conversación.",
+     "f": "La memoria a corto y largo plazo funcionan como un segundo inventario."
+    },
+    "en": {
+     "d": "Four protagonists and a dangerous physics discovery. You can store memories to use as conversation topics.",
+     "f": "Short- and long-term memory work as a second inventory."
+    },
+    "de": {
+     "d": "Vier Hauptfiguren und eine gefährliche physikalische Entdeckung. Erinnerungen lassen sich als Gesprächsthemen speichern.",
+     "f": "Kurz- und Langzeitgedächtnis dienen als zweites Inventar."
+    },
+    "fr": {
+     "d": "Quatre protagonistes et une découverte physique dangereuse. On peut garder des souvenirs comme sujets de conversation.",
+     "f": "Les mémoires à court et long terme servent de second inventaire."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Resonance_(video_game)"
   },
   {
    "id": "walking-dead",
@@ -1050,6 +2805,141 @@
    "link": "https://en.wikipedia.org/wiki/Broken_Age"
   },
   {
+   "id": "grim-fandango-remastered",
+   "year": 2015,
+   "title": "Grim Fandango Remastered",
+   "studio": "Double Fine · Tim Schafer",
+   "engine": "GrimE",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Remasterización con texturas mejoradas, iluminación nueva, música orquestal regrabada y control por ratón.",
+     "f": "Se puede alternar entre los gráficos originales y los nuevos."
+    },
+    "en": {
+     "d": "A remaster with improved textures, new lighting, re-recorded orchestral music and mouse control.",
+     "f": "You can switch between the original and the new graphics."
+    },
+    "de": {
+     "d": "Ein Remaster mit besseren Texturen, neuer Beleuchtung, neu eingespielter Orchestermusik und Maussteuerung.",
+     "f": "Man kann zwischen alter und neuer Grafik wechseln."
+    },
+    "fr": {
+     "d": "Un remaster avec textures améliorées, nouvel éclairage, musique orchestrale réenregistrée et contrôle à la souris.",
+     "f": "On peut basculer entre les graphismes d'origine et les nouveaux."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Grim_Fandango"
+  },
+  {
+   "id": "technobabylon",
+   "year": 2015,
+   "title": "Technobabylon",
+   "studio": "Technocrat Games · Wadjet Eye Games",
+   "engine": "AGS",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Ciberpunk en la ciudad de Newton: una adicta a la realidad virtual y dos agentes investigan asesinatos de «extracción de cerebros».",
+     "f": "Nació como una serie gratuita de capítulos hecha por James Dunn."
+    },
+    "en": {
+     "d": "Cyberpunk in the city of Newton: a virtual reality addict and two agents investigate “mind-jacking” murders.",
+     "f": "It began as a free episodic series by James Dunn."
+    },
+    "de": {
+     "d": "Cyberpunk in der Stadt Newton: Eine VR-Süchtige und zwei Agenten ermitteln in „Mindjacking“-Morden.",
+     "f": "Es begann als kostenlose Episodenreihe von James Dunn."
+    },
+    "fr": {
+     "d": "Cyberpunk dans la ville de Newton : une accro à la réalité virtuelle et deux agents enquêtent sur des meurtres par « mindjacking ».",
+     "f": "Il est né comme série épisodique gratuite de James Dunn."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Technobabylon"
+  },
+  {
+   "id": "kathy-rain",
+   "year": 2016,
+   "title": "Kathy Rain",
+   "studio": "Clifftop Games · Raw Fury",
+   "engine": "Unity",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "1995: una estudiante de periodismo vuelve al pueblo de su abuelo e investiga su pasado.",
+     "f": "Fue el primer juego del estudio sueco Clifftop Games, que luego hizo Whispers of a Machine."
+    },
+    "en": {
+     "d": "1995: a journalism student returns to her grandfather's town and investigates his past.",
+     "f": "It was the first game by Swedish studio Clifftop Games, who later made Whispers of a Machine."
+    },
+    "de": {
+     "d": "1995: Eine Journalistikstudentin kehrt in die Stadt ihres Großvaters zurück und erforscht seine Vergangenheit.",
+     "f": "Es war das erste Spiel des schwedischen Studios Clifftop Games, das später Whispers of a Machine machte."
+    },
+    "fr": {
+     "d": "1995 : une étudiante en journalisme retourne dans la ville de son grand-père et enquête sur son passé.",
+     "f": "C'est le premier jeu du studio suédois Clifftop Games, qui a ensuite créé Whispers of a Machine."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Kathy_Rain"
+  },
+  {
+   "id": "oxenfree",
+   "year": 2016,
+   "title": "Oxenfree",
+   "studio": "Night School Studio",
+   "engine": "Unity",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Adolescentes en una isla abren una grieta fantasmal con una radio. Los diálogos fluyen mientras caminas, sin detener la acción.",
+     "f": "El jugador puede interrumpir a los demás personajes."
+    },
+    "en": {
+     "d": "Teenagers on an island open a ghostly rift with a radio. Dialogue flows as you walk, without stopping the action.",
+     "f": "The player can interrupt the other characters."
+    },
+    "de": {
+     "d": "Jugendliche öffnen auf einer Insel mit einem Radio einen gespenstischen Riss. Dialoge laufen beim Gehen weiter, ohne Unterbrechung.",
+     "f": "Man kann anderen Figuren ins Wort fallen."
+    },
+    "fr": {
+     "d": "Des adolescents ouvrent une faille fantomatique avec une radio sur une île. Les dialogues s'enchaînent en marchant, sans interrompre l'action.",
+     "f": "Le joueur peut couper la parole aux autres personnages."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Oxenfree"
+  },
+  {
+   "id": "shardlight",
+   "year": 2016,
+   "title": "Shardlight",
+   "studio": "Wadjet Eye Games · Francisco Gonzalez",
+   "engine": "AGS",
+   "era": "revival",
+   "text": {
+    "es": {
+     "d": "Tras una guerra nuclear, una mecánica enferma busca la cura de un mal que el gobierno raciona en lotería.",
+     "f": "Su autor había creado antes «A Golden Wake»."
+    },
+    "en": {
+     "d": "After a nuclear war, a sick mechanic seeks the cure to a disease that the government rations by lottery.",
+     "f": "Its author had previously made “A Golden Wake”."
+    },
+    "de": {
+     "d": "Nach einem Atomkrieg sucht eine kranke Mechanikerin das Heilmittel gegen eine Seuche, das die Regierung per Lotterie zuteilt.",
+     "f": "Sein Autor hatte zuvor „A Golden Wake“ gemacht."
+    },
+    "fr": {
+     "d": "Après une guerre nucléaire, une mécanicienne malade cherche le remède d'un mal que le gouvernement rationne par loterie.",
+     "f": "Son auteur avait déjà créé « A Golden Wake »."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Shardlight"
+  },
+  {
    "id": "thimbleweed-park",
    "year": 2017,
    "title": "Thimbleweed Park",
@@ -1077,6 +2967,33 @@
    "link": "https://thimbleweed.com/"
   },
   {
+   "id": "lamplight-city",
+   "year": 2018,
+   "title": "Lamplight City",
+   "studio": "Grundislav Games · Application Systems Heidelberg",
+   "engine": "AGS",
+   "era": "now",
+   "text": {
+    "es": {
+     "d": "Un detective en una ciudad de vapor investiga casos que pueden quedar sin resolver: el juego sigue adelante aunque falles.",
+     "f": "Su autor, Francisco Gonzalez, es el mismo de Shardlight."
+    },
+    "en": {
+     "d": "A detective in a steam-powered city investigates cases that can go unsolved: the game moves on even if you fail.",
+     "f": "Its author, Francisco Gonzalez, also made Shardlight."
+    },
+    "de": {
+     "d": "Ein Detektiv in einer Dampfstadt ermittelt in Fällen, die ungelöst bleiben können: Das Spiel geht auch bei Misserfolg weiter.",
+     "f": "Sein Autor Francisco Gonzalez schuf auch Shardlight."
+    },
+    "fr": {
+     "d": "Un détective dans une ville à vapeur enquête sur des affaires qui peuvent rester non résolues : le jeu continue même en cas d'échec.",
+     "f": "Son auteur, Francisco Gonzalez, a aussi créé Shardlight."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Lamplight_City"
+  },
+  {
    "id": "unavowed",
    "year": 2018,
    "title": "Unavowed",
@@ -1102,6 +3019,87 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/Unavowed"
+  },
+  {
+   "id": "whispers-of-a-machine",
+   "year": 2019,
+   "title": "Whispers of a Machine",
+   "studio": "Clifftop Games · Raw Fury",
+   "engine": "AGS",
+   "era": "now",
+   "text": {
+    "es": {
+     "d": "Una detective con implantes resuelve asesinatos en un mundo que prohibió la inteligencia artificial.",
+     "f": "Sus habilidades aumentadas cambian según cómo te comportas en las conversaciones."
+    },
+    "en": {
+     "d": "A detective with implants solves murders in a world that banned artificial intelligence.",
+     "f": "Her augmented abilities change depending on how you behave in conversations."
+    },
+    "de": {
+     "d": "Eine Ermittlerin mit Implantaten klärt Morde in einer Welt, die künstliche Intelligenz verboten hat.",
+     "f": "Ihre erweiterten Fähigkeiten ändern sich je nach Verhalten in Gesprächen."
+    },
+    "fr": {
+     "d": "Une détective dotée d'implants résout des meurtres dans un monde qui a interdit l'intelligence artificielle.",
+     "f": "Ses capacités augmentées évoluent selon votre comportement dans les conversations."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Whispers_of_a_Machine"
+  },
+  {
+   "id": "beyond-a-steel-sky",
+   "year": 2020,
+   "title": "Beyond a Steel Sky",
+   "studio": "Revolution Software · Charles Cecil, Dave Gibbons",
+   "engine": "Unreal Engine",
+   "era": "now",
+   "text": {
+    "es": {
+     "d": "Secuela de Beneath a Steel Sky 26 años después, en 3D y con dibujos de Dave Gibbons, coautor de «Watchmen».",
+     "f": "Permite hackear los objetos para reescribir su comportamiento."
+    },
+    "en": {
+     "d": "A sequel to Beneath a Steel Sky 26 years later, in 3D and with art by Dave Gibbons, co-creator of “Watchmen”.",
+     "f": "It lets you hack objects to rewrite their behaviour."
+    },
+    "de": {
+     "d": "Fortsetzung von Beneath a Steel Sky 26 Jahre später, in 3D und mit Zeichnungen von Dave Gibbons, Mitschöpfer von „Watchmen“.",
+     "f": "Man kann Objekte hacken, um ihr Verhalten umzuschreiben."
+    },
+    "fr": {
+     "d": "Suite de Beneath a Steel Sky 26 ans après, en 3D et dessinée par Dave Gibbons, co-créateur de « Watchmen ».",
+     "f": "On peut pirater les objets pour réécrire leur comportement."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Beyond_a_Steel_Sky"
+  },
+  {
+   "id": "strangeland",
+   "year": 2021,
+   "title": "Strangeland",
+   "studio": "Wormwood Studios · Wadjet Eye Games",
+   "engine": "AGS",
+   "era": "now",
+   "text": {
+    "es": {
+     "d": "Una feria de pesadilla donde un hombre busca a una mujer que salta al vacío una y otra vez.",
+     "f": "Es el segundo juego del estudio de Primordia."
+    },
+    "en": {
+     "d": "A nightmarish carnival where a man searches for a woman who keeps leaping into the abyss.",
+     "f": "It is the second game by the studio behind Primordia."
+    },
+    "de": {
+     "d": "Ein albtraumhafter Jahrmarkt, auf dem ein Mann eine Frau sucht, die immer wieder in den Abgrund springt.",
+     "f": "Es ist das zweite Spiel des Primordia-Studios."
+    },
+    "fr": {
+     "d": "Une fête foraine cauchemardesque où un homme cherche une femme qui se jette encore et encore dans le vide.",
+     "f": "C'est le deuxième jeu du studio de Primordia."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/Strangeland_(video_game)"
   },
   {
    "id": "return-to-monkey-island",
@@ -1185,31 +3183,58 @@
    "link": "https://www.wadjeteyegames.com/"
   },
   {
-   "id": "old-skies",
-   "year": 2025,
-   "title": "Old Skies",
-   "studio": "Wadjet Eye Games",
-   "engine": "Wadjet Eye",
+   "id": "broken-sword-reforged",
+   "year": 2024,
+   "title": "Broken Sword – Shadow of the Templars: Reforged",
+   "studio": "Revolution Software",
+   "engine": "Revolution",
    "era": "now",
    "text": {
     "es": {
-     "d": "Una agente de viajes en el tiempo puede repetir cada escena hasta que todo salga bien. Pixel art en alta resolución.",
-     "f": "Convierte el ensayo y error de las viejas aventuras en la mecánica central."
+     "d": "Revolution redibuja el original de 1996 en 4K a partir de sus animaciones y fondos, con ayudas opcionales.",
+     "f": "Se puede alternar con los gráficos originales en cualquier momento."
     },
     "en": {
-     "d": "A time-travel agent can replay each scene until everything goes right. High-resolution pixel art.",
-     "f": "It turns the trial and error of old adventures into the core mechanic."
+     "d": "Revolution redraws the 1996 original in 4K from its animations and backgrounds, with optional hints.",
+     "f": "You can switch to the original graphics at any time."
     },
     "de": {
-     "d": "Eine Zeitreise-Agentin kann jede Szene wiederholen, bis alles klappt. Hochauflösende Pixel-Art.",
-     "f": "Es macht das Ausprobieren alter Adventures zur zentralen Mechanik."
+     "d": "Revolution zeichnet das Original von 1996 in 4K neu, auf Basis seiner Animationen und Hintergründe, mit optionalen Hilfen.",
+     "f": "Man kann jederzeit zur Originalgrafik wechseln."
     },
     "fr": {
-     "d": "Une agente de voyage temporel peut rejouer chaque scène jusqu'à ce que tout se passe bien. Pixel art en haute résolution.",
-     "f": "Il fait de l'essai-erreur des vieilles aventures sa mécanique centrale."
+     "d": "Revolution redessine l'original de 1996 en 4K à partir de ses animations et décors, avec des aides optionnelles.",
+     "f": "On peut revenir aux graphismes d'origine à tout moment."
     }
    },
-   "link": "https://www.wadjeteyegames.com/"
+   "link": "https://revolution.co.uk/"
+  },
+  {
+   "id": "rise-of-the-golden-idol",
+   "year": 2024,
+   "title": "The Rise of the Golden Idol",
+   "studio": "Color Gray Games",
+   "engine": "Unity",
+   "era": "now",
+   "text": {
+    "es": {
+     "d": "La secuela salta a los años 70: misma mecánica de deducción, rellenar huecos con palabras encontradas en la escena.",
+     "f": "Color Gray Games es un estudio de Letonia."
+    },
+    "en": {
+     "d": "The sequel jumps to the 1970s: the same deduction mechanic, filling blanks with words found in the scene.",
+     "f": "Color Gray Games is a studio from Latvia."
+    },
+    "de": {
+     "d": "Die Fortsetzung springt in die 1970er: dieselbe Deduktion, Lücken mit Wörtern aus der Szene füllen.",
+     "f": "Color Gray Games ist ein Studio aus Lettland."
+    },
+    "fr": {
+     "d": "La suite saute dans les années 70 : même mécanique de déduction, combler des blancs avec les mots trouvés dans la scène.",
+     "f": "Color Gray Games est un studio letton."
+    }
+   },
+   "link": "https://en.wikipedia.org/wiki/The_Case_of_the_Golden_Idol"
   },
   {
    "id": "kathy-rain-2",
@@ -1237,6 +3262,33 @@
     }
    },
    "link": "https://en.wikipedia.org/wiki/Kathy_Rain"
+  },
+  {
+   "id": "old-skies",
+   "year": 2025,
+   "title": "Old Skies",
+   "studio": "Wadjet Eye Games",
+   "engine": "Wadjet Eye",
+   "era": "now",
+   "text": {
+    "es": {
+     "d": "Una agente de viajes en el tiempo puede repetir cada escena hasta que todo salga bien. Pixel art en alta resolución.",
+     "f": "Convierte el ensayo y error de las viejas aventuras en la mecánica central."
+    },
+    "en": {
+     "d": "A time-travel agent can replay each scene until everything goes right. High-resolution pixel art.",
+     "f": "It turns the trial and error of old adventures into the core mechanic."
+    },
+    "de": {
+     "d": "Eine Zeitreise-Agentin kann jede Szene wiederholen, bis alles klappt. Hochauflösende Pixel-Art.",
+     "f": "Es macht das Ausprobieren alter Adventures zur zentralen Mechanik."
+    },
+    "fr": {
+     "d": "Une agente de voyage temporel peut rejouer chaque scène jusqu'à ce que tout se passe bien. Pixel art en haute résolution.",
+     "f": "Il fait de l'essai-erreur des vieilles aventures sa mécanique centrale."
+    }
+   },
+   "link": "https://www.wadjeteyegames.com/"
   }
  ]
 }

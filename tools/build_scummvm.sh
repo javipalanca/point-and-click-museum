@@ -20,10 +20,14 @@ if [[ ! -d "$WORK/.git" ]]; then
   git clone --depth 1 --branch "$VERSION" https://github.com/scummvm/scummvm.git "$WORK"
 fi
 cd "$WORK"
+# Native MIDI drivers make no sense in a browser. ScummVM 2.9.1's configure turns the /dev/sequencer one on for any
+# "posix" host, Emscripten included, and backends/midi/seq.cpp then fails: 'sys/soundcard.h' file not found.
+# SCUMMVM_CONFIGURE adds options of your own (e.g. --enable-debug).
 ./dists/emscripten/build.sh setup libs configure make dist \
   --disable-all-engines --enable-plugins --default-dynamic \
   --enable-engine="$ENGINES" --enable-mad --enable-vorbis \
-  --prefix=/ --datadir=/data
+  --disable-seq-midi --disable-timidity --disable-alsa --disable-sndio \
+  --prefix=/ --datadir=/data ${SCUMMVM_CONFIGURE:-}
 
 B="$WORK/build-emscripten"
 rm -rf "$OUT/scummvm.js" "$OUT/scummvm.wasm" "$OUT/data"

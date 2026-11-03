@@ -231,6 +231,9 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - **Compilar ScummVM de verdad** (`tools/build_scummvm.sh`) y probar los freeware: en la sesión en la nube se bloqueó la
   ejecución del script oficial (descarga y ejecuta Emscripten). La integración está probada con un ScummVM simulado;
   pueden hacer falta ajustes (nombres de plugins, rutas) con el build real.
+  2026-11-05: la primera compilación del usuario falló en `backends/midi/seq.cpp` (`sys/soundcard.h` no existe en
+  Emscripten): el `configure` de 2.9.1 activa el MIDI de `/dev/sequencer` en cualquier host «posix». El script pasa
+  ahora `--disable-seq-midi --disable-timidity --disable-alsa --disable-sndio` (y `SCUMMVM_CONFIGURE` para extras).
 - Guardar partidas de ScummVM entre visitas (hoy van a MEMFS y se pierden al cerrar; habría que enlazar IDBFS).
 - Los freeware de ScummVM se pueden redistribuir: valorar versionarlos (excepción en `.gitignore`) una vez probados.
 - Posibles mejoras: slugs localizados en las URLs, más estudios (Microïds, Cryo, Coktel Vision),

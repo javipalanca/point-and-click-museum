@@ -33,14 +33,17 @@
   const animate = () => { if (!raf) raf = requestAnimationFrame(drawFace); };
 
   /* --- the log */
+  function sourcesHtml(sources) {
+    return sources && sources.length ? '<p class="src"><span>' + esc(U.sources) + ":</span> " +
+      sources.map(s => s.external
+        ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + " ↗</a>"
+        : '<a href="' + esc(D.root + D.lang + "/" + s.url) + '">' + esc(s.title) + "</a>").join(" · ") + "</p>" : "";
+  }
+  const textHtml = t => esc(t).replace(/\n/g, "<br>");
   function render(item) {
     const li = document.createElement("li");
     li.className = "m-" + item.who + (item.waiting ? " waiting" : "");
-    li.innerHTML = '<span class="who">' + esc(item.who === "murray" ? "Murray" : U.you) + "</span><p>" + esc(item.text).replace(/\n/g, "<br>") + "</p>" +
-      (item.sources && item.sources.length ? '<p class="src"><span>' + esc(U.sources) + ":</span> " +
-        item.sources.map(s => s.external
-          ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + " ↗</a>"
-          : '<a href="' + esc(D.root + D.lang + "/" + s.url) + '">' + esc(s.title) + "</a>").join(" · ") + "</p>" : "");
+    li.innerHTML = '<span class="who">' + esc(item.who === "murray" ? "Murray" : U.you) + "</span><p>" + textHtml(item.text) + "</p>" + sourcesHtml(item.sources);
     log.appendChild(li); log.scrollTop = log.scrollHeight;
     return li;
   }
@@ -48,22 +51,55 @@
   function speak(text, sources) { talkingUntil = performance.now() + Math.min(9000, 600 + text.length * 35); add("murray", text, sources); animate(); }
   function mode(m) { lastMode = m || lastMode; $("#murrayMode").textContent = lastMode === "llm" ? U.llmBadge : lastMode === "offline" ? U.offlineBadge : ""; }
 
+  /* Reads the server's Server-Sent Events (data: {"delta"} … data: {"done", "sources", "mode"}) and calls back as they arrive. */
+  async function readStream(r, onDelta) {
+    if (!/event-stream/.test(r.headers.get("Content-Type") || "")) {  // an older server answering with plain JSON
+      const j = await r.json(); onDelta(j.reply || ""); return j;
+    }
+    const reader = r.body.getReader(), dec = new TextDecoder();
+    let buf = "", done = null;
+    for (;;) {
+      const { value, done: end } = await reader.read();
+      if (end) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n\n")) >= 0) {
+        const block = buf.slice(0, i); buf = buf.slice(i + 2);
+        const line = block.split("\n").find(l => l.startsWith("data:"));
+        if (!line) continue;
+        let ev; try { ev = JSON.parse(line.slice(5)); } catch (_) { continue; }
+        if (ev.delta) onDelta(ev.delta);
+        else if (ev.done) done = ev;
+        else if (ev.error) throw new Error(ev.error);
+      }
+    }
+    return done || {};
+  }
+
   async function ask(q) {
     q = q.trim(); if (!q || busy) return;
     busy = true; send.disabled = true; input.value = "";
     add("you", q); history.push({ role: "user", content: q }); sfx("click");
-    const wait = render({ who: "murray", text: U.thinking, waiting: true });
+    const li = render({ who: "murray", text: U.thinking, waiting: true }), p = li.querySelector("p");
+    let text = "";
     try {
-      const r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lang: D.lang, messages: history.slice(-12) }) });
-      wait.remove();
-      if (r.status === 429) { history.pop(); speak(M.errors.busy); return; }
+      const r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        body: JSON.stringify({ lang: D.lang, stream: true, messages: history.slice(-12) }) });
+      if (r.status === 429) { li.remove(); history.pop(); speak(M.errors.busy); return; }
       if (!r.ok) throw new Error("HTTP " + r.status);
-      const j = await r.json();
-      history.push({ role: "assistant", content: j.reply });
-      speak(j.reply, j.sources); mode(j.mode); save();
+      const end = await readStream(r, d => {
+        if (!text) li.classList.remove("waiting");
+        text += d; p.innerHTML = textHtml(text);
+        talkingUntil = performance.now() + 700; animate();          // Murray's jaw moves while the words arrive
+        log.scrollTop = log.scrollHeight;
+      });
+      text = text.trim() || M.errors.failed;
+      li.remove();
+      history.push({ role: "assistant", content: text });
+      add("murray", text, end.sources); mode(end.mode);
     } catch (e) {
-      wait.remove(); history.pop();
+      li.remove(); history.pop();
+      if (text) { add("murray", text.trim() + "\n\n" + M.errors.failed); return; }
       speak(location.protocol === "file:" || /HTTP 40[45]|Failed to fetch|NetworkError|Load failed/.test(String(e)) ? M.errors.offlineSite : M.errors.failed);
     } finally { busy = false; send.disabled = false; input.focus({ preventScroll: true }); }
   }

@@ -96,14 +96,18 @@ function serve() {
     let asked = null;
     await page.route("**/api/murray/chat", async route => {
       asked = JSON.parse(route.request().postData());
-      await route.fulfill({ json: { reply: "¡Tiembla, mortal! SCUMM.", sources: [{ title: "SCUMM", url: "engines/" }], mode: "llm" } });
+      const ev = o => "data: " + JSON.stringify(o) + "\n\n";
+      await route.fulfill({ headers: { "Content-Type": "text/event-stream" },
+        body: ev({ delta: "¡Tiembla, " }) + ev({ delta: "mortal! SCUMM." }) + ev({ done: true, sources: [{ title: "SCUMM", url: "engines/" }], mode: "llm" }) });
     });
     await page.goto(`${base}/es/engines/`);
     await page.click("#murrayFab");
     (await page.isVisible("#murrayPanel")) ? ok("Murray: the button opens the chat") : fail("Murray panel");
     await page.fill("#murrayIn", "¿Qué es SCUMM?"); await page.press("#murrayIn", "Enter");
     const answered = await page.waitForFunction(() => /Tiembla/.test(document.getElementById("murrayLog").textContent), null, { timeout: 5000 }).then(() => true, () => false);
-    answered && asked && asked.lang === "es" && asked.messages.at(-1).content === "¿Qué es SCUMM?" ? ok("Murray: question sent, answer and sources shown") : fail("Murray chat");
+    const full = await page.$eval("#murrayLog li:last-child", li => li.textContent);
+    answered && asked && asked.stream === true && asked.lang === "es" && asked.messages.at(-1).content === "¿Qué es SCUMM?" && /Tiembla, mortal! SCUMM\./.test(full) && /SCUMM/.test(full)
+      ? ok("Murray: question sent, streamed answer and sources shown") : fail("Murray chat: " + full);
     await page.goto(`${base}/en/timeline/`);
     const kept = await page.$$eval("#murrayLog li", l => l.length);
     kept >= 3 ? ok("Murray: conversation follows the visitor between rooms") : fail("Murray conversation lost: " + kept);

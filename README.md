@@ -201,6 +201,10 @@ Island*), que responde sobre la historia de las aventuras gráficas a partir de 
 - **La clave no se filtra**: la URL, la clave y el modelo solo existen como variables de entorno del contenedor
   `murray`. El navegador habla únicamente con `/api/murray/chat` del propio museo; ningún HTML o JS publicado las
   contiene (`npm test` lo comprueba) y el servicio no las registra en los logs. `.env` está en `.gitignore`.
+- **Streaming**: el modelo responde con `stream: true` y el servidor reenvía cada fragmento al navegador por
+  Server-Sent Events (`data: {"delta": …}` y al final `data: {"done": true, "sources": …}`), así que la respuesta se
+  escribe mientras Murray mueve la boca. Las llamadas a herramientas también llegan en streaming y el `<think>` de Qwen se
+  filtra al vuelo. nginx no almacena la respuesta en búfer. Si el servidor del modelo ignora `stream`, también funciona.
 - **Límites**: cuerpo de 16 KB, 12 mensajes de hasta 600 caracteres, `MURRAY_RATE` peticiones por IP cada 10 minutos
   (más el límite de nginx) y `MURRAY_DAILY_LIMIT` llamadas al modelo al día.
 - **Sin Docker**: `MURRAY_LLM_BASE_URL=… MURRAY_LLM_MODEL=… python3 server/murray.py` (puerto 8080) y un proxy de

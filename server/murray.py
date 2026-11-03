@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Murray, the talking skull: the museum's chat service.
 
-POST /api/murray/chat   {"lang": "es", "messages": [{"role": "user"|"assistant", "content": "..."}]}
-                     -> {"reply": "...", "sources": [{"title", "url"}], "mode": "llm"|"offline"}
+POST /api/murray/chat   {"lang": "es", "messages": [{"role": "user"|"assistant", "content": "..."}], "stream": true}
+                     -> text/event-stream: data: {"delta": "..."} … data: {"done": true, "sources": [...], "mode": "llm"|"offline"}
+                        (without "stream" / Accept: text/event-stream: one JSON {"reply", "sources", "mode"})
 GET  /api/murray/health -> {"ok": true, "mode": "llm"|"offline", "games": 118}
 
 Retrieval-augmented generation over the museum's own database (server/knowledge.py, built from data/*.json),
@@ -171,20 +172,55 @@ class LLMError(Exception):
         self.status, self.detail = status, detail
 
 
-def chat_completion(cfg: dict, messages: list[dict], tools: list | None) -> dict:
-    """One call to an OpenAI-compatible /chat/completions endpoint (stdlib HTTP, no SDK)."""
-    body = {"model": cfg["model"], "messages": messages, "temperature": cfg["temperature"], "max_tokens": cfg["max_tokens"], **cfg["extra"]}
+def _request(cfg: dict, messages: list[dict], tools: list | None, stream: bool):
+    body = {"model": cfg["model"], "messages": messages, "temperature": cfg["temperature"], "max_tokens": cfg["max_tokens"],
+            "stream": stream, **cfg["extra"]}
     if tools:
         body["tools"], body["tool_choice"] = tools, "auto"
-    headers = {"Content-Type": "application/json", "Accept": "application/json"}
+    headers = {"Content-Type": "application/json", "Accept": "text/event-stream" if stream else "application/json"}
     if cfg["key"]:
         headers["Authorization"] = "Bearer " + cfg["key"]
     req = urllib.request.Request(cfg["url"], data=json.dumps(body).encode("utf-8"), headers=headers, method="POST")
     try:
-        with urllib.request.urlopen(req, timeout=cfg["timeout"]) as r:
-            return json.loads(r.read().decode("utf-8"))
+        return urllib.request.urlopen(req, timeout=cfg["timeout"])
     except urllib.error.HTTPError as e:
         raise LLMError(e.code, e.read(2000).decode("utf-8", "replace")) from None
+
+
+def chat_stream(cfg: dict, messages: list[dict], tools: list | None):
+    """Streams one OpenAI-compatible /chat/completions call (stdlib HTTP, no SDK).
+    Yields ("text", str) as the model writes, then ("tool_calls", [calls]) with the accumulated calls (maybe empty).
+    Servers that ignore "stream" and answer with plain JSON are handled too."""
+    calls: dict[int, dict] = {}
+    with _request(cfg, messages, tools, stream=True) as r:
+        if "text/event-stream" not in r.headers.get("Content-Type", ""):
+            data = json.loads(r.read().decode("utf-8"))
+            msg = ((data.get("choices") or [{}])[0].get("message")) or {}
+            if msg.get("content"):
+                yield "text", msg["content"]
+            yield "tool_calls", msg.get("tool_calls") or []
+            return
+        for raw in r:
+            line = raw.decode("utf-8", "replace").strip()
+            if not line.startswith("data:"):
+                continue
+            payload = line[5:].strip()
+            if payload == "[DONE]":
+                break
+            try:
+                chunk = json.loads(payload)
+            except ValueError:
+                continue
+            delta = ((chunk.get("choices") or [{}])[0].get("delta")) or {}
+            if delta.get("content"):
+                yield "text", delta["content"]
+            for tc in delta.get("tool_calls") or []:  # tool calls arrive in pieces, keyed by index
+                slot = calls.setdefault(tc.get("index", len(calls)), {"id": "", "type": "function", "function": {"name": "", "arguments": ""}})
+                slot["id"] = tc.get("id") or slot["id"]
+                fn = tc.get("function") or {}
+                slot["function"]["name"] += fn.get("name") or ""
+                slot["function"]["arguments"] += fn.get("arguments") or ""
+    yield "tool_calls", [calls[k] for k in sorted(calls)]
 
 
 OPENAI_TOOLS = [{"type": "function", "function": {"name": t["name"], "description": t["description"], "parameters": t["input_schema"]}}
@@ -197,7 +233,41 @@ def clean_reply(text: str) -> str:
     return re.sub(r"^\s*</?think>\s*", "", text).strip()
 
 
-def llm_reply(history: list[dict], lang: str, cfg: dict) -> dict:
+class ThinkFilter:
+    """Removes <think>…</think> from a stream of text pieces, even when the tags are split across pieces."""
+    OPEN, CLOSE = "<think>", "</think>"
+
+    def __init__(self):
+        self.buf, self.inside, self.started = "", False, False
+
+    def feed(self, piece: str) -> str:
+        self.buf += piece
+        out = ""
+        while self.buf:
+            tag = self.CLOSE if self.inside else self.OPEN
+            i = self.buf.find(tag)
+            if i >= 0:
+                if not self.inside:
+                    out += self.buf[:i]
+                self.buf, self.inside = self.buf[i + len(tag):], not self.inside
+                continue
+            keep = next((k for k in range(len(tag) - 1, 0, -1) if self.buf.endswith(tag[:k])), 0)  # a tag may be starting
+            if not self.inside:
+                out += self.buf[:len(self.buf) - keep]
+            self.buf = self.buf[len(self.buf) - keep:] if keep else ""
+            break
+        if not self.started:  # no leading blank lines left behind by a removed <think> block
+            out = out.lstrip()
+            self.started = bool(out)
+        return out
+
+    def flush(self) -> str:
+        rest, self.buf = ("" if self.inside else self.buf), ""
+        return rest
+
+
+def llm_events(history: list[dict], lang: str, cfg: dict):
+    """The answer as a stream of events: ("delta", text)… then ("done", {"sources", "mode"})."""
     question = history[-1]["content"]
     context = MUSEUM.search(question, lang, 6)
     records = "\n".join(f"- [{d.id}] {d.text}" for d in context) or "- (no matching records)"
@@ -205,22 +275,35 @@ def llm_reply(history: list[dict], lang: str, cfg: dict) -> dict:
                [{"role": m["role"], "content": m["content"]} for m in history]
     used: list = []  # records the model looked up first, then the ones given as context
     tools = OPENAI_TOOLS if cfg["tools"] else None
+    wrote = False
     for _ in range(MAX_TOOL_ROUNDS + 1):
+        think, text, calls = ThinkFilter(), "", []
         try:
-            data = chat_completion(cfg, messages, tools)
+            for kind, value in chat_stream(cfg, messages, tools):
+                if kind == "text":
+                    text += value
+                    shown = think.feed(value)
+                    if shown:
+                        wrote = True
+                        yield "delta", shown
+                else:
+                    calls = value
         except LLMError as e:
-            if tools and e.status in (400, 404, 422, 501):  # server without function calling: RAG only
+            if tools and not wrote and e.status in (400, 404, 422, 501):  # server without function calling: RAG only
                 log.info("model server rejected tools (HTTP %s); retrying without them", e.status)
                 tools = None
                 continue
             raise
-        choice = (data.get("choices") or [{}])[0]
-        msg = choice.get("message") or {}
-        calls = msg.get("tool_calls") or []
+        tail = think.flush()
+        if tail.strip():
+            wrote = True
+            yield "delta", tail
         if not calls or not tools:
-            text = clean_reply(msg.get("content") or "")
-            return {"reply": text or loc(TEXTS["errors"]["failed"], lang), "sources": source_list(used + context), "mode": "llm"}
-        messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": calls})
+            if not wrote:
+                yield "delta", loc(TEXTS["errors"]["failed"], lang)
+            yield "done", {"sources": source_list(used + context), "mode": "llm"}
+            return
+        messages.append({"role": "assistant", "content": text or "", "tool_calls": calls})
         for c in calls:
             fn = c.get("function") or {}
             try:
@@ -230,7 +313,18 @@ def llm_reply(history: list[dict], lang: str, cfg: dict) -> dict:
             except (ValueError, TypeError) as e:
                 out = json.dumps({"error": f"bad arguments: {e}"})
             messages.append({"role": "tool", "tool_call_id": c.get("id", ""), "content": out})
-    return {"reply": loc(TEXTS["errors"]["failed"], lang), "sources": source_list(used + context), "mode": "llm"}
+    yield "delta", loc(TEXTS["errors"]["failed"], lang)
+    yield "done", {"sources": source_list(used + context), "mode": "llm"}
+
+
+def llm_reply(history: list[dict], lang: str, cfg: dict) -> dict:
+    parts, meta = [], {}
+    for kind, value in llm_events(history, lang, cfg):
+        if kind == "delta":
+            parts.append(value)
+        else:
+            meta = value
+    return {"reply": "".join(parts).strip(), **meta}
 
 
 def validate(body: dict) -> tuple[str, list[dict]]:
@@ -253,15 +347,38 @@ def validate(body: dict) -> tuple[str, list[dict]]:
     return lang, clean
 
 
-def answer(body: dict) -> dict:
+def answer_events(body: dict):
+    """Validates the request and yields ("delta", text)… ("done", {...}). Falls back to the offline answer if the model
+    fails before writing anything."""
     lang, history = validate(body)
     cfg = llm_config()
     if cfg and LIMITS.allow_llm():
+        wrote = False
         try:
-            return llm_reply(history, lang, cfg)
+            for ev in llm_events(history, lang, cfg):
+                wrote = wrote or ev[0] == "delta"
+                yield ev
+            return
         except Exception as e:  # model server down, timeout, bad JSON…: never leave the visitor without an answer
-            log.warning("LLM call failed (%s); answering offline", e if isinstance(e, LLMError) else type(e).__name__)
-    return offline_reply(history[-1]["content"], lang)
+            log.warning("LLM call failed (%s); %s", e if isinstance(e, LLMError) else type(e).__name__,
+                        "answer cut short" if wrote else "answering offline")
+            if wrote:
+                yield "delta", "\n\n" + loc(TEXTS["errors"]["failed"], lang)
+                yield "done", {"sources": [], "mode": "llm"}
+                return
+    r = offline_reply(history[-1]["content"], lang)
+    yield "delta", r["reply"]
+    yield "done", {"sources": r["sources"], "mode": r["mode"]}
+
+
+def answer(body: dict) -> dict:
+    parts, meta = [], {}
+    for kind, value in answer_events(body):
+        if kind == "delta":
+            parts.append(value)
+        else:
+            meta = value
+    return {"reply": "".join(parts).strip(), **meta}
 
 
 # ---------------------------------------------------------------------- HTTP
@@ -286,6 +403,28 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def send_stream(self, events):
+        """Server-Sent Events: `data: {"delta": "…"}` as the model writes, then `data: {"done": true, …}`."""
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Accel-Buffering", "no")  # nginx: pass each piece on immediately
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.end_headers()
+        try:
+            for kind, value in events:
+                obj = {"delta": value} if kind == "delta" else {"done": True, **value}
+                self.wfile.write(b"data: " + json.dumps(obj, ensure_ascii=False).encode("utf-8") + b"\n\n")
+                self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError):
+            log.info("visitor closed the stream")
+        except Exception:
+            log.exception("unexpected error while streaming")
+            try:
+                self.wfile.write(b'data: {"error": "internal error"}\n\n')
+            except OSError:
+                pass
+
     def do_GET(self):
         if self.path.rstrip("/") == "/api/murray/health":
             return self.send_json(200, {"ok": True, "mode": "llm" if llm_config() else "offline",
@@ -309,6 +448,9 @@ class Handler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(size).decode("utf-8"))
             if not isinstance(body, dict):
                 raise ValueError("expected an object")
+            if body.get("stream") or "text/event-stream" in self.headers.get("Accept", ""):
+                validate(body)  # bad requests still get a plain 400
+                return self.send_stream(answer_events(body))
             return self.send_json(200, answer(body))
         except (ValueError, UnicodeDecodeError) as e:
             return self.send_json(400, {"error": str(e)})

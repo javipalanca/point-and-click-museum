@@ -35,12 +35,28 @@ class FakeLLM(BaseHTTPRequestHandler):
         if FakeLLM.mode == "no-tools" and "tools" in body:
             return self.reply(400, {"error": {"message": "tools are not supported"}})
         last = body["messages"][-1]
-        if "tools" in body and last["role"] == "user":
+        tool_turn = "tools" in body and last["role"] == "user"
+        if tool_turn:
             msg = {"role": "assistant", "content": None, "tool_calls": [
                 {"id": "call_1", "type": "function", "function": {"name": "search_museum", "arguments": json.dumps({"query": "SCUMM"})}}]}
         else:
             msg = {"role": "assistant", "content": "<think>The visitor asks about SCUMM.</think>\n¡SCUMM, mortal! El motor de Maniac Mansion."}
-        self.reply(200, {"id": "x", "object": "chat.completion", "choices": [{"index": 0, "message": msg, "finish_reason": "stop"}]})
+        if not body.get("stream") or FakeLLM.mode == "json":  # some servers ignore "stream" and answer with plain JSON
+            return self.reply(200, {"id": "x", "object": "chat.completion", "choices": [{"index": 0, "message": msg, "finish_reason": "stop"}]})
+        # Server-Sent Events, with tags and tool-call arguments split across chunks like real servers do
+        if tool_turn:
+            args = msg["tool_calls"][0]["function"]["arguments"]
+            deltas = [{"tool_calls": [{"index": 0, "id": "call_1", "type": "function", "function": {"name": "search_museum", "arguments": args[:7]}}]},
+                      {"tool_calls": [{"index": 0, "function": {"arguments": args[7:]}}]}]
+        else:
+            deltas = [{"content": p} for p in ("<thi", "nk>The visitor asks about SCUMM.</th", "ink>\n¡SCUMM", ", mortal! El motor ", "de Maniac Mansion.")]
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.end_headers()
+        for d in deltas:
+            self.wfile.write(b"data: " + json.dumps({"choices": [{"index": 0, "delta": d}]}).encode() + b"\n\n")
+            self.wfile.flush()
+        self.wfile.write(b"data: [DONE]\n\n")
 
     def reply(self, code, obj):
         data = json.dumps(obj).encode()
@@ -130,6 +146,27 @@ class AnswerTests(unittest.TestCase):
         self.assertEqual(second["body"]["messages"][-1]["role"], "tool")
         self.assertNotIn(SECRET, json.dumps(r))
 
+    def test_streamed_events(self):
+        self.configure()
+        events = list(murray.answer_events({"lang": "es", "messages": [{"role": "user", "content": "¿Qué es SCUMM?"}]}))
+        deltas = [v for k, v in events if k == "delta"]
+        self.assertGreater(len(deltas), 1)                                  # the reply really arrives in pieces
+        self.assertEqual("".join(deltas), "¡SCUMM, mortal! El motor de Maniac Mansion.")
+        self.assertEqual(events[-1][0], "done")
+        self.assertTrue(FakeLLM.requests[0]["body"]["stream"])
+
+    def test_server_that_ignores_stream(self):
+        self.configure()
+        FakeLLM.mode = "json"
+        self.assertEqual(self.ask()["reply"], "¡SCUMM, mortal! El motor de Maniac Mansion.")
+
+    def test_think_filter_split_tags(self):
+        f, out = murray.ThinkFilter(), ""
+        for piece in ("<", "think>secret", " stuff</", "think>", "\nHello <b>", "world</b> <thin", "k>x</think> end"):
+            out += f.feed(piece)
+        out += f.flush()
+        self.assertEqual(out, "Hello <b>world</b>  end")
+
     def test_server_without_function_calling(self):
         self.configure()
         FakeLLM.mode = "no-tools"
@@ -179,6 +216,17 @@ class HttpTests(unittest.TestCase):
         self.assertEqual(self.post(b"{")[0], 400)
         self.assertEqual(self.post({"x": 1}, "text/plain")[0], 415)
         self.assertEqual(self.post(b"x" * (murray.MAX_BODY + 1))[0], 413)
+
+    def test_sse_stream(self):
+        req = urllib.request.Request(self.base + "/api/murray/chat", data=json.dumps(
+            {"lang": "en", "stream": True, "messages": [{"role": "user", "content": "Loom"}]}).encode(),
+            headers={"Content-Type": "application/json", "Accept": "text/event-stream"})
+        with urllib.request.urlopen(req) as r:
+            self.assertIn("text/event-stream", r.headers["Content-Type"])
+            events = [json.loads(l[5:]) for l in r.read().decode().splitlines() if l.startswith("data:")]
+        self.assertTrue(events[0]["delta"])
+        self.assertTrue(events[-1]["done"])
+        self.assertEqual(events[-1]["sources"][0]["title"], "Loom")
 
     def test_rate_limit(self):
         old = murray.LIMITS.rate

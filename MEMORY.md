@@ -137,6 +137,13 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   con HTTP 200 y un objeto `error`). Ahora se reintenta con `maxlag`/`ratelimited`, se salta y se informa el artículo
   que falle, y hay una pausa entre peticiones (`PCM_WIKI_PAUSE`).
 
+- **2026-11-05 · Murray en streaming** (petición del usuario). `server/murray.py` llama al modelo con `stream: true`,
+  acumula las `tool_calls` por índice, filtra `<think>…</think>` aunque llegue partido (`ThinkFilter`) y reenvía cada
+  fragmento por SSE cuando el cliente manda `stream: true` o `Accept: text/event-stream`; sin eso sigue respondiendo un
+  JSON. nginx con `proxy_buffering off` y el servidor con `X-Accel-Buffering: no`. Si el modelo falla a mitad, se
+  conserva lo escrito y se añade un aviso; si falla antes, responde en modo vitrina. Probado en Docker: los fragmentos
+  llegan al navegador al ritmo del modelo.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

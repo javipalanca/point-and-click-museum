@@ -43,7 +43,8 @@
   function render(item) {
     const li = document.createElement("li");
     li.className = "m-" + item.who + (item.waiting ? " waiting" : "");
-    li.innerHTML = '<span class="who">' + esc(item.who === "murray" ? "Murray" : U.you) + "</span><p>" + textHtml(item.text) + "</p>" + sourcesHtml(item.sources);
+    li.innerHTML = item.who === "nav" ? "<p>→ " + textHtml(item.text) + "</p>"
+      : '<span class="who">' + esc(item.who === "murray" ? "Murray" : U.you) + "</span><p>" + textHtml(item.text) + "</p>" + sourcesHtml(item.sources);
     log.appendChild(li); log.scrollTop = log.scrollHeight;
     return li;
   }
@@ -76,6 +77,23 @@
     return done || {};
   }
 
+  /* Murray takes the visitor somewhere: the chat stays open on the next page (state is in sessionStorage) */
+  function travel(nav) {
+    const base = D.pageUrls && D.pageUrls[nav.page];
+    if (base == null) return;
+    const title = nav.title || (D.ui && D.ui["page_" + nav.page + "_title"]) || nav.page;
+    add("nav", U.goingTo + ": " + title);
+    const url = new URL(base + (nav.hash ? "#" + nav.hash : ""), location.href);
+    setTimeout(() => {
+      save();
+      if (url.pathname === location.pathname) {           // same room: just move to the spot
+        if (nav.hash) { if (location.hash === "#" + nav.hash) dispatchEvent(new HashChangeEvent("hashchange")); else location.hash = nav.hash; }
+        else scrollTo({ top: 0, behavior: PCM.reduceMotion ? "auto" : "smooth" });
+      } else if (PCM.go) PCM.go(url.href);
+      else location.href = url.href;
+    }, PCM.reduceMotion ? 300 : 1400);
+  }
+
   async function ask(q) {
     q = q.trim(); if (!q || busy) return;
     busy = true; send.disabled = true; input.value = "";
@@ -84,7 +102,7 @@
     let text = "";
     try {
       const r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
-        body: JSON.stringify({ lang: D.lang, stream: true, messages: history.slice(-12) }) });
+        body: JSON.stringify({ lang: D.lang, page: D.page, stream: true, messages: history.slice(-12) }) });
       if (r.status === 429) { li.remove(); history.pop(); speak(M.errors.busy); return; }
       if (!r.ok) throw new Error("HTTP " + r.status);
       const end = await readStream(r, d => {
@@ -97,6 +115,7 @@
       li.remove();
       history.push({ role: "assistant", content: text });
       add("murray", text, end.sources); mode(end.mode);
+      if (end.navigate) travel(end.navigate);
     } catch (e) {
       li.remove(); history.pop();
       if (text) { add("murray", text.trim() + "\n\n" + M.errors.failed); return; }

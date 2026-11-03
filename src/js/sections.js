@@ -184,7 +184,8 @@
       }
     }
     $$(".tl-entry").forEach(b => b.addEventListener("click", () => openGame(+b.dataset.i)));
-    const deep = location.hash.slice(1); if (deep) { const i = games.findIndex(g => g.id === deep); if (i >= 0) openGame(i); }
+    const deep = () => { const id = location.hash.slice(1), i = games.findIndex(g => g.id === id); if (i >= 0) openGame(i); };
+    deep(); addEventListener("hashchange", deep);  // also when Murray brings the visitor here
     /* the stops light up as they scroll into view */
     if ("IntersectionObserver" in window && !reduceMotion) {
       const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
@@ -228,6 +229,20 @@
       const first = $("#dlgOpts button"); if (first) first.focus({ preventScroll: true });
     }
   })();
+
+  /* arriving at a studio card or an engine cartridge from a link (e.g. Murray's go_to): show it */
+  function arrive(prefix, act) {
+    const go = () => {
+      const el = location.hash.startsWith("#" + prefix) && document.getElementById(location.hash.slice(1));
+      if (!el) return;
+      el.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+      el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+      if (act) act(el);
+    };
+    go(); addEventListener("hashchange", go);
+  }
+  if ($("#studiosGrid")) arrive("studio-");
+  if ($("#carts")) arrive("engine-", el => setTimeout(() => el.click(), 400));
 
   /* ================= Engines ================= */
   if ($("#carts")) (() => {

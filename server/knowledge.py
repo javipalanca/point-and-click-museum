@@ -41,6 +41,9 @@ def tokens(s: str, stop: bool = False) -> list[str]:
     return [w for w in out if w not in STOP] if stop else out
 
 
+DEFAULT_PAGES = ("home", "timeline", "studios", "engines", "techniques", "games", "text-adventure", "restoration-room",
+                 "pixel-hunt", "chronology", "arcade")
+
 # museum records first, then curated history, Wikipedia passages and the (very terse) ScummVM catalogue
 KIND_WEIGHT = {"about": 1.3, "history": 1.15, "wikipedia": 0.95, "catalogue": 0.8}
 
@@ -63,6 +66,7 @@ class Museum:
         self.raw = {"timeline": load("timeline.json"), "studios": load("studios.json")["studios"],
                     "engines": load("engines.json")["engines"], "techniques": load("techniques.json")}
         self.about = load("murray.json").get("about", {}) if (self.data_dir / "murray.json").exists() else {}
+        self.pages = [p["id"] for p in load("site.json")["pages"]] if (self.data_dir / "site.json").exists() else list(DEFAULT_PAGES)
         self.external = self._external()
         self.docs: dict[str, list[Doc]] = {l: self._docs(l) + [d for d in self.external if d.fields["lang"] in (l, "en")] for l in LANGS}
         self.index = {l: self._bm25(d) for l, d in self.docs.items()}
@@ -191,6 +195,30 @@ class Museum:
         extra.sort(key=lambda d: (d.year or 0, d.title))
         return (museum + extra)[:limit]
 
+    def resolve_target(self, target: str, lang: str = "es") -> dict | None:
+        """Where Murray can take the visitor: a room, or a record inside one. -> {"page", "hash", "title"} or None."""
+        t = (target or "").strip().lower().lstrip("/")
+        if not t:
+            return None
+        page = t.split("/")[0].split("#")[0]
+        if page in self.pages and ("#" not in t):
+            return {"page": page, "hash": "", "title": ""}
+        kind, _, rid = t.partition(":")
+        if not rid:  # a bare id or title: find the record
+            d = self.get(t, lang)
+            if not d or d.fields.get("external"):
+                return None
+            kind, _, rid = d.id.partition(":")
+        where = {"game": ("timeline", rid), "era": ("timeline", "era-" + rid), "studio": ("studios", "studio-" + rid),
+                 "engine": ("engines", "engine-" + rid), "technique": ("techniques", "tech-" + rid),
+                 "interface": ("techniques", "tech-interface"), "idea": ("techniques", "tech-ideas"), "about": ("home", "")}.get(kind)
+        if not where:
+            return None
+        doc = next((d for d in self.docs[lang if lang in LANGS else "es"] if d.id == f"{kind}:{rid}"), None)
+        if kind != "about" and not doc:
+            return None
+        return {"page": where[0], "hash": where[1], "title": doc.title if doc and kind != "about" else ""}
+
     def stats(self) -> dict:
         games = [d for d in self.docs["es"] if d.kind == "game"]
         return {"games": len(games), "first": min(d.year for d in games), "last": max(d.year for d in games),
@@ -213,6 +241,14 @@ TOOLS = [
      "description": "Get one museum record by id (e.g. 'monkey-island', 'game:loom', 'studio:lucasarts') or exact title.",
      "input_schema": {"type": "object", "additionalProperties": False, "required": ["id"],
                       "properties": {"id": {"type": "string"}}}},
+    {"name": "go_to",
+     "description": "Take the visitor to another place in the museum website; the page changes when your reply ends and "
+                    "the chat stays open. Use it only when the visitor asks to go somewhere or accepts your offer. Target: a "
+                    "room (home, timeline, studios, engines, techniques, games, text-adventure, restoration-room, "
+                    "pixel-hunt, chronology, arcade) or a museum record id from the tools (game:loom, era:golden, "
+                    "studio:lucasarts, engine:scumm, technique:cycle, interface:mm).",
+     "input_schema": {"type": "object", "additionalProperties": False, "required": ["target"],
+                      "properties": {"target": {"type": "string"}}}},
     {"name": "list_games",
      "description": "List the museum's games filtered by year range, studio and/or engine, sorted by year. "
                     "Use for questions like 'which SCUMM games…', 'adventures from 1993', 'Sierra games'.",
@@ -241,6 +277,11 @@ def run_tool(museum: Museum, name: str, args: dict, lang: str) -> tuple[str, lis
     if name == "get_record":
         d = museum.get(str(args.get("id", ""))[:120], lang)
         return json.dumps(doc_brief(d) if d else {"error": "not found"}, ensure_ascii=False), [d] if d else []
+    if name == "go_to":
+        where = museum.resolve_target(str(args.get("target", ""))[:120], lang)
+        if not where:
+            return json.dumps({"ok": False, "error": "unknown place; use a room name or a museum record id"}), []
+        return json.dumps({"ok": True, "going_to": where}, ensure_ascii=False), []
     if name == "list_games":
         def num(k):
             try:

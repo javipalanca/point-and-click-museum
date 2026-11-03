@@ -144,6 +144,14 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   conserva lo escrito y se añade un aviso; si falla antes, responde en modo vitrina. Probado en Docker: los fragmentos
   llegan al navegador al ritmo del modelo.
 
+- **2026-11-05 · Murray guía la visita** (petición del usuario: «que me lleve a la sala sin pinchar»). Herramienta
+  `go_to` (y marca `[[go:…]]` para modelos sin herramientas) que el servidor valida con `Museum.resolve_target`:
+  salas de `site.json` y fichas (`game:`→`timeline/#id`, `era:`→`#era-id`, `studio:`→`studios/#studio-id`,
+  `engine:`→`engines/#engine-id`, `technique:`/`interface:`→`techniques/#tech-…`). El evento `done` lleva `navigate`;
+  el widget anuncia «Rumbo a…», guarda la conversación abierta y usa `PCM.go` (transición). Al llegar: la línea temporal
+  abre la ficha, los motores insertan el cartucho y los estudios resaltan su vitrina (también con `hashchange`).
+  El navegador manda `page` para que Murray sepa dónde está el visitante.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

@@ -124,6 +124,12 @@
    "en": "Questions go to the museum's server, which searches its database and, if configured, asks a language model. Conversations are not stored.",
    "de": "Fragen gehen an den Museumsserver, der seine Datenbank durchsucht und, falls eingerichtet, ein Sprachmodell fragt. Gespräche werden nicht gespeichert.",
    "fr": "Les questions vont au serveur du musée, qui cherche dans sa base de données et, s'il est configuré, interroge un modèle de langage. Les conversations ne sont pas conservées."
+  },
+  "goingTo": {
+   "es": "Rumbo a",
+   "en": "Heading to",
+   "de": "Unterwegs zu",
+   "fr": "Direction"
   }
  },
  "about": {

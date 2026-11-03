@@ -111,8 +111,23 @@ function serve() {
     await page.goto(`${base}/en/timeline/`);
     const kept = await page.$$eval("#murrayLog li", l => l.length);
     kept >= 3 ? ok("Murray: conversation follows the visitor between rooms") : fail("Murray conversation lost: " + kept);
-    await page.keyboard.press("Escape"); await page.focus("#murrayIn").catch(() => {});
     await page.unroute("**/api/murray/chat");
+    // Murray takes the visitor to another room: the page changes on its own and the chat stays open
+    await page.route("**/api/murray/chat", route => route.fulfill({ headers: { "Content-Type": "text/event-stream" },
+      body: "data: " + JSON.stringify({ delta: "¡Vamos a ver Loom!" }) + "\n\n" +
+            "data: " + JSON.stringify({ done: true, sources: [], mode: "llm", navigate: { page: "timeline", hash: "loom", title: "Loom" } }) + "\n\n" }));
+    await page.goto(`${base}/es/studios/`);
+    if (!(await page.isVisible("#murrayPanel"))) await page.click("#murrayFab");
+    await page.fill("#murrayIn", "Llévame a Loom"); await page.press("#murrayIn", "Enter");
+    const moved = await page.waitForURL(/\/es\/timeline\/#loom$/, { timeout: 6000 }).then(() => true, () => false);
+    await page.waitForTimeout(600);
+    const after = moved && await page.evaluate(() => ({ open: !document.getElementById("murrayPanel").hidden,
+      nav: /Loom/.test(document.querySelector("#murrayLog .m-nav")?.textContent || ""),
+      sheet: document.getElementById("modalBg").classList.contains("open") && /Loom/.test(document.getElementById("mTitle")?.textContent || "") }));
+    after && after.open && after.nav && after.sheet ? ok("Murray: takes the visitor to Loom's record, chat still open")
+      : fail("Murray navigation: " + JSON.stringify({ moved, after }));
+    await page.unroute("**/api/murray/chat");
+    await page.evaluate(() => sessionStorage.removeItem("pcm-murray"));
     const js = fs.readdirSync(path.join(DIST, "js")).map(f => fs.readFileSync(path.join(DIST, "js", f), "utf8")).join("\n");
     /MURRAY_LLM|api_key|Authorization|sk-[A-Za-z0-9]/.test(js) ? fail("model configuration found in public JS") : ok("no model URL or key in the public JS");
     await page.goto(`${base}/de/studios/`);

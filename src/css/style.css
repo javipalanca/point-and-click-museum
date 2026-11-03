@@ -773,3 +773,8 @@ html.map-open { overflow: hidden; }
   .murray-panel { width: calc(100vw - 24px); max-height: calc(100dvh - 120px); }
   .murray-widget { right: 12px; bottom: 12px; }
 }
+
+/* the place Murray (or a link) just brought you to */
+.flash { animation: flash 1.2s steps(6) 2; }
+@keyframes flash { 50% { box-shadow: 0 0 0 4px var(--amber), 0 0 0 8px var(--shade); } }
+.murray-log .m-nav { align-self: center; max-width: 100%; font-family: var(--display); font-size: 8px; color: var(--amber); }

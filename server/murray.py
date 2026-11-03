@@ -85,6 +85,11 @@ company, date, engine or technique. When sources disagree on a date, say so.
 - If nothing in the knowledge base covers it, you may use general knowledge about adventure games, but say it is \
 "outside the museum's display cases" and only state things you are sure of. If you don't know, say so in character. \
 Never invent titles, dates, people or quotes.
+- You can take the visitor around the museum: when they ask to go somewhere ("take me to…", "show me…") or say yes \
+to your offer, call the go_to tool with the room or record (if you have no tools, write [[go:TARGET]] at the very end \
+of your reply, e.g. [[go:timeline]] or [[go:game:loom]]). Say briefly where you are taking them. Never claim to move \
+them without doing it. Rooms: home, timeline, studios, engines, techniques, games, text-adventure, restoration-room, \
+pixel-hunt, chronology, arcade.
 - Stay on topic: graphic adventures, interactive fiction and their history. For anything else, decline in character \
 and steer back to adventure games.
 - Reply in the visitor's language ({lang_name}). Be brief: at most about 120 words unless asked for more. Plain text, \
@@ -266,23 +271,60 @@ class ThinkFilter:
         return rest
 
 
-def llm_events(history: list[dict], lang: str, cfg: dict):
+class GoMarker:
+    """Removes [[go:TARGET]] from streamed text (navigation for models without tools) and remembers the target."""
+    def __init__(self):
+        self.buf, self.target = "", None
+
+    def feed(self, piece: str) -> str:
+        self.buf += piece
+        out = ""
+        while True:
+            i = self.buf.find("[[")
+            if i < 0:
+                keep = 1 if self.buf.endswith("[") else 0
+                out += self.buf[:len(self.buf) - keep]
+                self.buf = self.buf[len(self.buf) - keep:]
+                return out
+            out += self.buf[:i]
+            j = self.buf.find("]]", i)
+            if j < 0:
+                if len(self.buf) - i > 80:  # not a marker after all
+                    out += self.buf[i:i + 2]
+                    self.buf = self.buf[i + 2:]
+                    continue
+                self.buf = self.buf[i:]
+                return out
+            inner = self.buf[i + 2:j].strip()
+            if inner.lower().startswith("go:"):
+                self.target = inner[3:].strip()
+            else:
+                out += self.buf[i:j + 2]
+            self.buf = self.buf[j + 2:]
+
+    def flush(self) -> str:
+        rest, self.buf = self.buf, ""
+        return rest
+
+
+def llm_events(history: list[dict], lang: str, cfg: dict, page: str = ""):
     """The answer as a stream of events: ("delta", text)… then ("done", {"sources", "mode"})."""
     question = history[-1]["content"]
     context = MUSEUM.search(question, lang, 6)
     records = "\n".join(f"- [{d.id}] {d.text}" for d in context) or "- (no matching records)"
-    messages = [{"role": "system", "content": SYSTEM.format(lang_name=LANG_NAMES[lang], records=records)}] + \
+    here = f"\nThe visitor is now in this room of the website: {page}." if page else ""
+    messages = [{"role": "system", "content": SYSTEM.format(lang_name=LANG_NAMES[lang], records=records) + here}] + \
                [{"role": m["role"], "content": m["content"]} for m in history]
     used: list = []  # records the model looked up first, then the ones given as context
     tools = OPENAI_TOOLS if cfg["tools"] else None
-    wrote = False
+    wrote, navigate, marker = False, None, GoMarker()
     for _ in range(MAX_TOOL_ROUNDS + 1):
         think, text, calls = ThinkFilter(), "", []
         try:
             for kind, value in chat_stream(cfg, messages, tools):
                 if kind == "text":
                     text += value
-                    shown = think.feed(value)
+                    shown = marker.feed(think.feed(value))
                     if shown:
                         wrote = True
                         yield "delta", shown
@@ -294,14 +336,19 @@ def llm_events(history: list[dict], lang: str, cfg: dict):
                 tools = None
                 continue
             raise
-        tail = think.flush()
+        tail = marker.feed(think.flush()) + marker.flush()
         if tail.strip():
             wrote = True
             yield "delta", tail
         if not calls or not tools:
             if not wrote:
                 yield "delta", loc(TEXTS["errors"]["failed"], lang)
-            yield "done", {"sources": source_list(used + context), "mode": "llm"}
+            if not navigate and marker.target:
+                navigate = MUSEUM.resolve_target(marker.target, lang)
+            done = {"sources": source_list(used + context), "mode": "llm"}
+            if navigate:
+                done["navigate"] = navigate
+            yield "done", done
             return
         messages.append({"role": "assistant", "content": text or "", "tool_calls": calls})
         for c in calls:
@@ -310,6 +357,8 @@ def llm_events(history: list[dict], lang: str, cfg: dict):
                 args = json.loads(fn.get("arguments") or "{}")
                 out, docs = run_tool(MUSEUM, fn.get("name", ""), args if isinstance(args, dict) else {}, lang)
                 used += docs
+                if fn.get("name") == "go_to" and json.loads(out).get("ok"):
+                    navigate = json.loads(out)["going_to"]
             except (ValueError, TypeError) as e:
                 out = json.dumps({"error": f"bad arguments: {e}"})
             messages.append({"role": "tool", "tool_call_id": c.get("id", ""), "content": out})
@@ -317,9 +366,9 @@ def llm_events(history: list[dict], lang: str, cfg: dict):
     yield "done", {"sources": source_list(used + context), "mode": "llm"}
 
 
-def llm_reply(history: list[dict], lang: str, cfg: dict) -> dict:
+def llm_reply(history: list[dict], lang: str, cfg: dict, page: str = "") -> dict:
     parts, meta = [], {}
-    for kind, value in llm_events(history, lang, cfg):
+    for kind, value in llm_events(history, lang, cfg, page):
         if kind == "delta":
             parts.append(value)
         else:
@@ -351,11 +400,12 @@ def answer_events(body: dict):
     """Validates the request and yields ("delta", text)… ("done", {...}). Falls back to the offline answer if the model
     fails before writing anything."""
     lang, history = validate(body)
+    page = body.get("page") if body.get("page") in MUSEUM.pages else ""
     cfg = llm_config()
     if cfg and LIMITS.allow_llm():
         wrote = False
         try:
-            for ev in llm_events(history, lang, cfg):
+            for ev in llm_events(history, lang, cfg, page):
                 wrote = wrote or ev[0] == "delta"
                 yield ev
             return

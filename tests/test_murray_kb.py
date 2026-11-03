@@ -111,6 +111,16 @@ class KnowledgeTests(unittest.TestCase):
         self.assertEqual(top.kind, "about")
         self.assertIn("UPV", top.text)
 
+    def test_resolve_target(self):
+        r = self.m.resolve_target
+        self.assertEqual(r("timeline"), {"page": "timeline", "hash": "", "title": ""})
+        self.assertEqual(r("game:loom")["hash"], "loom")
+        self.assertEqual(r("Grim Fandango", "en")["hash"], "grim-fandango")
+        self.assertEqual(r("engine:scumm")["hash"], "engine-scumm")
+        self.assertEqual(r("era:golden")["hash"], "era-golden")
+        self.assertIsNone(r("history:telltale"))        # web articles are not places in the museum
+        self.assertIsNone(r("game:does-not-exist"))
+
     def test_scummvm_catalogue_extends_lists(self):
         self.assertTrue(any(d.kind == "catalogue" for d in self.m.search("Gobliins 2", "en", 3)))
         games = self.m.list_games("en", 1993, 1993)

@@ -201,6 +201,12 @@ Island*), que responde sobre la historia de las aventuras gráficas a partir de 
 - **La clave no se filtra**: la URL, la clave y el modelo solo existen como variables de entorno del contenedor
   `murray`. El navegador habla únicamente con `/api/murray/chat` del propio museo; ningún HTML o JS publicado las
   contiene (`npm test` lo comprueba) y el servicio no las registra en los logs. `.env` está en `.gitignore`.
+- **Murray te lleva de visita**: con la herramienta `go_to` (o, en modelos sin herramientas, escribiendo
+  `[[go:destino]]`, que se retira del texto) Murray cambia de página cuando el visitante se lo pide o acepta su
+  propuesta: una sala (`timeline`, `studios`, `arcade`…) o una ficha (`game:loom` abre su ficha en la línea temporal,
+  `engine:scumm` inserta el cartucho, `studio:lucasarts` resalta la vitrina, `era:golden`, `technique:cycle`…). El
+  servidor valida el destino, el chat anuncia «Rumbo a…», viaja con la transición clásica y sigue abierto en la página
+  nueva. Murray sabe en qué sala está el visitante.
 - **Streaming**: el modelo responde con `stream: true` y el servidor reenvía cada fragmento al navegador por
   Server-Sent Events (`data: {"delta": …}` y al final `data: {"done": true, "sources": …}`), así que la respuesta se
   escribe mientras Murray mueve la boca. Las llamadas a herramientas también llegan en streaming y el `<think>` de Qwen se

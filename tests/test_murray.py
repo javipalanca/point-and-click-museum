@@ -36,9 +36,12 @@ class FakeLLM(BaseHTTPRequestHandler):
             return self.reply(400, {"error": {"message": "tools are not supported"}})
         last = body["messages"][-1]
         tool_turn = "tools" in body and last["role"] == "user"
+        tool = ("go_to", {"target": "game:loom"}) if FakeLLM.mode == "nav" else ("search_museum", {"query": "SCUMM"})
         if tool_turn:
             msg = {"role": "assistant", "content": None, "tool_calls": [
-                {"id": "call_1", "type": "function", "function": {"name": "search_museum", "arguments": json.dumps({"query": "SCUMM"})}}]}
+                {"id": "call_1", "type": "function", "function": {"name": tool[0], "arguments": json.dumps(tool[1])}}]}
+        elif FakeLLM.mode == "marker":
+            msg = {"role": "assistant", "content": "¡Vamos a la vitrina de LucasArts! [[go:studio:lucasarts]]"}
         else:
             msg = {"role": "assistant", "content": "<think>The visitor asks about SCUMM.</think>\n¡SCUMM, mortal! El motor de Maniac Mansion."}
         if not body.get("stream") or FakeLLM.mode == "json":  # some servers ignore "stream" and answer with plain JSON
@@ -46,8 +49,10 @@ class FakeLLM(BaseHTTPRequestHandler):
         # Server-Sent Events, with tags and tool-call arguments split across chunks like real servers do
         if tool_turn:
             args = msg["tool_calls"][0]["function"]["arguments"]
-            deltas = [{"tool_calls": [{"index": 0, "id": "call_1", "type": "function", "function": {"name": "search_museum", "arguments": args[:7]}}]},
+            deltas = [{"tool_calls": [{"index": 0, "id": "call_1", "type": "function", "function": {"name": tool[0], "arguments": args[:7]}}]},
                       {"tool_calls": [{"index": 0, "function": {"arguments": args[7:]}}]}]
+        elif FakeLLM.mode == "marker":
+            deltas = [{"content": p} for p in ("¡Vamos a la vitrina de LucasArts! [", "[go:studio:", "lucasarts]]")]
         else:
             deltas = [{"content": p} for p in ("<thi", "nk>The visitor asks about SCUMM.</th", "ink>\n¡SCUMM", ", mortal! El motor ", "de Maniac Mansion.")]
         self.send_response(200)
@@ -141,7 +146,7 @@ class AnswerTests(unittest.TestCase):
         self.assertEqual(first["path"], "/v1/chat/completions")
         self.assertEqual(first["auth"], "Bearer " + SECRET)
         self.assertEqual(first["body"]["model"], "qwen3.8")
-        self.assertEqual({t["function"]["name"] for t in first["body"]["tools"]}, {"search_museum", "get_record", "list_games"})
+        self.assertEqual({t["function"]["name"] for t in first["body"]["tools"]}, {"search_museum", "get_record", "list_games", "go_to"})
         self.assertIn("[engine:scumm]", first["body"]["messages"][0]["content"])  # RAG records in the system prompt
         self.assertEqual(second["body"]["messages"][-1]["role"], "tool")
         self.assertNotIn(SECRET, json.dumps(r))
@@ -166,6 +171,31 @@ class AnswerTests(unittest.TestCase):
             out += f.feed(piece)
         out += f.flush()
         self.assertEqual(out, "Hello <b>world</b>  end")
+
+    def test_go_to_tool_navigates(self):
+        self.configure()
+        FakeLLM.mode = "nav"
+        r = murray.answer({"lang": "es", "page": "studios", "messages": [{"role": "user", "content": "Llévame a Loom"}]})
+        self.assertEqual(r["navigate"], {"page": "timeline", "hash": "loom", "title": "Loom"})
+        self.assertIn("studios", FakeLLM.requests[0]["body"]["messages"][0]["content"])   # Murray knows where you are
+
+    def test_marker_navigates_without_tools(self):
+        self.configure(MURRAY_LLM_TOOLS="0")
+        FakeLLM.mode = "marker"
+        r = self.ask("Llévame a LucasArts")
+        self.assertEqual(r["reply"], "¡Vamos a la vitrina de LucasArts!")             # the marker never reaches the visitor
+        self.assertEqual(r["navigate"]["hash"], "studio-lucasarts")
+
+    def test_no_navigation_by_default(self):
+        self.configure()
+        self.assertNotIn("navigate", self.ask())
+
+    def test_go_marker_filter(self):
+        g, out = murray.GoMarker(), ""
+        for piece in ("Mira [esto] y ", "[[go:time", "line]] fin [[otra]]"):
+            out += g.feed(piece)
+        out += g.flush()
+        self.assertEqual((out, g.target), ("Mira [esto] y  fin [[otra]]", "timeline"))
 
     def test_server_without_function_calling(self):
         self.configure()

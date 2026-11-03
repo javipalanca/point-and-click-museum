@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 RUN useradd --system --no-create-home murray
 COPY server/ server/
-COPY data/timeline.json data/studios.json data/engines.json data/techniques.json data/murray.json data/
+COPY data/site.json data/timeline.json data/studios.json data/engines.json data/techniques.json data/murray.json data/
 COPY data/murray_kb/ data/murray_kb/
 USER murray
 EXPOSE 8080

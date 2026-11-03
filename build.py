@@ -621,7 +621,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         return (f'<div class="st-games"><span class="st-games-h">{E(ui["studioGames"])}</span><ul>' + "".join(out) + "</ul></div>") if out else ""
 
     b["studios"] = "".join(
-        f'<article class="px studio" data-i="{i}"><div class="top">{logo_or_monogram("studios", s)}'
+        f'<article class="px studio" id="studio-{s["id"]}" data-i="{i}"><div class="top">{logo_or_monogram("studios", s)}'
         f'<div><h3>{E(s["name"])}</h3><div class="yrs">{E(s["years"])}</div></div></div>'
         + studio_covers(s)
         + f'<div class="row studio-actions"><button class="pbtn small talk" type="button">{E(ui["talk"])}</button>'
@@ -631,7 +631,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         for i, s in enumerate(L["studios"]))
 
     b["carts"] = "".join(
-        f'<button class="cart" type="button" data-i="{i}" aria-pressed="false" style="--cc:{en["color"]}">'
+        f'<button class="cart" id="engine-{en["id"]}" type="button" data-i="{i}" aria-pressed="false" style="--cc:{en["color"]}">'
         f'<span class="lbl">' + (logo_or_monogram("engines", en) if media.get("engines", {}).get(en["id"], {}).get("logo") else "")
         + f'{E(en["name"])}<span class="yr2">{en["year"]}</span></span></button>'
         for i, en in enumerate(L["engines"]))

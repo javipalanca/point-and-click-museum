@@ -172,7 +172,17 @@ Un botón abajo a la derecha, en todas las páginas, abre un chat con Murray (la
 Island*), que responde sobre la historia de las aventuras gráficas a partir de la base de datos del museo:
 
 - **RAG**: `server/knowledge.py` indexa (BM25) los juegos, estudios, motores, épocas y técnicas de `data/*.json` en los
-  cuatro idiomas. Las fichas más relevantes van en cada petición al modelo, y Murray cita las «vitrinas consultadas».
+  cuatro idiomas y la base de conocimiento externa de `data/murray_kb/`:
+  - `history.json`: artículos sobre la historia del género (orígenes, Sierra, Lucasfilm y SCUMM, Myst, el declive,
+    Telltale, Kickstarter, ScummVM, AGS, aventuras españolas, ficción interactiva…) redactados a partir de fuentes
+    web, cada uno con sus URL;
+  - `scummvm-games.jsonl`: el catálogo de la web de ScummVM (unos 1200 juegos con compañía, año, motor y serie);
+  - `wikipedia-<idioma>.jsonl`: fragmentos de Wikipedia en es/en/de/fr de todos los juegos, estudios y motores del
+    museo y de los temas de historia del género (CC BY-SA 4.0, con su URL). Se generan con
+    `python3 tools/build_murray_kb.py wikipedia` donde Wikipedia sea accesible (en la sesión en la nube no lo era).
+
+  Las fichas más relevantes van en cada petición al modelo, y Murray cita las «vitrinas consultadas» (las externas
+  enlazan a su fuente). Una ficha «sobre el museo» deja claro que es un museo virtual sin relación con otros museos.
 - **Herramientas**: si el servidor del modelo admite *function calling*, el modelo puede además buscar
   (`search_museum`), leer una ficha (`get_record`) o listar juegos por año, estudio o motor (`list_games`). Si el
   servidor rechaza las herramientas, se reintenta automáticamente solo con RAG.

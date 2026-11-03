@@ -41,6 +41,10 @@ def tokens(s: str, stop: bool = False) -> list[str]:
     return [w for w in out if w not in STOP] if stop else out
 
 
+# museum records first, then curated history, Wikipedia passages and the (very terse) ScummVM catalogue
+KIND_WEIGHT = {"about": 1.3, "history": 1.15, "wikipedia": 0.95, "catalogue": 0.8}
+
+
 @dataclass
 class Doc:
     id: str            # e.g. game:monkey-island
@@ -58,8 +62,31 @@ class Museum:
         load = lambda n: json.loads((self.data_dir / n).read_text("utf-8"))
         self.raw = {"timeline": load("timeline.json"), "studios": load("studios.json")["studios"],
                     "engines": load("engines.json")["engines"], "techniques": load("techniques.json")}
-        self.docs: dict[str, list[Doc]] = {l: self._docs(l) for l in LANGS}
+        self.about = load("murray.json").get("about", {}) if (self.data_dir / "murray.json").exists() else {}
+        self.external = self._external()
+        self.docs: dict[str, list[Doc]] = {l: self._docs(l) + [d for d in self.external if d.fields["lang"] in (l, "en")] for l in LANGS}
         self.index = {l: self._bm25(d) for l, d in self.docs.items()}
+
+    # ------------------------------------------------------------------ external knowledge (data/murray_kb)
+    def _external(self) -> list[Doc]:
+        """Curated web articles (history.json) and generated passages (*.jsonl: ScummVM catalogue, Wikipedia)."""
+        kb, out = self.data_dir / "murray_kb", []
+        if not kb.is_dir():
+            return out
+        hist = kb / "history.json"
+        if hist.exists():
+            for a in json.loads(hist.read_text("utf-8"))["articles"]:
+                out.append(Doc(f"history:{a['id']}", "history", a["title"], a["text"], a["sources"][0], None,
+                               {"lang": "en", "sources": a["sources"], "keywords": a.get("keywords", ""), "external": True}))
+        for f in sorted(kb.glob("*.jsonl")):
+            for line in f.read_text("utf-8").splitlines():
+                if not line.strip():
+                    continue
+                r = json.loads(line)
+                out.append(Doc(r["id"], r.get("kind", "web"), r["title"], r["text"], r.get("source", ""), r.get("year"),
+                               {"lang": r.get("lang", "en"), "sources": [r.get("source", "")], "license": r.get("license", ""), "external": True,
+                                "company": r.get("company", ""), "engine": r.get("engine", "")}))
+        return out
 
     # ------------------------------------------------------------------ documents
     def _docs(self, lang: str) -> list[Doc]:
@@ -67,6 +94,8 @@ class Museum:
         eras = {e["id"]: e for e in tl["eras"]}
         studio_of = {g: s["name"] for s in self.raw["studios"] for g in s.get("games", [])}
         out = []
+        if self.about:
+            out.append(Doc("about:museum", "about", "Point and Click Museum", loc(self.about, lang), "", None, {"lang": lang}))
         for g in tl["games"]:
             e = eras[g["era"]]
             out.append(Doc(f"game:{g['id']}", "game", g["title"],
@@ -98,7 +127,7 @@ class Museum:
 
     @staticmethod
     def _bm25(docs: list[Doc]):
-        toks = [tokens(d.title + " " + d.title + " " + d.text) for d in docs]
+        toks = [tokens(d.title + " " + d.title + " " + d.text + " " + d.fields.get("keywords", "")) for d in docs]
         df: dict[str, int] = {}
         for t in toks:
             for w in set(t):
@@ -130,7 +159,7 @@ class Museum:
             elif s and tt and set(tt) <= set(q):
                 s += 3.0           # every word of the title asked for
             if s > 0:
-                scored.append((s, i))
+                scored.append((s * KIND_WEIGHT.get(d.kind, 1.0), i))
         scored.sort(reverse=True)
         return [docs[i] for _, i in scored[:k]]
 
@@ -145,18 +174,22 @@ class Museum:
 
     def list_games(self, lang: str = "es", year_from: int | None = None, year_to: int | None = None,
                    studio: str | None = None, engine: str | None = None, limit: int = 40) -> list[Doc]:
-        out = []
-        for d in self.docs[lang if lang in LANGS else "es"]:
-            if d.kind != "game":
-                continue
+        """Museum games first, then matching entries of the ScummVM catalogue that the museum doesn't cover."""
+        def keep(d: Doc, haystack_studio: str, haystack_engine: str) -> bool:
+            if d.year is None and (year_from or year_to):
+                return False
             if year_from and d.year < year_from or year_to and d.year > year_to:
-                continue
-            if studio and studio.lower() not in (d.fields["studio"] + " " + d.fields["museumStudio"]).lower():
-                continue
-            if engine and engine.lower() not in d.fields["engine"].lower():
-                continue
-            out.append(d)
-        return sorted(out, key=lambda d: (d.year, d.title))[:limit]
+                return False
+            if studio and studio.lower() not in haystack_studio.lower():
+                return False
+            return not (engine and engine.lower() not in haystack_engine.lower())
+        docs = self.docs[lang if lang in LANGS else "es"]
+        museum = [d for d in docs if d.kind == "game" and keep(d, d.fields["studio"] + " " + d.fields["museumStudio"], d.fields["engine"])]
+        seen = {tokens(d.title).__str__() for d in museum}
+        extra = [d for d in docs if d.kind == "catalogue" and str(tokens(d.title)) not in seen and keep(d, d.fields.get("company", ""), d.fields.get("engine", ""))]
+        museum.sort(key=lambda d: (d.year, d.title))
+        extra.sort(key=lambda d: (d.year or 0, d.title))
+        return (museum + extra)[:limit]
 
     def stats(self) -> dict:
         games = [d for d in self.docs["es"] if d.kind == "game"]
@@ -167,13 +200,15 @@ class Museum:
 # ---------------------------------------------------------------------- tools exposed to the model
 TOOLS = [
     {"name": "search_museum",
-     "description": "Full-text search of the Point and Click Museum database: graphic adventure games (title, year, studio, "
-                    "engine, era, description, trivia), studios, engines, interface techniques and eras. Use it before "
-                    "stating any fact about a game, person, company, date or technique.",
+     "description": "Full-text search of Murray's knowledge base on the history of graphic adventures: the museum's own "
+                    "records (games, studios, engines, techniques, eras), history articles written from web sources, Wikipedia "
+                    "passages and the ScummVM catalogue of ~1,200 adventure games (company, year, engine, series). English "
+                    "keywords work best. Use it before stating any fact about a game, person, company, date or technique.",
      "input_schema": {"type": "object", "additionalProperties": False, "required": ["query"],
                       "properties": {"query": {"type": "string", "description": "Keywords, titles, names or years."},
-                                     "kind": {"type": "string", "enum": ["game", "studio", "engine", "technique", "era"],
-                                              "description": "Optional: restrict to one kind of record."}}}},
+                                     "kind": {"type": "string", "enum": ["game", "studio", "engine", "technique", "era", "history", "wikipedia", "catalogue"],
+                                              "description": "Optional: restrict to one kind: museum records (game, studio, engine, technique, era), "
+                                                             "history articles from web sources, Wikipedia passages, or the ScummVM catalogue of ~1,200 games."}}}},
     {"name": "get_record",
      "description": "Get one museum record by id (e.g. 'monkey-island', 'game:loom', 'studio:lucasarts') or exact title.",
      "input_schema": {"type": "object", "additionalProperties": False, "required": ["id"],
@@ -188,9 +223,13 @@ TOOLS = [
 
 
 def doc_brief(d: Doc) -> dict:
-    out = {"id": d.id, "title": d.title, "text": d.text, "museum_page": d.url}
-    if d.fields.get("link"):
-        out["source"] = d.fields["link"]
+    out = {"id": d.id, "title": d.title, "text": d.text}
+    if d.fields.get("external"):
+        out["sources"] = d.fields.get("sources", [])
+    else:
+        out["museum_page"] = d.url
+        if d.fields.get("link"):
+            out["source"] = d.fields["link"]
     return out
 
 
@@ -209,7 +248,7 @@ def run_tool(museum: Museum, name: str, args: dict, lang: str) -> tuple[str, lis
             except (TypeError, ValueError):
                 return None
         docs = museum.list_games(lang, num("year_from"), num("year_to"), args.get("studio"), args.get("engine"))
-        return json.dumps({"count": len(docs), "games": [{"id": d.id, "title": d.title, "year": d.year,
-                                                          "studio": d.fields["studio"], "engine": d.fields["engine"]} for d in docs]},
-                          ensure_ascii=False), docs[:6]
+        rows = [{"id": d.id, "title": d.title, "year": d.year, "studio": d.fields["studio"], "engine": d.fields["engine"]}
+                if d.kind == "game" else {"id": d.id, "title": d.title, "year": d.year, "info": d.text} for d in docs]
+        return json.dumps({"count": len(docs), "games": rows}, ensure_ascii=False), docs[:6]
     return json.dumps({"error": f"unknown tool {name}"}), []

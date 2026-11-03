@@ -38,7 +38,9 @@
     li.className = "m-" + item.who + (item.waiting ? " waiting" : "");
     li.innerHTML = '<span class="who">' + esc(item.who === "murray" ? "Murray" : U.you) + "</span><p>" + esc(item.text).replace(/\n/g, "<br>") + "</p>" +
       (item.sources && item.sources.length ? '<p class="src"><span>' + esc(U.sources) + ":</span> " +
-        item.sources.map(s => '<a href="' + esc(D.root + D.lang + "/" + s.url) + '">' + esc(s.title) + "</a>").join(" · ") + "</p>" : "");
+        item.sources.map(s => s.external
+          ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + " ↗</a>"
+          : '<a href="' + esc(D.root + D.lang + "/" + s.url) + '">' + esc(s.title) + "</a>").join(" · ") + "</p>" : "");
     log.appendChild(li); log.scrollTop = log.scrollHeight;
     return li;
   }

@@ -28,6 +28,7 @@ python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
 python3 tools/fetch_media.py     # descarga portadas, capturas y logos de data/media.json (--check, --only grupo/id)
 python3 tools/find_media.py "Título" [--kind cover|screenshot|logo]   # busca imágenes en GitHub (libretro, scummvm-web, logos)
 docker compose up -d --build    # despliegue: nginx (web) + Murray; configuración en .env (ver .env.example)
+python3 tools/build_murray_kb.py scummvm|wikipedia|all   # regenera la base de conocimiento externa de Murray
 python3 server/murray.py         # Murray en local (puerto 8080); MURRAY_LLM_BASE_URL/MODEL/API_KEY en el entorno
 nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el programa DOS de prueba
 ```
@@ -59,7 +60,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/interfaces.js` | laboratorio de interfaces (técnicas): parser, verbos SCUMM, menú de Full Throttle, moneda de CMI, dos botones, un clic; datos en `techniques.json → interfaces, lab` |
 | `src/js/techlab.js` | demos de cajas de paseo, pantalla de prioridad y paletas CGA/EGA/VGA |
 | `src/js/murray.js` | widget de chat de Murray (botón abajo a la derecha en todas las páginas); textos en `data/murray.json` |
-| `server/murray.py`, `server/knowledge.py` | servicio de Murray: RAG (BM25) y herramientas sobre `data/`, API compatible con OpenAI, límites |
+| `server/murray.py`, `server/knowledge.py` | servicio de Murray: RAG (BM25) y herramientas sobre `data/` y `data/murray_kb/`, API compatible con OpenAI, límites |
+| `data/murray_kb/` | conocimiento externo de Murray: `history.json` (artículos con fuentes web), catálogo de ScummVM, Wikipedia (`tools/build_murray_kb.py`) |
 | `deploy/`, `docker-compose.yml`, `.env.example` | imágenes Docker (nginx + Murray), configuración de nginx y variables |
 | `src/scummvm/player.*` | reproductor de ScummVM (iframe): copia datos y juego al sistema de ficheros de Emscripten |
 | `vendor/scummvm/` | ScummVM web compilado por `tools/build_scummvm.sh` (ignorado salvo `NOTICE.md`) |

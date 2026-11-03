@@ -122,6 +122,18 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   usuario: él pone el modelo, Qwen 3.8): `MURRAY_LLM_BASE_URL`, `MURRAY_LLM_API_KEY`, `MURRAY_LLM_MODEL` en `.env`.
   Sin modelo, «modo vitrina». Se descartó usar la API de Anthropic y el SDK (`pip` no hace falta).
 
+- **2026-11-05 · Murray mira a la izquierda y sin píxeles rojos** (petición del usuario). Los fotogramas se guardan
+  reflejados y con el color #bb3b0b del contorno (resto del extractor de sprites) cambiado por negro, mediante las
+  opciones `mirror` y `replace` de `data/media.json` que aplica `tools/fetch_media.py`.
+- **2026-11-05 · Murray habla de historia de las aventuras, no de otros museos** (el modelo del usuario respondía sobre
+  el Museo de Informática de la UPV, otro proyecto). El prompt y una ficha «sobre el museo» (`murray.json → about`)
+  dicen que este es un museo virtual sin relación con ninguna institución ni con ese museo.
+- **2026-11-05 · Base de conocimiento de internet para Murray** (petición del usuario). Desde la nube solo eran
+  accesibles GitHub y la búsqueda web: `data/murray_kb/history.json` (16 artículos redactados con la búsqueda web, con
+  fuentes y discrepancias señaladas) y `scummvm-games.jsonl` (catálogo de scummvm-web fijado a un commit, sin demos ni
+  duplicados). `tools/build_murray_kb.py wikipedia` añade Wikipedia en cuatro idiomas (probado con una API falsa;
+  pendiente de ejecutar donde Wikipedia sea accesible). Ponderación: ficha del museo > historia > Wikipedia > catálogo.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,
@@ -149,6 +161,8 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
 - Verificar fechas, estudios y motores contra Wikidata (P577, P178, P408) cuando haya acceso: la portada de Myst es
   la Masterpiece Edition y la de Mystery House una reedición SierraVenture (así lo dice su crédito).
 
+- **Generar la parte de Wikipedia de Murray:** `python3 tools/build_murray_kb.py wikipedia` en local o en el servidor
+  (en la nube Wikipedia estaba bloqueada) y hacer commit de `data/murray_kb/wikipedia-*.jsonl`.
 - **Probar Murray con el modelo real** (Qwen 3.8 en el servidor del usuario): en la sesión solo se probó con un
   servidor falso compatible con OpenAI. Revisar el tono, la latencia y si su servidor admite *function calling*.
 - Verificar los enlaces externos (Wikipedia y webs oficiales): no se pudieron comprobar desde el entorno en la nube.

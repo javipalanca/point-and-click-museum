@@ -60,7 +60,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/interfaces.js` | laboratorio de interfaces (técnicas): parser, verbos SCUMM, menú de Full Throttle, moneda de CMI, dos botones, un clic; datos en `techniques.json → interfaces, lab` |
 | `src/js/techlab.js` | demos de cajas de paseo, pantalla de prioridad y paletas CGA/EGA/VGA |
 | `src/js/murray.js` | widget de chat de Murray (botón abajo a la derecha en todas las páginas); textos en `data/murray.json` |
-| `server/murray.py`, `server/knowledge.py` | servicio de Murray: RAG (BM25) y herramientas sobre `data/` y `data/murray_kb/`, API compatible con OpenAI, límites |
+| `server/murray.py`, `server/knowledge.py`, `server/guard.py` | servicio de Murray: RAG (BM25) y herramientas sobre `data/` y `data/murray_kb/`, API compatible con OpenAI, límites y guardarraíles de tema |
 | `data/murray_kb/` | conocimiento externo de Murray: `history.json` (artículos con fuentes web), catálogo de ScummVM, Wikipedia (`tools/build_murray_kb.py`) |
 | `deploy/`, `docker-compose.yml`, `.env.example` | imágenes Docker (nginx + Murray), configuración de nginx y variables |
 | `src/scummvm/player.*` | reproductor de ScummVM (iframe): copia datos y juego al sistema de ficheros de Emscripten |

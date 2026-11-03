@@ -167,6 +167,22 @@ class Museum:
         scored.sort(reverse=True)
         return [docs[i] for _, i in scored[:k]]
 
+    def relevance(self, query: str, lang: str = "es") -> float:
+        """How strongly the query matches the knowledge base: best BM25 score from word matches only (no year bonus),
+        weighted by kind. Used by the topic guard."""
+        lang = lang if lang in LANGS else "es"
+        ix, docs = self.index[lang], self.docs[lang]
+        q = [w for w in tokens(query, stop=True) if not w.isdigit() and w in ix["idf"]]
+        best = 0.0
+        for i, d in enumerate(docs):
+            s = 0.0
+            for w in q:
+                f = ix["tf"][i].get(w)
+                if f:
+                    s += ix["idf"][w] * f * 2.2 / (f + 1.2 * (0.25 + 0.75 * ix["len"][i] / ix["avg"]))
+            best = max(best, s * KIND_WEIGHT.get(d.kind, 1.0))
+        return best
+
     def get(self, doc_id_or_title: str, lang: str = "es") -> Doc | None:
         lang = lang if lang in LANGS else "es"
         key = doc_id_or_title.strip().lower()

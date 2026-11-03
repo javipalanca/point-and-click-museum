@@ -152,6 +152,13 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   abre la ficha, los motores insertan el cartucho y los estudios resaltan su vitrina (también con `hashchange`).
   El navegador manda `page` para que Murray sepa dónde está el visitante.
 
+- **2026-11-05 · Guardarraíles de tema para Murray** (petición del usuario: «que NO hable de nada que no sea
+  aventuras gráficas»). Tres capas: reglas sin modelo (`server/guard.py`: nombres de la base de conocimiento, sagas,
+  vocabulario del género en 4 idiomas, saludos → sí; manipulación y otros museos → negativa fija); clasificador con el
+  propio modelo solo para lo dudoso, viendo la respuesta anterior; prompt endurecido y recordatorio en cada mensaje.
+  La puntuación BM25 se descartó como señal: «receta de paella» o «capital de Francia» puntuaban alto por el catálogo.
+  Calibrado: ningún mensaje fuera de tema de la batería pasa las reglas. `MURRAY_GUARD=strict|rules|off`.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

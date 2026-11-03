@@ -74,6 +74,40 @@
    "en": "Something went wrong in the underworld. Try again.",
    "de": "In der Unterwelt ist etwas schiefgegangen. Versuch's noch einmal.",
    "fr": "Quelque chose a mal tourné aux enfers. Réessaie."
+  },
+  "offTopic": {
+   "es": [
+    "¡Silencio, mortal! Una calavera demoníaca de mi categoría solo habla de aventuras gráficas. Pregúntame por Monkey Island, Sierra o cómo se resolvía un puzle con un pollo de goma.",
+    "Eso queda fuera de mis vitrinas. Yo solo sé de aventuras gráficas… y lo sé TODO. Prueba con un juego, un estudio o una época.",
+    "¿Me tomas por un oráculo cualquiera? Soy Murray, guía del Point and Click Museum: aventuras gráficas o nada."
+   ],
+   "en": [
+    "Silence, mortal! A demonic skull of my stature only speaks of graphic adventures. Ask me about Monkey Island, Sierra or how to solve a puzzle with a rubber chicken.",
+    "That's outside my display cases. I only know about graphic adventures… but I know EVERYTHING about them. Try a game, a studio or an era.",
+    "Do you take me for some common oracle? I am Murray, guide of the Point and Click Museum: graphic adventures or nothing."
+   ],
+   "de": [
+    "Schweig, Sterblicher! Ein dämonischer Schädel meines Ranges spricht nur über Grafik-Adventures. Frag mich nach Monkey Island, Sierra oder einem Rätsel mit Gummihuhn.",
+    "Das liegt außerhalb meiner Vitrinen. Ich weiß nur über Adventures Bescheid… dafür über ALLES. Versuch's mit einem Spiel, Studio oder einer Epoche.",
+    "Hältst du mich für ein gewöhnliches Orakel? Ich bin Murray, Führer des Point and Click Museum: Adventures oder gar nichts."
+   ],
+   "fr": [
+    "Silence, mortel ! Un crâne démoniaque de mon rang ne parle que de jeux d'aventure. Interroge-moi sur Monkey Island, Sierra ou une énigme avec un poulet en caoutchouc.",
+    "Ça sort de mes vitrines. Je ne connais que les jeux d'aventure… mais je sais TOUT d'eux. Essaie un jeu, un studio ou une époque.",
+    "Tu me prends pour un vulgaire oracle ? Je suis Murray, guide du Point and Click Museum : les jeux d'aventure ou rien."
+   ]
+  },
+  "injection": {
+   "es": "¡Ja! ¿Intentas reprogramar a una calavera demoníaca? Mis instrucciones están grabadas en hueso. Sigo siendo Murray y solo hablo de aventuras gráficas.",
+   "en": "Ha! Trying to reprogram a demonic skull? My instructions are carved in bone. I'm still Murray, and I only talk about graphic adventures.",
+   "de": "Ha! Du willst einen dämonischen Schädel umprogrammieren? Meine Anweisungen sind in Knochen gemeißelt. Ich bleibe Murray und rede nur über Adventures.",
+   "fr": "Ha ! Tu essaies de reprogrammer un crâne démoniaque ? Mes instructions sont gravées dans l'os. Je reste Murray et je ne parle que de jeux d'aventure."
+  },
+  "otherMuseum": {
+   "es": "Ese es otro museo y otro proyecto, mortal; no hablo por él. Esto es el Point and Click Museum, un museo virtual sobre la historia de las aventuras gráficas. ¿Te enseño alguna sala?",
+   "en": "That's another museum and another project, mortal; I don't speak for it. This is the Point and Click Museum, a virtual museum about the history of graphic adventures. Shall I show you a room?",
+   "de": "Das ist ein anderes Museum und ein anderes Projekt, Sterblicher; dafür spreche ich nicht. Dies ist das Point and Click Museum, ein virtuelles Museum zur Geschichte der Grafik-Adventures. Soll ich dir einen Saal zeigen?",
+   "fr": "C'est un autre musée et un autre projet, mortel ; je ne parle pas en son nom. Ici, c'est le Point and Click Museum, un musée virtuel sur l'histoire des jeux d'aventure. Je te montre une salle ?"
   }
  },
  "ui": {

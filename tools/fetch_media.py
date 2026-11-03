@@ -233,6 +233,9 @@ def shrink_png(data: bytes, role: str):
     if size > limit:
         k = limit / size
         nw, nh = max(1, round(w * k)), max(1, round(h * k))
+        f = -(-size // limit)  # pixel-art screenshots: reduce by a whole factor so pixels stay square and sharp
+        if role == "screenshot" and w % f == 0 and h % f == 0 and size // f >= limit * 0.6:
+            nw, nh = w // f, h // f
         px, w, h = box_resize(w, h, px, nw, nh), nw, nh
         data = png_write(w, h, px)
     if len(data) > QUANTIZE_ABOVE:  # fotografías y SVGA: 256 colores pesan un tercio y apenas se notan

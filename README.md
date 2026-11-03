@@ -144,7 +144,7 @@ src/layout.html     plantilla común con marcadores {{t:clave}}, {{v:var}}, {{ra
 src/pages/          contenido de cada página
 src/css, src/js     estilos y scripts (sin dependencias)
 server/             Murray: chat con RAG sobre data/ y API compatible con OpenAI
-deploy/, docker-compose.yml   imágenes Docker (nginx + Murray) y configuración de nginx
+deploy/, docker-compose.yml   imágenes Docker (builder + nginx + Murray) y configuración de nginx
 tools/              bundles de js-dos, descarga del emulador y programas DOS de prueba
 vendor/js-dos/      js-dos alojado localmente (opcional)
 ```
@@ -156,12 +156,35 @@ cp .env.example .env            # ajusta BASE_URL, PORT y, si quieres, el modelo
 docker compose up -d --build    # http://localhost:8080/
 ```
 
-Dos contenedores:
+Tres contenedores:
 
 | Servicio | Qué hace |
 |---|---|
-| `web` | genera el sitio con `build.py` (build público, sin tu colección local salvo `PUBLIC=0`) y lo sirve con nginx: gzip, caché de recursos, cabeceras de seguridad, `/healthz`, y proxy de `/api/murray/` con límite de peticiones |
+| `builder` | genera el sitio con `build.py` en el volumen `site` y lo vuelve a generar cada vez que añades, cambias o quitas un juego de la carpeta de juegos (`tools/games_inbox.py`). Cada build va a una carpeta nueva y se activa de golpe (enlace `current`), así que nadie ve un sitio a medias. Con `PUBLIC=1` (por defecto) deja fuera la colección local que hubiera en el contexto de la imagen |
+| `web` | sirve el sitio con nginx: gzip, caché de recursos, cabeceras de seguridad, `/healthz`, y proxy de `/api/murray/` con límite de peticiones |
 | `murray` | el chat de Murray (`server/murray.py`, solo biblioteca estándar). No publica puertos: solo se llega a él a través de `web`. Usuario sin privilegios, sistema de ficheros de solo lectura, sin capacidades |
+
+### Juegos en el servidor: deja los zips en una carpeta
+
+```bash
+cp ~/Descargas/MiJuego.zip games/      # GAMES_DIR en .env; por defecto ./games junto a docker-compose.yml
+docker compose logs -f builder         # importing MiJuego.zip · ok: … DOSBox runs MIJUEGO.EXE · built 44 pages
+```
+
+En unos segundos (`GAMES_WATCH`, 15 por defecto) el juego aparece en la sala DOSBox con la etiqueta «local». Cada zip
+pasa por `tools/add_game.py`: va a ScummVM si reconoce sus datos y ScummVM está compilado (`vendor/scummvm/` en el
+servidor antes de `docker compose build`); si no, a DOSBox con el ejecutable más probable. Se admiten subcarpetas y
+`.jsdos` ya hechos. Los ficheros que aún se están copiando esperan a la siguiente vuelta. Si borras o sustituyes un
+zip, el catálogo se actualiza; cada juego se convierte una sola vez (volumen `games-cache`). Para fijar título, año,
+estudio, ejecutable o velocidad, pon al lado un JSON con el mismo nombre (`MiJuego.json`):
+
+```json
+{"title": "Mi Juego", "year": 1993, "studio": "Estudio", "exe": "JUEGO/START.BAT", "cycles": 20000, "license": "Freeware"}
+```
+
+Los zips que no se pueden importar (por ejemplo, juegos de Windows) aparecen en el log y se ignoran. **Todo lo que
+pongas en esa carpeta se sirve a cualquier visitante**: deja solo juegos que tengas derecho a compartir. Sin Docker:
+`python3 tools/games_inbox.py ~/juegos` (vigila la carpeta y regenera `dist/`; `--once` para una sola pasada).
 
 Detrás de un dominio con HTTPS, pon un proxy inverso (Caddy, Traefik, nginx…) delante del puerto `PORT` y define
 `BASE_URL=https://tu-dominio` para que canonical, hreflang y sitemap usen la URL buena.

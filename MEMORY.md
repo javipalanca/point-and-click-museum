@@ -181,6 +181,18 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   solo la conversación encoge (el resto `flex: none`); las sugerencias se reparten en filas con su propio scroll, la
   altura máxima descuenta el botón y el panel tiene scroll como último recurso.
 
+- **2026-11-05 · Carpeta de juegos en el servidor** (petición del usuario: «dejar zips en el servidor y que se
+  detecten y carguen»). Nuevo servicio `builder` (`deploy/builder.Dockerfile`, `tools/games_inbox.py`): monta
+  `GAMES_DIR` (por defecto `./games`, en `.gitignore` y `.dockerignore`) en solo lectura, cada `GAMES_WATCH` s mira si
+  hay ficheros nuevos, cambiados o borrados (espera a que dejen de cambiar), los importa con `add_game.add()`
+  (caché por ruta+tamaño+fecha+JSON de opciones en el volumen `games-cache`), los marca `"inbox": true` en
+  `arcade.local.json` sin tocar los añadidos a mano ni sus ficheros, y genera el sitio en `/site/build-*`, que activa
+  cambiando el enlace `/site/current` (atómico; guarda el anterior). `web` ya no genera el sitio: nginx sirve
+  `/site/current` del volumen `site` (sustituye al build dentro de `web.Dockerfile` del Docker Compose del 2026-11-05);
+  los `.jsdos` pasan a `no-cache` porque un zip sustituido conserva el nombre. Opciones por juego en `<zip>.json`.
+  Probado en Docker: PAINT.COM en un zip aparece en la sala, arranca en DOSBox y desaparece al borrar el zip.
+  ScummVM en Docker solo si `vendor/scummvm/` está compilado en el servidor antes de `docker compose build`.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

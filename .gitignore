@@ -22,3 +22,6 @@ assets/scummvm/
 
 # Secrets for Docker Compose (see .env.example)
 .env
+
+# Games inbox on the server (docker compose: GAMES_DIR, default ./games)
+/games/

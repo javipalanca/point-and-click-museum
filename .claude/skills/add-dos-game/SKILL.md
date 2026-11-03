@@ -19,6 +19,13 @@ ni los publiques: los builds públicos (`tools/export_artifact.py`, `build.py --
 Si el ejecutable elegido no es el correcto, repite con `--exe RUTA/PROGRAMA.EXE --force`. Si el juego necesita
 instalarse, instálalo antes en DOSBox de escritorio y comprime la carpeta instalada.
 
+## En el servidor (Docker): carpeta de juegos
+
+Deja el zip en `GAMES_DIR` (por defecto `./games`): el servicio `builder` (`tools/games_inbox.py`) lo importa con
+`add_game.add()`, lo marca `"inbox": true` en `data/arcade.local.json` del contenedor y regenera el sitio. Opciones por
+juego en un JSON junto al zip (`title`, `year`, `studio`, `exe`, `cycles`, `engine`, `license`, `desc`, `source`, `icon`).
+Errores en `docker compose logs builder`. Pruebas: `tests/test_games_inbox.py`.
+
 ## ScummVM
 
 - `add_game.py` detecta el motor (firmas de ficheros en `SCUMMVM_SIGNATURES`; mantén la copia JS de `src/js/arcade.js`

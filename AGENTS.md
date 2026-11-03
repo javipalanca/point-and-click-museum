@@ -19,6 +19,7 @@ npm install && npx playwright install chromium   # una vez, para las pruebas
 npm test                         # pruebas de humo sobre dist/ (requiere build previo)
 python3 tools/export_artifact.py --out /tmp/artifact   # copia para publicar como Artifact de claude.ai
 python3 tools/add_game.py ~/Downloads/*.zip [--yes]   # añade juegos DOS o ScummVM locales (no versionados)
+python3 tools/games_inbox.py ~/juegos [--once]   # vigila una carpeta de zips, los importa y regenera el sitio (servicio builder)
 tools/build_scummvm.sh           # compila ScummVM web en vendor/scummvm/ (no versionado; 30-60 min)
 npm run test:scummvm             # prueba la integración de ScummVM con tests/fixtures/fake-scummvm
 python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
@@ -27,7 +28,7 @@ python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/gam
 python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
 python3 tools/fetch_media.py     # descarga portadas, capturas y logos de data/media.json (--check, --only grupo/id)
 python3 tools/find_media.py "Título" [--kind cover|screenshot|logo]   # busca imágenes en GitHub (libretro, scummvm-web, logos)
-docker compose up -d --build    # despliegue: nginx (web) + Murray; configuración en .env (ver .env.example)
+docker compose up -d --build    # despliegue: builder (genera y vigila GAMES_DIR) + nginx (web) + Murray; configuración en .env
 python3 tools/build_murray_kb.py scummvm|wikipedia|all   # regenera la base de conocimiento externa de Murray
 python3 server/murray.py         # Murray en local (puerto 8080); MURRAY_LLM_BASE_URL/MODEL/API_KEY en el entorno
 nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el programa DOS de prueba
@@ -47,6 +48,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `data/minigames/*.json` | los cuatro minijuegos (reglas, escenas, textos, parámetros) |
 | `data/arcade.json` | emulador y juegos DOS versionados; `catalogue.filtersFrom` = nº de juegos a partir del que aparecen los filtros |
 | `data/arcade.local.json` + `assets/games/` | colección local creada por `tools/add_game.py` (**ignorada por git**, nunca la añadas) |
+| `tools/games_inbox.py` + `games/` | carpeta de juegos del servidor: importa zips con `add_game`, caché por fichero, build atómico (`<site>/current`); `games/` está en `.gitignore` |
 | `data/media.json` + `assets/media/` | imágenes reales (portadas, capturas, logos) con su fuente exacta; `refs` reutiliza imágenes entre fichas |
 | `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos de la interfaz y los minijuegos |
 | `src/layout.html` | plantilla común; `src/pages/<id>.html` contenido de cada página |
@@ -62,7 +64,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/murray.js` | widget de chat de Murray (botón abajo a la derecha en todas las páginas); textos en `data/murray.json` |
 | `server/murray.py`, `server/knowledge.py`, `server/guard.py` | servicio de Murray: RAG (BM25) y herramientas sobre `data/` y `data/murray_kb/`, API compatible con OpenAI, límites y guardarraíles de tema |
 | `data/murray_kb/` | conocimiento externo de Murray: `history.json` (artículos con fuentes web), catálogo de ScummVM, Wikipedia (`tools/build_murray_kb.py`) |
-| `deploy/`, `docker-compose.yml`, `.env.example` | imágenes Docker (nginx + Murray), configuración de nginx y variables |
+| `deploy/`, `docker-compose.yml`, `.env.example` | imágenes Docker (builder + nginx + Murray), configuración de nginx y variables |
 | `src/scummvm/player.*` | reproductor de ScummVM (iframe): copia datos y juego al sistema de ficheros de Emscripten |
 | `vendor/scummvm/` | ScummVM web compilado por `tools/build_scummvm.sh` (ignorado salvo `NOTICE.md`) |
 | `tests/site.test.js` | pruebas de humo con Playwright |

@@ -322,6 +322,10 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   2026-11-05: la primera compilación del usuario falló en `backends/midi/seq.cpp` (`sys/soundcard.h` no existe en
   Emscripten): el `configure` de 2.9.1 activa el MIDI de `/dev/sequencer` en cualquier host «posix». El script pasa
   ahora `--disable-seq-midi --disable-timidity --disable-alsa --disable-sndio` (y `SCUMMVM_CONFIGURE` para extras).
+  2026-11-05: en el Mac del usuario, la descarga de Emscripten falló con «Can't timestamp and not clobber old files at
+  the same time»: `dists/emscripten/build.sh` usa `wget -nc` y su configuración de wget tenía `timestamping = on`.
+  El script pone ahora delante en el PATH un `wget` envoltorio con `--no-config` (`.cache/wget-shim/`), y avisa si
+  no hay wget.
 - ~~Guardar partidas de ScummVM entre visitas~~ hecho el 2026-11-05 (IndexedDB). Las de DOSBox dependen de js-dos (sin comprobar).
 - **Primera sincronización real del catálogo** en el servidor: `docker compose logs builder` tras arrancar; comprobar
   los nombres de colecciones de Internet Archive (`data/catalog.sources.json`), que GOG devuelve `products` y que las

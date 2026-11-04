@@ -23,6 +23,20 @@ if [[ ! -d "$WORK/.git" ]]; then
   git clone --depth 1 --branch "$VERSION" https://github.com/scummvm/scummvm.git "$WORK"
 fi
 cd "$WORK"
+
+# ScummVM's Emscripten script downloads with `wget -nc`. A ~/.wgetrc (or system wgetrc) with timestamping=on makes
+# wget refuse that ("can't timestamp and not clobber old files at the same time"), so during the build wget runs
+# with --no-config, through a small wrapper first in PATH. Your own wget settings are not touched.
+if ! command -v wget >/dev/null 2>&1; then
+  echo "error: ScummVM's build script needs wget (macOS: brew install wget; Debian/Ubuntu: apt install wget)" >&2
+  exit 1
+fi
+REAL_WGET="$(command -v wget)"
+SHIM="$ROOT/.cache/wget-shim"
+mkdir -p "$SHIM"
+printf '#!/bin/sh\nexec "%s" --no-config "$@"\n' "$REAL_WGET" > "$SHIM/wget"
+chmod +x "$SHIM/wget"
+export PATH="$SHIM:$PATH"
 case "$ENGINES" in
   all)          ENGINE_FLAGS=() ;;                         # configure's default: every stable engine
   all-unstable) ENGINE_FLAGS=(--enable-all-engines) ;;

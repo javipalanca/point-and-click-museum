@@ -51,8 +51,12 @@ services:
       GAMES_CACHE_MB: ${GAMES_CACHE_MB:-2048}   # games kept on the server at most (least recently used go first)
       GAMES_RATE: ${GAMES_RATE:-20}             # new downloads per visitor IP and hour
       GAMES_MAX_MB: ${GAMES_MAX_MB:-400}
+      # control panel at /admin/ (off if empty); put them only in .env
+      ADMIN_USER: ${ADMIN_USER:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_COOKIE_SECURE: ${ADMIN_COOKIE_SECURE:-0}   # 1 behind HTTPS
     volumes:
-      - catalog:/catalog:ro
+      - catalog:/catalog                  # the panel writes its decisions (catalog.admin.json) and sync requests here
       - games-proxy:/games-cache
     expose:
       - "8081"

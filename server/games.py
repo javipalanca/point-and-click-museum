@@ -28,7 +28,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import game_fetch  # noqa: E402
+import admin  # noqa: E402  (server/admin.py: the control panel)
 
 log = logging.getLogger("games")
 CATALOG = Path(os.environ.get("PCM_CATALOG", ROOT / "data" / "catalog.json"))
@@ -59,6 +61,7 @@ class Catalog:
 
 
 CAT = Catalog(CATALOG)
+ADMIN_PATHS = admin.paths(CATALOG, CACHE)
 LOCKS: dict[str, threading.Lock] = {}
 LOCKS_GUARD = threading.Lock()
 HITS: dict[str, list[float]] = {}
@@ -105,7 +108,13 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def do_POST(self):
+        if not admin.handle(self, "POST", ADMIN_PATHS):
+            self.send_json(404, {"error": "not found"})
+
     def do_GET(self):
+        if admin.handle(self, "GET", ADMIN_PATHS):
+            return
         path = self.path.split("?", 1)[0]
         if path == "/api/games/health":
             return self.send_json(200, {"ok": True, "cacheMB": CACHE_MB})
@@ -120,16 +129,22 @@ class Handler(BaseHTTPRequestHandler):
             with lock_for(ed["id"]):  # a second visitor waits for the first download instead of starting another
                 f = cached(ed)
                 if not f:
+                    t0 = time.time()
                     try:
                         CACHE.mkdir(parents=True, exist_ok=True)
                         f = Path(game_fetch.prepare(ed, CACHE)["file"])
                         log.info("prepared %s (%d KB)", ed["id"], f.stat().st_size // 1024)
+                        admin.record_download(ADMIN_PATHS, {"key": ed["id"], "title": ed.get("title"), "ok": True, "by": "visitor",
+                                                            "seconds": round(time.time() - t0, 1), "bytes": f.stat().st_size})
                         game_fetch.trim_cache(CACHE, CACHE_MB)
                     except game_fetch.GameError as e:
                         log.warning("cannot prepare %s: %s", ed["id"], e)
+                        admin.record_download(ADMIN_PATHS, {"key": ed["id"], "title": ed.get("title"), "ok": False, "by": "visitor", "error": str(e)})
                         return self.send_json(422, {"error": str(e)})
                     except OSError as e:  # the source is down: the visitor can try again later
                         log.warning("download of %s failed: %s", ed["id"], type(e).__name__)
+                        admin.record_download(ADMIN_PATHS, {"key": ed["id"], "title": ed.get("title"), "ok": False, "by": "visitor",
+                                                            "error": f"source did not answer ({type(e).__name__})", "network": True})
                         return self.send_json(502, {"error": "the game's source did not answer; try again later"})
         f.touch()
         etag = '"%x-%x"' % (int(f.stat().st_mtime), f.stat().st_size)
@@ -156,7 +171,8 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
     srv = ThreadingHTTPServer(("0.0.0.0", int(os.environ.get("GAMES_PORT", "8081"))), Handler)
-    log.info("games proxy on :%d · catalogue %s · cache %s (%d MB)", srv.server_address[1], CATALOG, CACHE, CACHE_MB)
+    log.info("games proxy on :%d · catalogue %s · cache %s (%d MB) · control panel %s", srv.server_address[1], CATALOG, CACHE,
+             CACHE_MB, "on /admin/" if admin.ENABLED else "off (no ADMIN_USER/ADMIN_PASSWORD)")
     srv.serve_forever()
 
 

@@ -120,7 +120,28 @@ python3 server/games.py                                 # el proxy en local (pue
 ```
 
 Correcciones a mano (enlace de GOG, ejecutable, permiso de un autor, dejar un juego como solo ficha) en
-`data/catalog.overrides.json`; siempre ganan a las fuentes. Fuentes y nombres de colecciones en
+`data/catalog.overrides.json` o, mejor, desde el **panel de control**; siempre ganan a las fuentes.
+
+### Panel de control (`/admin/`)
+
+Con `ADMIN_USER` y `ADMIN_PASSWORD` en `.env`, el contenedor `games` sirve un panel privado en `/admin/`
+(`server/admin.py`, `server/admin/`). Desde él:
+
+- **Resumen**: cuántos juegos hay en cada estado, lanzar una sincronización (fuentes, cuántas ediciones validar,
+  reintentar las fallidas) y ver cómo va.
+- **Juegos**: los ~1000 juegos localizados (la línea temporal, el catálogo completo de ScummVM e Internet Archive,
+  **también los comerciales**), con filtros. En cada edición: **Probar** (el servidor la descarga solo para ti y se
+  abre en DOSBox o ScummVM dentro del panel), **Validar** (las comprobaciones automáticas), **Derechos** (si tienes el
+  permiso del titular: `permission` con el **enlace a la prueba** y una nota; sin enlace no se acepta) y **Arranque**
+  (ejecutable y `cycles`). También el enlace de GOG, dejar un juego como solo ficha y **buscar en Internet Archive**
+  para añadir un elemento a un juego que no lo tenía.
+- **Fuentes**, **Descargas y errores** (públicas y del panel, con el motivo) y **Registro** de la sincronización.
+
+Un juego pasa a jugable en la web pública solo cuando tiene derechos autorizados **y** una validación correcta;
+probarlo en el panel no lo publica. Tus decisiones se guardan en `catalog.admin.json` (volumen `catalog`) y la
+sincronización diaria las respeta. Seguridad: sesión en cookie `HttpOnly`/`SameSite=Strict` (`ADMIN_COOKIE_SECURE=1`
+detrás de HTTPS), cabecera obligatoria en los POST, bloqueo tras 5 intentos fallidos, `noindex` y fuera de
+`robots.txt`. Si no defines usuario y contraseña, el panel no existe. Fuentes y nombres de colecciones en
 `data/catalog.sources.json`.
 
 ### ScummVM
@@ -207,7 +228,7 @@ Cuatro contenedores:
 |---|---|
 | `builder` | genera el sitio con `build.py` en el volumen `site` y lo vuelve a generar cada vez que añades, cambias o quitas un juego de la carpeta de juegos (`tools/games_inbox.py`). Cada build va a una carpeta nueva y se activa de golpe (enlace `current`), así que nadie ve un sitio a medias. Con `PUBLIC=1` (por defecto) deja fuera la colección local que hubiera en el contexto de la imagen |
 | `web` | sirve el sitio con nginx: gzip, caché de recursos, cabeceras de seguridad, `/healthz`, y proxy de `/api/murray/` y `/api/games/` con límite de peticiones |
-| `games` | proxy de descarga del catálogo (`server/games.py`): trae un juego jugable de ScummVM o Internet Archive la primera vez que alguien lo abre, lo comprueba, lo convierte y lo guarda en una caché limitada. El `builder` además refresca el catálogo cada `CATALOG_EVERY` horas (24 por defecto) |
+| `games` | panel de control en `/admin/` (si hay `ADMIN_USER`/`ADMIN_PASSWORD`) y proxy de descarga del catálogo (`server/games.py`): trae un juego jugable de ScummVM o Internet Archive la primera vez que alguien lo abre, lo comprueba, lo convierte y lo guarda en una caché limitada. El `builder` además refresca el catálogo cada `CATALOG_EVERY` horas (24 por defecto) |
 | `murray` | el chat de Murray (`server/murray.py`, solo biblioteca estándar). No publica puertos: solo se llega a él a través de `web`. Usuario sin privilegios, sistema de ficheros de solo lectura, sin capacidades |
 
 ### Juegos en el servidor: deja los zips en una carpeta
@@ -329,6 +350,7 @@ python3 build.py && npm test
 python3 -m unittest discover -s tests            # tools/add_game.py y el servidor de Murray (con un modelo simulado)
 npm run test:scummvm                             # sala ScummVM con un ScummVM simulado (no hace falta compilarlo)
 npm run test:catalog                             # catálogo: línea temporal → Jugar → proxy → ScummVM/DOSBox, caché y partidas
+npm run test:admin                               # panel: acceso, probar en DOSBox, validar, permiso con prueba, búsqueda en IA
 ```
 
 `tests/site.test.js` comprueba las 44 páginas (errores, desbordamiento en móvil y tableta, enlaces internos), resuelve la

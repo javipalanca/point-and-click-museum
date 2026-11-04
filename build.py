@@ -168,6 +168,8 @@ def add_catalog(arcade: dict, catalog: dict, timeline: dict) -> dict:
     for c in catalog.get("games", []):
         ed = (c.get("editions") or [None])[0]
         mine = by_id.get(c["id"])
+        if c["status"] == "record" and not c.get("timeline") and not mine:
+            continue  # the hundreds of games only located (ScummVM's list, Internet Archive) are for the control panel
         if mine and mine.get("bundle"):
             mine.update({k: c[k] for k in ("gog", "timeline") if c.get(k) and not mine.get(k)})
             continue
@@ -985,7 +987,9 @@ def write_scummvm(d: dict, out: Path, inline: bool) -> dict:
                     target.write_bytes(z.read(info))
         g["files"] = sorted(files)
     version = (SVM_VENDOR / "VERSION").read_text().strip() if (SVM_VENDOR / "VERSION").exists() else ""
-    return {"available": available, "data": data_files, "inline": inline, "version": version}
+    info = {"available": available, "data": data_files, "inline": inline, "version": version}
+    (dest / "manifest.json").write_text(json.dumps(info), "utf-8")  # for the control panel's test emulator
+    return info
 
 
 # --------------------------------------------------------------------------- main
@@ -1069,7 +1073,7 @@ def main() -> int:
     (out / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
         f'xmlns:xhtml="http://www.w3.org/1999/xhtml">{"".join(urls)}</urlset>\n', "utf-8")
-    (out / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {S.base}/sitemap.xml\n", "utf-8")
+    (out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: {S.base}/sitemap.xml\n", "utf-8")
     ui = d["i18n"][default]
     (out / "manifest.webmanifest").write_text(json.dumps({
         "name": d["site"]["name"], "short_name": "P&C Museum", "description": ui["metaDescription"],

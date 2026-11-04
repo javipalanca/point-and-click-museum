@@ -36,6 +36,8 @@ y una prueba. Nunca inventes portadas: o la del museo (`media.json`) o libretro-
 autorizados (freeware, demo, shareware, dominio público, licencia libre, o `"rights": "permission"` con `rightsSource`
 en `data/catalog.overrides.json`) y validación automática (`tools/game_fetch.py <edición>`). Si falla porque falta el
 motor, añádelo a `ENGINES` de `tools/build_scummvm.sh` (se revalida solo). Prueba: `npm run test:catalog`.
+El usuario gestiona todo eso desde el panel `/admin/` (`server/admin.py`): probar, validar y marcar derechos con prueba.
+Prueba del panel: `npm run test:admin`.
 
 ## ScummVM
 

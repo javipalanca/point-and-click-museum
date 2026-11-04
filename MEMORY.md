@@ -234,6 +234,23 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   para Mac, `docker compose up` fallaba con «error while creating mount source path …/games: chown … permission
   denied» porque Docker no puede crear la carpeta de un bind mount. Si se cambia `GAMES_DIR`, hay que crearla antes.
 
+- **2026-11-05 · Panel de control del catálogo** (petición del usuario: «panel con usuario y contraseña para lanzar
+  descargas, ver errores y fuentes, probar en DOSBox antes de validar; localízalos todos, yo marco los que tengan
+  permiso»). `server/admin.py` + `server/admin/` en el contenedor `games`, en `/admin/` (nginx lo pasa, `noindex`,
+  fuera de `robots.txt`). Credenciales solo en `.env` (`ADMIN_USER`, `ADMIN_PASSWORD`); sin ellas, 404. Sesión en
+  memoria con cookie `HttpOnly`+`SameSite=Strict`, cabecera `X-PCM-Admin` en los POST, 5 fallos por IP = 15 min.
+  La sincronización ahora **localiza todo**: catálogo completo de aventuras de ScummVM (sin edición), Internet Archive
+  paginado (`maxResults`) con metadatos de todos sus elementos (cacheados, `metadataPerRun`), comerciales incluidos.
+  El panel puede descargar cualquier edición para probarla (`game_fetch.prepare(admin=True)`), validarla, marcar
+  derechos (`permission` exige enlace de prueba; queda `rightsBy`/`rightsAt`), cambiar el arranque, el enlace de GOG,
+  forzar «solo ficha» y adjuntar elementos de IA a un juego. Decisiones en `catalog.admin.json` (junto al catálogo,
+  gana a `data/catalog.overrides.json`); la sincronización las aplica antes de decidir si una validación sigue
+  valiendo y conserva las validaciones del panel hechas mientras corría. El `builder` atiende `sync.request.json`,
+  escribe `sync.status.json` y `sync.log`, y regenera la web cuando cambia el catálogo. Registro de descargas en
+  `downloads.jsonl` (caché del proxy). La web pública solo lista los «solo ficha» de la línea temporal (el resto, ~800,
+  solo en el panel). Panel solo en español: herramienta privada, no contenido del museo. Probado con `npm run
+  test:admin` (fuentes falsas) y en Docker (login, sincronización pedida desde el panel, regeneración).
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

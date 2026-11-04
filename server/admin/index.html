@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel del catálogo · Point and Click Museum</title>
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+<main id="login" class="login" hidden>
+  <form id="loginForm" class="card">
+    <h1>Panel del catálogo</h1>
+    <label>Usuario <input name="user" autocomplete="username" required></label>
+    <label>Contraseña <input name="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit">Entrar</button>
+    <p class="err" id="loginErr" aria-live="polite"></p>
+  </form>
+</main>
+
+<div id="app" hidden>
+  <header class="top">
+    <h1>Panel del catálogo</h1>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="summary" aria-selected="true">Resumen</button>
+      <button role="tab" data-tab="games">Juegos</button>
+      <button role="tab" data-tab="sources">Fuentes</button>
+      <button role="tab" data-tab="downloads">Descargas y errores</button>
+      <button role="tab" data-tab="log">Registro</button>
+    </nav>
+    <span class="who"><span id="who"></span> · <button id="logout" class="link">Salir</button></span>
+  </header>
+
+  <section data-panel="summary" class="panel">
+    <div class="counts" id="counts"></div>
+    <div class="grid2">
+      <div class="card">
+        <h2>Sincronizar</h2>
+        <form id="syncForm">
+          <fieldset><legend>Fuentes</legend>
+            <label><input type="checkbox" name="only" value="scummvm" checked> ScummVM</label>
+            <label><input type="checkbox" name="only" value="archive" checked> Internet Archive</label>
+            <label><input type="checkbox" name="only" value="gog" checked> GOG</label>
+          </fieldset>
+          <label>Ediciones a descargar y validar <input type="number" name="validate" min="0" max="500" value="20"></label>
+          <label><input type="checkbox" name="retryFailed"> Reintentar las que fallaron</label>
+          <button type="submit">Sincronizar ahora</button>
+        </form>
+        <p class="muted">Solo se validan automáticamente las ediciones con derechos autorizados. Las demás se prueban y
+          validan a mano desde la ficha del juego.</p>
+      </div>
+      <div class="card">
+        <h2>Última sincronización</h2>
+        <dl id="syncStatus" class="kv"></dl>
+        <h2>Servidor</h2>
+        <dl id="cacheStatus" class="kv"></dl>
+      </div>
+    </div>
+  </section>
+
+  <section data-panel="games" class="panel" hidden>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Buscar título, estudio o identificador">
+      <select id="fStatus"><option value="">Todos los estados</option><option value="playable">Jugable</option><option value="pending">Pendiente</option><option value="record">Solo ficha</option></select>
+      <select id="fSource"><option value="">Todas las fuentes</option><option value="scummvm">ScummVM (descargas)</option><option value="scummvm-catalogue">ScummVM (catálogo)</option><option value="archive">Internet Archive</option><option value="manual">Añadidas a mano</option></select>
+      <select id="fFlag"><option value="">Todo</option><option value="download">Con descarga</option><option value="nodownload">Sin descarga</option><option value="failed">Validación fallida</option><option value="timeline">En la línea temporal</option><option value="gog">En GOG</option></select>
+      <span id="gCount" class="muted"></span>
+    </div>
+    <div class="split">
+      <ul id="gameList" class="list"></ul>
+      <article id="detail" class="card detail"><p class="muted">Elige un juego de la lista.</p></article>
+    </div>
+  </section>
+
+  <section data-panel="sources" class="panel" hidden><div id="sources"></div></section>
+  <section data-panel="downloads" class="panel" hidden><div id="downloads"></div></section>
+  <section data-panel="log" class="panel" hidden><pre id="log" class="log"></pre></section>
+
+  <dialog id="player" class="player">
+    <header><strong id="playerTitle"></strong><span id="playerState" class="muted"></span><button id="playerClose" class="link">Cerrar</button></header>
+    <div id="playerHost" class="screen"></div>
+    <p class="muted">Prueba privada: la descarga es solo para ti. La web pública solo ofrece las ediciones jugables.</p>
+  </dialog>
+</div>
+<script src="/admin/admin.js" defer></script>
+</body>
+</html>

@@ -23,12 +23,27 @@ FILES = {
 }
 
 
+FILES["/download/msdos_quest_1991/QUEST.ZIP"] = zbytes({"QUEST/QUEST.EXE": (ROOT / "tools/dos/PAINT.COM").read_bytes()})
+SEARCH = {"response": {"docs": [{"identifier": "msdos_quest_1991", "title": "Quest for the Museum (1991)", "year": "1991",
+                                 "creator": "Some Studio", "collection": ["softwarelibrary_msdos_games"]}]}}
+META = {"metadata": {"identifier": "msdos_quest_1991", "title": "Quest for the Museum (1991)", "creator": "Some Studio",
+                     "collection": ["softwarelibrary_msdos_games"], "emulator": "dosbox", "emulator_start": "QUEST/QUEST.EXE"},
+        "files": [{"name": "QUEST.ZIP", "size": str(len(FILES["/download/msdos_quest_1991/QUEST.ZIP"]))}]}
+
+
 class H(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
     def do_GET(self):
-        data = FILES.get(self.path)
+        import json
+        path = self.path.split("?")[0]
+        if path == "/advancedsearch.php":
+            data = json.dumps(SEARCH).encode()
+        elif path == "/metadata/msdos_quest_1991":
+            data = json.dumps(META).encode()
+        else:
+            data = FILES.get(path)
         self.send_response(200 if data else 404)
         self.send_header("Content-Length", str(len(data or b"")))
         self.end_headers()

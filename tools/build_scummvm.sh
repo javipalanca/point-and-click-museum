@@ -48,9 +48,25 @@ esac
 # libraries some engines need (videos, PNG/JPEG images, fonts…); the Emscripten script fetches or builds them.
 # With a short engine list they are not needed; configure leaves out any engine whose libraries are missing.
 LIB_FLAGS=(--enable-mad --enable-vorbis)
+LIBS_BUILT="$WORK/dists/emscripten/libs/build/lib"
+# A library that ScummVM's script downloads from the original site (some have gone: liba52.sourceforge.io answers 404)
+# is used only if it is already built or its download is reachable now; otherwise it is left out with a warning
+# (it only adds a few video codecs; configure leaves out any engine that really needs it).
+optional_lib() {  # flag  built-file  url
+  if [[ -f "$LIBS_BUILT/$2" ]] || "$REAL_WGET" --no-config -q --spider --timeout=20 --tries=2 "$3"; then
+    LIB_FLAGS+=("$1")
+  else
+    echo "warning: $3 is not reachable: building without $1" >&2
+  fi
+}
 if [[ "$ENGINES" == all* ]]; then
-  LIB_FLAGS+=(--enable-ogg --enable-zlib --enable-png --enable-jpeg --enable-gif --enable-freetype2 \
-              --enable-theoradec --enable-mpeg2 --enable-a52 --enable-faad)
+  # Emscripten ports: always available
+  LIB_FLAGS+=(--enable-ogg --enable-zlib --enable-png --enable-jpeg --enable-gif --enable-freetype2)
+  # downloaded and built by dists/emscripten/build.sh (URLs of ScummVM 2.9.1's script)
+  optional_lib --enable-theoradec libtheora.a "https://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.xz"
+  optional_lib --enable-mpeg2 libmpeg2.a "http://libmpeg2.sourceforge.net/files/libmpeg2-0.5.1.tar.gz"
+  optional_lib --enable-faad libfaad.a "https://sourceforge.net/projects/faac/files/faad2-src/faad2-2.8.0/faad2-2.8.8.tar.gz"
+  optional_lib --enable-a52 liba52.a "https://liba52.sourceforge.io/files/a52dec-0.7.4.tar.gz"
 fi
 # Native MIDI drivers make no sense in a browser. ScummVM 2.9.1's configure turns the /dev/sequencer one on for any
 # "posix" host, Emscripten included, and backends/midi/seq.cpp then fails: 'sys/soundcard.h' file not found.

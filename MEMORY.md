@@ -326,7 +326,10 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   the same time»: `dists/emscripten/build.sh` usa `wget -nc` y su configuración de wget tenía `timestamping = on`.
   El script pone ahora delante en el PATH un `wget` envoltorio con `--no-config` (`.cache/wget-shim/`), y avisa si
   no hay wget. Después, `npm install` (dentro de la instalación de Emscripten) falló por la caché de npm dañada del usuario
-  (`~/.npm/_cacache`, ENOENT): el script usa ahora su propia caché (`npm_config_cache=.cache/npm`).
+  (`~/.npm/_cacache`, ENOENT): el script usa ahora su propia caché (`npm_config_cache=.cache/npm`). Luego, con
+  `ENGINES=all`, la descarga de a52dec falló (404 en `liba52.sourceforge.io`): las bibliotecas que baja el script de
+  ScummVM (theora, mpeg2, faad, a52) son ahora opcionales; se comprueba su URL con `wget --spider` (o que ya estén
+  compiladas) y, si no responde, se compila sin ella con un aviso. Solo afectan a algunos códecs de vídeo.
 - ~~Guardar partidas de ScummVM entre visitas~~ hecho el 2026-11-05 (IndexedDB). Las de DOSBox dependen de js-dos (sin comprobar).
 - **Primera sincronización real del catálogo** en el servidor: `docker compose logs builder` tras arrancar; comprobar
   los nombres de colecciones de Internet Archive (`data/catalog.sources.json`), que GOG devuelve `products` y que las

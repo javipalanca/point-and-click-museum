@@ -2,11 +2,14 @@
 # Build ScummVM for the web (WebAssembly) and copy it to vendor/scummvm/.
 #
 #   tools/build_scummvm.sh                 # ScummVM 2.9.1 with the museum's engines
+#   ENGINES=all tools/build_scummvm.sh     # every stable engine, with the libraries they need
+#   ENGINES=all-unstable tools/build_scummvm.sh   # also the engines ScummVM marks as unstable (may not work)
 #   SCUMMVM_VERSION=v2.9.1 ENGINES=scumm,sky tools/build_scummvm.sh
 #
 # Uses ScummVM's official Emscripten script (dists/emscripten/build.sh), which downloads the
 # Emscripten SDK and a few libraries. Needs git, python3, make, a C compiler toolchain and ~5 GB of disk.
-# The first build takes 30-60 minutes. ScummVM is GPLv3: see vendor/scummvm/NOTICE.md.
+# The first build takes 30-60 minutes (with ENGINES=all, a few hours and ~15 GB). ScummVM is GPLv3: see
+# vendor/scummvm/NOTICE.md. Engines are dynamic plugins: the player only loads the one each game needs.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -20,12 +23,24 @@ if [[ ! -d "$WORK/.git" ]]; then
   git clone --depth 1 --branch "$VERSION" https://github.com/scummvm/scummvm.git "$WORK"
 fi
 cd "$WORK"
+case "$ENGINES" in
+  all)          ENGINE_FLAGS=() ;;                         # configure's default: every stable engine
+  all-unstable) ENGINE_FLAGS=(--enable-all-engines) ;;
+  *)            ENGINE_FLAGS=(--disable-all-engines "--enable-engine=$ENGINES") ;;
+esac
+# libraries some engines need (videos, PNG/JPEG images, fonts…); the Emscripten script fetches or builds them.
+# With a short engine list they are not needed; configure leaves out any engine whose libraries are missing.
+LIB_FLAGS=(--enable-mad --enable-vorbis)
+if [[ "$ENGINES" == all* ]]; then
+  LIB_FLAGS+=(--enable-ogg --enable-zlib --enable-png --enable-jpeg --enable-gif --enable-freetype2 \
+              --enable-theoradec --enable-mpeg2 --enable-a52 --enable-faad)
+fi
 # Native MIDI drivers make no sense in a browser. ScummVM 2.9.1's configure turns the /dev/sequencer one on for any
 # "posix" host, Emscripten included, and backends/midi/seq.cpp then fails: 'sys/soundcard.h' file not found.
 # SCUMMVM_CONFIGURE adds options of your own (e.g. --enable-debug).
+# ${ARR[@]+"${ARR[@]}"}: an empty list must not trip `set -u` in macOS's bash 3.2
 ./dists/emscripten/build.sh setup libs configure make dist \
-  --disable-all-engines --enable-plugins --default-dynamic \
-  --enable-engine="$ENGINES" --enable-mad --enable-vorbis \
+  --enable-plugins --default-dynamic ${ENGINE_FLAGS[@]+"${ENGINE_FLAGS[@]}"} "${LIB_FLAGS[@]}" \
   --disable-seq-midi --disable-timidity --disable-alsa --disable-sndio \
   --prefix=/ --datadir=/data ${SCUMMVM_CONFIGURE:-}
 
@@ -36,6 +51,9 @@ cp "$B/scummvm.js" "$B/scummvm.wasm" "$OUT/"
 cp -R "$B/data" "$OUT/data"
 rm -rf "$OUT/data/games"
 echo "$VERSION" > "$OUT/VERSION"
-echo "$ENGINES" > "$OUT/ENGINES"
+# the engines really built (one plugin each), for the catalogue: tools/game_fetch.py reads this list
+PLUGINS=$(find "$OUT/data/plugins" -name 'lib*.so' 2>/dev/null | sed 's#.*/lib##; s#\.so$##' | grep -v '^detection$' | sort | paste -sd, -)
+echo "${PLUGINS:-$ENGINES}" > "$OUT/ENGINES"
+echo "engines: $(tr ',' '\n' < "$OUT/ENGINES" | wc -l | tr -d ' ') ($(cat "$OUT/ENGINES"))"
 du -sh "$OUT"
 echo "ScummVM $VERSION -> $OUT  (now run: python3 build.py)"

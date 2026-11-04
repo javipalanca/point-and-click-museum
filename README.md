@@ -157,6 +157,20 @@ tools/build_scummvm.sh      # ScummVM 2.9.1 → vendor/scummvm/ (30–60 min la 
 python3 build.py
 ```
 
+Por defecto compila los motores de aventura que usa el museo. Para **todos** los motores:
+
+```bash
+ENGINES=all tools/build_scummvm.sh            # todos los motores estables, con png, jpeg, freetype, theora, mpeg2…
+ENGINES=all-unstable tools/build_scummvm.sh   # también los que ScummVM marca como inestables (pueden no funcionar)
+ENGINES=scumm,sky,sword1 tools/build_scummvm.sh   # o una lista concreta
+```
+
+Con `ENGINES=all` la compilación tarda unas horas y ocupa ~15 GB en `.cache/`; `configure` deja fuera (y lo dice en
+su salida) los motores cuyas bibliotecas no consiga. Al terminar, `vendor/scummvm/ENGINES` lista los motores
+realmente compilados; el catálogo lo lee para revalidar los juegos que esperaban su motor. Después, en Docker,
+`docker compose up -d --build` (el `builder` y `games` copian `vendor/scummvm/`). Cada plugin es un fichero aparte:
+el reproductor solo descarga el del juego que se abre, pero la web generada ocupa más (todos los plugins).
+
 Requisitos: git, python3, make y herramientas de compilación de C/C++ (en macOS, `xcode-select --install`).
 `vendor/scummvm/` no se versiona (pesa varios MB y es GPLv3); sin compilar, las fichas de ScummVM avisan de que falta.
 Cada partida carga solo el plugin de detección y el del motor del juego. ScummVM usa el ratón directamente.

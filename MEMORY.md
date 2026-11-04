@@ -272,6 +272,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   idiomas). Llegar con `#play=<id>` abre la página donde está ese juego (limpia los filtros si lo ocultaban). Se quitó
   la caja con scroll propio de la lista (`max-height`), innecesaria con páginas.
 
+- **2026-11-05 · ScummVM con todos los motores** (petición del usuario). `tools/build_scummvm.sh` acepta
+  `ENGINES=all` (sin `--disable-all-engines`: todos los estables, que es lo que hace `configure` por defecto) y
+  `ENGINES=all-unstable` (`--enable-all-engines`), y en ambos activa `--enable-ogg --enable-zlib --enable-png
+  --enable-jpeg --enable-gif --enable-freetype2 --enable-theoradec --enable-mpeg2 --enable-a52 --enable-faad` (en
+  Emscripten 2.9.1 png/jpeg/gif/freetype/ogg/zlib son ports que solo se usan si se piden; a52/faad/mpeg2/theora los
+  compila `dists/emscripten/build.sh`). La compilación por defecto no cambia. `vendor/scummvm/ENGINES` se escribe
+  ahora a partir de los plugins compilados (`data/plugins/lib*.so`). Listas vacías con `${A[@]+"${A[@]}"}` por el
+  bash 3.2 de macOS. Sin probar la compilación completa en la sesión (no se puede ejecutar Emscripten aquí).
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

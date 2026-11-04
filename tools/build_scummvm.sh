@@ -37,6 +37,9 @@ mkdir -p "$SHIM"
 printf '#!/bin/sh\nexec "%s" --no-config "$@"\n' "$REAL_WGET" > "$SHIM/wget"
 chmod +x "$SHIM/wget"
 export PATH="$SHIM:$PATH"
+# Installing Emscripten runs `npm install`; a damaged ~/.npm cache ("invalid json response body … ENOENT … _cacache")
+# stops it. The build uses a cache of its own, in .cache/npm (delete that folder if npm ever fails there too).
+export npm_config_cache="$ROOT/.cache/npm"
 case "$ENGINES" in
   all)          ENGINE_FLAGS=() ;;                         # configure's default: every stable engine
   all-unstable) ENGINE_FLAGS=(--enable-all-engines) ;;

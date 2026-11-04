@@ -282,32 +282,62 @@ if (document.getElementById("dosHost")) (() => {
   });
 })();
 
-/* ---------- catalogue: search, company, A–Z index, sort ---------- */
+/* ---------- catalogue: search, company, A–Z index, sort, pages ---------- */
 if (document.getElementById("catList")) (() => {
-  const { $, $$, t, sfx } = PCM;
+  const { D, $, $$, t, sfx, reduceMotion } = PCM;
   const list = $("#catList"), items = $$(".dos-game", list), count = $("#catCount"), empty = $("#catEmpty");
   const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button"), engineSel = $("#catEngine"), stateSel = $("#catStatus");
   if (!search) return; // few games: no filters
+  const PER = (D.arcade.catalogue || {}).pageSize || 10;
   const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   items.forEach(el => { el._text = norm(el.querySelector("h3").textContent + " " + el.dataset.studio); });
-  let letter = "";
-  function apply() {
+  let letter = "", page = 0, matched = [];
+  const pager = document.createElement("nav");
+  pager.className = "cat-pages"; pager.setAttribute("aria-label", t("catPages"));
+  list.after(pager);
+
+  /* what the search, filters and letter leave, in the list's current order; then only the current page is shown */
+  function apply(keepPage) {
     const q = norm(search.value.trim()), st = studio.value, en = engineSel ? engineSel.value : "", ss = stateSel ? stateSel.value : "";
-    let n = 0;
-    items.forEach(el => {
-      const show = (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) && (!letter || el.dataset.letter === letter) && (!en || el.dataset.engine === en) && (!ss || el.dataset.status === ss);
-      el.hidden = !show; if (show) n++;
-    });
-    count.textContent = t("catCount", { n, total: items.length });
-    empty.hidden = n > 0;
+    matched = $$(".dos-game", list).filter(el => (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) &&
+      (!letter || el.dataset.letter === letter) && (!en || el.dataset.engine === en) && (!ss || el.dataset.status === ss));
+    if (!keepPage) page = 0;
+    show();
   }
+  function show() {
+    const pages = Math.max(1, Math.ceil(matched.length / PER));
+    page = Math.min(Math.max(page, 0), pages - 1);
+    const visible = new Set(matched.slice(page * PER, page * PER + PER));
+    items.forEach(el => { el.hidden = !visible.has(el); });
+    count.textContent = t("catCount", { n: matched.length, total: items.length });
+    empty.hidden = matched.length > 0;
+    pager.hidden = pages < 2;
+    if (pages < 2) { pager.innerHTML = ""; return; }
+    // first, last and the pages around the current one
+    const nums = [...new Set([0, pages - 1, page - 2, page - 1, page, page + 1, page + 2].filter(n => n >= 0 && n < pages))].sort((a, b) => a - b);
+    let html = '<button type="button" data-p="' + (page - 1) + '"' + (page === 0 ? " disabled" : "") + ">◀ " + t("catPrev") + "</button>", last = -1;
+    nums.forEach(n => {
+      if (n - last > 1) html += '<span aria-hidden="true">…</span>';
+      html += '<button type="button" data-p="' + n + '"' + (n === page ? ' aria-current="page"' : "") + ' aria-label="' + t("catPage", { n: n + 1, total: pages }) + '">' + (n + 1) + "</button>";
+      last = n;
+    });
+    html += '<button type="button" data-p="' + (page + 1) + '"' + (page === pages - 1 ? " disabled" : "") + ">" + t("catNext") + " ▶</button>";
+    pager.innerHTML = html;
+  }
+  pager.addEventListener("click", e => {
+    const b = e.target.closest("button[data-p]");
+    if (!b || b.disabled) return;
+    page = +b.dataset.p; sfx("click"); show();
+    $("#catTitle").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
+  });
   function reorder() {
     const by = sort.value;
     const rank = { playable: 0, pending: 1, record: 2 }, r = el => rank[el.dataset.status] || 0;
     items.slice().sort((a, b) => r(a) - r(b) || (by === "year" ? (+a.dataset.year - +b.dataset.year) || a.dataset.key.localeCompare(b.dataset.key) : a.dataset.key.localeCompare(b.dataset.key)))
       .forEach(el => list.appendChild(el));
+    apply();
   }
-  search.addEventListener("input", apply);
+  search.addEventListener("input", () => apply());
   studio.addEventListener("change", () => { sfx("click"); apply(); });
   if (engineSel) engineSel.addEventListener("change", () => { sfx("click"); apply(); });
   if (stateSel) stateSel.addEventListener("change", () => { sfx("click"); apply(); });
@@ -318,5 +348,15 @@ if (document.getElementById("catList")) (() => {
   document.addEventListener("keydown", e => {
     if (e.key === "/" && document.activeElement === document.body) { e.preventDefault(); search.focus(); }
   });
+  /* arriving with #play=<id> (from the timeline): open the page where that game is */
+  const toHash = () => {
+    const m = /^#play=([\w-]+)/.exec(location.hash), el = m && items.find(x => x.dataset.id === m[1]);
+    if (!el) return;
+    let i = matched.indexOf(el);
+    if (i < 0) { search.value = ""; letter = ""; studio.value = ""; if (engineSel) engineSel.value = ""; if (stateSel) stateSel.value = "";
+      letters.forEach(x => x.setAttribute("aria-pressed", String(x.dataset.l === ""))); apply(); i = matched.indexOf(el); }
+    page = Math.floor(i / PER); show();
+  };
   apply();
+  toHash(); addEventListener("hashchange", toHash);
 })();

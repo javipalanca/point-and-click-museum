@@ -184,6 +184,33 @@ function serve() {
     await page.close();
   }
 
+  console.log("DOSBox room catalogue: 10 per page, with search, letters and order");
+  {
+    const page = await ctx.newPage(); await page.goto(`${base}/es/arcade/`);
+    const visible = () => page.$$eval(".dos-game", a => a.filter(x => !x.hidden).map(x => x.querySelector("h3").textContent));
+    const total = await page.$$eval(".dos-game", a => a.length);
+    (await visible()).length === Math.min(10, total) ? ok("10 games on the first page") : fail("first page shows " + (await visible()).length);
+    const first = await visible();
+    if (total > 10) {
+      await page.click('.cat-pages button[data-p="1"]');
+      const second = await visible();
+      second.length > 0 && !second.some(t => first.includes(t)) ? ok("page 2 shows the next games") : fail("page 2");
+    }
+    await page.fill("#catSearch", "monkey");
+    const found = await visible();
+    found.length > 0 && found.every(t => /monkey/i.test(t)) && (await page.getAttribute(".cat-pages", "hidden")) !== undefined
+      ? ok("search filters and starts again at page 1") : fail("search with pages: " + found.join(", "));
+    await page.fill("#catSearch", "");
+    await page.click('.letters button[data-l="M"]');
+    const em = await visible();
+    em.length > 0 && em.length <= 10 && em.every(t => /^(the |a |an )?m/i.test(t)) ? ok("letter M, at most 10 per page") : fail("letter: " + em.join(", "));
+    await page.click('.letters button[data-l=""]');
+    await page.selectOption("#catSort", "year");
+    const years = await page.$$eval(".dos-game", a => a.filter(x => !x.hidden && x.dataset.status === "record").map(x => +x.dataset.year));
+    years.every((y, i) => i === 0 || y >= years[i - 1]) ? ok("order by year kept within the page") : fail("year order " + years);
+    await page.close();
+  }
+
   console.log("Navigation: doors, games submenu, museum map, in-this-room strip");
   {
     const page = await ctx.newPage(); const errs = [];

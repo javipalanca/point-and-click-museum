@@ -246,5 +246,9 @@
  "arcadeDownloading": "Descargando {title}… {mb} MB",
  "arcadeFetchFail": "No se pudo traer el juego desde su fuente. Inténtalo más tarde.",
  "arcadeFetchBusy": "Demasiados juegos nuevos en poco tiempo. Espera un rato.",
- "arcadeNoServer": "Esta copia del museo no tiene el servidor de descargas: los juegos del catálogo solo se pueden jugar en el museo desplegado con Docker."
+ "arcadeNoServer": "Esta copia del museo no tiene el servidor de descargas: los juegos del catálogo solo se pueden jugar en el museo desplegado con Docker.",
+ "catPrev": "Anterior",
+ "catNext": "Siguiente",
+ "catPage": "Página {n} de {total}",
+ "catPages": "Páginas del catálogo"
 }

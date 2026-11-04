@@ -265,6 +265,13 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   `catalog.admin.json → <juego>.removedEditions` con lo que era, la sincronización la salta (`merge`), se borra su
   descarga de la caché, y la ficha lista las eliminadas con «Restaurar» (vuelve al momento, sin esperar a sincronizar).
 
+- **2026-11-05 · Catálogo de la sala DOSBox por páginas** (petición del usuario: «de 10 en 10, manteniendo la
+  búsqueda, las letras y el orden»). `arcade.js` filtra (búsqueda, compañía, motor, estado, letra), ordena (año o A–Z)
+  y muestra solo la página actual (`arcade.json → catalogue.pageSize`, 10); cambiar un filtro vuelve a la página 1.
+  Paginador con primera, última y ±2 alrededor de la actual (`catPrev`, `catNext`, `catPage`, `catPages` en los cuatro
+  idiomas). Llegar con `#play=<id>` abre la página donde está ese juego (limpia los filtros si lo ocultaban). Se quitó
+  la caja con scroll propio de la lista (`max-height`), innecesaria con páginas.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

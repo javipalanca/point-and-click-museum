@@ -20,7 +20,8 @@ Each game gets one of three states:
   pending   found automatically, but its rights or its compatibility are not confirmed yet;
   record    documented only: no edition we may distribute (commercial games, "abandonware" included).
 Internet Archive items are never playable on the uploader's word alone: only with an explicit licence in their
-metadata (Creative Commons / public domain) or rights confirmed in catalog.overrides.json with an evidence link.
+metadata (Creative Commons / public domain) or when a person marks them as available in the control panel
+("approved", the person takes care of the authorisation; also possible in catalog.overrides.json).
 Standard library only.
 """
 from __future__ import annotations
@@ -329,6 +330,9 @@ def added_editions(overrides: dict) -> list[dict]:
 
 # ---------------------------------------------------------------- merge
 def edition_status(ed: dict) -> str:
+    """Playable: approved by a person in the control panel, or authorised rights that passed the automatic check."""
+    if ed.get("approved"):
+        return "playable"
     if ed["rights"] not in game_fetch.RIGHTS_PLAYABLE:
         return "record" if ed["rights"] == "commercial" else "pending"
     v = ed.get("validated") or {}

@@ -157,7 +157,7 @@ def prepare(game: dict, cache: Path, admin: bool = False) -> dict:
     gid = game["id"]
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,80}", gid):
         raise GameError("bad id")
-    if not admin and game.get("rights") not in RIGHTS_PLAYABLE:
+    if not admin and not game.get("approved") and game.get("rights") not in RIGHTS_PLAYABLE:
         raise GameError(f"not authorised to run on the web (rights: {game.get('rights')})")
     dl = game.get("download") or {}
     if not dl.get("url"):

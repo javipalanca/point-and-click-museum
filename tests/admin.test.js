@@ -1,5 +1,5 @@
 /* End-to-end test of the control panel (server/admin.py): login, catalogue, Internet Archive search, testing a game
-   in DOSBox, validating it, confirming its rights with evidence; and that the public proxy only serves it then.
+   in DOSBox, marking it as available (and withdrawing it), validating it; and that the public proxy only serves it then.
    Run: npm run test:admin */
 "use strict";
 const { execFileSync, spawn } = require("child_process");
@@ -85,24 +85,27 @@ const firstLine = proc => new Promise((resolve, reject) => {
     check(!!(await page.$("#playerHost canvas")), "it runs in the panel's DOSBox before validating it");
     await page.click("#playerClose");
     check(await pub() === 404, "testing it did not publish it");
-    await page.click('#detail [data-act="validate"]');
-    await page.waitForSelector("#detail .badge.playable");
-    check((await page.textContent("#detail")).includes("DOSBox runs QUEST/QUEST.EXE"), "validated: the checks are shown");
-    check(await pub() === 404, "validated but without rights: still not public");
-    await page.selectOption('#detail [data-form="rights"] select', "permission");
-    await page.click('#detail [data-form="rights"] button');
-    await page.waitForTimeout(500);
-    check(!(await page.textContent("#detail")).includes("javi 20"), "a permission without its evidence link is refused");
-    await page.fill('#detail [data-form="rights"] [name=source]', "https://example.org/permission-letter");
-    await page.fill('#detail [data-form="rights"] [name=note]', "Autorizado por el autor por correo");
-    await page.click('#detail [data-form="rights"] button');
+    await page.click('#detail [data-act="approve"]');
     await page.waitForFunction(() => document.querySelector("#detail h2 .badge").textContent.includes("Jugable"));
-    check(true, "with permission and validated: playable");
-    await shot(page, "admin-detail");
+    check(true, "marked as available by you: playable, without needing the automatic check");
     for (let i = 0; i < 20 && await pub() !== 200; i++) await page.waitForTimeout(300);
     check(await pub() === 200, "now the public proxy serves it");
+    await shot(page, "admin-detail");
     const ov = JSON.parse(fs.readFileSync(path.join(catDir, "catalog.admin.json"), "utf8"));
-    check(ov["quest-for-the-museum"].editions[key].rightsSource === "https://example.org/permission-letter", "the decision is saved with its evidence (catalog.admin.json)");
+    const fix = ov["quest-for-the-museum"].editions[key];
+    check(fix.approved === true && fix.rightsBy === "javi" && !!fix.rightsAt, "your decision is saved with who and when (catalog.admin.json)");
+    await page.click('#detail [data-act="revert"]');
+    await page.waitForFunction(() => document.querySelector("#detail h2 .badge").textContent.includes("Solo ficha"));
+    for (let i = 0; i < 20 && await pub() !== 404; i++) await page.waitForTimeout(300);
+    check(await pub() === 404, "withdrawn from the web: the proxy stops serving it");
+    await page.click('#detail [data-act="validate"]');
+    await page.waitForSelector("#detail .badge.playable");
+    check((await page.textContent("#detail")).includes("DOSBox runs QUEST/QUEST.EXE"), "the automatic check is there to inform you: its steps are shown");
+    await page.fill('#detail [data-form="rights"] [name=note]', "Autorizado");
+    await page.selectOption('#detail [data-form="rights"] select', "permission");
+    await page.click('#detail [data-form="rights"] button');
+    await page.waitForFunction(() => document.querySelector("#detail h2 .badge").textContent.includes("Jugable"));
+    check(true, "choosing permission in the rights form, without any link, also makes it available");
 
     console.log("Locate a game in Internet Archive");
     await page.fill("#q", "lonely game");

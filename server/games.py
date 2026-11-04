@@ -156,7 +156,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", "application/zip")
         self.send_header("Content-Length", str(f.stat().st_size))
-        self.send_header("Cache-Control", "public, max-age=86400")
+        self.send_header("Cache-Control", "no-cache")  # revalidated with the ETag: a game you withdraw stops at once
         self.send_header("ETag", etag)
         self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()

@@ -242,7 +242,7 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   La sincronización ahora **localiza todo**: catálogo completo de aventuras de ScummVM (sin edición), Internet Archive
   paginado (`maxResults`) con metadatos de todos sus elementos (cacheados, `metadataPerRun`), comerciales incluidos.
   El panel puede descargar cualquier edición para probarla (`game_fetch.prepare(admin=True)`), validarla, marcar
-  derechos (`permission` exige enlace de prueba; queda `rightsBy`/`rightsAt`), cambiar el arranque, el enlace de GOG,
+  derechos (`permission` exigía enlace de prueba: sustituido el mismo día, ver «el usuario decide qué es jugable»; queda `rightsBy`/`rightsAt`), cambiar el arranque, el enlace de GOG,
   forzar «solo ficha» y adjuntar elementos de IA a un juego. Decisiones en `catalog.admin.json` (junto al catálogo,
   gana a `data/catalog.overrides.json`); la sincronización las aplica antes de decidir si una validación sigue
   valiendo y conserva las validaciones del panel hechas mientras corría. El `builder` atiende `sync.request.json`,
@@ -250,6 +250,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   `downloads.jsonl` (caché del proxy). La web pública solo lista los «solo ficha» de la línea temporal (el resto, ~800,
   solo en el panel). Panel solo en español: herramienta privada, no contenido del museo. Probado con `npm run
   test:admin` (fuentes falsas) y en Docker (login, sincronización pedida desde el panel, regeneración).
+
+- **2026-11-05 · El usuario decide qué es jugable** (petición del usuario: «ese requisito no te lo he dado; yo lo
+  validaré, ya he hecho toda la autorización»). Sustituye la exigencia de un enlace de prueba para `permission` y la de
+  una validación automática correcta: el botón «Marcar como disponible» del panel pone `approved: true` (con
+  `rightsBy`/`rightsAt`; nota y enlace opcionales) y eso basta para que sea jugable (`edition_status`, y el proxy lo
+  sirve aunque la etiqueta de derechos no sea de `RIGHTS_PLAYABLE`). La validación automática informa (si falló, el
+  panel lo avisa) pero no bloquea. «Retirar de la web» lo devuelve a lo que dice la fuente. El proxy responde con
+  `Cache-Control: no-cache` + ETag (antes `max-age=86400`), para que un juego retirado deje de servirse al momento
+  (los navegadores revalidan y reciben 304 si no cambió).
 
 ## Datos técnicos útiles
 

@@ -56,7 +56,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `data/arcade.local.json` + `assets/games/` | colección local creada por `tools/add_game.py` (**ignorada por git**, nunca la añadas) |
 | `tools/games_inbox.py` + `games/` | carpeta de juegos del servidor: importa zips con `add_game`, identifica el juego y su portada, caché por fichero, build atómico (`<site>/current`) con `build.py --arcade-local-only` (la sala lista solo esos juegos); `games/` está en `.gitignore` |
 | `data/catalog.json` | catálogo automático (generado por `tools/sync_catalog.py`; no editar a mano): una ficha por juego con estado `playable`/`pending`/`record`, ediciones, derechos, descarga, validación y enlace de GOG |
-| `data/catalog.overrides.json`, `data/catalog.sources.json` | correcciones a mano (ganan siempre; los permisos con enlace de prueba) y configuración de las fuentes |
+| `data/catalog.overrides.json`, `data/catalog.sources.json` | correcciones a mano (ganan siempre) y configuración de las fuentes |
 | `server/admin.py`, `server/admin/` | panel de control privado (`/admin/`, usuario y contraseña del entorno): sincronizar, probar en DOSBox/ScummVM, validar, derechos con prueba, búsqueda en IA; decisiones en `catalog.admin.json`. Solo en español (herramienta privada, no contenido del museo) |
 | `tools/sync_catalog.py`, `tools/game_fetch.py`, `server/games.py` | sincronización (ScummVM, Internet Archive, GOG), descarga y validación, y proxy `/api/games/` (solo ediciones jugables) |
 | `tools/identify_game.py` | identificación de juegos (firmas de ficheros SCUMM/AGI, nombres, `timeline.json` + catálogo de ScummVM) y portadas (`media.json` del museo o libretro-thumbnails) |
@@ -104,7 +104,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
    con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos de interfaz son originales.
    **Catálogo automático:** solo es «jugable» lo que tiene distribución autorizada (`game_fetch.RIGHTS_PLAYABLE`) y pasa
    las comprobaciones. «Abandonware» no es una licencia: los juegos comerciales de Internet Archive son «solo ficha»
-   salvo permiso documentado (en el panel o en `catalog.overrides.json`, siempre con enlace a la prueba). El catálogo
+   salvo que el usuario los marque como disponibles en el panel (él se ocupa de la autorización; `approved`). El catálogo
    sí **localiza** todos los juegos (también comerciales) y el panel los descarga para probarlos en privado; el proxy
    público nunca sirve lo que no es jugable.
 12. **Rigor e imágenes reales.** Juegos, estudios y motores reales se ilustran con imágenes reales (portada, captura,

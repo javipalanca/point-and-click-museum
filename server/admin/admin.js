@@ -143,7 +143,6 @@
 
   function editionHtml(e) {
     const v = e.validated || {}, dl = e.download || {};
-    const playable = me.playable.includes(e.rights);
     return '<div class="edition" data-key="' + esc(e.key) + '"><h3>' + esc(e.edition || e.key) +
       ' <span class="badge ' + esc(e.status) + '">' + esc(STATE[e.status]) + "</span>" +
       (v.ok === true ? '<span class="badge playable">validada</span>' : v.ok === false ? '<span class="badge fail">falló</span>' : "") + "</h3>" +
@@ -156,12 +155,13 @@
       "<dt>Arranque</dt><dd>" + esc(JSON.stringify(e.run || {})) + "</dd>" +
       (v.at ? "<dt>Validación</dt><dd>" + esc(v.at) + (v.by ? " · " + esc(v.by) : "") + (v.error ? '<br><span class="err">' + esc(v.error) + "</span>" : "") +
         (v.checks ? '<ul class="checks">' + v.checks.map(c => "<li>" + esc(c) + "</li>").join("") + "</ul>" : "") + "</dd>" : "") + "</dl>" +
-      '<div class="row">' + (dl.url ? '<button data-act="test">Probar</button><button data-act="validate">Validar</button>' : '<span class="muted">Sin fichero descargable.</span>') + "</div>" +
+      '<div class="row">' + (dl.url ? '<button data-act="test">Probar</button><button data-act="validate">Validar</button>' : '<span class="muted">Sin fichero descargable.</span>') +
+      (e.approved ? '<span class="badge playable">disponible · ' + esc((e.rightsBy || "") + " " + (e.rightsAt || "")) + '</span><button data-act="revert">Retirar de la web</button>' : dl.url ? '<button class="primary" data-act="approve">Marcar como disponible</button>' : "") + "</div>" +
+      (e.approved && v.ok === false ? '<p class="err">Está disponible, pero la validación automática falló: comprueba que arranca con «Probar».</p>' : "") +
       '<form class="row" data-form="rights"><select name="rights">' + me.rights.map(r => '<option' + (r === e.rights ? " selected" : "") + ">" + esc(r) + "</option>").join("") + "</select>" +
-      '<input type="url" name="source" placeholder="Enlace a la prueba del permiso" value="' + esc(e.rightsSource || "") + '">' +
-      '<input type="text" name="note" placeholder="Nota (quién lo autoriza, condiciones…)" value="' + esc(e.rightsNote || "") + '">' +
-      "<button>Guardar derechos</button>" + (e.rightsBy ? '<button type="button" data-act="revert">Volver a lo que dice la fuente</button>' : "") + "</form>" +
-      (playable ? "" : '<p class="muted">Para que sea jugable en la web: «permission» con el enlace a la autorización del titular, y una validación correcta.</p>') +
+      '<input type="url" name="source" placeholder="Enlace (opcional)" value="' + esc(e.rightsSource || "") + '">' +
+      '<input type="text" name="note" placeholder="Nota (opcional)" value="' + esc(e.rightsNote || "") + '">' +
+      "<button>Guardar derechos</button>" + (e.rightsBy && !e.approved ? '<button type="button" data-act="revert">Volver a lo que dice la fuente</button>' : "") + "</form>" +
       '<form class="row" data-form="run"><input type="text" name="exe" placeholder="Programa (GAME/START.BAT)" value="' + esc((e.run || {}).exe || "") + '">' +
       '<input type="number" name="cycles" placeholder="cycles" value="' + esc((e.run || {}).cycles || "") + '"><button>Guardar arranque</button></form></div>';
   }
@@ -181,6 +181,7 @@
     try {
       if (btn.dataset.act === "validate") { btn.textContent = "Descargando y comprobando…"; await post("/api/admin/editions/" + key + "/validate"); }
       if (btn.dataset.act === "revert") await post("/api/admin/editions/" + key + "/rights", { rights: null });
+      if (btn.dataset.act === "approve") await post("/api/admin/editions/" + key + "/rights", { approved: true });
       await loadCatalog();
     } catch (x) { alert(x.message); await loadCatalog(); }
   }
@@ -191,7 +192,7 @@
     ev.preventDefault();
     const key = f.closest(".edition").dataset.key, data = Object.fromEntries(new FormData(f));
     try {
-      if (f.dataset.form === "rights") await post("/api/admin/editions/" + key + "/rights", data);
+      if (f.dataset.form === "rights") await post("/api/admin/editions/" + key + "/rights", Object.assign(data, { approved: me.playable.includes(data.rights) }));
       else await post("/api/admin/editions/" + key + "/run", { exe: data.exe, cycles: data.cycles ? +data.cycles : undefined });
       await loadCatalog();
     } catch (x) { alert(x.message); }

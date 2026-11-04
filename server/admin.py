@@ -12,13 +12,14 @@
     POST /api/admin/games/<id>/attach       {"archive": identifier}
     GET  /api/admin/editions/<key>/bundle   download and prepare any edition, for testing in the panel's emulator
     POST /api/admin/editions/<key>/validate run the automatic checks
-    POST /api/admin/editions/<key>/rights   {"rights": "permission"|…|null, "source": url, "note": text}
+    POST /api/admin/editions/<key>/rights   {"approved": true} makes it available on the web (your decision);
+                                            {"rights": …, "source": url?, "note": text?}; {"rights": null} withdraws it
     POST /api/admin/editions/<key>/run      {"exe": "GAME/START.BAT", "cycles": 20000}
 
 Credentials: ADMIN_USER and ADMIN_PASSWORD in the environment of the games container (.env, never in the
 repository); without them the panel does not exist (404). Sessions live in memory for ADMIN_SESSION_HOURS (12).
 Every POST needs the header X-PCM-Admin: 1 (with SameSite=Strict, against cross-site requests); 5 failed logins
-per IP lock it for 15 minutes. What you decide (rights with their evidence, how a game starts, GOG links) goes to
+per IP lock it for 15 minutes. What you decide (which games are available, how a game starts, GOG links) goes to
 catalog.admin.json next to the catalogue, which the daily sync applies on top of the sources.
 
 Testing a commercial game here downloads it to the server for you alone; the public proxy (/api/games/) keeps
@@ -363,23 +364,30 @@ def route(h, method: str, path: str, q: dict, P: dict):
         if rights is not None and rights not in RIGHTS:
             raise ValueError(f"rights: one of {', '.join(RIGHTS)} or null")
         source = str(b.get("source") or "").strip()
-        if rights == "permission" and not re.match(r"^https?://", source):
-            raise ValueError("a permission needs the link to its evidence (an e-mail archive, a web page, a document)")
+        if source and not re.match(r"^https?://", source):
+            raise ValueError("the optional link must start with http:// or https://")
+        approved = b.get("approved")
+        fields = ("rights", "rightsSource", "rightsNote", "rightsBy", "rightsAt", "approved")
 
         def change(cat, ov):
             g2, ed2 = find(cat, key)
             fix = ov_edition(ov, g2["id"], key)
             ed2.setdefault("rightsOriginal", ed2.get("rights"))
-            if rights is None:  # back to what the source says
-                for k in ("rights", "rightsSource", "rightsNote", "rightsBy", "rightsAt"):
+            if rights is None and not approved:  # withdraw: back to what the source says
+                for k in fields:
                     fix.pop(k, None)
                     if k != "rights":
                         ed2.pop(k, None)
                 ed2["rights"] = ed2.get("rightsOriginal") or "unknown"
-            else:
-                fix.update(rights=rights, rightsSource=source or ed2.get("rightsSource", ""), rightsNote=str(b.get("note") or "")[:500],
+            else:  # your decision: available on the web (you have done the authorisation)
+                new = rights or ("permission" if ed2["rights"] not in game_fetch.RIGHTS_PLAYABLE else ed2["rights"])
+                fix.update(rights=new, approved=bool(approved) if approved is not None else new in game_fetch.RIGHTS_PLAYABLE,
                            rightsBy=USER, rightsAt=time.strftime("%Y-%m-%d"))
-                ed2.update({k: fix[k] for k in ("rights", "rightsSource", "rightsNote", "rightsBy", "rightsAt")})
+                if source:
+                    fix["rightsSource"] = source
+                if b.get("note") is not None:
+                    fix["rightsNote"] = str(b.get("note") or "")[:500]
+                ed2.update({k: fix[k] for k in fields if k in fix})
             sync_catalog.restatus(g2, ov.get(g2["id"]))
             return ed2
         return send(h, 200, {"edition": edit(P, change)})

@@ -95,7 +95,7 @@ estados, que se ven en la sala DOSBox (con filtro) y en la línea temporal:
 - **Internet Archive**: `advancedsearch.php` para descubrir aventuras de MS-DOS, `metadata/{id}` para ficheros,
   sumas md5/sha1 y el programa que arranca (`emulator_start`), y `download/{id}/{fichero}` para descargar. **Un
   elemento de Internet Archive solo es jugable con una licencia explícita en sus metadatos** (Creative Commons o
-  dominio público) o con sus derechos confirmados a mano en `data/catalog.overrides.json`, con un enlace de prueba.
+  dominio público) o cuando lo marcas como disponible en el panel de control (o en `data/catalog.overrides.json`).
   Que lo haya subido alguien no lo autoriza: los juegos comerciales quedan como «solo ficha».
 - **GOG.com**: solo para el enlace «Comprar en GOG» de los juegos que aún se venden (búsqueda del catálogo de gog.com,
   coincidencia exacta del título: la *Special Edition* no es el original).
@@ -131,14 +131,15 @@ Con `ADMIN_USER` y `ADMIN_PASSWORD` en `.env`, el contenedor `games` sirve un pa
   reintentar las fallidas) y ver cómo va.
 - **Juegos**: los ~1000 juegos localizados (la línea temporal, el catálogo completo de ScummVM e Internet Archive,
   **también los comerciales**), con filtros. En cada edición: **Probar** (el servidor la descarga solo para ti y se
-  abre en DOSBox o ScummVM dentro del panel), **Validar** (las comprobaciones automáticas), **Derechos** (si tienes el
-  permiso del titular: `permission` con el **enlace a la prueba** y una nota; sin enlace no se acepta) y **Arranque**
-  (ejecutable y `cycles`). También el enlace de GOG, dejar un juego como solo ficha y **buscar en Internet Archive**
+  abre en DOSBox o ScummVM dentro del panel), **Validar** (las comprobaciones automáticas, informativas), **Marcar como
+  disponible** / **Retirar de la web** (tu decisión: queda anotado quién y cuándo; nota y enlace opcionales) y
+  **Arranque** (ejecutable y `cycles`). También el enlace de GOG, dejar un juego como solo ficha y **buscar en Internet Archive**
   para añadir un elemento a un juego que no lo tenía.
 - **Fuentes**, **Descargas y errores** (públicas y del panel, con el motivo) y **Registro** de la sincronización.
 
-Un juego pasa a jugable en la web pública solo cuando tiene derechos autorizados **y** una validación correcta;
-probarlo en el panel no lo publica. Tus decisiones se guardan en `catalog.admin.json` (volumen `catalog`) y la
+Un juego pasa a jugable en la web pública cuando **tú lo marcas como disponible** en el panel (la validación
+automática no lo bloquea: si falló, el panel lo avisa), o automáticamente si es freeware, demo o similar y pasa la
+validación. Probarlo en el panel no lo publica; retirarlo lo deja de servir al momento. Tus decisiones se guardan en `catalog.admin.json` (volumen `catalog`) y la
 sincronización diaria las respeta. Seguridad: sesión en cookie `HttpOnly`/`SameSite=Strict` (`ADMIN_COOKIE_SECURE=1`
 detrás de HTTPS), cabecera obligatoria en los POST, bloqueo tras 5 intentos fallidos, `noindex` y fuera de
 `robots.txt`. Si no defines usuario y contraseña, el panel no existe. Fuentes y nombres de colecciones en

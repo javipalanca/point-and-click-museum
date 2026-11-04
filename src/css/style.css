@@ -759,6 +759,16 @@ html.map-open { overflow: hidden; }
 @media (max-width: 899px) { .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ft-about { grid-column: 1 / -1; } }
 @media (max-width: 559px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
 
+.link-btn { background: none; border: 0; padding: 0; color: var(--paper); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.link-btn:hover { color: var(--amber); }
+
+/* Google Analytics consent: a small sign bottom-left (Murray lives bottom-right) */
+.pconsent { --c: var(--amber); position: fixed; z-index: 96; left: max(16px, env(safe-area-inset-left, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  width: min(400px, calc(100vw - 230px)); padding: 12px 14px 8px; color: var(--paper); font-size: 19px; line-height: 1.25; }
+.pconsent p { margin: 0 0 6px; }
+.pconsent .row { display: flex; flex-wrap: wrap; gap: 4px; }
+@media (max-width: 599px) { .pconsent { left: 12px; right: 12px; width: auto; bottom: calc(12px + 96px); } }
+
 /* Murray, the talking skull: chat widget, bottom-right on every page */
 .murray-widget { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 95; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
 .murray-widget > * { pointer-events: auto; }

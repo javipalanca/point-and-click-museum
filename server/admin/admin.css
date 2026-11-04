@@ -65,3 +65,16 @@ th { color: var(--dim); font-weight: 500; }
 .player header button { margin-left: auto; }
 .screen { background: #000; aspect-ratio: 4 / 3; position: relative; }
 .screen > * { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* statistics */
+.grid3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin: 16px 0; align-items: start; }
+.stat h2 { display: flex; justify-content: space-between; gap: 8px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hbars th { font-weight: 400; color: var(--paper); width: 45%; }
+.hbars td.bar { width: 45%; }
+.hbars td.bar span { display: block; height: 10px; min-width: 2px; background: var(--amber); border-radius: 0 3px 3px 0; }
+.cols { display: flex; align-items: flex-end; gap: 2px; height: 140px; border-bottom: 1px solid #4a3a28; }
+.cols span { flex: 1 1 0; height: 100%; display: flex; align-items: flex-end; }
+.cols span:hover i { background: var(--paper); }
+.cols i { display: block; width: 100%; min-height: 1px; background: var(--amber); border-radius: 3px 3px 0 0; }
+.cols-axis { display: flex; justify-content: space-between; margin: 4px 0 0; }
+details.card summary { cursor: pointer; color: var(--amber); }

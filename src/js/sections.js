@@ -168,6 +168,7 @@
     updCount();
     function openGame(i) {
       const g = games[i], er = eras.find(e => e.id === g.era), m = g.media || {};
+      PCM.track("timeline_open", { id: g.id });
       openModal('<article class="sheet' + (m.cover ? "" : " no-cover") + '" style="--ec:' + er.color + '">' +
         '<header class="sheet-head"><span class="m-year">' + g.year + '</span><span class="sheet-era">' + esc(er.name) + " · " + esc(er.range) + '</span><h3 id="mTitle">' + esc(g.title) + "</h3></header>" +
         '<div class="sheet-body">' + mediaFigure(m.cover, t("coverOf", { title: g.title }), "sheet-cover") +

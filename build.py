@@ -887,6 +887,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
         "nav": site["nav"], "gamePages": [p["id"] for p in S.pages if p.get("parent") == "games"],
         "site": {"score": site["score"]}, "transitions": site.get("transitions", {}), "sprites": d["sprites"], "font": d["font"], "characters": d["characters"],
         "arcadeVendored": vendored,
+        "analytics": {"ga": S.args.ga_id, "stats": S.args.stats_url},
         "svm": dict(svm or {"available": False}, base=f"{'../' * Site.depth(page, is_root)}scummvm/"),
         "pageUrls": {p["id"]: S.url(lang, p["id"], depth) for p in S.pages},
         "langHints": {l: {"text": d["i18n"][l]["langHintText"], "label": d["i18n"][l]["langHintLink"],
@@ -907,6 +908,8 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
         scripts.append(f'<script src="{root}games/bundles.js?v={build_id}" defer></script>')
     scripts += [f'<script src="{root}js/{n}.js?v={build_id}" defer></script>' for n in sorted(names, key=order.index)]
     blocks["scripts"] = "\n".join(scripts)
+    blocks["consentLink"] = (f'<p><button class="link-btn" type="button" id="consentOpen">{E(ui["consentLink"])}</button></p>'
+                             if S.args.ga_id else "")
 
     def sub(m, vars_):
         kind, key = m.group(1), m.group(2)
@@ -1004,6 +1007,10 @@ def main() -> int:
                     help="leave out the games in data/arcade.local.json (use it for public builds)")
     ap.add_argument("--arcade-local-only", action="store_true",
                     help="the DOSBox room lists only your games (data/arcade.local.json), as on a server with a games folder")
+    ap.add_argument("--ga-id", default=os.environ.get("PCM_GA_ID", ""),
+                    help="Google Analytics 4 measurement id (G-XXXXXXX), loaded only after the visitor accepts (env PCM_GA_ID)")
+    ap.add_argument("--stats-url", default=os.environ.get("PCM_STATS_URL", ""),
+                    help="where the pages send their cookieless usage events, e.g. /api/stats (env PCM_STATS_URL)")
     ap.add_argument("--check", action="store_true", help="only validate the data")
     args = ap.parse_args()
 
@@ -1016,6 +1023,12 @@ def main() -> int:
     if errors:
         for e in errors:
             print("error:", e, file=sys.stderr)
+        return 1
+    if args.ga_id and not re.fullmatch(r"G-[A-Z0-9]{4,16}", args.ga_id):
+        print(f"error: --ga-id {args.ga_id!r} is not a GA4 measurement id (G-XXXXXXX)", file=sys.stderr)
+        return 1
+    if args.stats_url and not re.fullmatch(r"(/|https://)[\w./-]{1,200}", args.stats_url):
+        print(f"error: --stats-url {args.stats_url!r} must be a path (/api/stats) or an https URL", file=sys.stderr)
         return 1
     if args.check:
         print("data OK")

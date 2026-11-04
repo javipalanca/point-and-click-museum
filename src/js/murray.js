@@ -83,6 +83,7 @@
     if (base == null) return;
     const title = nav.title || (D.ui && D.ui["page_" + nav.page + "_title"]) || nav.page;
     add("nav", U.goingTo + ": " + title);
+    PCM.track("murray_go", { to: nav.page + (nav.hash ? "#" + nav.hash : "") });
     const url = new URL(base + (nav.hash ? "#" + nav.hash : ""), location.href);
     setTimeout(() => {
       save();
@@ -98,6 +99,7 @@
     q = q.trim(); if (!q || busy) return;
     busy = true; send.disabled = true; input.value = "";
     add("you", q); history.push({ role: "user", content: q }); sfx("click");
+    PCM.track("murray_ask");
     const li = render({ who: "murray", text: U.thinking, waiting: true }), p = li.querySelector("p");
     let text = "";
     try {
@@ -138,7 +140,7 @@
     if (focus) input.focus({ preventScroll: true });
   }
   function close() { panel.hidden = true; fab.setAttribute("aria-expanded", "false"); fab.classList.remove("on"); save(); fab.focus({ preventScroll: true }); }
-  fab.addEventListener("click", () => { sfx("open"); panel.hidden ? open(true) : close(); });
+  fab.addEventListener("click", () => { sfx("open"); if (panel.hidden) { open(true); PCM.track("murray_open"); } else close(); });
   $("#murrayClose").addEventListener("click", close);
   $("#murrayReset").addEventListener("click", () => { history = []; shown = []; log.innerHTML = ""; speak(M.greeting); });
   panel.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); close(); } });

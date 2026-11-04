@@ -6,7 +6,7 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 GAMES_PORT=8081 GAMES_TRUST_PROXY=1 \
     PCM_CATALOG=/catalog/catalog.json GAMES_CACHE=/games-cache
 WORKDIR /app
-COPY server/games.py server/admin.py server/
+COPY server/games.py server/admin.py server/stats.py server/
 COPY server/admin/ server/admin/
 COPY tools/ tools/
 COPY vendor/scummvm/ vendor/scummvm/

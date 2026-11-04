@@ -78,6 +78,7 @@ window.PCM = (() => {
     if (b.dataset.toggle === "sound") { soundOn = !soundOn; store("snd", soundOn); }
     else { crtOn = !crtOn; store("crt", crtOn); }
     renderToggles(); sfx("click");
+    window.PCM.track("toggle", { what: b.dataset.toggle, on: b.dataset.toggle === "sound" ? soundOn : crtOn });
   }));
   renderToggles();
 
@@ -110,7 +111,8 @@ window.PCM = (() => {
     if (cfg.cap && [...awarded].filter(a => a.startsWith(key + ":")).length >= cfg.cap) return false;
     awarded.add(id); store("awarded", [...awarded]); score = Math.min(SC.total, scoreOf()); renderScore();
     toast("+" + cfg.points + " · " + (label || t("award_" + key))); sfx("points");
-    if (score >= SC.total) setTimeout(showCert, 1200);
+    window.PCM.track("award", { key });
+    if (score >= SC.total) { window.PCM.track("score_complete"); setTimeout(showCert, 1200); }
     return true;
   }
   renderScore();
@@ -146,5 +148,6 @@ window.PCM = (() => {
   }
 
   return { D, $, $$, t, fmt, esc, store, spriteURL, drawSprite, hash, rng, mediaFigure, pixelText, pixelTextWidth, canvasPoint,
-    tone, sfx, ac, get soundOn() { return soundOn; }, typeText, award, toast, openModal, closeModal, reduceMotion };
+    tone, sfx, ac, get soundOn() { return soundOn; }, typeText, award, toast, openModal, closeModal, reduceMotion,
+    track() { /* replaced by analytics.js */ } };
 })();

@@ -14,6 +14,9 @@ services:
       CATALOG_EVERY: ${CATALOG_EVERY:-24}            # hours between catalogue refreshes (ScummVM, Internet Archive, GOG)
       GAMES_VALIDATE_PER_RUN: ${GAMES_VALIDATE_PER_RUN:-20}   # new editions downloaded and checked per refresh
       GAMES_MAX_MB: ${GAMES_MAX_MB:-400}
+      # statistics (see .env.example): Google Analytics only after the visitor accepts; the museum's own, without cookies
+      PCM_GA_ID: ${GA_MEASUREMENT_ID:-}
+      PCM_STATS_URL: ${STATS_URL-/api/stats}
     volumes:
       - ${GAMES_DIR:-./games}:/inbox:ro   # drop .zip / .jsdos files here (sub-folders too)
       - site:/site
@@ -55,9 +58,12 @@ services:
       ADMIN_USER: ${ADMIN_USER:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       ADMIN_COOKIE_SECURE: ${ADMIN_COOKIE_SECURE:-0}   # 1 behind HTTPS
+      PCM_STATS_DIR: /stats
+      MURRAY_URL: http://murray:8080      # the panel asks Murray for his numbers inside this network
     volumes:
       - catalog:/catalog                  # the panel writes its decisions (catalog.admin.json) and sync requests here
       - games-proxy:/games-cache
+      - stats:/stats                      # usage statistics, one small JSON file per day
     expose:
       - "8081"
     read_only: true
@@ -86,6 +92,9 @@ services:
       MURRAY_GUARD: ${MURRAY_GUARD:-strict}
       MURRAY_RATE: ${MURRAY_RATE:-30}
       MURRAY_DAILY_LIMIT: ${MURRAY_DAILY_LIMIT:-2000}
+      PCM_STATS_DIR: /stats               # counts and response times only, never the questions
+    volumes:
+      - murray-stats:/stats
     extra_hosts:
       - "host.docker.internal:host-gateway"   # lets you point MURRAY_LLM_BASE_URL at a model server on the host
     expose:
@@ -103,3 +112,5 @@ volumes:
   games-cache:   # games of the inbox already converted, so that a restart does not convert them again
   catalog:       # the automatic catalogue (tools/sync_catalog.py)
   games-proxy:   # games of the catalogue brought on demand (server/games.py), size-limited
+  stats:         # usage statistics of the site and the games proxy (server/stats.py)
+  murray-stats:  # Murray's statistics (questions answered, latency), no message contents

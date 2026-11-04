@@ -289,6 +289,20 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   («© su editor · fuente ↗»), descripción solo si existe, «Unknown Company» oculto, «Pendiente» → «Próximamente».
   `impeccable` se vendoriza sin `scripts/` (el lanzador descarga y ejecuta un binario). El estilo retro manda sobre sus
   prohibiciones genéricas.
+- **2026-11-05 · Estadísticas de uso** (petición del usuario: «Google Analytics y otras para trackear el uso, frontend y
+  backend»). Google Analytics 4 con aviso de cookies (aceptar y rechazar con el mismo peso, Consent Mode denegado por
+  defecto, sin Google Signals; no se carga hasta aceptar, como exige la AEPD) y, además, estadísticas propias sin
+  cookies al estilo Plausible (`server/stats.py`: contadores e histogramas por día, visitantes con hash de IP+navegador
+  y sal diaria solo en memoria). Navegador (`src/js/analytics.js`, `PCM.track`): páginas, entrada, referente (solo el
+  dominio), dispositivo, tiempo y profundidad de lectura, Core Web Vitals medidos sin la librería web-vitals, fichas,
+  juegos arrancados, puntos, Murray abierto/preguntas/visitas guiadas, idioma, enlaces externos, búsquedas con o sin
+  resultado, errores de JS. Servidor: Murray (respuestas por tipo, negativas del guardarraíl por reglas o
+  clasificador, errores del modelo, latencia de primera palabra y total; nunca el texto) y el proxy de juegos. Murray
+  guarda en su volumen `murray-stats` y se lo da al panel por la red interna (`/api/murray/stats`, que nginx bloquea y
+  que Murray rechaza si llega con `X-Real-IP`). GPC/DNT apagan las dos capas. Apagado por defecto (build local,
+  Artifact); en Docker las propias están activas y GA cuando se pone `GA_MEASUREMENT_ID`. Probado con
+  `npm run test:admin` y en Docker. Nota de prueba: Chromium manda el beacon de una página que se cierra con su
+  user agent «HeadlessChrome», que cuenta como robot.
 
 ## Datos técnicos útiles
 

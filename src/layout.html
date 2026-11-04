@@ -74,7 +74,7 @@
     <nav aria-labelledby="ft-rooms"><h2 id="ft-rooms">{{t:footerRooms}}</h2><ul>{{raw:footerRooms}}</ul></nav>
     <nav aria-labelledby="ft-games"><h2 id="ft-games">{{t:footerGames}}</h2><ul>{{raw:footerGames}}</ul></nav>
     <nav aria-labelledby="ft-langs"><h2 id="ft-langs">{{t:language}}</h2><ul>{{raw:footerLangs}}</ul></nav>
-    <div class="ft-about"><h2>{{t:footerAbout}}</h2><p>{{t:footer}}</p></div>
+    <div class="ft-about"><h2>{{t:footerAbout}}</h2><p>{{t:footer}}</p>{{raw:consentLink}}</div>
   </div>
 </footer>
 
@@ -126,6 +126,7 @@
 
 <script id="pcm-data" type="application/json">{{raw:data}}</script>
 <script src="{{v:root}}js/core.js?v={{v:build}}" defer></script>
+<script src="{{v:root}}js/analytics.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/transitions.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/nav.js?v={{v:build}}" defer></script>
 <script src="{{v:root}}js/characters.js?v={{v:build}}" defer></script>

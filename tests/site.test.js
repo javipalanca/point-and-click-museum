@@ -147,6 +147,19 @@ function serve() {
     await c.close(); ok(dev);
   }
 
+  console.log("Statistics are off unless the build asks for them");
+  {
+    const page = await ctx.newPage(), out = [];
+    page.on("request", r => { if (/googletagmanager|google-analytics|\/api\/stats/.test(r.url())) out.push(r.url()); });
+    await page.goto(`${base}/es/`); await page.click(".tl-entry, a.pbtn").catch(() => {});
+    await page.evaluate(() => { Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true }); document.dispatchEvent(new Event("visibilitychange")); });
+    await page.waitForTimeout(300);
+    if (await page.$(".pconsent") || await page.$("#consentOpen") || out.length) fail("a build without PCM_GA_ID / PCM_STATS_URL still tracks: " + out.join(", "));
+    else ok("no cookie banner, no Google, no beacons by default");
+    if (typeof (await page.evaluate(() => typeof PCM.track)) !== "string" || await page.evaluate(() => typeof PCM.track) !== "function") fail("PCM.track missing");
+    await page.close();
+  }
+
   console.log("Text adventure is solvable in every language");
   for (const l of LANGS) {
     const page = await ctx.newPage(); await page.goto(`${base}/${l}/games/text-adventure/`);

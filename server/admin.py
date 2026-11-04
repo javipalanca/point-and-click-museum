@@ -17,6 +17,7 @@
     POST /api/admin/editions/<key>/run      {"exe": "GAME/START.BAT", "cycles": 20000}
     POST /api/admin/editions/<key>/delete   remove an edition (the daily sync will not bring it back)
     POST /api/admin/games/<id>/restore      {"key": …} bring back an edition removed by mistake
+    GET  /api/admin/stats?days=30           usage statistics: the site, this proxy and Murray (MURRAY_URL)
 
 Credentials: ADMIN_USER and ADMIN_PASSWORD in the environment of the games container (.env, never in the
 repository); without them the panel does not exist (404). Sessions live in memory for ADMIN_SESSION_HOURS (12).
@@ -46,6 +47,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import game_fetch  # noqa: E402
+import stats  # noqa: E402
 import sync_catalog  # noqa: E402
 
 UI = Path(__file__).resolve().parent / "admin"
@@ -130,6 +132,20 @@ def ov_edition(ov: dict, gid: str, key: str) -> dict:
 
 
 # ---------------------------------------------------------------- request handling
+def murray_stats(days: int) -> dict:
+    """Murray keeps his own numbers (his container is apart); he hands them over only inside the Docker network."""
+    base = os.environ.get("MURRAY_URL", "")
+    if not base:
+        return {"error": "off"}
+    import urllib.request
+    try:
+        with urllib.request.urlopen(f"{base.rstrip('/')}/api/murray/stats?days={days}", timeout=5) as r:
+            doc = json.loads(r.read().decode("utf-8"))
+        return doc if isinstance(doc.get("days"), dict) else {"error": "bad answer"}
+    except (OSError, ValueError) as e:
+        return {"error": f"no answer ({type(e).__name__})"}
+
+
 def cookie_token(handler) -> str:
     for part in (handler.headers.get("Cookie") or "").split(";"):
         k, _, v = part.strip().partition("=")
@@ -261,6 +277,21 @@ def route(h, method: str, path: str, q: dict, P: dict):
         return send(h, 200, {"sync": read_json(P["status"], {}), "requested": read_json(P["request"], None), "log": log_lines,
                              "downloads": recent_downloads(P), "cache": {"files": len(cache),
                              "mb": round(sum(p.stat().st_size for p in cache) / 1048576, 1)}})
+    if path == "/api/admin/stats":
+        try:
+            days = max(1, min(int((q.get("days") or ["30"])[0]), 400))
+        except ValueError:
+            days = 30
+        for st in P.get("live", ()):
+            st.flush()
+        raw = stats.load(P.get("stats"), days)
+        murray = murray_stats(days)
+        for day, docs in murray.get("days", {}).items():
+            raw["days"].setdefault(day, {}).update(docs)
+        out = stats.summary(raw)
+        out["murray"] = "ok" if murray.get("days") is not None and "error" not in murray else murray.get("error", "off")
+        out["days"] = days
+        return send(h, 200, out)
     if path == "/api/admin/sync" and method == "POST":
         b = body(h)
         req = {"only": [s for s in b.get("only") or [] if s in ("scummvm", "archive", "gog")],

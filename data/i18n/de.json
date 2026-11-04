@@ -244,5 +244,9 @@
  "catPrev": "Zurück",
  "catNext": "Weiter",
  "catPage": "Seite {n} von {total}",
- "catPages": "Katalogseiten"
+ "catPages": "Katalogseiten",
+ "consentText": "Dürfen wir deinen Besuch mit Google Analytics zählen? Es nutzt Cookies; das Museum funktioniert auch ohne.",
+ "consentAccept": "Annehmen",
+ "consentReject": "Ablehnen",
+ "consentLink": "Cookies"
 }

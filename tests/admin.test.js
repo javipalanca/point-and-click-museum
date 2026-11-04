@@ -1,5 +1,6 @@
 /* End-to-end test of the control panel (server/admin.py): login, catalogue, Internet Archive search, testing a game
    in DOSBox, marking it as available (and withdrawing it), validating it; and that the public proxy only serves it then.
+   Also the statistics: the cookie banner of Google Analytics, the museum's own events and the panel's tab.
    Run: npm run test:admin */
 "use strict";
 const { execFileSync, spawn } = require("child_process");
@@ -33,9 +34,10 @@ const firstLine = proc => new Promise((resolve, reject) => {
   const catFile = path.join(catDir, "catalog.json");
   fs.writeFileSync(catFile, JSON.stringify(catalog));
   const out = path.join(tmp, "site");
-  execFileSync("python3", [path.join(ROOT, "build.py"), "--out", out, "--no-local"], { env: { ...process.env, PCM_CATALOG: catFile }, stdio: "ignore" });
+  execFileSync("python3", [path.join(ROOT, "build.py"), "--out", out, "--no-local"], { env: { ...process.env, PCM_CATALOG: catFile, PCM_GA_ID: "G-TEST1234", PCM_STATS_URL: "/api/stats" }, stdio: "ignore" });
   const games = spawn("python3", [path.join(ROOT, "server/games.py")], { env: { ...process.env, GAMES_PORT: "0", PCM_CATALOG: catFile,
-    GAMES_CACHE: path.join(tmp, "cache"), PCM_GAMES_TEST_HOSTS: "127.0.0.1", PCM_IA_BASE: src, ADMIN_USER: "javi", ADMIN_PASSWORD: "una-clave-larga-de-prueba" } });
+    GAMES_CACHE: path.join(tmp, "cache"), PCM_GAMES_TEST_HOSTS: "127.0.0.1", PCM_IA_BASE: src, ADMIN_USER: "javi", ADMIN_PASSWORD: "una-clave-larga-de-prueba",
+    PCM_STATS_DIR: path.join(tmp, "stats"), MURRAY_URL: "" } });
   let gamesPort = null;
   games.stderr.on("data", d => { const m = /games proxy on :(\d+)/.exec(String(d)); if (m) gamesPort = +m[1]; });
   for (let i = 0; i < 50 && !gamesPort; i++) await new Promise(r => setTimeout(r, 100));
@@ -58,6 +60,38 @@ const firstLine = proc => new Promise((resolve, reject) => {
   const key = "quest-for-the-museum-full-msdos-quest-1991";
   const pub = () => page.evaluate(async u => (await fetch(u)).status, "/api/games/" + key);
   try {
+    console.log("Statistics, as a visitor");
+    const vctx = await browser.newContext({ viewport: { width: 1280, height: 800 },  // headless browsers count as robots
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36" }), v = await vctx.newPage();
+    let gaRequests = 0;
+    await vctx.route(/googletagmanager\.com/, r => { gaRequests++; r.fulfill({ status: 200, contentType: "text/javascript", body: "/* gtag stub */" }); });
+    await vctx.route(/fonts\.(googleapis|gstatic)\.com/, r => r.fulfill({ status: 200, contentType: "text/css", body: "" }));
+    v.on("pageerror", e => errs.push(e.message));
+    await v.goto(base + "/es/");
+    await v.waitForSelector(".pconsent");
+    check(gaRequests === 0, "Google Analytics does not load before the visitor answers");
+    await v.click('.pconsent [data-c="0"]');
+    check(!(await v.$(".pconsent")), "declining closes the banner");
+    await v.goto(base + "/es/timeline/");
+    await v.waitForTimeout(300);
+    check(!(await v.$(".pconsent")) && gaRequests === 0, "the answer is remembered and Google stays out");
+    check(!(await vctx.cookies()).some(c => /^_ga/.test(c.name)), "no analytics cookies");
+    await v.click("#consentOpen");
+    await v.click('.pconsent [data-c="1"]');
+    for (let i = 0; i < 20 && !gaRequests; i++) await v.waitForTimeout(100);
+    check(gaRequests === 1 && await v.evaluate(() => JSON.stringify(window.dataLayer).includes('"analytics_storage":"granted"')),
+      "accepting from the footer loads gtag.js with analytics consent granted (ads stay denied)");
+    await v.click(".tl-entry");
+    await v.waitForSelector("#modalBg.open");
+    await v.waitForTimeout(1200);
+    const beacon = v.waitForRequest(r => r.url().endsWith("/api/stats") && r.method() === "POST");
+    await v.evaluate(() => { Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true }); document.dispatchEvent(new Event("visibilitychange")); });
+    const sent = JSON.parse((await beacon).postData());
+    check(sent.e.some(x => x.n === "timeline_open") && sent.e.some(x => x.n === "engage"), "the museum's own events go out in one beacon (record opened, time on the page)");
+    check(!JSON.stringify(sent).includes("javi") && !(await vctx.cookies()).some(c => c.name.startsWith("pcm")), "the beacon carries no identifiers and sets no cookies");
+    await v.waitForTimeout(300);
+    await vctx.close();
+
     console.log("Access");
     await page.goto(base + "/admin/");
     check(await page.isVisible("#loginForm"), "asks for user and password");
@@ -125,6 +159,21 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await page.click("#detail [data-restore]");
     await page.waitForSelector("#detail .edition");
     check(!(await page.$("#detail [data-restore]")), "restored");
+
+    console.log("Statistics in the panel");
+    await page.click('[data-tab="stats"]');
+    await page.waitForSelector("#stats .counts");
+    const st = await page.evaluate(async () => (await fetch("/api/admin/stats?days=7")).json());
+    // a beacon sent while a page unloads leaves Chromium with its own headless user agent, so it counts as a robot
+    const views = st.totals.pageviews + ((st.counters["web.bots"] || {}).page_view || 0);
+    check(views === 2 && st.totals.pageviews >= 1 && st.totals.visitors === 1, "page views (" + views + ") and one unique visitor");
+    check(st.counters["web.consent"] && st.counters["web.consent"].denied === 1 && st.counters["web.consent"].granted === 1, "the banner answers are counted");
+    check(Object.keys(st.counters["web.timeline_open"] || {}).length === 1, "the record opened in the timeline");
+    check(Object.keys(st.counters["games.requests"] || {}).includes(key), "the games proxy counts the games it served");
+    check((await page.textContent("#stats")).includes("Salas"), "the tab shows the rooms visited");
+    const files = fs.readdirSync(path.join(tmp, "stats"));
+    check(files.length >= 1 && !files.some(f => fs.readFileSync(path.join(tmp, "stats", f), "utf8").includes("127.0.0.1")), "statistics are kept per day, without IP addresses");
+    await shot(page, "admin-stats");
 
     console.log("Sync, sources, log");
     await page.click('[data-tab="summary"]');

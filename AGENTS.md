@@ -30,6 +30,7 @@ tools/build_scummvm.sh           # compila ScummVM web en vendor/scummvm/ (no ve
 npm run test:scummvm             # prueba la integración de ScummVM con tests/fixtures/fake-scummvm
 python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
 python3 build.py --no-local      # build público sin la colección local
+python3 build.py --ga-id G-XXXX --stats-url /api/stats   # con estadísticas (en Docker: GA_MEASUREMENT_ID y STATS_URL en .env)
 python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/games/x.jsdos
 python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
 python3 tools/fetch_media.py     # descarga portadas, capturas y logos de data/media.json (--check, --only grupo/id)
@@ -73,6 +74,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `src/js/interfaces.js` | laboratorio de interfaces (técnicas): parser, verbos SCUMM, menú de Full Throttle, moneda de CMI, dos botones, un clic; datos en `techniques.json → interfaces, lab` |
 | `src/js/techlab.js` | demos de cajas de paseo, pantalla de prioridad y paletas CGA/EGA/VGA |
 | `src/js/murray.js` | widget de chat de Murray (botón abajo a la derecha en todas las páginas); textos en `data/murray.json` |
+| `src/js/analytics.js`, `server/stats.py` | estadísticas: `PCM.track(evento, datos)` desde cualquier script; Google Analytics 4 solo con consentimiento (`PCM_GA_ID`) y estadísticas propias sin cookies (`PCM_STATS_URL` → `POST /api/stats` en el contenedor `games`); Murray y el proxy cuentan lo suyo; el panel lo muestra en «Estadísticas». Eventos nuevos: añádelos también a `stats.ingest()` (lo que no conoce se descarta) |
 | `server/murray.py`, `server/knowledge.py`, `server/guard.py` | servicio de Murray: RAG (BM25) y herramientas sobre `data/` y `data/murray_kb/`, API compatible con OpenAI, límites y guardarraíles de tema |
 | `data/murray_kb/` | conocimiento externo de Murray: `history.json` (artículos con fuentes web), catálogo de ScummVM, Wikipedia (`tools/build_murray_kb.py`) |
 | `deploy/`, `docker-compose.yml`, `.env.example` | imágenes Docker (builder + nginx + Murray), configuración de nginx y variables |
@@ -114,6 +116,9 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 13. **Secretos fuera del cliente.** La URL, la clave y el nombre del modelo de Murray solo viven en el entorno del
     contenedor `murray` (`.env`, ignorado por git). Nunca en `data/`, `src/`, `dist/` ni en logs. El navegador solo
     llama a `/api/murray/chat`. El servidor de Murray usa solo la biblioteca estándar.
+14. **Privacidad en las estadísticas.** Google Analytics solo tras aceptar el aviso; las estadísticas propias nunca
+    guardan IPs, textos escritos por el visitante (preguntas a Murray, búsquedas) ni identificadores. Un build sin
+    `PCM_GA_ID`/`PCM_STATS_URL` no rastrea nada (`npm test` lo comprueba).
 9. **Enlaces externos:** a Wikipedia o a webs oficiales; `target="_blank" rel="noopener"`. Verifica que existen.
 10. **SEO:** cada página nueva necesita título, descripción, entrada en `site.json → pages` y queda en el sitemap.
 11. **Navegación:** las salas salen de `site.json → nav` (puertas de la cabecera, plano del museo y pie) con su etiqueta

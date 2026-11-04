@@ -27,6 +27,7 @@
       <button role="tab" data-tab="sources">Fuentes</button>
       <button role="tab" data-tab="downloads">Descargas y errores</button>
       <button role="tab" data-tab="log">Registro</button>
+      <button role="tab" data-tab="stats">Estadísticas</button>
     </nav>
     <span class="who"><span id="who"></span> · <button id="logout" class="link">Salir</button></span>
   </header>
@@ -75,6 +76,14 @@
   <section data-panel="sources" class="panel" hidden><div id="sources"></div></section>
   <section data-panel="downloads" class="panel" hidden><div id="downloads"></div></section>
   <section data-panel="log" class="panel" hidden><pre id="log" class="log"></pre></section>
+  <section data-panel="stats" class="panel" hidden>
+    <div class="filters">
+      <label>Periodo <select id="statDays"><option value="7">7 días</option><option value="30" selected>30 días</option><option value="90">90 días</option><option value="365">1 año</option></select></label>
+      <button id="statReload">Actualizar</button>
+      <span class="muted" id="statNote"></span>
+    </div>
+    <div id="stats"></div>
+  </section>
 
   <dialog id="player" class="player">
     <header><strong id="playerTitle"></strong><span id="playerState" class="muted"></span><button id="playerClose" class="link">Cerrar</button></header>

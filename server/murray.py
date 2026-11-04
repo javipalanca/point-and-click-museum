@@ -57,6 +57,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from knowledge import LANGS, TOOLS, Museum, loc, run_tool  # noqa: E402
 from guard import CLASSIFIER, Guard, parse_verdict  # noqa: E402
+import stats  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = Path(os.environ.get("MURRAY_DATA", ROOT / "data"))
@@ -515,13 +516,13 @@ def answer_events(body: dict):
     cfg = llm_config()
     refusal, pending = guard_start(history, lang, cfg)
 
-    def refuse(text):
+    def refuse(text, by="classifier"):
         log.info("guard: message refused")
         yield "delta", text
-        yield "done", {"sources": [], "mode": "llm" if cfg else "offline", "guard": True}
+        yield "done", {"sources": [], "mode": "llm" if cfg else "offline", "guard": True, "guardBy": by}
 
     if refusal:
-        yield from refuse(refusal)
+        yield from refuse(refusal, "rules")
         return
     if cfg and LIMITS.allow_llm():
         wrote, held = False, []  # while the classifier decides, the answer is generated but held back
@@ -544,6 +545,7 @@ def answer_events(body: dict):
                 yield ev
             return
         except Exception as e:  # model server down, timeout, bad JSON…: never leave the visitor without an answer
+            STATS.hit("errors", "model cut short" if wrote else "model failed")
             log.warning("LLM call failed (%s); %s", e if isinstance(e, LLMError) else type(e).__name__,
                         "answer cut short" if wrote else "answering offline")
             if pending:
@@ -553,7 +555,7 @@ def answer_events(body: dict):
                     return
             if wrote:
                 yield "delta", "\n\n" + loc(TEXTS["errors"]["failed"], lang)
-                yield "done", {"sources": [], "mode": "llm"}
+                yield "done", {"sources": [], "mode": "llm", "cut": True}
                 return
     if pending:
         refusal = refusal_for(pending.result(), history[-1]["content"], lang)
@@ -573,6 +575,40 @@ def answer(body: dict) -> dict:
         else:
             meta = value
     return {"reply": "".join(parts).strip(), **meta}
+
+
+# ---------------------------------------------------------------------- statistics
+# Only numbers: how many questions, in which language and room, how they were answered and how long it took.
+# Never the questions or the answers.
+STATS = stats.Stats(stats.folder_from_env(Path(__file__).resolve().parent.parent / ".cache" / "murray-stats"), "murray")
+
+
+def measured(body: dict, events):
+    t0, first, meta = time.monotonic(), None, {}
+    try:
+        for ev in events:
+            if ev[0] == "delta" and first is None:
+                first = time.monotonic() - t0
+            if ev[0] == "done":
+                meta = ev[1]
+            yield ev
+    finally:
+        STATS.hit("requests", "total")
+        STATS.hit("langs", str(body.get("lang", "")))
+        STATS.hit("pages", str(body.get("page") or "(none)"))
+        STATS.hit("turns", str(min(len(body.get("messages") or []) // 2 + 1, 10)))
+        if meta:
+            STATS.hit("answers", "refused · " + meta.get("guardBy", "") if meta.get("guard") else
+                      ("model" if meta.get("mode") == "llm" else "museum database (no model)"))
+            if meta.get("navigate"):
+                nav = meta["navigate"]
+                STATS.hit("navigate", (nav.get("page", "") + nav.get("hash", "")) if isinstance(nav, dict) else str(nav))
+            if not meta.get("guard"):
+                if first is not None:
+                    STATS.time("latency", "first word", first * 1000)
+                STATS.time("latency", "whole answer", (time.monotonic() - t0) * 1000)
+        else:
+            STATS.hit("answers", "visitor left before the end")
 
 
 # ---------------------------------------------------------------------- HTTP
@@ -620,6 +656,14 @@ class Handler(BaseHTTPRequestHandler):
                 pass
 
     def do_GET(self):
+        path, _, query = self.path.partition("?")
+        if path == "/api/murray/stats":
+            # for the control panel, inside the Docker network only: nginx refuses this path and always adds X-Real-IP
+            if self.headers.get("X-Real-IP"):
+                return self.send_json(404, {"error": "not found"})
+            STATS.flush()
+            m = re.search(r"days=(\d+)", query)
+            return self.send_json(200, stats.load(STATS.folder, max(1, min(int(m.group(1)) if m else 30, 400))))
         if self.path.rstrip("/") == "/api/murray/health":
             return self.send_json(200, {"ok": True, "mode": "llm" if llm_config() else "offline",
                                         "games": MUSEUM.stats()["games"]})
@@ -637,6 +681,7 @@ class Handler(BaseHTTPRequestHandler):
         if size <= 0 or size > MAX_BODY:
             return self.send_json(413, {"error": "body too large or empty"})
         if not LIMITS.allow_ip(self.client_ip()):
+            STATS.hit("errors", "rate limited")
             return self.send_json(429, {"error": "rate limited"})
         try:
             body = json.loads(self.rfile.read(size).decode("utf-8"))
@@ -644,8 +689,11 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("expected an object")
             if body.get("stream") or "text/event-stream" in self.headers.get("Accept", ""):
                 validate(body)  # bad requests still get a plain 400
-                return self.send_stream(answer_events(body))
-            return self.send_json(200, answer(body))
+                return self.send_stream(measured(body, answer_events(body)))
+            parts, meta = [], {}
+            for kind, value in measured(body, answer_events(body)):
+                parts.append(value) if kind == "delta" else meta.update(value)
+            return self.send_json(200, {"reply": "".join(parts).strip(), **meta})
         except (ValueError, UnicodeDecodeError) as e:
             return self.send_json(400, {"error": str(e)})
         except Exception:

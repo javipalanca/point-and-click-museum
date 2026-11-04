@@ -78,7 +78,7 @@ if (document.getElementById("dosHost")) (() => {
     sfx("open");
     now.textContent = t("arcadeLoading", { title });
     try { await loadJsDos(); }
-    catch (e) { now.textContent = t("arcadeEmuError"); toast(t("arcadeEmuError")); return false; }
+    catch (e) { now.textContent = t("arcadeEmuError"); toast(t("arcadeEmuError")); PCM.track("arcade_error", { id: title, kind: "emulator" }); return false; }
     await stop();
     if (blob) blobUrl = blob;
     idle.hidden = true; now.textContent = "▶ " + title;
@@ -210,7 +210,7 @@ if (document.getElementById("dosHost")) (() => {
   async function playCatalog(g) {
     let bytes;
     try { now.textContent = t("arcadeLoading", { title: g.title }); bytes = await fetchGame(g); }
-    catch (e) { now.textContent = t("arcadeNothing"); toast(e.message); sfx("bad"); return; }
+    catch (e) { now.textContent = t("arcadeNothing"); toast(e.message); sfx("bad"); PCM.track("arcade_error", { id: g.id, kind: "download" }); return; }
     if (g.engine === "scummvm") {
       let files;
       try { files = await unzip(bytes); } catch (e) { toast(t("arcadeFetchFail")); return; }
@@ -222,6 +222,7 @@ if (document.getElementById("dosHost")) (() => {
   }
 
   function play(g) {
+    PCM.track("arcade_play", { id: g.id, engine: g.engine || "dosbox", src: g.key ? "catalog" : g.local ? "local" : "museum" });
     if (g.key) return playCatalog(g);
     if (g.engine === "scummvm") {
       runScummVM(g.title, { gameId: g.id, engine: g.svmEngine, files: g.files || [], gameBase: "games/" + g.id + "/", args: svmArgs(g.id) });
@@ -265,6 +266,7 @@ if (document.getElementById("dosHost")) (() => {
       run(file.name, { url: u }, u);
     } else if (name.endsWith(".zip")) {
       const bytes = new Uint8Array(await file.arrayBuffer()), want = $("#byoEngine").value;
+      PCM.track("arcade_play", { id: "(own game)", engine: want || "auto", src: "byo" });
       let files;
       try { files = await unzip(bytes); } catch (x) { err.textContent = x.message; sfx("bad"); return; }
       const svm = want !== "dosbox" ? detectScummVM(files) : null;
@@ -337,7 +339,12 @@ if (document.getElementById("catList")) (() => {
       .forEach(el => list.appendChild(el));
     apply();
   }
-  search.addEventListener("input", () => apply());
+  let searchTimer = null;
+  search.addEventListener("input", () => {
+    apply();
+    clearTimeout(searchTimer);  // only whether a search found something, never what was typed
+    if (search.value.trim()) searchTimer = setTimeout(() => PCM.track("catalog_search", { results: matched.length > 0 }), 1500);
+  });
   studio.addEventListener("change", () => { sfx("click"); apply(); });
   if (engineSel) engineSel.addEventListener("change", () => { sfx("click"); apply(); });
   if (stateSel) stateSel.addEventListener("change", () => { sfx("click"); apply(); });

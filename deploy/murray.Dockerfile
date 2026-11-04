@@ -4,7 +4,7 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     MURRAY_PORT=8080 MURRAY_TRUST_PROXY=1 MURRAY_DATA=/app/data
 WORKDIR /app
-RUN useradd --system --no-create-home murray
+RUN useradd --system --no-create-home murray && mkdir /stats && chown murray /stats
 COPY server/ server/
 COPY data/site.json data/timeline.json data/studios.json data/engines.json data/techniques.json data/murray.json data/
 COPY data/murray_kb/ data/murray_kb/

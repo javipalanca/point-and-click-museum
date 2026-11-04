@@ -3,6 +3,7 @@
 
     GET /api/games/health
     GET /api/games/<edition key>      -> the js-dos bundle (.jsdos) or the ScummVM data (.zip) of that edition
+    POST /api/stats                   -> usage events of the site, without cookies (server/stats.py)
 
 Why a proxy: Internet Archive and ScummVM's download server do not always let a page read their files with fetch()
 (CORS), and a game must be checked and turned into a js-dos bundle with its dosbox.conf before DOSBox can run it.
@@ -12,7 +13,8 @@ host outside tools/game_fetch.ALLOWED_HOSTS, never serves a path given by the vi
 of games (least recently used go first) and limits how many new downloads an IP can start (GAMES_RATE per hour).
 
 Environment: GAMES_PORT (8081), PCM_CATALOG (data/catalog.json), GAMES_CACHE (.cache/games-proxy),
-GAMES_CACHE_MB (2048), GAMES_RATE (20), GAMES_TRUST_PROXY (1 behind the bundled nginx). Standard library only.
+GAMES_CACHE_MB (2048), GAMES_RATE (20), GAMES_TRUST_PROXY (1 behind the bundled nginx), PCM_STATS_DIR
+(.cache/stats; "off" to keep no statistics), STATS_RATE (events per IP and minute, 120). Standard library only.
 """
 from __future__ import annotations
 
@@ -31,12 +33,17 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import game_fetch  # noqa: E402
 import admin  # noqa: E402  (server/admin.py: the control panel)
+import stats  # noqa: E402  (server/stats.py: usage statistics)
 
 log = logging.getLogger("games")
 CATALOG = Path(os.environ.get("PCM_CATALOG", ROOT / "data" / "catalog.json"))
 CACHE = Path(os.environ.get("GAMES_CACHE", ROOT / ".cache" / "games-proxy"))
 CACHE_MB = int(os.environ.get("GAMES_CACHE_MB", "2048"))
 RATE = int(os.environ.get("GAMES_RATE", "20"))
+STATS_RATE = int(os.environ.get("STATS_RATE", "120"))
+STATS_DIR = stats.folder_from_env(ROOT / ".cache" / "stats")
+WEB = stats.Stats(STATS_DIR, "web")      # what visitors do in the pages
+SRV = stats.Stats(STATS_DIR, "games")    # the work of this proxy
 KEY = re.compile(r"^/api/games/([a-z0-9][a-z0-9-]{0,80})(?:\.(?:jsdos|zip))?$")
 
 
@@ -62,6 +69,7 @@ class Catalog:
 
 CAT = Catalog(CATALOG)
 ADMIN_PATHS = admin.paths(CATALOG, CACHE)
+ADMIN_PATHS["stats"], ADMIN_PATHS["live"] = STATS_DIR, (WEB, SRV)
 LOCKS: dict[str, threading.Lock] = {}
 LOCKS_GUARD = threading.Lock()
 HITS: dict[str, list[float]] = {}
@@ -80,6 +88,22 @@ def allow(ip: str) -> bool:
             HITS[ip] = hits
             return False
         HITS[ip] = hits + [now]
+        return True
+
+
+BEACONS: dict[str, list[float]] = {}
+
+
+def allow_events(ip: str, n: int) -> bool:
+    now = time.time()
+    with LOCKS_GUARD:
+        hits = [t for t in BEACONS.get(ip, []) if now - t < 60]
+        if len(BEACONS) > 20000:
+            BEACONS.clear()
+        if len(hits) + n > STATS_RATE:
+            BEACONS[ip] = hits
+            return False
+        BEACONS[ip] = hits + [now] * n
         return True
 
 
@@ -109,8 +133,29 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_POST(self):
+        if self.path.split("?", 1)[0] == "/api/stats":
+            return self.post_stats()
         if not admin.handle(self, "POST", ADMIN_PATHS):
             self.send_json(404, {"error": "not found"})
+
+    def post_stats(self):
+        """A beacon of the site (navigator.sendBeacon, text/plain JSON). Always 204: nothing to tell the page."""
+        try:
+            size = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            size = 0
+        if 0 < size <= 16384 and WEB.folder:
+            try:
+                payload = json.loads(self.rfile.read(size).decode("utf-8"))
+                n = len(payload.get("e", [])) if isinstance(payload, dict) and isinstance(payload.get("e"), list) else 0
+                if n and allow_events(self.client_ip(), min(n, 40)):
+                    host = (self.headers.get("Host") or "").split(":")[0].lower().removeprefix("www.")
+                    stats.ingest(WEB, payload, self.client_ip(), self.headers.get("User-Agent", ""), host)
+            except (ValueError, UnicodeDecodeError, AttributeError):
+                pass
+        self.send_response(204)
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
 
     def do_GET(self):
         if admin.handle(self, "GET", ADMIN_PATHS):
@@ -121,10 +166,14 @@ class Handler(BaseHTTPRequestHandler):
         m = KEY.match(path)
         ed = CAT.get(m.group(1)) if m else None
         if not ed:
+            SRV.hit("not_playable", m.group(1) if m else "(bad path)")
             return self.send_json(404, {"error": "not a playable game"})
+        SRV.hit("requests", ed["id"])
         f = cached(ed)
+        SRV.hit("cache", "hit" if f else "miss")
         if not f:
             if not allow(self.client_ip()):
+                SRV.hit("errors", "rate limited")
                 return self.send_json(429, {"error": "too many new games in an hour; try again later"})
             with lock_for(ed["id"]):  # a second visitor waits for the first download instead of starting another
                 f = cached(ed)
@@ -134,21 +183,25 @@ class Handler(BaseHTTPRequestHandler):
                         CACHE.mkdir(parents=True, exist_ok=True)
                         f = Path(game_fetch.prepare(ed, CACHE)["file"])
                         log.info("prepared %s (%d KB)", ed["id"], f.stat().st_size // 1024)
+                        SRV.time("prepare", ed.get("emulator") or "dosbox", (time.time() - t0) * 1000)
                         admin.record_download(ADMIN_PATHS, {"key": ed["id"], "title": ed.get("title"), "ok": True, "by": "visitor",
                                                             "seconds": round(time.time() - t0, 1), "bytes": f.stat().st_size})
                         game_fetch.trim_cache(CACHE, CACHE_MB)
                     except game_fetch.GameError as e:
                         log.warning("cannot prepare %s: %s", ed["id"], e)
+                        SRV.hit("errors", "check failed")
                         admin.record_download(ADMIN_PATHS, {"key": ed["id"], "title": ed.get("title"), "ok": False, "by": "visitor", "error": str(e)})
                         return self.send_json(422, {"error": str(e)})
                     except OSError as e:  # the source is down: the visitor can try again later
                         log.warning("download of %s failed: %s", ed["id"], type(e).__name__)
+                        SRV.hit("errors", "source down")
                         admin.record_download(ADMIN_PATHS, {"key": ed["id"], "title": ed.get("title"), "ok": False, "by": "visitor",
                                                             "error": f"source did not answer ({type(e).__name__})", "network": True})
                         return self.send_json(502, {"error": "the game's source did not answer; try again later"})
         f.touch()
         etag = '"%x-%x"' % (int(f.stat().st_mtime), f.stat().st_size)
         if self.headers.get("If-None-Match") == etag:
+            SRV.hit("served", "304 (browser cache)")
             self.send_response(304)
             self.send_header("ETag", etag)
             self.end_headers()
@@ -160,6 +213,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("ETag", etag)
         self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
+        SRV.hit("served", "200")
+        SRV.hit("served_kb", ed["id"], f.stat().st_size // 1024)
         with open(f, "rb") as fh:
             while chunk := fh.read(1 << 20):
                 try:

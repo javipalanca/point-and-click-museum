@@ -146,6 +146,24 @@ detrás de HTTPS), cabecera obligatoria en los POST, bloqueo tras 5 intentos fal
 `robots.txt`. Si no defines usuario y contraseña, el panel no existe. Fuentes y nombres de colecciones en
 `data/catalog.sources.json`.
 
+### Estadísticas
+
+Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en el Artifact:
+
+- **Google Analytics 4** (`GA_MEASUREMENT_ID=G-…` en `.env`, o `build.py --ga-id`). Solo se carga si el visitante
+  acepta el aviso de cookies (Consent Mode con todo denegado por defecto, sin señales de Google ni publicidad); la
+  decisión se recuerda y se cambia desde «Cookies» en el pie. Con GPC o «Do Not Track» no se muestra el aviso ni se carga.
+  Los eventos de abajo también llegan a GA como eventos personalizados.
+- **Estadísticas propias** (`STATS_URL=/api/stats`, por defecto en Docker; vacío para apagarlas): sin cookies, sin
+  nada guardado en el navegador y sin IPs. Los visitantes únicos se cuentan con un hash de IP + navegador con una sal que
+  cambia cada día y solo vive en memoria. Se ven en el panel, pestaña «Estadísticas»: visitantes y páginas por día,
+  salas, sala de entrada, de dónde llegan (solo el dominio), idiomas, dispositivo, tiempo en cada sala y hasta dónde
+  se lee, Core Web Vitals (LCP, INP, CLS, FCP, TTFB), fichas abiertas, juegos arrancados (y con qué emulador), puntos,
+  enlaces externos, cambios de idioma, búsquedas del catálogo con o sin resultados, errores de JavaScript; del servidor,
+  preguntas a Murray (idioma, sala, respuesta con modelo o sin él, negativas del guardarraíl, errores, latencia de la
+  primera palabra y total, nunca el texto) y el proxy de juegos (pedidos, caché, KB servidos, tiempo de preparación,
+  errores). Un fichero JSON por día en los volúmenes `stats` y `murray-stats` (`server/stats.py`).
+
 ### ScummVM
 
 Muchos juegos no traen `.exe`: son datos que ejecuta ScummVM (Beneath a Steel Sky, Flight of the Amazon Queen,

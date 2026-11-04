@@ -39,6 +39,7 @@
     $$("[data-panel]").forEach(p => { p.hidden = p.dataset.panel !== b.dataset.tab; });
     if (b.dataset.tab === "sources") renderSources();
     if (b.dataset.tab === "downloads" || b.dataset.tab === "log") refreshStatus();
+    if (b.dataset.tab === "stats") loadStats();
   }));
 
   /* ---------- summary and sync */
@@ -289,6 +290,68 @@
       "<h2>Ediciones de ScummVM</h2>" + table(by.scummvm || []) + "<h2>Ediciones de Internet Archive</h2>" + table(by.archive || []) +
       (by.manual ? "<h2>Añadidas a mano</h2>" + table(by.manual) : "");
   }
+  /* ---------- statistics (server/stats.py): the site, the games proxy and Murray */
+  const fmtN = n => (n == null ? "—" : Number(n).toLocaleString("es-ES"));
+  const fmtMs = v => v == null ? "—" : v >= 60000 ? (v / 60000).toFixed(1) + " min" : v >= 1000 ? (v / 1000).toFixed(1) + " s" : Math.round(v) + " ms";
+  const NAMES = { "web.pages": "Salas", "web.langs": "Idioma de la página", "web.browser_langs": "Idioma del navegador", "web.devices": "Dispositivo",
+    "web.referrers": "De dónde llegan", "web.entry_pages": "Sala de entrada", "web.navigation": "Tipo de navegación", "web.timeline_open": "Fichas abiertas (línea temporal)",
+    "web.arcade_play": "Juegos arrancados", "web.arcade_engine": "Emulador", "web.arcade_source": "Origen del juego", "web.arcade_error": "Errores en la sala de juegos",
+    "web.award": "Puntos conseguidos (por tipo)", "web.score_complete": "Visitas con los 100 puntos", "web.murray_open": "Murray abierto (por sala)", "web.murray_go": "Murray llevó a…",
+    "web.lang_switch": "Cambios de idioma", "web.outbound": "Enlaces externos", "web.toggle": "Ajustes", "web.catalog_search": "Búsquedas en el catálogo",
+    "web.consent": "Google Analytics (banner)", "web.js_error": "Errores de JavaScript", "web.vitals_rating": "Core Web Vitals (valoración)", "web.scroll_depth": "Hasta dónde leen",
+    "web.bots": "Robots descartados",
+    "murray.answers": "Murray · respuestas", "murray.langs": "Murray · idioma", "murray.pages": "Murray · desde qué sala", "murray.turns": "Murray · turno de la conversación",
+    "murray.errors": "Murray · errores", "murray.navigate": "Murray · visitas guiadas",
+    "games.requests": "Proxy · juegos pedidos", "games.cache": "Proxy · caché", "games.served": "Proxy · respuestas", "games.served_kb": "Proxy · KB servidos",
+    "games.errors": "Proxy · errores", "games.not_playable": "Proxy · pedidos no jugables" };
+  const ORDER = ["web.pages", "web.entry_pages", "web.referrers", "web.langs", "web.browser_langs", "web.devices", "web.timeline_open", "web.arcade_play",
+    "web.arcade_engine", "web.arcade_source", "web.award", "web.scroll_depth", "web.murray_open", "murray.answers", "murray.pages", "murray.langs", "murray.turns",
+    "murray.navigate", "murray.errors", "games.requests", "games.cache", "games.served", "games.served_kb", "games.errors", "games.not_playable",
+    "web.outbound", "web.lang_switch", "web.toggle", "web.catalog_search", "web.consent", "web.vitals_rating", "web.arcade_error", "web.js_error", "web.score_complete", "web.navigation", "web.bots"];
+  function bars(title, kv, unit) {
+    const rows = Object.entries(kv || {}).sort((a, b) => b[1] - a[1]), top = rows.slice(0, 15), max = top.length ? top[0][1] : 1;
+    const total = rows.reduce((n, r) => n + r[1], 0);
+    return '<div class="card stat"><h2>' + esc(title) + ' <span class="muted">' + fmtN(total) + (unit || "") + "</span></h2>" +
+      (top.length ? '<table class="hbars"><tbody>' + top.map(([k, v]) =>
+        "<tr><th>" + esc(k) + '</th><td class="bar"><span style="width:' + (100 * v / max).toFixed(1) + '%"></span></td><td class="num">' + fmtN(v) + "</td></tr>").join("") +
+        "</tbody></table>" + (rows.length > 15 ? '<p class="muted">y ' + (rows.length - 15) + " más</p>" : "") : '<p class="muted">Sin datos todavía.</p>') + "</div>";
+  }
+  function column(title, daily, key) {
+    const max = Math.max(1, ...daily.map(d => d[key]));
+    return '<div class="card stat"><h2>' + esc(title) + '</h2><div class="cols" role="img" aria-label="' + esc(title + " por día") + '">' +
+      daily.map(d => '<span title="' + esc(d.date + ": " + fmtN(d[key])) + '"><i style="height:' + (100 * d[key] / max).toFixed(1) + '%"></i></span>').join("") +
+      '</div><p class="muted cols-axis"><span>' + esc((daily[0] || {}).date || "") + "</span><span>máx. " + fmtN(max) + "</span><span>" + esc((daily[daily.length - 1] || {}).date || "") + "</span></p></div>";
+  }
+  function timings(title, kv, fmt = fmtMs) {
+    const list = Object.entries(kv || {}).sort((a, b) => b[1].n - a[1].n).slice(0, 15), f = (v, k) => (v == null ? "—" : fmt(v, k));
+    return '<div class="card stat"><h2>' + esc(title) + "</h2>" + (list.length ? "<table><thead><tr><th></th><th>n</th><th>mediana</th><th>p75</th><th>p95</th></tr></thead><tbody>" +
+      list.map(([k, h]) => "<tr><th>" + esc(k) + '</th><td class="num">' + fmtN(h.n) + '</td><td class="num">' + f(h.p50, k) + '</td><td class="num">' + f(h.p75, k) + '</td><td class="num">' + f(h.p95, k) + "</td></tr>").join("") +
+      "</tbody></table>" : '<p class="muted">Sin datos todavía.</p>') + "</div>";
+  }
+  async function loadStats() {
+    let s;
+    try { s = await api("/api/admin/stats?days=" + $("#statDays").value); } catch (e) { $("#stats").innerHTML = '<p class="err">' + esc(e.message) + "</p>"; return; }
+    const T = s.totals;
+    $("#statNote").textContent = "Sin cookies ni IPs guardadas. Murray: " + (s.murray === "ok" ? "conectado" : s.murray) + ".";
+    $("#stats").innerHTML =
+      '<div class="counts">' + [["Visitantes únicos (por día)", T.visitors], ["Páginas vistas", T.pageviews], ["Preguntas a Murray", T.murray], ["Partidas", T.plays]]
+        .map(([k, v]) => "<div><b>" + fmtN(v) + "</b>" + esc(k) + "</div>").join("") + "</div>" +
+      '<div class="grid2">' + column("Visitantes", s.daily, "visitors") + column("Páginas vistas", s.daily, "pageviews") + "</div>" +
+      '<div class="grid3">' +
+      timings("Core Web Vitals", s.timings["web.vitals"], (v, k) => (k === "CLS" ? (v / 1000).toFixed(3) : fmtMs(v))) +
+      timings("Tiempo en cada sala", s.timings["web.time_on_page"]) +
+      timings("Murray · tiempo de respuesta", s.timings["murray.latency"]) +
+      timings("Proxy · preparar un juego", s.timings["games.prepare"]) +
+      ORDER.filter(k => s.counters[k]).map(k => bars(NAMES[k] || k, s.counters[k], k === "games.served_kb" ? " KB" : "")).join("") +
+      Object.keys(s.counters).filter(k => !ORDER.includes(k) && !/pageviews|requests$|page_lang/.test(k) && k !== "games.requests").map(k => bars(NAMES[k] || k, s.counters[k])).join("") +
+      "</div>" +
+      '<details class="card"><summary>Tabla por día</summary><table><thead><tr><th>Día</th><th>Visitantes</th><th>Páginas</th><th>Murray</th><th>Partidas</th></tr></thead><tbody>' +
+      s.daily.slice().reverse().map(d => "<tr><td>" + esc(d.date) + '</td><td class="num">' + fmtN(d.visitors) + '</td><td class="num">' + fmtN(d.pageviews) + '</td><td class="num">' + fmtN(d.murray) + '</td><td class="num">' + fmtN(d.plays) + "</td></tr>").join("") +
+      "</tbody></table></details>";
+  }
+  $("#statDays").addEventListener("change", loadStats);
+  $("#statReload").addEventListener("click", loadStats);
+
   function renderDownloads(list) {
     const failed = [];
     catalog.games.forEach(g => g.editions.forEach(e => { if (e.validated && e.validated.ok === false) failed.push([g, e]); }));

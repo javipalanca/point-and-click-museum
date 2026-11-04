@@ -318,6 +318,8 @@ def load_overrides(out: Path) -> dict:
                         m.setdefault("editions", {}).setdefault(key, {}).update(fix)
                 elif k == "addEditions":
                     m.setdefault("addEditions", []).extend(v)
+                elif k == "removedEditions":  # {key: what it was}, removed in the control panel
+                    m.setdefault("removedEditions", {}).update(v)
                 else:
                     m[k] = v
     return merged
@@ -367,6 +369,8 @@ def merge(found: list[dict], prev: dict, overrides: dict) -> list[dict]:
                                 "alternatives", "archive", "page", "iaTitle", "added") if e.get(k)}
         src = e.get("archive") or Path(urllib.parse.unquote((e.get("download") or {}).get("url", ""))).stem or e.get("scummvm") or ""
         ed["key"] = e.get("key") or add_game.slugify(f"{gid}-{e['kind']}-{src}")[:80].strip("-")
+        if ed["key"] in ((overrides.get(gid) or {}).get("removedEditions") or {}):
+            continue  # removed in the control panel: the sources do not bring it back
         fix = ((overrides.get(gid) or {}).get("editions") or {}).get(ed["key"])
         if fix:  # the control panel's (or the file's) corrections, before deciding whether the last check still holds
             ed.update(fix)
@@ -383,7 +387,7 @@ def merge(found: list[dict], prev: dict, overrides: dict) -> list[dict]:
                     g[k] = old[gid][k]
         ov = overrides.get(gid) or {}
         for k, v in ov.items():
-            if k not in ("editions", "addEditions") and not k.startswith("_"):
+            if k not in ("editions", "addEditions", "removedEditions") and not k.startswith("_"):
                 g[k] = v
         restatus(g, ov)
         if not g.get("cover") and g.get("timeline"):

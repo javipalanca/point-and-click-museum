@@ -15,6 +15,8 @@
     POST /api/admin/editions/<key>/rights   {"approved": true} makes it available on the web (your decision);
                                             {"rights": …, "source": url?, "note": text?}; {"rights": null} withdraws it
     POST /api/admin/editions/<key>/run      {"exe": "GAME/START.BAT", "cycles": 20000}
+    POST /api/admin/editions/<key>/delete   remove an edition (the daily sync will not bring it back)
+    POST /api/admin/games/<id>/restore      {"key": …} bring back an edition removed by mistake
 
 Credentials: ADMIN_USER and ADMIN_PASSWORD in the environment of the games container (.env, never in the
 repository); without them the panel does not exist (404). Sessions live in memory for ADMIN_SESSION_HOURS (12).
@@ -248,6 +250,8 @@ def route(h, method: str, path: str, q: dict, P: dict):
     if path == "/api/admin/catalog":
         cat = read_json(P["catalog"], {"games": []})
         src = cat.get("sources", {})
+        cat["removed"] = {gid: o["removedEditions"] for gid, o in read_json(P["admin"], {}).items()
+                          if isinstance(o, dict) and o.get("removedEditions")}
         cat["sources"] = {"scummvm": src.get("scummvm", {}), "gog": {"at": (src.get("gog") or {}).get("at")},
                           "archive": {k: v for k, v in (src.get("archive") or {}).items() if k != "meta"}}
         return send(h, 200, cat)
@@ -279,6 +283,21 @@ def route(h, method: str, path: str, q: dict, P: dict):
                                                           "creator": d.get("creator"), "collection": d.get("collection"),
                                                           "page": f"https://archive.org/details/{d['identifier']}",
                                                           "rights": sync_catalog.ia_rights(d)} for d in docs]})
+    m = re.fullmatch(r"/api/admin/games/([a-z0-9][a-z0-9-]{0,80})/restore", path)
+    if m and method == "POST":
+        gid, key = m.group(1), str(body(h).get("key", ""))
+
+        def restore(cat, ov):
+            g = next((x for x in cat["games"] if x["id"] == gid), None)
+            removed = (ov.get(gid) or {}).get("removedEditions") or {}
+            if not g or key not in removed:
+                raise ValueError("no such removed edition")
+            ed = removed.pop(key)
+            if not any(e["key"] == key for e in g["editions"]):
+                g["editions"].append(ed)
+            sync_catalog.restatus(g, ov.get(gid))
+            return ed
+        return send(h, 200, {"edition": edit(P, restore)})
     m = re.fullmatch(r"/api/admin/games/([a-z0-9][a-z0-9-]{0,80})(/attach)?", path)
     if m and method == "POST":
         gid, attach, b = m.group(1), m.group(2), body(h)
@@ -323,7 +342,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
                 sync_catalog.restatus(g, {"status": o["status"]})
             return g
         return send(h, 200, {"game": edit(P, change)})
-    m = re.fullmatch(r"/api/admin/editions/([a-z0-9][a-z0-9-]{0,80})/(bundle|validate|rights|run)", path)
+    m = re.fullmatch(r"/api/admin/editions/([a-z0-9][a-z0-9-]{0,80})/(bundle|validate|rights|run|delete)", path)
     if not m:
         return send(h, 404, {"error": "unknown"})
     key, action = m.groups()
@@ -359,6 +378,19 @@ def route(h, method: str, path: str, q: dict, P: dict):
             return ed2
         return send(h, 200, {"edition": edit(P, ok), "kind": r["kind"], "files": r.get("files"), "exe": r.get("exe")})
     b = body(h)
+    if action == "delete":
+        def remove(cat, ov):
+            g2, ed2 = find(cat, key)
+            o = ov.setdefault(g2["id"], {})
+            o.setdefault("removedEditions", {})[key] = {k: v for k, v in ed2.items() if k != "status"}
+            o["addEditions"] = [e for e in o.get("addEditions", []) if e.get("key") != key]
+            (o.get("editions") or {}).pop(key, None)
+            g2["editions"] = [e for e in g2["editions"] if e["key"] != key]
+            for f in P["cache"].glob(f"{key}.*"):  # its download goes too
+                f.unlink(missing_ok=True)
+            sync_catalog.restatus(g2, o)
+            return g2
+        return send(h, 200, {"game": edit(P, remove)})
     if action == "rights":
         rights = b.get("rights")
         if rights is not None and rights not in RIGHTS:

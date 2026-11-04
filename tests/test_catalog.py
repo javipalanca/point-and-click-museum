@@ -179,6 +179,14 @@ class CatalogTest(unittest.TestCase):
         with self.assertRaisesRegex(gf.GameError, "engine"):
             gf.prepare(dict(base, emulator="scummvm", run={"svmEngine": "sword25"}, download={"url": self.base + "/x"}), self.cache)
 
+    def test_removed_editions_do_not_come_back(self):
+        sc = self.sc
+        found, _ = sc.scummvm_source(self.cfg["scummvm"], {})
+        key = "beneath-a-steel-sky-full-bass-cd-1-2"
+        games = {g["id"]: g for g in sc.merge(found, {}, {"beneath-a-steel-sky": {"removedEditions": {key: {"key": key}}}})}
+        self.assertNotIn(key, [e["key"] for e in games["beneath-a-steel-sky"]["editions"]])
+        self.assertTrue(games["beneath-a-steel-sky"]["editions"])  # the demo stays
+
     def test_network_failures_are_not_verdicts(self):
         sc = self.sc
         games = [{"title": "Far", "editions": [

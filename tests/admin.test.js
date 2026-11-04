@@ -54,7 +54,7 @@ const firstLine = proc => new Promise((resolve, reject) => {
   const base = "http://localhost:" + front.address().port;
   const browser = await chromium.launch(), page = await browser.newPage({ viewport: { width: 1360, height: 900 } }), errs = [];
   page.on("pageerror", e => errs.push(e.message));
-  page.on("dialog", d => d.dismiss());
+  page.on("dialog", d => d.type() === "confirm" ? d.accept() : d.dismiss());
   const key = "quest-for-the-museum-full-msdos-quest-1991";
   const pub = () => page.evaluate(async u => (await fetch(u)).status, "/api/games/" + key);
   try {
@@ -115,6 +115,16 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await page.click("[data-attach]");
     await page.waitForSelector("#detail .edition");
     check((await page.textContent("#detail .edition")).includes("msdos_quest_1991"), "an Internet Archive item attached to a game");
+
+    console.log("Remove an edition, and restore it");
+    await page.click('#detail [data-act="delete"]');
+    await page.waitForSelector("#detail [data-restore]");
+    check(!(await page.$("#detail .edition")), "the edition is gone from the game");
+    const ov2 = JSON.parse(fs.readFileSync(path.join(catDir, "catalog.admin.json"), "utf8"));
+    check(Object.keys(ov2["lonely-game"].removedEditions || {}).length === 1, "remembered as removed, so that the daily sync does not bring it back");
+    await page.click("#detail [data-restore]");
+    await page.waitForSelector("#detail .edition");
+    check(!(await page.$("#detail [data-restore]")), "restored");
 
     console.log("Sync, sources, log");
     await page.click('[data-tab="summary"]');

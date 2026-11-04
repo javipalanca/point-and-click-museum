@@ -109,6 +109,7 @@
   function renderDetail() {
     const g = catalog.games.find(x => x.id === current), d = $("#detail");
     if (!g) { d.innerHTML = '<p class="muted">Elige un juego de la lista.</p>'; return; }
+    const removed = (catalog.removed || {})[g.id] || {};
     d.innerHTML =
       "<h2>" + esc(g.title) + ' <span class="badge ' + esc(g.status) + '">' + esc(STATE[g.status]) + "</span></h2>" +
       '<dl class="kv"><dt>Id</dt><dd>' + esc(g.id) + "</dd><dt>Año · estudio</dt><dd>" + esc([g.year, g.developer].filter(Boolean).join(" · ") || "—") + "</dd>" +
@@ -118,6 +119,8 @@
       '<form class="row" id="gogForm"><label>GOG <input type="url" name="gog" placeholder="https://www.gog.com/en/game/…" value="' + esc(g.gog || "") + '"></label><button>Guardar</button></form>' +
       '<label class="row"><input type="checkbox" id="forceRecord"' + (g.forcedRecord ? " checked" : "") + "> Mantener como solo ficha aunque tenga ediciones jugables</label>" +
       "<h2>Ediciones</h2>" + (g.editions.map(editionHtml).join("") || '<p class="muted">Ninguna fuente la ofrece todavía. Búscala en Internet Archive:</p>') +
+      (Object.keys(removed).length ? "<h2>Ediciones eliminadas</h2><ul class=\"removed\">" + Object.entries(removed).map(([k, e]) =>
+        "<li>" + esc(e.edition || k) + ' <button class="link" data-restore="' + esc(k) + '">Restaurar</button></li>').join("") + "</ul>" : "") +
       '<h2>Buscar en Internet Archive</h2><form class="row" id="iaForm"><input type="text" name="q" value="' + esc(g.title.split(":")[0]) + '">' +
       '<label><input type="checkbox" name="all"> fuera de las colecciones configuradas</label><button>Buscar</button></form><div id="iaResults"></div>';
     $("#gogForm").addEventListener("submit", async e => {
@@ -156,6 +159,7 @@
       (v.at ? "<dt>Validación</dt><dd>" + esc(v.at) + (v.by ? " · " + esc(v.by) : "") + (v.error ? '<br><span class="err">' + esc(v.error) + "</span>" : "") +
         (v.checks ? '<ul class="checks">' + v.checks.map(c => "<li>" + esc(c) + "</li>").join("") + "</ul>" : "") + "</dd>" : "") + "</dl>" +
       '<div class="row">' + (dl.url ? '<button data-act="test">Probar</button><button data-act="validate">Validar</button>' : '<span class="muted">Sin fichero descargable.</span>') +
+      '<button data-act="delete" title="La sincronización no la volverá a traer">Eliminar edición</button>' +
       (e.approved ? '<span class="badge playable">disponible · ' + esc((e.rightsBy || "") + " " + (e.rightsAt || "")) + '</span><button data-act="revert">Retirar de la web</button>' : dl.url ? '<button class="primary" data-act="approve">Marcar como disponible</button>' : "") + "</div>" +
       (e.approved && v.ok === false ? '<p class="err">Está disponible, pero la validación automática falló: comprueba que arranca con «Probar».</p>' : "") +
       '<form class="row" data-form="rights"><select name="rights">' + me.rights.map(r => '<option' + (r === e.rights ? " selected" : "") + ">" + esc(r) + "</option>").join("") + "</select>" +
@@ -167,6 +171,12 @@
   }
 
   async function onDetailClick(ev) {
+    const restore = ev.target.closest("[data-restore]");
+    if (restore) {
+      try { await post("/api/admin/games/" + current + "/restore", { key: restore.dataset.restore }); await loadCatalog(); }
+      catch (x) { alert(x.message); }
+      return;
+    }
     const attach = ev.target.closest("[data-attach]");
     if (attach) {
       try { await post("/api/admin/games/" + current + "/attach", { archive: attach.dataset.attach }); await loadCatalog(); }
@@ -177,10 +187,12 @@
     if (!btn) return;
     const key = btn.closest(".edition").dataset.key;
     if (btn.dataset.act === "test") return test(key);
+    if (btn.dataset.act === "delete" && !confirm("¿Eliminar esta edición? La sincronización no la volverá a traer; podrás restaurarla desde esta ficha.")) return;
     btn.disabled = true;
     try {
       if (btn.dataset.act === "validate") { btn.textContent = "Descargando y comprobando…"; await post("/api/admin/editions/" + key + "/validate"); }
       if (btn.dataset.act === "revert") await post("/api/admin/editions/" + key + "/rights", { rights: null });
+      if (btn.dataset.act === "delete") await post("/api/admin/editions/" + key + "/delete");
       if (btn.dataset.act === "approve") await post("/api/admin/editions/" + key + "/rights", { approved: true });
       await loadCatalog();
     } catch (x) { alert(x.message); await loadCatalog(); }

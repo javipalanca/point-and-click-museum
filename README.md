@@ -133,7 +133,8 @@ Con `ADMIN_USER` y `ADMIN_PASSWORD` en `.env`, el contenedor `games` sirve un pa
   **también los comerciales**), con filtros. En cada edición: **Probar** (el servidor la descarga solo para ti y se
   abre en DOSBox o ScummVM dentro del panel), **Validar** (las comprobaciones automáticas, informativas), **Marcar como
   disponible** / **Retirar de la web** (tu decisión: queda anotado quién y cuándo; nota y enlace opcionales) y
-  **Arranque** (ejecutable y `cycles`). También el enlace de GOG, dejar un juego como solo ficha y **buscar en Internet Archive**
+  **Arranque** (ejecutable y `cycles`) y **Eliminar edición** (la sincronización no la vuelve a traer; las eliminadas se
+  listan al final de la ficha con «Restaurar»). También el enlace de GOG, dejar un juego como solo ficha y **buscar en Internet Archive**
   para añadir un elemento a un juego que no lo tenía.
 - **Fuentes**, **Descargas y errores** (públicas y del panel, con el motivo) y **Registro** de la sincronización.
 

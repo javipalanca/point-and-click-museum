@@ -260,6 +260,11 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   `Cache-Control: no-cache` + ETag (antes `max-age=86400`), para que un juego retirado deje de servirse al momento
   (los navegadores revalidan y reciben 304 si no cambió).
 
+- **2026-11-05 · Eliminar ediciones en el panel** (petición del usuario: «cuando hay varias ediciones se deberían
+  poder eliminar, no solo añadir»). Botón «Eliminar edición» (con confirmación): se guarda en
+  `catalog.admin.json → <juego>.removedEditions` con lo que era, la sincronización la salta (`merge`), se borra su
+  descarga de la caché, y la ficha lista las eliminadas con «Restaurar» (vuelve al momento, sin esperar a sincronizar).
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

@@ -329,7 +329,10 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   (`~/.npm/_cacache`, ENOENT): el script usa ahora su propia caché (`npm_config_cache=.cache/npm`). Luego, con
   `ENGINES=all`, la descarga de a52dec falló (404 en `liba52.sourceforge.io`): las bibliotecas que baja el script de
   ScummVM (theora, mpeg2, faad, a52) son ahora opcionales; se comprueba su URL con `wget --spider` (o que ya estén
-  compiladas) y, si no responde, se compila sin ella con un aviso. Solo afectan a algunos códecs de vídeo.
+  compiladas) y, si no responde, se compila sin ella con un aviso. Solo afectan a algunos códecs de vídeo. Después, el
+  motor `grim` falló en `gfx_opengl_shaders.cpp` (`GL_DRAW_FRAMEBUFFER_BINDING`, de OpenGL ES 3, no existe en el
+  GLES2 de Emscripten): el modo `all` pasa `--disable-opengl-game --enable-tinygl` (los motores 3D usan TinyGL,
+  el renderizado por software de ScummVM) y `SKIP_ENGINES=a,b` añade `--disable-engine=a,b` para saltar motores.
 - ~~Guardar partidas de ScummVM entre visitas~~ hecho el 2026-11-05 (IndexedDB). Las de DOSBox dependen de js-dos (sin comprobar).
 - **Primera sincronización real del catálogo** en el servidor: `docker compose logs builder` tras arrancar; comprobar
   los nombres de colecciones de Internet Archive (`data/catalog.sources.json`), que GOG devuelve `products` y que las

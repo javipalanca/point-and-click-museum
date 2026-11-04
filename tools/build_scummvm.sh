@@ -4,6 +4,7 @@
 #   tools/build_scummvm.sh                 # ScummVM 2.9.1 with the museum's engines
 #   ENGINES=all tools/build_scummvm.sh     # every stable engine, with the libraries they need
 #   ENGINES=all-unstable tools/build_scummvm.sh   # also the engines ScummVM marks as unstable (may not work)
+#   ENGINES=all SKIP_ENGINES=grim,stark tools/build_scummvm.sh   # all but some (if one does not compile)
 #   SCUMMVM_VERSION=v2.9.1 ENGINES=scumm,sky tools/build_scummvm.sh
 #
 # Uses ScummVM's official Emscripten script (dists/emscripten/build.sh), which downloads the
@@ -45,6 +46,9 @@ case "$ENGINES" in
   all-unstable) ENGINE_FLAGS=(--enable-all-engines) ;;
   *)            ENGINE_FLAGS=(--disable-all-engines "--enable-engine=$ENGINES") ;;
 esac
+if [[ -n "${SKIP_ENGINES:-}" ]]; then
+  ENGINE_FLAGS+=("--disable-engine=$SKIP_ENGINES")
+fi
 # libraries some engines need (videos, PNG/JPEG images, fonts…); the Emscripten script fetches or builds them.
 # With a short engine list they are not needed; configure leaves out any engine whose libraries are missing.
 LIB_FLAGS=(--enable-mad --enable-vorbis)
@@ -60,6 +64,9 @@ optional_lib() {  # flag  built-file  url
   fi
 }
 if [[ "$ENGINES" == all* ]]; then
+  # 3D engines (grim, myst3, stark…) draw with TinyGL, ScummVM's software renderer: their OpenGL paths need OpenGL ES 3
+  # constants that Emscripten's OpenGL ES 2 lacks (engines/grim/gfx_opengl_shaders.cpp: GL_DRAW_FRAMEBUFFER_BINDING)
+  LIB_FLAGS+=(--disable-opengl-game --enable-tinygl)
   # Emscripten ports: always available
   LIB_FLAGS+=(--enable-ogg --enable-zlib --enable-png --enable-jpeg --enable-gif --enable-freetype2)
   # downloaded and built by dists/emscripten/build.sh (URLs of ScummVM 2.9.1's script)

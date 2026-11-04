@@ -185,7 +185,8 @@ class CatalogTest(unittest.TestCase):
         key = "beneath-a-steel-sky-full-bass-cd-1-2"
         games = {g["id"]: g for g in sc.merge(found, {}, {"beneath-a-steel-sky": {"removedEditions": {key: {"key": key}}}})}
         self.assertNotIn(key, [e["key"] for e in games["beneath-a-steel-sky"]["editions"]])
-        self.assertTrue(games["beneath-a-steel-sky"]["editions"])  # the demo stays
+        self.assertEqual(games["beneath-a-steel-sky"]["status"], "record")  # nothing left to play: back to record only
+        self.assertTrue(games["monkey-island"]["editions"])  # other games keep theirs
 
     def test_network_failures_are_not_verdicts(self):
         sc = self.sc

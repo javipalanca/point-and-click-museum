@@ -1024,12 +1024,16 @@ def main() -> int:
         for e in errors:
             print("error:", e, file=sys.stderr)
         return 1
+    # a wrong statistics setting must never stop the site from being built: warn and leave that part off
+    args.ga_id = args.ga_id.strip().strip("'\"").strip().upper()
     if args.ga_id and not re.fullmatch(r"G-[A-Z0-9]{4,16}", args.ga_id):
-        print(f"error: --ga-id {args.ga_id!r} is not a GA4 measurement id (G-XXXXXXX)", file=sys.stderr)
-        return 1
+        print(f"warning: GA id {args.ga_id!r} is not a GA4 measurement id (G-XXXXXXX, in Google Analytics → Admin → "
+              "Data streams); Google Analytics stays off", file=sys.stderr)
+        args.ga_id = ""
+    args.stats_url = args.stats_url.strip().strip("'\"").strip()
     if args.stats_url and not re.fullmatch(r"(/|https://)[\w./-]{1,200}", args.stats_url):
-        print(f"error: --stats-url {args.stats_url!r} must be a path (/api/stats) or an https URL", file=sys.stderr)
-        return 1
+        print(f"warning: stats URL {args.stats_url!r} must be a path (/api/stats) or an https URL; statistics stay off", file=sys.stderr)
+        args.stats_url = ""
     if args.check:
         print("data OK")
         return 0

@@ -1,0 +1,19 @@
+{
+ "_doc": "Sources of tools/sync_catalog.py. Internet Archive collection and subject names: check them on archive.org if a search finds nothing (they were not reachable from the session that wrote this). GOG: the public catalogue search of gog.com (not a documented API; only used for shop links).",
+ "scummvm": {"commit": ""},
+ "archive": {
+  "enabled": true,
+  "collections": ["softwarelibrary_msdos_games", "softwarelibrary_msdos"],
+  "subjects": ["adventure", "graphic adventure", "point and click", "point-and-click"],
+  "rows": 300,
+  "titleQueries": 150,
+  "keepUnmatched": true,
+  "pause": 0.5
+ },
+ "gog": {
+  "enabled": true,
+  "search": "https://catalog.gog.com/v1/catalog?limit=5&query=like:{query}&order=desc:score&productType=in:game,pack",
+  "days": 7,
+  "pause": 0.3
+ }
+}

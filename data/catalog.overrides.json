@@ -1,0 +1,3 @@
+{
+ "_doc": "Corrections to data/catalog.json, by catalogue id; they always win over the sources. Typical uses: {\"<id>\": {\"gog\": \"https://www.gog.com/en/game/...\"}} for a missing or wrong shop link; {\"<id>\": {\"status\": \"record\"}} to keep a game as record only; {\"<id>\": {\"editions\": {\"<edition key>\": {\"rights\": \"permission\", \"rightsSource\": \"<link to the written permission>\"}}}} when the rights holder allows it to run on the web, or {\"run\": {\"exe\": \"GAME/START.BAT\", \"cycles\": 20000}} to fix how it starts. Never mark as playable a game without evidence that it may be distributed: 'abandonware' is not a licence."
+}

@@ -189,7 +189,7 @@ def identify(names: list[str], stem: str, engine: str | None = None, hint: str |
 def timeline_for(rec: dict) -> str | None:
     """The museum's record of a catalogue game: same title, or one title inside the other with the same year
     ("Maniac Mansion: Day of the Tentacle" in ScummVM is "Day of the Tentacle" in the timeline)."""
-    kb, t = knowledge(), norm(rec["title"])
+    kb, t = knowledge(), norm(re.sub(r"\([^)]*\)", " ", rec["title"]))  # "Passport to Adventure (… Monkey Island …)" is not MI
     if t in kb["timeline"]:
         return kb["timeline"][t]["id"]
     for name, g in kb["timeline"].items():

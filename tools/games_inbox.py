@@ -40,6 +40,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import zipfile
 from pathlib import Path
@@ -276,6 +277,10 @@ def main() -> int:
     ap.add_argument("--watch", type=float, default=15, help="seconds between looks at the folder (default 15)")
     ap.add_argument("--once", action="store_true", help="import, build and exit")
     ap.add_argument("--base-url", help="passed on to build.py")
+    ap.add_argument("--catalog-every", type=float, default=0, metavar="HOURS",
+                    help="also refresh the automatic catalogue (tools/sync_catalog.py) every HOURS and rebuild (0 = never)")
+    ap.add_argument("--catalog-cache", type=Path, default=ROOT / ".cache" / "games-proxy",
+                    help="where the catalogue sync keeps the games it validates (shared with server/games.py)")
     ap.add_argument("--all-games", action="store_true",
                     help="also list the museum's demo and the freeware it knows (default: only the games you have)")
     args = ap.parse_args()
@@ -287,9 +292,25 @@ def main() -> int:
         shutil.rmtree(d, ignore_errors=True)
     log(f"games inbox: {inbox}")
 
+    refreshed = threading.Event()
+    if args.catalog_every > 0:
+        def refresh_catalog():  # in the background: the inbox keeps working while the sources are read
+            while True:
+                log("catalogue: refreshing from ScummVM, Internet Archive and GOG")
+                r = subprocess.run([sys.executable, str(ROOT / "tools" / "sync_catalog.py"), "--cache", str(args.catalog_cache)],
+                                   cwd=ROOT, capture_output=True, text=True)
+                for line in (r.stdout + r.stderr).strip().splitlines()[-12:]:
+                    log("  " + line)
+                refreshed.set()
+                time.sleep(args.catalog_every * 3600)
+        threading.Thread(target=refresh_catalog, daemon=True).start()
+
     last = done = None
     while True:
         try:
+            if refreshed.is_set() and done is not None:
+                refreshed.clear()
+                build(args.site, extra)
             now = scan(inbox)
             if args.once:
                 return 0 if sync(inbox, cache, args.site, extra, now) else 1

@@ -11,7 +11,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="${SCUMMVM_VERSION:-v2.9.1}"
-ENGINES="${ENGINES:-scumm,scumm_7_8,agi,sci,sky,queen,lure,drascula,dreamweb,teenagent,cge,ags}"
+ENGINES="${ENGINES:-scumm,scumm_7_8,agi,sci,sky,queen,lure,drascula,dreamweb,teenagent,cge,cge2,parallaction,adl,ags}"
 WORK="${SCUMMVM_WORK:-$ROOT/.cache/scummvm-$VERSION}"
 OUT="$ROOT/vendor/scummvm"
 

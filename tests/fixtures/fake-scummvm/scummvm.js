@@ -2,7 +2,14 @@
 // arguments from the URL fragment) and records which files the player copied into the virtual file system.
 Module.arguments = decodeURI(location.hash.slice(1)).split(" ");
 var FILES = {};
-var FS = { mkdirTree() {}, writeFile(p, d) { FILES[p] = d.length; } };
+var DATA = {};  // a tiny in-memory file system: enough for the player's saved-games code
+var FS = {
+  mkdirTree() {},
+  writeFile(p, d) { FILES[p] = d.length; DATA[p] = { d: d instanceof Uint8Array ? d : new TextEncoder().encode(String(d)), t: Date.now() }; },
+  readFile(p) { return DATA[p].d; },
+  stat(p) { return { size: DATA[p].d.length, mtime: DATA[p].t }; },
+  readdir(dir) { return [".", ".."].concat(Object.keys(DATA).filter(p => p.startsWith(dir + "/")).map(p => p.slice(dir.length + 1)).filter(n => !n.includes("/"))); },
+};
 var deps = 0;
 function addRunDependency() { deps++; }
 function removeRunDependency() { if (--deps === 0) main(); }

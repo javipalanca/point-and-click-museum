@@ -21,6 +21,10 @@ python3 tools/export_artifact.py --out /tmp/artifact   # copia para publicar com
 python3 tools/add_game.py ~/Downloads/*.zip [--yes]   # añade juegos DOS o ScummVM locales (no versionados)
 python3 tools/games_inbox.py ~/juegos [--once]   # vigila una carpeta de zips, los importa y regenera el sitio (servicio builder)
 python3 tools/identify_game.py juego.zip --cover   # qué juego es (ficheros, nombres, línea temporal, catálogo ScummVM) y su portada
+python3 tools/sync_catalog.py [--only scummvm|archive|gog] [--validate N]   # catálogo automático -> data/catalog.json
+python3 tools/game_fetch.py <edición>   # descarga, valida y prepara una edición del catálogo
+python3 server/games.py          # proxy de descarga del catálogo en local (puerto 8081)
+npm run test:catalog             # extremo a extremo del catálogo (fuentes falsas, proxy real)
 tools/build_scummvm.sh           # compila ScummVM web en vendor/scummvm/ (no versionado; 30-60 min)
 npm run test:scummvm             # prueba la integración de ScummVM con tests/fixtures/fake-scummvm
 python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
@@ -50,6 +54,9 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `data/arcade.json` | emulador y juegos DOS versionados; `catalogue.filtersFrom` = nº de juegos a partir del que aparecen los filtros |
 | `data/arcade.local.json` + `assets/games/` | colección local creada por `tools/add_game.py` (**ignorada por git**, nunca la añadas) |
 | `tools/games_inbox.py` + `games/` | carpeta de juegos del servidor: importa zips con `add_game`, identifica el juego y su portada, caché por fichero, build atómico (`<site>/current`) con `build.py --arcade-local-only` (la sala lista solo esos juegos); `games/` está en `.gitignore` |
+| `data/catalog.json` | catálogo automático (generado por `tools/sync_catalog.py`; no editar a mano): una ficha por juego con estado `playable`/`pending`/`record`, ediciones, derechos, descarga, validación y enlace de GOG |
+| `data/catalog.overrides.json`, `data/catalog.sources.json` | correcciones a mano (ganan siempre; los permisos con enlace de prueba) y configuración de las fuentes |
+| `tools/sync_catalog.py`, `tools/game_fetch.py`, `server/games.py` | sincronización (ScummVM, Internet Archive, GOG), descarga y validación, y proxy `/api/games/` (solo ediciones jugables) |
 | `tools/identify_game.py` | identificación de juegos (firmas de ficheros SCUMM/AGI, nombres, `timeline.json` + catálogo de ScummVM) y portadas (`media.json` del museo o libretro-thumbnails) |
 | `data/media.json` + `assets/media/` | imágenes reales (portadas, capturas, logos) con su fuente exacta; `refs` reutiliza imágenes entre fichas |
 | `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos de la interfaz y los minijuegos |
@@ -93,6 +100,9 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 8. **Legalidad:** nada de juegos comerciales ni recreaciones de juegos existentes en el repositorio. La colección
    personal del usuario va en `assets/games/`, `assets/scummvm/` y `data/arcade.local.json`, que están en `.gitignore`: no los fuerces
    con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos de interfaz son originales.
+   **Catálogo automático:** solo es «jugable» lo que tiene distribución autorizada (`game_fetch.RIGHTS_PLAYABLE`) y pasa
+   las comprobaciones. «Abandonware» no es una licencia: los juegos comerciales de Internet Archive son «solo ficha»
+   salvo permiso documentado en `catalog.overrides.json`. No añadas fuentes que distribuyan juegos comerciales.
 12. **Rigor e imágenes reales.** Juegos, estudios y motores reales se ilustran con imágenes reales (portada, captura,
     logotipo), nunca con sprites inventados. Cada imagen va en `data/media.json` con su fuente fijada (commit de GitHub o
     fichero de Wikimedia) y se muestra con su crédito; revisa que sea del juego y edición correctos (no un port posterior).

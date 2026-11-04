@@ -29,6 +29,14 @@ La sala lista solo esos juegos (`build.py --arcade-local-only`). `tools/identify
 portada: si falla con un juego real, añade su firma de ficheros (`AGI_PREFIX`, extensiones en `identify()`) o un alias,
 y una prueba. Nunca inventes portadas: o la del museo (`media.json`) o libretro-thumbnails con su crédito.
 
+## Catálogo automático
+
+`tools/sync_catalog.py` (ScummVM freeware y demos, Internet Archive, GOG) escribe `data/catalog.json`; el proxy
+`server/games.py` descarga bajo demanda solo ediciones jugables. Para que un juego pase a jugable: derechos
+autorizados (freeware, demo, shareware, dominio público, licencia libre, o `"rights": "permission"` con `rightsSource`
+en `data/catalog.overrides.json`) y validación automática (`tools/game_fetch.py <edición>`). Si falla porque falta el
+motor, añádelo a `ENGINES` de `tools/build_scummvm.sh` (se revalida solo). Prueba: `npm run test:catalog`.
+
 ## ScummVM
 
 - `add_game.py` detecta el motor (firmas de ficheros en `SCUMMVM_SIGNATURES`; mantén la copia JS de `src/js/arcade.js`

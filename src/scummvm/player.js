@@ -61,6 +61,43 @@
     return base === "detection" || family.includes(base);
   }
 
+  /* saved games survive between visits: ScummVM writes them to MEMFS (/home/web_user/saves); we copy that folder to
+     IndexedDB every few seconds and when the page closes, and put it back before the next start */
+  const SAVES = "/home/web_user/saves", DB = "pcm-scummvm-saves";
+  const idb = () => new Promise((resolve, reject) => {
+    const r = indexedDB.open(DB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("files");
+    r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
+  });
+  const tx = (db, mode, fn) => new Promise((resolve, reject) => {
+    const t = db.transaction("files", mode), st = t.objectStore("files"), out = fn(st);
+    t.oncomplete = () => resolve(out && out.result); t.onerror = () => reject(t.error);
+  });
+  async function restoreSaves() {
+    try {
+      const db = await idb(), keys = await tx(db, "readonly", st => st.getAllKeys());
+      for (const k of keys || []) {
+        const data = await tx(db, "readonly", st => st.get(k));
+        if (data) FS.writeFile(SAVES + "/" + k, new Uint8Array(data));
+      }
+      return db;
+    } catch (e) { console.warn("[saves] not available", e); return null; }
+  }
+  const stamps = {};
+  async function storeSaves(db) {
+    if (!db) return;
+    try {
+      for (const name of FS.readdir(SAVES)) {
+        if (name === "." || name === "..") continue;
+        const st = FS.stat(SAVES + "/" + name), stamp = st.mtime + ":" + st.size;
+        if (stamps[name] === stamp) continue;
+        stamps[name] = stamp;
+        const bytes = FS.readFile(SAVES + "/" + name);
+        await tx(db, "readwrite", s => s.put(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), name));
+      }
+    } catch (e) { /* the file system is busy: next time */ }
+  }
+
   async function populate() {
     const data = job.data.filter(wanted);
     const total = data.length + job.files.length;
@@ -81,7 +118,10 @@
       }
     }
     await Promise.all([worker(), worker(), worker(), worker()]);
-    FS.mkdirTree("/home/web_user/saves");
+    FS.mkdirTree(SAVES);
+    const db = await restoreSaves();
+    setInterval(() => storeSaves(db), 5000);
+    addEventListener("pagehide", () => storeSaves(db));
     FS.writeFile("/home/web_user/scummvm.ini",
       "[scummvm]\nextrapath=/data\nthemepath=/data\npluginspath=/data/plugins\nsavepath=/home/web_user/saves\n" +
       "gui_theme=scummmodern\nfullscreen=false\naspect_ratio=true\nfiltering=false\n");

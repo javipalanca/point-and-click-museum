@@ -535,6 +535,18 @@ a.ext:hover { color: var(--amber); border-color: var(--amber); }
 .cat-list.compact .dos-game p { display: none; }
 .cat-list.compact .dos-game .row { grid-column: 3; grid-row: 1 / span 2; }
 .cat-list.compact .dos-game .row .ext { display: none; }
+/* catalogue cards (state, reason, shop link): their actions go on a line of their own under the title */
+.cat-list.compact .dos-game[data-status] .row { grid-column: 2 / -1; grid-row: auto; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+.cat-list.compact .dos-game[data-status] .row .ext { display: inline; font-size: 16px; }
+.cat-list.compact .dos-game[data-status] .row .pbtn { margin: 2px 0; }
+.dos-game .why { font-size: 15px; color: var(--dim); line-height: 1.1; }
+.chip.state.playable { color: var(--ink); background: var(--teal); }
+.chip.state.pending { color: var(--amber); }
+.chip.state.record { color: var(--dim); }
+.dos-game[data-status="record"] h3 { color: var(--dim); }
+.tl-play { display: block; margin-top: 3px; font-size: 15px; color: var(--teal); }
+.m-actions { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 14px; }
+.m-actions .pbtn { text-decoration: none; }
 @media (min-width: 600px) and (max-width: 900px) { .cat-list.compact { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 900px) { .cat-list.compact { max-height: 70vh; overflow-y: auto; } }
 .svm-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }

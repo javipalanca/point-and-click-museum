@@ -78,6 +78,51 @@ python3 tools/fetch_jsdos.py
 
 Si `vendor/js-dos/` no existe, la página carga js-dos desde jsDelivr.
 
+### Catálogo automático (ScummVM, Internet Archive, GOG)
+
+`tools/sync_catalog.py` escribe `data/catalog.json` (en el servidor, cada `CATALOG_EVERY` horas) con una ficha por
+juego: todas las aventuras de la línea temporal y las que encuentra en las fuentes. Cada ficha tiene uno de tres
+estados, que se ven en la sala DOSBox (con filtro) y en la línea temporal:
+
+| Estado | Qué significa |
+|---|---|
+| **Jugable** | una edición con distribución autorizada (freeware, demo, shareware, dominio público, licencia libre o permiso documentado) que ha pasado las comprobaciones automáticas. Se descarga **bajo demanda** cuando alguien la abre |
+| **Pendiente de validar** | localizada automáticamente, pero sin confirmar sus derechos o su compatibilidad (motor no compilado, descarga aún no comprobada…) |
+| **Solo ficha** | documentada, sin distribución autorizada: los juegos comerciales, también los llamados «abandonware» |
+
+- **ScummVM**: los juegos freeware y las demos que distribuye su web con permiso de los autores (`scummvm-web`, fijado a
+  un commit), solo de sus motores de aventuras. Son la fuente de juegos jugables.
+- **Internet Archive**: `advancedsearch.php` para descubrir aventuras de MS-DOS, `metadata/{id}` para ficheros,
+  sumas md5/sha1 y el programa que arranca (`emulator_start`), y `download/{id}/{fichero}` para descargar. **Un
+  elemento de Internet Archive solo es jugable con una licencia explícita en sus metadatos** (Creative Commons o
+  dominio público) o con sus derechos confirmados a mano en `data/catalog.overrides.json`, con un enlace de prueba.
+  Que lo haya subido alguien no lo autoriza: los juegos comerciales quedan como «solo ficha».
+- **GOG.com**: solo para el enlace «Comprar en GOG» de los juegos que aún se venden (búsqueda del catálogo de gog.com,
+  coincidencia exacta del título: la *Special Edition* no es el original).
+- No se usan **dos.zone** ni **eXoDOS**: distribuyen juegos comerciales sin autorización.
+
+Las comprobaciones (`tools/game_fetch.py`): host permitido, tamaño, suma de control, zip válido, programa DOS que no
+sea de Windows (o motor de ScummVM incluido en nuestra compilación). El resultado se convierte en un paquete `.jsdos`
+con su `dosbox.conf`, o en los datos de ScummVM sin la carpeta que los envuelve. Cada pasada valida como mucho
+`GAMES_VALIDATE_PER_RUN` ediciones nuevas; un fallo de red no cuenta como suspenso y se reintenta.
+
+El navegador no descarga de las fuentes (CORS y la conversión lo impiden): lo hace el **proxy de descarga**
+(`server/games.py`, contenedor `games`, ruta `/api/games/<edición>`). Solo sirve ediciones jugables, solo desde
+`downloads.scummvm.org` y `archive.org`, guarda como mucho `GAMES_CACHE_MB` en el servidor (lo menos usado sale
+primero) y limita las descargas nuevas por IP (`GAMES_RATE` por hora). El navegador guarda los juegos ya descargados
+en Cache Storage y las partidas de ScummVM en IndexedDB, así que sobreviven a la siguiente visita.
+
+```bash
+python3 tools/sync_catalog.py --validate 0             # refresca las fichas sin descargar nada
+python3 tools/sync_catalog.py --only scummvm           # una fuente; las demás se conservan
+python3 tools/game_fetch.py beneath-a-steel-sky-full-bass-cd-1-2   # descarga y valida una edición
+python3 server/games.py                                 # el proxy en local (puerto 8081)
+```
+
+Correcciones a mano (enlace de GOG, ejecutable, permiso de un autor, dejar un juego como solo ficha) en
+`data/catalog.overrides.json`; siempre ganan a las fuentes. Fuentes y nombres de colecciones en
+`data/catalog.sources.json`.
+
 ### ScummVM
 
 Muchos juegos no traen `.exe`: son datos que ejecuta ScummVM (Beneath a Steel Sky, Flight of the Amazon Queen,
@@ -156,12 +201,13 @@ cp .env.example .env            # ajusta BASE_URL, PORT y, si quieres, el modelo
 docker compose up -d --build    # http://localhost:8080/
 ```
 
-Tres contenedores:
+Cuatro contenedores:
 
 | Servicio | Qué hace |
 |---|---|
 | `builder` | genera el sitio con `build.py` en el volumen `site` y lo vuelve a generar cada vez que añades, cambias o quitas un juego de la carpeta de juegos (`tools/games_inbox.py`). Cada build va a una carpeta nueva y se activa de golpe (enlace `current`), así que nadie ve un sitio a medias. Con `PUBLIC=1` (por defecto) deja fuera la colección local que hubiera en el contexto de la imagen |
-| `web` | sirve el sitio con nginx: gzip, caché de recursos, cabeceras de seguridad, `/healthz`, y proxy de `/api/murray/` con límite de peticiones |
+| `web` | sirve el sitio con nginx: gzip, caché de recursos, cabeceras de seguridad, `/healthz`, y proxy de `/api/murray/` y `/api/games/` con límite de peticiones |
+| `games` | proxy de descarga del catálogo (`server/games.py`): trae un juego jugable de ScummVM o Internet Archive la primera vez que alguien lo abre, lo comprueba, lo convierte y lo guarda en una caché limitada. El `builder` además refresca el catálogo cada `CATALOG_EVERY` horas (24 por defecto) |
 | `murray` | el chat de Murray (`server/murray.py`, solo biblioteca estándar). No publica puertos: solo se llega a él a través de `web`. Usuario sin privilegios, sistema de ficheros de solo lectura, sin capacidades |
 
 ### Juegos en el servidor: deja los zips en una carpeta
@@ -281,6 +327,7 @@ npm install && npx playwright install chromium   # una vez
 python3 build.py && npm test
 python3 -m unittest discover -s tests            # tools/add_game.py y el servidor de Murray (con un modelo simulado)
 npm run test:scummvm                             # sala ScummVM con un ScummVM simulado (no hace falta compilarlo)
+npm run test:catalog                             # catálogo: línea temporal → Jugar → proxy → ScummVM/DOSBox, caché y partidas
 ```
 
 `tests/site.test.js` comprueba las 44 páginas (errores, desbordamiento en móvil y tableta, enlaces internos), resuelve la

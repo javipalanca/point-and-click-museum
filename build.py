@@ -76,6 +76,7 @@ def load_all() -> dict:
         "arcade": load_arcade(),
         "murray": load("murray.json"),
         "media": load_media(),
+        "catalog": load_catalog(),
         "sprites": load("sprites.json"),
         "characters": load("characters.json"),
         "font": load("pixelfont.json"),
@@ -149,11 +150,52 @@ def media_view(it: dict, root: str, ui: dict) -> dict:
 
 
 LOCAL_ARCADE = DATA / "arcade.local.json"   # games added with tools/add_game.py (not versioned)
+CATALOG = Path(os.environ.get("PCM_CATALOG", DATA / "catalog.json"))   # tools/sync_catalog.py (refreshed daily on the server)
+STATUS_RANK = {"playable": 0, "pending": 1, "record": 2}
 INCLUDE_LOCAL = True                         # switched off by --no-local
 LOCAL_ONLY = False                           # --arcade-local-only: list only your games (the server's games folder)
 
 
+def load_catalog() -> dict:
+    return json.loads(CATALOG.read_text("utf-8")) if CATALOG.exists() else {"games": []}
+
+
+def add_catalog(arcade: dict, catalog: dict, timeline: dict) -> dict:
+    """The automatic catalogue in the DOSBox room: one card per game, playable / pending / record only.
+    Your own copy of a game (local or inbox) wins over the catalogue's, and gets its shop link."""
+    tl = {t["id"]: t for t in timeline["games"]}
+    by_id = {g["id"]: g for g in arcade["games"]}
+    for c in catalog.get("games", []):
+        ed = (c.get("editions") or [None])[0]
+        mine = by_id.get(c["id"])
+        if mine and mine.get("bundle"):
+            mine.update({k: c[k] for k in ("gog", "timeline") if c.get(k) and not mine.get(k)})
+            continue
+        v = (ed or {}).get("validated") or {}
+        why = ("" if c["status"] != "pending" else "failed" if v.get("ok") is False else
+               "rights" if ed and ed["rights"] not in ("freeware", "shareware", "demo", "public-domain", "open-license", "permission") else "checks")
+        g = {"id": c["id"], "title": c["title"], "year": c.get("year"), "studio": c.get("developer") or "", "icon": "floppy",
+             "catalog": True, "status": c["status"], "why": why, "error": v.get("error", ""), "timeline": c.get("timeline"),
+             "gog": c.get("gog"), "cover": c.get("cover"), "edition": (ed or {}).get("edition", ""), "kind": (ed or {}).get("kind"),
+             "rights": (ed or {}).get("rights"), "engine": (ed or {}).get("emulator", "dosbox"),
+             "svmEngine": ((ed or {}).get("run") or {}).get("svmEngine"),
+             "desc": {lang: v["d"] for lang, v in tl[c["timeline"]]["text"].items()} if c.get("timeline") in tl else None}
+        if c["status"] == "playable":
+            g["key"] = ed["key"]
+        if mine:
+            arcade["games"][arcade["games"].index(mine)] = g  # e.g. a freeware the museum listed without a bundle
+        else:
+            arcade["games"].append(g)
+        by_id[c["id"]] = g
+    return arcade
+
+
 def load_arcade() -> dict:
+    """data/arcade.json, the local catalogue written by tools/add_game.py and the automatic catalogue."""
+    return add_catalog(load_arcade_local(), load_catalog(), load("timeline.json"))
+
+
+def load_arcade_local() -> dict:
     """data/arcade.json plus, if present, the local catalogue written by tools/add_game.py."""
     arcade = load("arcade.json")
     if LOCAL_ONLY:  # only the games you have: the museum's demo and the freeware without a bundle are left out
@@ -602,13 +644,17 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
             img = (f'<img class="tl-cover" src="{root}media/{cover["file"]}" width="{cover["w"]}" height="{cover["h"]}" '
                    f'alt="{E(ui["coverOf"].format(title=g["title"]))}" loading="lazy" decoding="async">') if cover else ""
             people = g["studio"].split(" · ")
+            cat = next((c for c in S.d["catalog"].get("games", []) if c.get("timeline") == g["id"]), None)
+            playable = bool(cat and cat["status"] == "playable")
             items.append(
                 f'<li class="tl-item {"r" if side % 2 else "l"}{" has-cover" if cover else ""}" id="{g["id"]}" data-i="{i}">'
                 f'<span class="tl-node" aria-hidden="true"></span>'
                 f'<time class="tl-year" datetime="{g["year"]}">{g["year"]}</time>'
                 f'<button class="tl-entry" type="button" data-i="{i}" aria-haspopup="dialog">{img}'
                 f'<span class="tl-text"><span class="tl-title">{E(g["title"])}</span>'
-                f'<span class="tl-meta">{E(people[0])} · {E(g["engine"])}</span></span></button>'
+                f'<span class="tl-meta">{E(people[0])} · {E(g["engine"])}</span>'
+                + (f'<span class="tl-play">▶ {E(ui["tlPlayable_demo" if cat["editions"][0]["kind"] == "demo" else "tlPlayable"])}</span>' if playable else "")
+                + '</span></button>'
                 f'<div class="vh"><p>{E(ui["studio"])}: {E(g["studio"])}. {E(ui["engine"])}: {E(g["engine"])}.</p>'
                 f'<p>{E(g["text"]["d"])}</p><p>{E(g["text"]["f"])}</p>'
                 + (f'<a href="{E(g["link"])}">{E(ui["moreAbout"])}</a>' if g.get("link") else "") + "</div></li>")
@@ -705,13 +751,23 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
 
     A = L["arcade"]
     b["arcadeIntro"] = E(A["introServer"] if A.get("localOnly") else A["intro"])
-    games = sorted(A["games"], key=lambda g: (0 if g.get("pinned") else 1, sort_key(g["title"])))
+    status_of = lambda g: g.get("status") or ("playable" if g.get("bundle") else "pending")
+    games = sorted(A["games"], key=lambda g: (0 if g.get("pinned") else 1, STATUS_RANK[status_of(g)], sort_key(g["title"])))
     items = []
     for g in games:
         key = sort_key(g["title"])
         letter = key[:1].upper() if key[:1].isalpha() else "#"
-        action = (f'<button class="pbtn small dos-play" type="button" data-id="{E(g["id"])}">{E(ui["arcadePlay"])}</button>' if g.get("bundle")
-                  else f'<span class="chip warn">{E(ui["arcadeNeedsBundle"])}</span>')
+        st = status_of(g)
+        if g.get("bundle") or g.get("key"):
+            action = f'<button class="pbtn small dos-play" type="button" data-id="{E(g["id"])}">{E(ui["arcadePlayDemo"] if g.get("kind") == "demo" else ui["arcadePlay"])}</button>'
+        elif g.get("catalog"):
+            action = f'<span class="chip state {st}"{f" title={chr(34)}{E(g["error"])}{chr(34)}" if g.get("error") else ""}>{E(ui["catState_" + st])}</span>'
+            if st == "pending":
+                action += f' <small class="why">{E(ui["catWhy_" + g["why"]])}</small>'
+        else:
+            action = f'<span class="chip warn">{E(ui["arcadeNeedsBundle"])}</span>'
+        if g.get("gog"):
+            action += f' <a class="ext buy" href="{E(g["gog"])}" rel="noopener" target="_blank">{E(ui["buyGog"])} ↗</a>'
         if g.get("source"):
             action += f' <a class="ext" href="{E(g["source"])}" rel="noopener" target="_blank">{E(ui["arcadeSource"])} ↗</a>'
         if g.get("timeline"):  # the museum has a record of it
@@ -723,12 +779,14 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         credit = (f'<small class="credit">{E(ui["arcadeCover"])}: {E(cover["label"] or g["title"])} · {E(cover["rights"])} · '
                   f'<a href="{E(cover["url"])}" rel="noopener" target="_blank">{E(cover["via"])} ↗</a></small>' if cover else "")
         engine = g.get("engine", "dosbox")
-        chips = f'<span class="chip engine">{"ScummVM" if engine == "scummvm" else "DOSBox"}</span> ' + (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") and not A.get("localOnly") else "")
+        rights = ui.get("rights_label_" + (g.get("rights") or ""), "") if g.get("catalog") and st != "record" else ""
+        chips = (f'<span class="chip engine">{"ScummVM" if engine == "scummvm" else "DOSBox"}</span> ' if st != "record" else "") \
+            + (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f'<span class="chip">{E(rights)}</span>' if rights else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") and not A.get("localOnly") else "")
         items.append(
-            f'<article class="px dos-game" data-id="{E(g["id"])}" data-engine="{engine}" data-key="{E(key)}" data-letter="{letter}" '
+            f'<article class="px dos-game" data-id="{E(g["id"])}" data-engine="{engine}" data-status="{st}" data-key="{E(key)}" data-letter="{letter}" '
             f'data-studio="{E(g.get("studio") or "")}" data-year="{g.get("year") or 9999}"{" data-cover" if cover else ""}>'
             f'{art}<h3>{E(g["title"])}</h3><div class="meta">{meta} {chips}</div>'
-            f'<p>{E(g["desc"])}</p><div class="row">{action}</div>{credit}</article>')
+            f'<p>{E(g["desc"] or ui["catDesc_" + st])}</p><div class="row">{action}</div>{credit}</article>')
     b["arcadeGames"] = "".join(items) or f'<p class="cat-none">{E(ui["arcadeNoGames"])}</p>'
     b["arcadeCount"] = E(ui["catCount"].format(n=len(games), total=len(games)))
     tools = ""
@@ -745,6 +803,9 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
             + (f'<label class="vh" for="catEngine">{E(ui["catAllEngines"])}</label><select id="catEngine"><option value="">{E(ui["catAllEngines"])}</option>'
                '<option value="dosbox">DOSBox</option><option value="scummvm">ScummVM</option></select>'
                if len({g.get("engine", "dosbox") for g in games}) > 1 else "")
+            + (f'<label class="vh" for="catStatus">{E(ui["catAllStates"])}</label><select id="catStatus"><option value="">{E(ui["catAllStates"])}</option>'
+               + "".join(f'<option value="{x}">{E(ui["catState_" + x])}</option>' for x in STATUS_RANK if any(status_of(g) == x for g in games)) + "</select>"
+               if len({status_of(g) for g in games}) > 1 else "")
             + f'<label class="vh" for="catSort">{E(ui["catSortTitle"])}</label><select id="catSort">'
             f'<option value="title">{E(ui["catSortTitle"])}</option><option value="year">{E(ui["catSortYear"])}</option></select></div>'
             f'<nav class="letters" aria-label="{E(ui["catLetters"])}"><button type="button" data-l="" aria-pressed="true">{E(ui["catAllLetters"])}</button>'
@@ -801,6 +862,13 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     for group, items in (("games", L["timeline"]["games"]), ("studios", L["studios"]), ("engines", L["engines"])):
         for x in items:  # real images (covers, screenshots, logos) with their credits
             x["media"] = {r: media_view(it, root, ui) for r, it in d["media"].get(group, {}).get(x["id"], {}).items()}
+    catalog = {c["timeline"]: c for c in d["catalog"].get("games", []) if c.get("timeline")}
+    for x in L["timeline"]["games"]:  # play it in the museum's DOSBox/ScummVM, or buy it where it is still sold
+        c = catalog.get(x["id"])
+        if c and c["status"] == "playable":
+            x["play"] = {"url": S.url(lang, "arcade", depth) + "#play=" + c["id"], "demo": c["editions"][0]["kind"] == "demo"}
+        if c and c.get("gog"):
+            x["gog"] = c["gog"]
     frames = d["media"].get("murray", {}).get("murray", {})
     L["murray"]["frames"] = [media_view(frames[f"talk{i}"], root, ui) for i in range(9) if f"talk{i}" in frames]
     pal = L["techniques"]["demos"]["palette"]

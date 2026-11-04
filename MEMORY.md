@@ -210,6 +210,26 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   descargadas fuera de Docker; en Docker, solo los juegos de la carpeta y Pixel Paint arranca. Pendiente: probar la
   identificación con los zips reales del usuario.
 
+- **2026-11-05 · Catálogo automático de aventuras** (petición del usuario: «automatizar el catálogo desde ScummVM y
+  archive.org, con enlace a jugar en nuestro DOSBox y a comprar en GOG»). `tools/sync_catalog.py` (diario en el
+  `builder`, `CATALOG_EVERY`) une la línea temporal con ScummVM (freeware y demos de `scummvm-web`, fijado a un commit;
+  solo motores de aventura: fuera *Crime Patrol*, *Castle Master*, *Griffon Legend*…), Internet Archive
+  (`advancedsearch`, `metadata`, `download`) y GOG (solo enlace de tienda, título exacto). Una ficha por juego con sus
+  ediciones y tres estados: **jugable** (derechos en `game_fetch.RIGHTS_PLAYABLE` + validación automática: host,
+  tamaño, md5/sha1, zip, programa DOS no Windows o motor compilado), **pendiente** y **solo ficha**.
+  **Decisión sobre derechos:** el usuario pidió incluir «abandonware» jugable; no se hace. Abandonware no es una
+  licencia: los juegos comerciales de Internet Archive quedan como «solo ficha» (con GOG si se vende), y un elemento
+  de IA solo es jugable con licencia explícita en sus metadatos o con permiso documentado en
+  `data/catalog.overrides.json`. dos.zone y eXoDOS no se usan como fuentes (distribuyen juegos comerciales).
+  Descarga **bajo demanda** por el proxy `server/games.py` (contenedor `games`, `/api/games/<edición>`, CORS y
+  conversión a `.jsdos`), solo ediciones jugables, caché LRU (`GAMES_CACHE_MB`), límite por IP. Navegador: Cache
+  Storage para los juegos descargados, partidas de ScummVM en IndexedDB (copia periódica de `/home/web_user/saves`).
+  Un fallo de red no es suspenso (se reintenta); un motor no compilado se revalida cuando se compila. Motores
+  añadidos a `build_scummvm.sh`: cge2, parallaction, adl (sin dependencias); sludge, wage, sword25 y wintermute
+  necesitan png/lua/jpeg y siguen fuera; `got` no existe en 2.9.1. Probado con fuentes simuladas (`test_catalog.py`,
+  `npm run test:catalog`) y en Docker; **las fuentes reales no eran accesibles desde la sesión**: pendiente la
+  primera sincronización en el servidor, revisar los nombres de colecciones de IA y la respuesta real de GOG.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,
@@ -251,7 +271,10 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   2026-11-05: la primera compilación del usuario falló en `backends/midi/seq.cpp` (`sys/soundcard.h` no existe en
   Emscripten): el `configure` de 2.9.1 activa el MIDI de `/dev/sequencer` en cualquier host «posix». El script pasa
   ahora `--disable-seq-midi --disable-timidity --disable-alsa --disable-sndio` (y `SCUMMVM_CONFIGURE` para extras).
-- Guardar partidas de ScummVM entre visitas (hoy van a MEMFS y se pierden al cerrar; habría que enlazar IDBFS).
+- ~~Guardar partidas de ScummVM entre visitas~~ hecho el 2026-11-05 (IndexedDB). Las de DOSBox dependen de js-dos (sin comprobar).
+- **Primera sincronización real del catálogo** en el servidor: `docker compose logs builder` tras arrancar; comprobar
+  los nombres de colecciones de Internet Archive (`data/catalog.sources.json`), que GOG devuelve `products` y que las
+  descargas de ScummVM validan. Compilar ScummVM con `ENGINES` ampliado si se quieren más freeware jugables.
 - Los freeware de ScummVM se pueden redistribuir: valorar versionarlos (excepción en `.gitignore`) una vez probados.
 - Posibles mejoras: slugs localizados en las URLs, más estudios (Microïds, Cryo, Coktel Vision),
   modo de alto contraste.

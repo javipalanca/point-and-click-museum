@@ -179,9 +179,50 @@ if (document.getElementById("dosHost")) (() => {
     if (player) try { player.setMouseSensitivity(sensitivity); } catch (e) { /* ignore */ }
   });
 
-  $$(".dos-play").forEach(b => b.addEventListener("click", () => {
-    const g = D.arcade.games.find(x => x.id === b.dataset.id);
-    if (!g || !g.bundle) return;
+  /* catalogue games: the museum's download proxy (/api/games/<edition>) brings them from ScummVM or Internet Archive;
+     the browser keeps them in Cache Storage, so a game is only downloaded once per visitor */
+  const CACHE_NAME = "pcm-games-v1";
+  async function fetchGame(g) {
+    const url = "/api/games/" + g.key;
+    let res = null;
+    try { res = "caches" in window ? await (await caches.open(CACHE_NAME)).match(url) : null; } catch (e) { /* private mode */ }
+    if (!res) {
+      if (location.protocol === "file:") throw new Error(t("arcadeNoServer"));
+      res = await fetch(url);
+      if (res.status === 429) throw new Error(t("arcadeFetchBusy"));
+      if (res.status === 404 && !/json/.test(res.headers.get("Content-Type") || "")) throw new Error(t("arcadeNoServer"));
+      if (!res.ok) throw new Error(t("arcadeFetchFail"));
+      const total = +res.headers.get("Content-Length") || 0, reader = res.body.getReader(), parts = [];
+      let got = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        parts.push(value); got += value.length;
+        now.textContent = t("arcadeDownloading", { title: g.title, mb: (got / 1048576).toFixed(1) + (total ? " / " + (total / 1048576).toFixed(1) : "") });
+      }
+      const blob = new Blob(parts, { type: "application/zip" });
+      try { if ("caches" in window) await (await caches.open(CACHE_NAME)).put(url, new Response(blob, { headers: { "Content-Type": "application/zip" } })); }
+      catch (e) { /* quota or private mode: play without keeping it */ }
+      return new Uint8Array(await blob.arrayBuffer());
+    }
+    return new Uint8Array(await res.arrayBuffer());
+  }
+  async function playCatalog(g) {
+    let bytes;
+    try { now.textContent = t("arcadeLoading", { title: g.title }); bytes = await fetchGame(g); }
+    catch (e) { now.textContent = t("arcadeNothing"); toast(e.message); sfx("bad"); return; }
+    if (g.engine === "scummvm") {
+      let files;
+      try { files = await unzip(bytes); } catch (e) { toast(t("arcadeFetchFail")); return; }
+      runScummVM(g.title, { gameId: g.id, engine: g.svmEngine, files: Object.keys(files), memFiles: files, gameBase: "", args: svmArgs(g.id) });
+    } else {
+      const u = URL.createObjectURL(new Blob([bytes], { type: "application/zip" }));
+      run(g.title, { url: u }, u);
+    }
+  }
+
+  function play(g) {
+    if (g.key) return playCatalog(g);
     if (g.engine === "scummvm") {
       runScummVM(g.title, { gameId: g.id, engine: g.svmEngine, files: g.files || [], gameBase: "games/" + g.id + "/", args: svmArgs(g.id) });
       return;
@@ -193,7 +234,20 @@ if (document.getElementById("dosHost")) (() => {
       const u = URL.createObjectURL(new Blob([bytes], { type: "application/zip" }));
       run(g.title, { url: u }, u);
     } else run(g.title, { url: /^https?:/.test(g.bundle) ? g.bundle : D.root + g.bundle });
+  }
+  $$(".dos-play").forEach(b => b.addEventListener("click", () => {
+    const g = D.arcade.games.find(x => x.id === b.dataset.id);
+    if (g && (g.bundle || g.key)) play(g);
   }));
+  /* arriving from the timeline ("Play in the museum"): #play=<id> */
+  const fromHash = () => {
+    const m = /^#play=([\w-]+)/.exec(location.hash), g = m && D.arcade.games.find(x => x.id === m[1]);
+    if (!g || !(g.bundle || g.key)) return;
+    const card = $('.dos-game[data-id="' + g.id + '"]');
+    if (card) { card.hidden = false; card.classList.add("flash"); }
+    play(g);
+  };
+  fromHash(); addEventListener("hashchange", fromHash);
   stopBtn.addEventListener("click", () => { sfx("click"); stop(); });
   fullBtn.addEventListener("click", () => {
     const el = $("#dosScreen");
@@ -232,16 +286,16 @@ if (document.getElementById("dosHost")) (() => {
 if (document.getElementById("catList")) (() => {
   const { $, $$, t, sfx } = PCM;
   const list = $("#catList"), items = $$(".dos-game", list), count = $("#catCount"), empty = $("#catEmpty");
-  const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button"), engineSel = $("#catEngine");
+  const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button"), engineSel = $("#catEngine"), stateSel = $("#catStatus");
   if (!search) return; // few games: no filters
   const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   items.forEach(el => { el._text = norm(el.querySelector("h3").textContent + " " + el.dataset.studio); });
   let letter = "";
   function apply() {
-    const q = norm(search.value.trim()), st = studio.value, en = engineSel ? engineSel.value : "";
+    const q = norm(search.value.trim()), st = studio.value, en = engineSel ? engineSel.value : "", ss = stateSel ? stateSel.value : "";
     let n = 0;
     items.forEach(el => {
-      const show = (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) && (!letter || el.dataset.letter === letter) && (!en || el.dataset.engine === en);
+      const show = (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) && (!letter || el.dataset.letter === letter) && (!en || el.dataset.engine === en) && (!ss || el.dataset.status === ss);
       el.hidden = !show; if (show) n++;
     });
     count.textContent = t("catCount", { n, total: items.length });
@@ -249,12 +303,14 @@ if (document.getElementById("catList")) (() => {
   }
   function reorder() {
     const by = sort.value;
-    items.slice().sort((a, b) => by === "year" ? (+a.dataset.year - +b.dataset.year) || a.dataset.key.localeCompare(b.dataset.key) : a.dataset.key.localeCompare(b.dataset.key))
+    const rank = { playable: 0, pending: 1, record: 2 }, r = el => rank[el.dataset.status] || 0;
+    items.slice().sort((a, b) => r(a) - r(b) || (by === "year" ? (+a.dataset.year - +b.dataset.year) || a.dataset.key.localeCompare(b.dataset.key) : a.dataset.key.localeCompare(b.dataset.key)))
       .forEach(el => list.appendChild(el));
   }
   search.addEventListener("input", apply);
   studio.addEventListener("change", () => { sfx("click"); apply(); });
   if (engineSel) engineSel.addEventListener("change", () => { sfx("click"); apply(); });
+  if (stateSel) stateSel.addEventListener("change", () => { sfx("click"); apply(); });
   sort.addEventListener("change", () => { sfx("click"); reorder(); });
   letters.forEach(b => b.addEventListener("click", () => {
     letter = b.dataset.l; letters.forEach(x => x.setAttribute("aria-pressed", String(x === b))); sfx("click"); apply(); list.scrollTop = 0;

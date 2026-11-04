@@ -172,7 +172,11 @@
         '<header class="sheet-head"><span class="m-year">' + g.year + '</span><span class="sheet-era">' + esc(er.name) + " · " + esc(er.range) + '</span><h3 id="mTitle">' + esc(g.title) + "</h3></header>" +
         '<div class="sheet-body">' + mediaFigure(m.cover, t("coverOf", { title: g.title }), "sheet-cover") +
         '<div class="sheet-info"><dl class="meta"><dt>' + esc(t("studio")) + "</dt><dd>" + esc(g.studio) + "</dd><dt>" + esc(t("engine")) + "</dt><dd>" + esc(g.engine) + "</dd></dl>" +
-        "<p>" + esc(g.text.d) + '</p><p class="fact">' + esc(g.text.f) + "</p></div></div>" +
+        "<p>" + esc(g.text.d) + '</p><p class="fact">' + esc(g.text.f) + "</p>" +
+        (g.play || g.gog ? '<p class="m-actions">' +
+          (g.play ? '<a class="pbtn small" href="' + esc(g.play.url) + '">▶ ' + esc(t(g.play.demo ? "playDemoInMuseum" : "playInMuseum")) + "</a>" : "") +
+          (g.gog ? linkHtml(g.gog, t("buyGog")) : "") + "</p>" : "") +
+        "</div></div>" +
         mediaFigure(m.screenshot, t("screenshotOf", { title: g.title }), "sheet-shot", t("screenshotLabel")) +
         (g.link ? '<p class="m-link"><span class="sheet-src">' + esc(t("sourcesTitle")) + ":</span> " + linkHtml(g.link, linkLabel(g.link) + " · " + g.title) + "</p>" : "") +
         '<div class="nav"><button class="pbtn small" id="mPrev" type="button"' + (i === 0 ? " disabled" : "") + ">◀ " + esc(t("prev")) + '</button><button class="pbtn small" id="mNext" type="button"' + (i === games.length - 1 ? " disabled" : "") + ">" + esc(t("next")) + " ▶</button></div></article>",

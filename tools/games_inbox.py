@@ -292,24 +292,65 @@ def main() -> int:
         shutil.rmtree(d, ignore_errors=True)
     log(f"games inbox: {inbox}")
 
-    refreshed = threading.Event()
-    if args.catalog_every > 0:
-        def refresh_catalog():  # in the background: the inbox keeps working while the sources are read
-            while True:
-                log("catalogue: refreshing from ScummVM, Internet Archive and GOG")
-                r = subprocess.run([sys.executable, str(ROOT / "tools" / "sync_catalog.py"), "--cache", str(args.catalog_cache)],
-                                   cwd=ROOT, capture_output=True, text=True)
-                for line in (r.stdout + r.stderr).strip().splitlines()[-12:]:
-                    log("  " + line)
-                refreshed.set()
-                time.sleep(args.catalog_every * 3600)
-        threading.Thread(target=refresh_catalog, daemon=True).start()
+    catalog = Path(os.environ.get("PCM_CATALOG", ROOT / "data" / "catalog.json"))
+    files = {"request": catalog.with_name("sync.request.json"), "status": catalog.with_name("sync.status.json"),
+             "log": catalog.with_name("sync.log")}
+
+    def run_sync(req: dict):
+        """One catalogue refresh; its output goes to sync.log and its result to sync.status.json (for the panel)."""
+        cmd = [sys.executable, str(ROOT / "tools" / "sync_catalog.py"), "--cache", str(args.catalog_cache)]
+        for src in req.get("only") or []:
+            cmd += ["--only", src]
+        if req.get("validate") is not None:
+            cmd += ["--validate", str(int(req["validate"]))]
+        if req.get("retryFailed"):
+            cmd.append("--retry-failed")
+        started = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        write_status = lambda st: files["status"].write_text(json.dumps(st, ensure_ascii=False), "utf-8")
+        write_status({"running": True, "started": started, "request": req})
+        log("catalogue: refreshing (" + (" ".join(cmd[2:]) or "all sources") + ")")
+        last = ""
+        with open(files["log"], "a", encoding="utf-8") as lf:
+            lf.write(f"\n===== {started} {' '.join(cmd[2:])}\n")
+            proc = subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            for line in proc.stdout:
+                lf.write(line)
+                lf.flush()
+                last = line.strip() or last
+            rc = proc.wait()
+        log("  " + last)
+        lines = files["log"].read_text("utf-8", "replace").splitlines()
+        if len(lines) > 5000:  # keep the log small
+            files["log"].write_text("\n".join(lines[-3000:]) + "\n", "utf-8")
+        write_status({"running": False, "started": started, "finished": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                      "ok": rc == 0, "summary": last, "request": req})
+
+    def catalog_worker():
+        """Refreshes the catalogue every --catalog-every hours, and whenever the control panel asks for it."""
+        due = time.time() if args.catalog_every > 0 else float("inf")
+        while True:
+            try:
+                req = json.loads(files["request"].read_text("utf-8")) if files["request"].exists() else None
+                if req is not None:
+                    files["request"].unlink(missing_ok=True)
+                    run_sync(req)
+                elif time.time() >= due:
+                    run_sync({})
+                    due = time.time() + args.catalog_every * 3600
+            except Exception as e:  # never let the worker die
+                log(f"catalogue refresh failed: {type(e).__name__}: {e}")
+            time.sleep(5)
+    if not args.once:
+        threading.Thread(target=catalog_worker, daemon=True).start()
+    cat_mtime = catalog.stat().st_mtime if catalog.exists() else None
 
     last = done = None
     while True:
         try:
-            if refreshed.is_set() and done is not None:
-                refreshed.clear()
+            # the catalogue changed (daily refresh, or a decision in the control panel): rebuild the site
+            m = catalog.stat().st_mtime if catalog.exists() else None
+            if m != cat_mtime and done is not None and (m is None or time.time() - m > 2):
+                cat_mtime = m
                 build(args.site, extra)
             now = scan(inbox)
             if args.once:

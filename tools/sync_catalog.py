@@ -174,59 +174,96 @@ def as_list(v) -> list:
     return v if isinstance(v, list) else [v] if v else []
 
 
+IA_FIELDS = ("identifier", "title", "year", "date", "creator", "publisher", "subject", "collection", "licenseurl")
+
+
+def ia_search(q: str, rows: int, page: int = 1) -> list[dict]:
+    url = f"{IA}/advancedsearch.php?" + urllib.parse.urlencode(
+        [("q", q), ("rows", rows), ("page", page), ("output", "json")] + [("fl[]", f) for f in IA_FIELDS])
+    return http_json(url)["response"]["docs"]
+
+
+def ia_meta(ident: str) -> dict:
+    """The zip files of an item (with size and checksums) and the program its emulator starts."""
+    meta = http_json(f"{IA}/metadata/{urllib.parse.quote(ident)}")
+    md = meta.get("metadata", {})
+    return {"files": [{k: f.get(k) for k in ("name", "size", "md5", "sha1")} for f in meta.get("files", [])
+                      if str(f.get("name", "")).lower().endswith(".zip")],
+            "emulator": md.get("emulator"), "start": md.get("emulator_start")}
+
+
+def ia_entry(d: dict, meta: dict | None) -> dict:
+    """An Internet Archive item as a catalogue edition: its rights, and its download if it has a zip."""
+    ident = d["identifier"]
+    title = str(as_list(d.get("title"))[0] if d.get("title") else ident)
+    match = ig.identify([], title, None, title) or {}
+    rights, hint = ia_rights(d)
+    entry = {"title": match.get("title") or re.sub(r"\s*\([^)]*\)|\s*\[[^\]]*\]", "", title).strip() or ident,
+             "year": match.get("year") or year_of(d), "iaTitle": title,
+             "developer": match.get("studio") or str(as_list(d.get("creator"))[0] if d.get("creator") else ""),
+             "kind": "demo" if hint == "demo" else "full", "rights": rights, "rightsHint": hint,
+             "archive": ident, "emulator": "dosbox", "edition": f"Internet Archive · {ident}",
+             "source": "archive", "page": f"https://archive.org/details/{ident}"}
+    if meta and meta.get("files"):
+        f = max(meta["files"], key=lambda x: int(x.get("size") or 0))
+        entry["download"] = {"provider": "archive", "file": f["name"], "size": int(f.get("size") or 0) or None,
+                             "md5": f.get("md5"), "sha1": f.get("sha1"),
+                             "url": f"{IA}/download/{urllib.parse.quote(ident)}/{urllib.parse.quote(f['name'])}"}
+        if meta.get("start"):
+            entry["run"] = {"exe": meta["start"]}
+    return entry
+
+
 def archive_source(cfg: dict, known: list[dict], prev_ia: dict) -> tuple[list[dict], dict]:
+    """Finds adventures on Internet Archive (all of them, commercial ones included: those stay "record only" until
+    a person confirms their rights in the control panel). Metadata is fetched once per item and kept."""
     if not cfg.get("enabled", True):
         return [], {}
     coll = " OR ".join(cfg["collections"])
     subj = " OR ".join(f'"{s}"' for s in cfg["subjects"])
-    queries = [f"collection:({coll}) AND subject:({subj})"]
-    # and each game of the timeline by title, which finds the ones tagged loosely
-    queries += [f'collection:({coll}) AND title:("{g["title"].split(":")[0]}")' for g in known if g.get("timeline")][:cfg.get("titleQueries", 150)]
+    rows, most = cfg.get("rows", 300), cfg.get("maxResults", 3000)
     docs: dict[str, dict] = {}
-    for q in queries:
-        url = f"{IA}/advancedsearch.php?" + urllib.parse.urlencode(
-            [("q", q), ("rows", cfg.get("rows", 200)), ("output", "json")] + [("fl[]", f) for f in
-             ("identifier", "title", "year", "date", "creator", "publisher", "subject", "collection", "licenseurl")])
-        try:
-            for d in http_json(url)["response"]["docs"]:
+    try:
+        for page in range(1, most // rows + 2):  # the subject search, page by page
+            batch = ia_search(f"collection:({coll}) AND subject:({subj})", rows, page)
+            for d in batch:
                 docs.setdefault(d["identifier"], d)
-        except Exception as e:
-            log(f"  Internet Archive search failed ({type(e).__name__}): {q[:60]}")
-            if not docs:
-                break  # no network: do not try 150 more times
-        time.sleep(cfg.get("pause", 0.5))
-    found, seen_meta = [], dict(prev_ia.get("meta", {}))
+            time.sleep(cfg.get("pause", 0.5))
+            if len(batch) < rows or len(docs) >= most:
+                break
+        # and each game we know by title, which finds the ones tagged loosely
+        for g in [g for g in known if g.get("timeline")][:cfg.get("titleQueries", 150)]:
+            for d in ia_search(f'collection:({coll}) AND title:("{g["title"].split(":")[0]}")', 50):
+                docs.setdefault(d["identifier"], d)
+            time.sleep(cfg.get("pause", 0.5))
+    except Exception as e:
+        log(f"  Internet Archive search stopped ({type(e).__name__}); {len(docs)} items found so far")
+    found, seen_meta, fetched = [], dict(prev_ia.get("meta", {})), 0
     for ident, d in docs.items():
-        title = str(as_list(d.get("title"))[0] if d.get("title") else ident)
-        match = ig.identify([], title, None, title) or {}
-        if not match and not cfg.get("keepUnmatched", True):
-            continue
-        rights, hint = ia_rights(d)
-        entry = {"title": match.get("title") or re.sub(r"\s*\([^)]*\)|\s*\[[^\]]*\]", "", title).strip() or ident, "year": match.get("year") or year_of(d),
-                 "developer": match.get("studio") or str(as_list(d.get("creator"))[0] if d.get("creator") else ""),
-                 "kind": "demo" if hint == "demo" else "full", "rights": rights, "rightsHint": hint,
-                 "archive": ident, "emulator": "dosbox", "edition": f"Internet Archive · {ident}"}
-        if rights in game_fetch.RIGHTS_PLAYABLE or hint:  # files, checksum and program to start: only when it could be played
-            meta = seen_meta.get(ident)
-            if not meta:
-                try:
-                    meta = http_json(f"{IA}/metadata/{urllib.parse.quote(ident)}")
-                    meta = {"files": [f for f in meta.get("files", []) if str(f.get("name", "")).lower().endswith(".zip")],
-                            "emulator": meta.get("metadata", {}).get("emulator"), "start": meta.get("metadata", {}).get("emulator_start")}
-                    seen_meta[ident] = meta
-                    time.sleep(cfg.get("pause", 0.5))
-                except Exception as e:
-                    log(f"  metadata of {ident} not available ({type(e).__name__})")
-            if meta and meta["files"]:
-                f = max(meta["files"], key=lambda x: int(x.get("size") or 0))
-                entry["download"] = {"provider": "archive", "file": f["name"], "size": int(f.get("size") or 0) or None,
-                                     "md5": f.get("md5"), "sha1": f.get("sha1"),
-                                     "url": f"{IA}/download/{urllib.parse.quote(ident)}/{urllib.parse.quote(f['name'])}"}
-                if meta.get("start"):
-                    entry["run"] = {"exe": meta["start"]}
-        found.append(entry)
-    log(f"Internet Archive: {len(found)} items ({sum(1 for e in found if e['rights'] == 'commercial')} commercial: record only)")
-    return found, {"meta": seen_meta, "at": int(time.time())}
+        if ident not in seen_meta and fetched < cfg.get("metadataPerRun", 400):
+            try:
+                seen_meta[ident] = ia_meta(ident)
+                fetched += 1
+                time.sleep(cfg.get("pause", 0.5))
+            except Exception as e:
+                log(f"  metadata of {ident} not available ({type(e).__name__})")
+        found.append(ia_entry(d, seen_meta.get(ident)))
+    log(f"Internet Archive: {len(found)} items, {fetched} new metadata "
+        f"({sum(1 for e in found if e['rights'] == 'commercial')} commercial: record only until you confirm their rights)")
+    return found, {"meta": seen_meta, "at": int(time.time()), "items": len(found)}
+
+
+def scummvm_catalogue() -> list[dict]:
+    """Every adventure ScummVM supports (its compatibility list, data/murray_kb/scummvm-games.jsonl): records to locate
+    elsewhere, without an edition of their own."""
+    out = []
+    for line in (DATA / "murray_kb" / "scummvm-games.jsonl").read_text("utf-8").splitlines():
+        g = json.loads(line)
+        _, engine, gid = g["id"].split(":", 2)
+        if engine in ADVENTURE_ENGINES:
+            out.append({"title": g["title"], "year": g.get("year"), "developer": g.get("company", ""),
+                        "scummvm": f"{engine}:{gid}", "noEdition": True, "source": "scummvm-catalogue"})
+    return out
 
 
 def year_of(d: dict):
@@ -259,6 +296,37 @@ def gog_link(title: str, cfg: dict, cached: dict) -> str | None:
     return cached[key]["url"]
 
 
+# ---------------------------------------------------------------- overrides (repository + control panel)
+def admin_overrides_path(out: Path) -> Path:
+    return Path(os.environ.get("PCM_ADMIN_OVERRIDES") or out.with_name("catalog.admin.json"))
+
+
+def load_overrides(out: Path) -> dict:
+    """data/catalog.overrides.json, then what the control panel saved (it wins), merged per game and per edition."""
+    merged: dict = {}
+    for path in (DATA / "catalog.overrides.json", admin_overrides_path(out)):
+        if not path.exists():
+            continue
+        for gid, ov in json.loads(path.read_text("utf-8")).items():
+            if gid.startswith("_") or not isinstance(ov, dict):
+                continue
+            m = merged.setdefault(gid, {})
+            for k, v in ov.items():
+                if k == "editions":
+                    for key, fix in v.items():
+                        m.setdefault("editions", {}).setdefault(key, {}).update(fix)
+                elif k == "addEditions":
+                    m.setdefault("addEditions", []).extend(v)
+                else:
+                    m[k] = v
+    return merged
+
+
+def added_editions(overrides: dict) -> list[dict]:
+    """Editions attached by hand in the control panel (e.g. an Internet Archive item found by searching)."""
+    return [dict(e, forGame=gid) for gid, ov in overrides.items() for e in ov.get("addEditions", [])]
+
+
 # ---------------------------------------------------------------- merge
 def edition_status(ed: dict) -> str:
     if ed["rights"] not in game_fetch.RIGHTS_PLAYABLE:
@@ -274,23 +342,35 @@ def merge(found: list[dict], prev: dict, overrides: dict) -> list[dict]:
     for t in json.loads((DATA / "timeline.json").read_text("utf-8"))["games"]:  # every timeline game has a record
         games[t["id"]] = {"id": t["id"], "title": t["title"], "year": t["year"], "developer": t["studio"].split(" · ")[0],
                           "timeline": t["id"], "editions": []}
+    by_scummvm = {}
     for e in found:
         tl = ig.timeline_for({"title": e["title"], "year": e.get("year")})
-        gid = tl or slug(e["title"])
+        gid = e.get("forGame") or (by_scummvm.get(e.get("scummvm")) if e.get("scummvm") else None) or tl or slug(e["title"])
         g = games.setdefault(gid, {"id": gid, "title": e["title"], "year": e.get("year"), "developer": e.get("developer", ""), "editions": []})
-        if tl:
+        if tl and not e.get("forGame"):
             g["timeline"] = tl
         for k in ("scummvm", "archive"):
             if e.get(k):
                 g.setdefault(k, e[k])
+        if e.get("scummvm"):
+            by_scummvm.setdefault(e["scummvm"], gid)
+        src_name = e.get("source") or (e.get("download") or {}).get("provider") or "manual"
+        if src_name not in g.setdefault("sources", []):
+            g["sources"].append(src_name)
+        if e.get("noEdition"):
+            continue
         ed = {k: e[k] for k in ("kind", "rights", "rightsHint", "rightsSource", "emulator", "run", "edition", "download",
-                                "alternatives", "archive") if e.get(k)}
+                                "alternatives", "archive", "page", "iaTitle", "added") if e.get(k)}
         src = e.get("archive") or Path(urllib.parse.unquote((e.get("download") or {}).get("url", ""))).stem or e.get("scummvm") or ""
-        ed["key"] = add_game.slugify(f"{gid}-{e['kind']}-{src}")[:80].strip("-")
+        ed["key"] = e.get("key") or add_game.slugify(f"{gid}-{e['kind']}-{src}")[:80].strip("-")
+        fix = ((overrides.get(gid) or {}).get("editions") or {}).get(ed["key"])
+        if fix:  # the control panel's (or the file's) corrections, before deciding whether the last check still holds
+            ed.update(fix)
         prev_ed = next((x for x in old.get(gid, {}).get("editions", []) if x.get("key") == ed["key"]), {})
-        if prev_ed.get("validated") and prev_ed.get("download", {}).get("url") == ed.get("download", {}).get("url"):
+        if prev_ed.get("validated") and prev_ed.get("download", {}).get("url") == ed.get("download", {}).get("url") \
+                and (prev_ed.get("run") or {}) == (ed.get("run") or {}):
             ed["validated"] = prev_ed["validated"]
-        if ed not in g["editions"]:
+        if not any(x["key"] == ed["key"] for x in g["editions"]):
             g["editions"].append(ed)
     for gid, g in games.items():
         if gid in old:  # keep what does not come from the sources (GOG link, cover)
@@ -299,22 +379,24 @@ def merge(found: list[dict], prev: dict, overrides: dict) -> list[dict]:
                     g[k] = old[gid][k]
         ov = overrides.get(gid) or {}
         for k, v in ov.items():
-            if k == "editions":  # per-edition corrections, by key or by index
-                for sel, fix in v.items():
-                    eds = [x for x in g["editions"] if x.get("key") == sel] or ([g["editions"][int(sel)]] if sel.isdigit() and int(sel) < len(g["editions"]) else [])
-                    for x in eds:
-                        x.update(fix)
-            elif not k.startswith("_"):
+            if k not in ("editions", "addEditions") and not k.startswith("_"):
                 g[k] = v
-        for ed in g["editions"]:
-            ed["status"] = edition_status(ed)
-        g["editions"].sort(key=lambda x: (RANK[x["status"]], x["kind"] != "full"))
-        g["status"] = g["editions"][0]["status"] if g["editions"] else "record"
-        if ov.get("status") == "record":
-            g["status"] = "record"
+        restatus(g, ov)
         if not g.get("cover") and g.get("timeline"):
             g["cover"] = {"media": f"games/{g['timeline']}/cover"}
     return sorted(games.values(), key=lambda g: (ig.norm(g["title"]), g["id"]))
+
+
+def restatus(g: dict, ov: dict | None = None):
+    """The state of each edition and of the game (its best edition); "status": "record" in the overrides forces it."""
+    for ed in g["editions"]:
+        ed["status"] = edition_status(ed)
+    g["editions"].sort(key=lambda x: (RANK[x["status"]], x["kind"] != "full"))
+    g["status"] = g["editions"][0]["status"] if g["editions"] else "record"
+    if ov is not None:
+        g["forcedRecord"] = ov.get("status") == "record"
+    if g.get("forcedRecord"):
+        g["status"] = "record"
 
 
 def validate(games: list[dict], cache: Path, limit: int) -> int:
@@ -354,8 +436,7 @@ def validate(games: list[dict], cache: Path, limit: int) -> int:
                 if net_errors == 3:
                     log("  three downloads in a row failed: the sources look unreachable, stopping the checks for today")
             ed["status"] = edition_status(ed)
-        g["editions"].sort(key=lambda x: (RANK[x["status"]], x["kind"] != "full"))
-        g["status"] = g["editions"][0]["status"] if g["editions"] else "record"
+        restatus(g)
     return done
 
 
@@ -369,7 +450,7 @@ def main() -> int:
     ap.add_argument("--retry-failed", action="store_true", help="check again the editions that failed")
     a = ap.parse_args()
     cfg = json.loads((DATA / "catalog.sources.json").read_text("utf-8"))
-    overrides = json.loads((DATA / "catalog.overrides.json").read_text("utf-8")) if (DATA / "catalog.overrides.json").exists() else {}
+    overrides = load_overrides(a.out)
     prev = json.loads(a.out.read_text("utf-8")) if a.out.exists() else {}
     only = set(a.only or ("scummvm", "archive", "gog"))
     state = dict(prev.get("sources") or {})
@@ -398,6 +479,9 @@ def main() -> int:
             state["archive"] = st
     else:
         found += prev_found["archive"]
+    if cfg.get("scummvmCatalogue", True):
+        found += scummvm_catalogue()
+    found += added_editions(overrides)
     games = merge(found, prev, overrides)
     if "gog" in only and cfg.get("gog", {}).get("enabled", True):
         cached, errors = state.get("gog", {}).get("cache", {}), 0
@@ -423,6 +507,15 @@ def main() -> int:
                 if (ed.get("validated") or {}).get("ok") is False:
                     ed.pop("validated")
     checked = validate(games, a.cache, a.validate) if a.validate else 0
+    # the control panel may have checked editions while this run was reading the sources: keep its newer verdicts
+    latest = json.loads(a.out.read_text("utf-8")) if a.out.exists() else {}
+    newer = {ed["key"]: ed for g in latest.get("games", []) for ed in g.get("editions", []) if (ed.get("validated") or {}).get("by") == "panel"}
+    for g in games:
+        for ed in g["editions"]:
+            n = newer.get(ed["key"])
+            if n and (n["validated"]["at"] > (ed.get("validated") or {}).get("at", "")) and n.get("download", {}).get("url") == ed.get("download", {}).get("url"):
+                ed["validated"] = n["validated"]
+        restatus(g)
     counts = {s: sum(g["status"] == s for g in games) for s in RANK}
     doc = {"_doc": "Generated by tools/sync_catalog.py (do not edit: corrections go in data/catalog.overrides.json).",
            "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "counts": counts, "sources": state, "games": games}

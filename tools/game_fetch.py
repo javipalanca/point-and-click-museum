@@ -150,12 +150,14 @@ def find_exe(files: dict[str, bytes], wanted: str | None, stem: str) -> str:
     return cands[0][1]
 
 
-def prepare(game: dict, cache: Path) -> dict:
-    """Downloads and prepares a catalogue game. -> {"file": path, "kind": "jsdos"|"svm", "checks": [...]}"""
+def prepare(game: dict, cache: Path, admin: bool = False) -> dict:
+    """Downloads and prepares a catalogue game. -> {"file": path, "kind": "jsdos"|"svm", "checks": [...]}
+    admin=True (the control panel, behind its password): also editions whose rights are not confirmed, so that a
+    person can test them before deciding; the public proxy never serves those."""
     gid = game["id"]
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,80}", gid):
         raise GameError("bad id")
-    if game.get("rights") not in RIGHTS_PLAYABLE:
+    if not admin and game.get("rights") not in RIGHTS_PLAYABLE:
         raise GameError(f"not authorised to run on the web (rights: {game.get('rights')})")
     dl = game.get("download") or {}
     if not dl.get("url"):

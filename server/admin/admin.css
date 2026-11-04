@@ -2,6 +2,7 @@
 :root { --ink: #14211c; --panel: #2c1f17; --panel2: #46331f; --well: #0f1814; --paper: #f3e6c8; --dim: #b9ab8c;
   --amber: #ffb547; --teal: #4fd6c8; --rose: #d3584a; --moss: #8fb35a; font-family: system-ui, sans-serif; }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }  /* the hidden attribute wins over .login { display: grid } and the like */
 html { background: var(--ink); }
 body { margin: 0; min-height: 100vh; background: var(--ink); color: var(--paper); font-size: 15px; line-height: 1.4; }
 h1, h2 { margin: 0 0 10px; font-weight: 600; }

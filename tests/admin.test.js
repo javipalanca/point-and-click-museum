@@ -68,6 +68,7 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await page.fill("[name=password]", "una-clave-larga-de-prueba"); await page.click("#loginForm button");
     await page.waitForSelector("#counts div");
     check((await page.textContent("#who")) === "javi", "logged in");
+    check(!(await page.isVisible("#loginForm")) && await page.isVisible("#app"), "the login form goes away once logged in");
     const cookie = (await page.context().cookies()).find(c => c.name === "pcm_admin");
     check(cookie && cookie.httpOnly && cookie.sameSite === "Strict", "session cookie is HttpOnly and SameSite=Strict");
     check(await page.evaluate(async () => (await fetch("/api/admin/sync", { method: "POST", body: "{}" })).status) === 403, "a POST without the panel's header is refused");
@@ -125,6 +126,8 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await page.click('[data-tab="sources"]');
     check((await page.textContent("#sources")).includes("Internet Archive"), "the sources are listed");
     await page.click("#logout");
+    await page.waitForSelector("#loginForm", { state: "visible" });
+    check(!(await page.isVisible("#app")), "logging out shows only the login form");
     check(await page.evaluate(async () => (await fetch("/api/admin/catalog")).status) === 401, "logged out");
     check(errs.length === 0, "no JavaScript errors " + errs.join(" | "));
   } finally {

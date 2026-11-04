@@ -215,5 +215,10 @@
  "murrayTitle": "Murray, la calavera parlante",
  "murrayOpen": "Hablar con Murray",
  "murrayClose": "Cerrar el chat",
- "murrayReset": "Nueva conversación"
+ "murrayReset": "Nueva conversación",
+ "arcadeRecord": "Ver ficha",
+ "arcadeCover": "Portada",
+ "arcadeCoverAlt": "Portada de {title}",
+ "arcadeNoGames": "Todavía no hay juegos. Deja archivos .zip en la carpeta de juegos del servidor y aparecerán aquí en unos segundos. También puedes probar tu propia copia con «Trae tu propio juego».",
+ "volume": "Volumen"
 }

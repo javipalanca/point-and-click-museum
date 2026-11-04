@@ -116,6 +116,20 @@ def source_name(url: str) -> str:
     return f"{m.group(1)}/{m.group(2)} (GitHub)" if m else urllib.parse.urlsplit(url).netloc
 
 
+def arcade_cover(S, g: dict, root: str, ui: dict) -> dict | None:
+    """Box art of a game in the DOSBox room: the museum's own cover or the one tools/games_inbox.py found."""
+    c = g.get("cover") or {}
+    if c.get("media"):
+        grp, gid, role = c["media"].split("/")
+        it = S.d["media"].get(grp, {}).get(gid, {}).get(role)
+        return media_view(it, root, ui) if it else None
+    if c.get("file") and (ROOT / "assets" / c["file"]).exists():
+        view = media_view(dict(c, role="cover", rights=c.get("rights", "boxart"), file=c["file"]), root, ui)
+        view["src"] = f"{root}{c['file']}"  # next to the bundles (assets/games/covers/), not in media/
+        return view
+    return None
+
+
 def media_view(it: dict, root: str, ui: dict) -> dict:
     """What a page needs to show an image honestly: file, size, alt text and a credit line with its source."""
     page = it.get("page", "")
@@ -136,11 +150,23 @@ def media_view(it: dict, root: str, ui: dict) -> dict:
 
 LOCAL_ARCADE = DATA / "arcade.local.json"   # games added with tools/add_game.py (not versioned)
 INCLUDE_LOCAL = True                         # switched off by --no-local
+LOCAL_ONLY = False                           # --arcade-local-only: list only your games (the server's games folder)
 
 
 def load_arcade() -> dict:
     """data/arcade.json plus, if present, the local catalogue written by tools/add_game.py."""
     arcade = load("arcade.json")
+    if LOCAL_ONLY:  # only the games you have: the museum's demo and the freeware without a bundle are left out
+        official = {g["id"]: g for g in arcade["games"]}
+        arcade["games"], arcade["localOnly"] = [], True
+        for g in (json.loads(LOCAL_ARCADE.read_text("utf-8")).get("games", []) if LOCAL_ARCADE.exists() else []):
+            if not (ROOT / "assets" / g["bundle"]).exists():
+                print(f"warning: arcade.local.json: {g['id']} has no bundle at assets/{g['bundle']}, skipped", file=sys.stderr)
+            elif g["id"] in official:  # e.g. the official Beneath a Steel Sky zip: the museum's record, your files
+                arcade["games"].append(dict(official[g["id"]], **{k: g[k] for k in ("bundle", "engine", "svmEngine", "exe", "cover") if k in g}, local=True))
+            else:
+                arcade["games"].append(dict(g, local=True))
+        return arcade
     if INCLUDE_LOCAL and LOCAL_ARCADE.exists():
         ids = {g["id"] for g in arcade["games"]}
         official = {g["id"]: g for g in arcade["games"]}
@@ -678,7 +704,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
     b["taPlaceholder"] = E(G["textAdventure"]["placeholder"])
 
     A = L["arcade"]
-    b["arcadeIntro"] = E(A["intro"])
+    b["arcadeIntro"] = E(A["introServer"] if A.get("localOnly") else A["intro"])
     games = sorted(A["games"], key=lambda g: (0 if g.get("pinned") else 1, sort_key(g["title"])))
     items = []
     for g in games:
@@ -688,16 +714,22 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
                   else f'<span class="chip warn">{E(ui["arcadeNeedsBundle"])}</span>')
         if g.get("source"):
             action += f' <a class="ext" href="{E(g["source"])}" rel="noopener" target="_blank">{E(ui["arcadeSource"])} ↗</a>'
+        if g.get("timeline"):  # the museum has a record of it
+            action += f' <a class="ext" href="{root}{E(S.url(lang, "timeline", 0))}#{E(g["timeline"])}">{E(ui["arcadeRecord"])}</a>'
         meta = " · ".join(x for x in (str(g["year"]) if g.get("year") else "", E(g.get("studio") or "")) if x)
+        cover = arcade_cover(S, g, root, ui)
+        art = (f'<img class="cover" src="{E(cover["src"])}" width="{cover["w"]}" height="{cover["h"]}" alt="{E(ui["arcadeCoverAlt"].format(title=g["title"]))}" loading="lazy">'
+               if cover else f'<img src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">')
+        credit = (f'<small class="credit">{E(ui["arcadeCover"])}: {E(cover["label"] or g["title"])} · {E(cover["rights"])} · '
+                  f'<a href="{E(cover["url"])}" rel="noopener" target="_blank">{E(cover["via"])} ↗</a></small>' if cover else "")
         engine = g.get("engine", "dosbox")
-        chips = f'<span class="chip engine">{"ScummVM" if engine == "scummvm" else "DOSBox"}</span> ' + (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") else "")
+        chips = f'<span class="chip engine">{"ScummVM" if engine == "scummvm" else "DOSBox"}</span> ' + (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") and not A.get("localOnly") else "")
         items.append(
             f'<article class="px dos-game" data-id="{E(g["id"])}" data-engine="{engine}" data-key="{E(key)}" data-letter="{letter}" '
-            f'data-studio="{E(g.get("studio") or "")}" data-year="{g.get("year") or 9999}">'
-            f'<img src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">'
-            f'<h3>{E(g["title"])}</h3><div class="meta">{meta} {chips}</div>'
-            f'<p>{E(g["desc"])}</p><div class="row">{action}</div></article>')
-    b["arcadeGames"] = "".join(items)
+            f'data-studio="{E(g.get("studio") or "")}" data-year="{g.get("year") or 9999}"{" data-cover" if cover else ""}>'
+            f'{art}<h3>{E(g["title"])}</h3><div class="meta">{meta} {chips}</div>'
+            f'<p>{E(g["desc"])}</p><div class="row">{action}</div>{credit}</article>')
+    b["arcadeGames"] = "".join(items) or f'<p class="cat-none">{E(ui["arcadeNoGames"])}</p>'
     b["arcadeCount"] = E(ui["catCount"].format(n=len(games), total=len(games)))
     tools = ""
     if len(games) >= A.get("catalogue", {}).get("filtersFrom", 8):
@@ -899,11 +931,14 @@ def main() -> int:
                     help="also pack local .jsdos bundles into games/bundles.js (for hosts that refuse .zip files)")
     ap.add_argument("--no-local", action="store_true",
                     help="leave out the games in data/arcade.local.json (use it for public builds)")
+    ap.add_argument("--arcade-local-only", action="store_true",
+                    help="the DOSBox room lists only your games (data/arcade.local.json), as on a server with a games folder")
     ap.add_argument("--check", action="store_true", help="only validate the data")
     args = ap.parse_args()
 
-    global INCLUDE_LOCAL
+    global INCLUDE_LOCAL, LOCAL_ONLY
     INCLUDE_LOCAL = not args.no_local
+    LOCAL_ONLY = args.arcade_local_only and INCLUDE_LOCAL
     d = load_all()
     args.base_url = args.base_url or d["site"]["baseUrl"]
     errors = validate(d)
@@ -925,12 +960,13 @@ def main() -> int:
     if vendored:
         shutil.copytree(ROOT / "vendor/js-dos", out / "vendor/js-dos")
     if (ROOT / "assets").exists():
-        keep = {g["bundle"] for g in d["arcade"]["games"] if g.get("bundle")}
+        keep = {g["bundle"] for g in d["arcade"]["games"] if g.get("bundle")} | \
+               {g["cover"]["file"] for g in d["arcade"]["games"] if (g.get("cover") or {}).get("file")}
         def skip(folder, names):  # never copy bundles that are not in the catalogue (e.g. local games with --no-local)
             rel = Path(folder).relative_to(ROOT / "assets").as_posix()
             if rel == ".":
                 return [n for n in names if n == "scummvm"]  # ScummVM zips are unpacked by write_scummvm()
-            return [n for n in names if n.endswith(".jsdos") and f"{rel}/{n}".lstrip("./") not in keep]
+            return [n for n in names if (n.endswith(".jsdos") or rel == "games/covers") and f"{rel}/{n}".lstrip("./") not in keep]
         shutil.copytree(ROOT / "assets", out, dirs_exist_ok=True, ignore=skip)
     (out / "games").mkdir(exist_ok=True)
     (out / "games/museum-demo.jsdos").write_bytes(museum_demo_bundle())

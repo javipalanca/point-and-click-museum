@@ -215,5 +215,10 @@
  "murrayTitle": "Murray, le crâne qui parle",
  "murrayOpen": "Parler à Murray",
  "murrayClose": "Fermer le chat",
- "murrayReset": "Nouvelle conversation"
+ "murrayReset": "Nouvelle conversation",
+ "arcadeRecord": "Fiche du musée",
+ "arcadeCover": "Jaquette",
+ "arcadeCoverAlt": "Jaquette de {title}",
+ "arcadeNoGames": "Pas encore de jeux. Déposez des fichiers .zip dans le dossier de jeux du serveur et ils apparaîtront ici en quelques secondes. Vous pouvez aussi essayer votre propre copie avec « Apportez votre jeu ».",
+ "volume": "Volume"
 }

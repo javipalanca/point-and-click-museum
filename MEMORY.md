@@ -193,6 +193,23 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   Probado en Docker: PAINT.COM en un zip aparece en la sala, arranca en DOSBox y desaparece al borrar el zip.
   ScummVM en Docker solo si `vendor/scummvm/` está compilado en el servidor antes de `docker compose build`.
 
+- **2026-11-05 · La sala DOSBox del servidor lista solo los juegos de la carpeta, identificados y con portada**
+  (petición del usuario). `games_inbox.py` construye con `build.py --arcade-local-only` (sin la demo ni los freeware
+  sin paquete; los zips oficiales de los freeware conservan su ficha; `--all-games` vuelve a la lista del museo).
+  `tools/identify_game.py` identifica cada juego: ficheros de datos con el id de ScummVM (`MONKEY2.000`, `FT.LA0`,
+  `KQ4DIR`), nombres del zip y de sus carpetas contra `timeline.json` y el catálogo de ScummVM (difflib + palabras,
+  sin «The», números romanos → arábigos, números distintos penalizan: Larry 1 ≠ Larry 7); un nombre de ejecutable solo
+  cuenta si el zip no se llama de otra forma (PRINCE.EXE de *Prince of Persia* no es *The Prince and the Coward*).
+  Con ficha del museo: su título, año, estudio, descripción en 4 idiomas, enlace «Ver ficha» y su portada revisada
+  (`media.json`). Sin ficha: portada de PC de libretro-thumbnails (DOS, luego ScummVM; se evitan demos, remasters y
+  versiones de Windows) vía API de GitHub (o `git`), fijada al commit, reducida con `fetch_media.shrink_png` y
+  mostrada con crédito; se guarda en `assets/games/covers/` (ignorado) y se reintenta a diario si no hay red.
+  «Trae tu propio juego» se mantiene (solo en el navegador). Control de volumen en la sala (`#dosVol`, recordado):
+  js-dos `setVolume` y, en el iframe de ScummVM, un `GainNode` maestro interceptando `AudioNode.connect` hacia el
+  destino (`PCM_SET_VOLUME`). Probado: juegos sintéticos (solo nombres de ficheros) identificados, portadas reales
+  descargadas fuera de Docker; en Docker, solo los juegos de la carpeta y Pixel Paint arranca. Pendiente: probar la
+  identificación con los zips reales del usuario.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

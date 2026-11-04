@@ -171,12 +171,20 @@ cp ~/Descargas/MiJuego.zip games/      # GAMES_DIR en .env; por defecto ./games 
 docker compose logs -f builder         # importing MiJuego.zip · ok: … DOSBox runs MIJUEGO.EXE · built 44 pages
 ```
 
-En unos segundos (`GAMES_WATCH`, 15 por defecto) el juego aparece en la sala DOSBox con la etiqueta «local». Cada zip
-pasa por `tools/add_game.py`: va a ScummVM si reconoce sus datos y ScummVM está compilado (`vendor/scummvm/` en el
-servidor antes de `docker compose build`); si no, a DOSBox con el ejecutable más probable. Se admiten subcarpetas y
+En unos segundos (`GAMES_WATCH`, 15 por defecto) el juego aparece en la sala DOSBox, que lista **solo los juegos de
+esa carpeta** (sin la demo del museo ni los freeware que no tengas). Cada zip pasa por `tools/add_game.py`: va a
+ScummVM si reconoce sus datos y ScummVM está compilado (`vendor/scummvm/` en el servidor antes de `docker compose
+build`); si no, a DOSBox con el ejecutable más probable. Después, `tools/identify_game.py` averigua qué juego es: por
+los ficheros de datos (`MONKEY2.000`, `TENTACLE.000`, `FT.LA0`, `KQ4DIR`…) y por el nombre del zip y de sus carpetas,
+comparados con la línea temporal y el catálogo de ScummVM (unos 1200 juegos). Así obtiene título, año, estudio y, si
+el museo tiene ficha, su descripción, un enlace a ella y su portada revisada; si no, la portada de la edición de PC
+de libretro-thumbnails (GitHub, fijada a un commit y con su crédito). Si no lo reconoce, sale con el nombre del
+fichero. El servidor necesita acceso a `api.github.com` y `raw.githubusercontent.com` para esas portadas; sin red el
+juego funciona igual y la portada se vuelve a buscar al día siguiente. Se admiten subcarpetas y
 `.jsdos` ya hechos. Los ficheros que aún se están copiando esperan a la siguiente vuelta. Si borras o sustituyes un
 zip, el catálogo se actualiza; cada juego se convierte una sola vez (volumen `games-cache`). Para fijar título, año,
-estudio, ejecutable o velocidad, pon al lado un JSON con el mismo nombre (`MiJuego.json`):
+estudio, ejecutable o velocidad (o quitar la portada con `"cover": false`), pon al lado un JSON con el mismo nombre
+(`MiJuego.json`):
 
 ```json
 {"title": "Mi Juego", "year": 1993, "studio": "Estudio", "exe": "JUEGO/START.BAT", "cycles": 20000, "license": "Freeware"}
@@ -184,7 +192,13 @@ estudio, ejecutable o velocidad, pon al lado un JSON con el mismo nombre (`MiJue
 
 Los zips que no se pueden importar (por ejemplo, juegos de Windows) aparecen en el log y se ignoran. **Todo lo que
 pongas en esa carpeta se sirve a cualquier visitante**: deja solo juegos que tengas derecho a compartir. Sin Docker:
-`python3 tools/games_inbox.py ~/juegos` (vigila la carpeta y regenera `dist/`; `--once` para una sola pasada).
+`python3 tools/games_inbox.py ~/juegos` (vigila la carpeta y regenera `dist/`; `--once` para una sola pasada,
+`--all-games` para conservar también la lista del museo). Para ver qué detectaría con un zip:
+`python3 tools/identify_game.py MiJuego.zip --cover`.
+
+«Trae tu propio juego» sigue disponible en la sala: el zip se lee y se ejecuta en el navegador del visitante y nunca
+se envía al servidor. Debajo de la pantalla hay un control de **volumen** (DOSBox y ScummVM) que se recuerda entre
+visitas.
 
 Detrás de un dominio con HTTPS, pon un proxy inverso (Caddy, Traefik, nginx…) delante del puerto `PORT` y define
 `BASE_URL=https://tu-dominio` para que canonical, hreflang y sitemap usen la URL buena.

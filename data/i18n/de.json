@@ -215,5 +215,10 @@
  "murrayTitle": "Murray, der sprechende Schädel",
  "murrayOpen": "Mit Murray reden",
  "murrayClose": "Chat schließen",
- "murrayReset": "Neues Gespräch"
+ "murrayReset": "Neues Gespräch",
+ "arcadeRecord": "Museumseintrag",
+ "arcadeCover": "Packungsbild",
+ "arcadeCoverAlt": "Packungsbild von {title}",
+ "arcadeNoGames": "Noch keine Spiele. Lege .zip-Dateien in den Spieleordner des Servers, dann erscheinen sie hier in wenigen Sekunden. Du kannst auch deine eigene Kopie mit „Bring dein eigenes Spiel mit“ ausprobieren.",
+ "volume": "Lautstärke"
 }

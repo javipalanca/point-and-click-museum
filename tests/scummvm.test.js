@@ -59,11 +59,20 @@ with zipfile.ZipFile(sys.argv[1] + "/dosgame.zip", "w") as z:
     check(r && r.files.includes("/data/plugins/libscumm.so") && r.files.includes("/data/plugins/libdetection.so") && !r.files.includes("/data/plugins/libsky.so"),
       "only the detection plugin and the game's engine are loaded");
     check(r && r.files.includes("/home/web_user/scummvm.ini"), "scummvm.ini written");
+    const gain = () => frame.evaluate(() => { const c = window.PCM_TEST_CTX || (window.PCM_TEST_CTX = new AudioContext());
+      if (!c.pcmMaster) c.createOscillator().connect(c.destination); return c.pcmMaster && c.pcmMaster.gain.value; });
+    check(frame && Math.abs(await gain() - 0.8) < 0.01, "ScummVM's sound goes through the volume control (80% by default)");
+    await page.locator("#dosVol").fill("0.3");
+    check(frame && Math.abs(await gain() - 0.3) < 0.01 && (await page.textContent("#dosVolOut")) === "30%", "the volume slider changes ScummVM's volume");
     check(await page.isHidden("#dosMouse"), "DOSBox mouse controls hidden for ScummVM");
     await page.setInputFiles("#byoFile", path.join(tmp, "dosgame.zip"));
     await page.click("#byoForm button[type=submit]");
     await page.waitForTimeout(6000);
     check(!!(await page.$("#dosHost canvas")) && !(await page.$(".svm-frame")), "a DOS zip without executable is detected and runs in DOSBox");
+    await page.locator("#dosVol").fill("0.6");
+    await page.waitForTimeout(300);
+    check(await page.evaluate(() => Object.entries(localStorage).some(([k, v]) => /^jsdos.*volume$/.test(k) && +v === 0.6)),
+      "the volume slider sets js-dos's volume");
     check(errs.length === 0, "no JavaScript errors " + errs.join(" | "));
     await page.close(); srv.close();
   }

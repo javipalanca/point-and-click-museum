@@ -36,6 +36,22 @@
   }
   const load = job.inline ? viaScript : viaFetch;
 
+  /* volume: everything ScummVM (SDL2) plays goes through one gain node per audio context, set by the parent page */
+  let volume = job.volume == null ? 1 : job.volume;
+  const gains = new Set(), connect = AudioNode.prototype.connect;
+  AudioNode.prototype.connect = function (dest, ...rest) {
+    if (dest instanceof AudioDestinationNode && !(this instanceof GainNode && this.pcmMaster)) {
+      const ctx = dest.context;
+      if (!ctx.pcmMaster) {
+        ctx.pcmMaster = ctx.createGain(); ctx.pcmMaster.pcmMaster = true; ctx.pcmMaster.gain.value = volume;
+        connect.call(ctx.pcmMaster, dest); gains.add(ctx.pcmMaster);
+      }
+      return connect.call(this, ctx.pcmMaster, ...rest);
+    }
+    return connect.call(this, dest, ...rest);
+  };
+  window.PCM_SET_VOLUME = v => { volume = v; gains.forEach(g => { g.gain.value = v; }); };
+
   /* only the plugins this game needs: the shared detection plugin and the engine itself */
   function wanted(path) {
     if (!/^plugins\//.test(path)) return true;

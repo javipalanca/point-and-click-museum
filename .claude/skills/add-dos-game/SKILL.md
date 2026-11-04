@@ -24,7 +24,10 @@ instalarse, instálalo antes en DOSBox de escritorio y comprime la carpeta insta
 Deja el zip en `GAMES_DIR` (por defecto `./games`): el servicio `builder` (`tools/games_inbox.py`) lo importa con
 `add_game.add()`, lo marca `"inbox": true` en `data/arcade.local.json` del contenedor y regenera el sitio. Opciones por
 juego en un JSON junto al zip (`title`, `year`, `studio`, `exe`, `cycles`, `engine`, `license`, `desc`, `source`, `icon`).
-Errores en `docker compose logs builder`. Pruebas: `tests/test_games_inbox.py`.
+Errores en `docker compose logs builder`. Pruebas: `tests/test_games_inbox.py`, `tests/test_identify_game.py`.
+La sala lista solo esos juegos (`build.py --arcade-local-only`). `tools/identify_game.py` pone título, año, estudio y
+portada: si falla con un juego real, añade su firma de ficheros (`AGI_PREFIX`, extensiones en `identify()`) o un alias,
+y una prueba. Nunca inventes portadas: o la del museo (`media.json`) o libretro-thumbnails con su crédito.
 
 ## ScummVM
 

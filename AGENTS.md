@@ -20,6 +20,7 @@ npm test                         # pruebas de humo sobre dist/ (requiere build p
 python3 tools/export_artifact.py --out /tmp/artifact   # copia para publicar como Artifact de claude.ai
 python3 tools/add_game.py ~/Downloads/*.zip [--yes]   # añade juegos DOS o ScummVM locales (no versionados)
 python3 tools/games_inbox.py ~/juegos [--once]   # vigila una carpeta de zips, los importa y regenera el sitio (servicio builder)
+python3 tools/identify_game.py juego.zip --cover   # qué juego es (ficheros, nombres, línea temporal, catálogo ScummVM) y su portada
 tools/build_scummvm.sh           # compila ScummVM web en vendor/scummvm/ (no versionado; 30-60 min)
 npm run test:scummvm             # prueba la integración de ScummVM con tests/fixtures/fake-scummvm
 python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
@@ -48,7 +49,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `data/minigames/*.json` | los cuatro minijuegos (reglas, escenas, textos, parámetros) |
 | `data/arcade.json` | emulador y juegos DOS versionados; `catalogue.filtersFrom` = nº de juegos a partir del que aparecen los filtros |
 | `data/arcade.local.json` + `assets/games/` | colección local creada por `tools/add_game.py` (**ignorada por git**, nunca la añadas) |
-| `tools/games_inbox.py` + `games/` | carpeta de juegos del servidor: importa zips con `add_game`, caché por fichero, build atómico (`<site>/current`); `games/` está en `.gitignore` |
+| `tools/games_inbox.py` + `games/` | carpeta de juegos del servidor: importa zips con `add_game`, identifica el juego y su portada, caché por fichero, build atómico (`<site>/current`) con `build.py --arcade-local-only` (la sala lista solo esos juegos); `games/` está en `.gitignore` |
+| `tools/identify_game.py` | identificación de juegos (firmas de ficheros SCUMM/AGI, nombres, `timeline.json` + catálogo de ScummVM) y portadas (`media.json` del museo o libretro-thumbnails) |
 | `data/media.json` + `assets/media/` | imágenes reales (portadas, capturas, logos) con su fuente exacta; `refs` reutiliza imágenes entre fichas |
 | `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos de la interfaz y los minijuegos |
 | `src/layout.html` | plantilla común; `src/pages/<id>.html` contenido de cada página |

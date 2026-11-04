@@ -166,5 +166,11 @@
   ],
   "catalogue": {
     "filtersFrom": 8
+  },
+  "introServer": {
+    "es": "Una sala con dos emuladores en el navegador: DOSBox (js-dos) para programas de MS-DOS y ScummVM para juegos de datos como los de LucasArts, Sierra, Revolution o AGS. Aquí están los juegos de la carpeta del servidor, identificados con su portada original. Si traes tu propia copia, se ejecuta solo en tu navegador: nunca se envía al servidor.",
+    "en": "A room with two emulators in the browser: DOSBox (js-dos) for MS-DOS programs and ScummVM for data-based games such as LucasArts, Sierra, Revolution or AGS titles. Here are the games in the server's folder, identified with their original box art. If you bring your own copy, it runs only in your browser: it is never sent to the server.",
+    "de": "Ein Raum mit zwei Emulatoren im Browser: DOSBox (js-dos) für MS-DOS-Programme und ScummVM für datenbasierte Spiele wie die von LucasArts, Sierra, Revolution oder AGS. Hier stehen die Spiele aus dem Ordner des Servers, erkannt und mit ihrem Originalcover. Bringst du deine eigene Kopie mit, läuft sie nur in deinem Browser: Sie wird nie an den Server geschickt.",
+    "fr": "Une salle avec deux émulateurs dans le navigateur : DOSBox (js-dos) pour les programmes MS-DOS et ScummVM pour les jeux à données comme ceux de LucasArts, Sierra, Revolution ou AGS. Voici les jeux du dossier du serveur, identifiés avec leur jaquette d'origine. Si vous apportez votre propre copie, elle tourne uniquement dans votre navigateur : elle n'est jamais envoyée au serveur."
   }
 }

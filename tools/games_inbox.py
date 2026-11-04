@@ -8,15 +8,21 @@ Every few seconds it looks at the folder (sub-folders too). When a file is new, 
   1. each new or changed file goes through tools/add_game.py (ScummVM if it recognises the data and ScummVM is built,
      otherwise DOSBox with the best executable guess) and the result is kept in a cache, so that a game is only
      converted once;
+     Then tools/identify_game.py works out which game it is (data files such as MONKEY2.000, the names of the zip
+     and its folders, against the timeline and the ScummVM catalogue) for its title, year, studio and, for the
+     museum's own games, their description; and finds its original box art (the museum's checked cover, or the
+     PC box from libretro-thumbnails on GitHub, with its credit);
   2. the local catalogue (data/arcade.local.json, assets/games/, assets/scummvm/) gets the inbox games; games you
      added yourself with add_game.py are kept and never overwritten;
-  3. the site is built again. With --site it is built in a new folder and swapped in at once through the symlink
-     <site>/current, so visitors never see a half-written site; without it, it is built into dist/.
+  3. the site is built again, with only these games in the DOSBox room (--all-games keeps the museum's own list).
+     With --site it is built in a new folder and swapped in at once through the symlink <site>/current, so
+     visitors never see a half-written site; without it, it is built into dist/.
 
 Files still being copied are left for the next look (their size or date must stay the same between two looks).
 Optional settings for one game go in a JSON file next to it with the same name (Game.zip -> Game.json):
     {"title": "My Game", "year": 1993, "studio": "Studio", "exe": "GAME/START.BAT", "cycles": 20000,
-     "engine": "dosbox", "license": "Freeware", "desc": "…", "source": "https://…", "icon": "floppy"}
+     "engine": "dosbox", "license": "Freeware", "desc": "…", "source": "https://…", "icon": "floppy", "cover": false}
+("cover": false leaves the cover out; a title given here is also used to find the cover.)
 
 Only put games there that you are allowed to share: everything in the folder is served to every visitor.
 Standard library only.
@@ -29,21 +35,24 @@ import hashlib
 import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import time
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import add_game  # noqa: E402
+import identify_game  # noqa: E402
 
 ASSETS = ROOT / "assets"
 KINDS = (".zip", ".jsdos")
-OPTIONS = ("title", "year", "studio", "exe", "cycles", "engine", "license", "desc", "source", "icon")
+OPTIONS = ("title", "year", "studio", "exe", "cycles", "engine", "license", "desc", "source", "icon", "cover")
 SETTLE = 5.0  # seconds a file must stay untouched before it is imported
 
 
@@ -75,11 +84,72 @@ def settings(text: str, name: str) -> dict:
     return {k: v for k, v in data.items() if k in OPTIONS} if isinstance(data, dict) else {}
 
 
+MEDIA = ROOT / "data" / "media.json"
+COVER_RETRY = 86400  # a cover not found (no network, GitHub limit) is looked for again a day later
+
+
+def museum_cover(timeline_id: str) -> bool:
+    """The museum already shows a (checked) cover of this game: data/media.json, downloaded."""
+    items = json.loads(MEDIA.read_text("utf-8"))["items"]
+    return any(i["group"] == "games" and i["id"] == timeline_id and i["role"] == "cover" and i.get("file") for i in items)
+
+
+def enrich(entry: dict, path: Path, opts: dict, dest: Path, cache: Path) -> dict:
+    """Works out which game it is (title, year, studio, the museum's description) and finds its original cover."""
+    official = {g["id"] for g in json.loads((ROOT / "data/arcade.json").read_text("utf-8"))["games"]}
+    if "identified" not in entry:
+        try:
+            names = identify_game.zip_names(path)
+        except (OSError, zipfile.BadZipFile):
+            names = []
+        r = identify_game.identify(names, path.stem, entry.get("svmEngine"), opts.get("title"))
+        entry["identified"] = {"score": r["score"], "why": r["why"]} if r else None
+        if r and entry["id"] not in official:  # official freeware zips already brought their own record
+            entry["title"] = opts.get("title") or r["title"]
+            entry["year"] = opts.get("year") or r.get("year")
+            entry["studio"] = opts.get("studio") or r.get("studio") or entry.get("studio")
+            # short, stable ids: the museum's own (kings-quest-5), else the title before its subtitle
+            entry["id"] = (r.get("timeline") if not opts.get("title") else None) or add_game.slugify(
+                re.split(r"[:–]| - ", entry["title"])[0].replace("'", ""))
+            if r.get("timeline"):
+                entry["timeline"] = r["timeline"]
+                if not opts.get("desc") and r.get("desc"):
+                    entry["desc"] = {lang: v["d"] for lang, v in r["desc"].items()}
+                    entry.pop("autoDesc", None)
+            log(f"  identified: {entry['title']} ({entry.get('year') or '?'}) from {r['why']}")
+        elif not r and opts.get("title"):
+            log(f"  not in the museum's lists: listed as {opts['title']} (from its .json)")
+        elif not r:
+            log("  not identified: listed with the name of the file (add a .json next to it to fix it)")
+    if opts.get("cover") is False or entry.get("cover"):
+        return entry
+    if entry.get("timeline") and museum_cover(entry["timeline"]):
+        entry["cover"] = {"media": f"games/{entry['timeline']}/cover"}
+        return entry
+    if time.time() - entry.get("coverChecked", 0) < COVER_RETRY or entry["id"] in official and not entry.get("identified"):
+        return entry
+    entry["coverChecked"] = int(time.time())
+    try:
+        spec = identify_game.find_cover(entry["title"], entry.get("year"), cache / "covers-index")
+        if spec:
+            meta = identify_game.fetch_cover(spec, dest / "cover.png")
+            entry["cover"] = dict(meta, file="cover.png", role="cover", rights="boxart")
+            log(f"  cover: {spec.rsplit('/', 1)[-1]}")
+    except Exception as e:  # no network: the game works without its cover, we try again later
+        log(f"  cover not available now ({type(e).__name__}: {str(e)[:80]}); trying again in a day")
+    return entry
+
+
 def convert(path: Path, opts: dict, cache: Path, key: str) -> dict | None:
     """Runs add_game on one file; the bundle and its catalogue entry are kept in cache/<key>/."""
     dest = cache / key
     if (dest / "entry.json").exists():
-        return json.loads((dest / "entry.json").read_text("utf-8"))
+        entry = json.loads((dest / "entry.json").read_text("utf-8"))
+        before = json.dumps(entry, sort_keys=True)
+        entry = enrich(entry, path, opts, dest, cache)
+        if json.dumps(entry, sort_keys=True) != before:
+            (dest / "entry.json").write_text(json.dumps(entry, ensure_ascii=False, indent=2), "utf-8")
+        return entry
     if (dest / "error.txt").exists():
         return None
     work = Path(tempfile.mkdtemp(prefix="convert-", dir=cache))
@@ -113,8 +183,9 @@ def convert(path: Path, opts: dict, cache: Path, key: str) -> dict | None:
             shutil.move(str(f), dest / f.name)
             entry["bundle"] = f"{folder}/{f.name}"
     shutil.rmtree(work, ignore_errors=True)
-    (dest / "entry.json").write_text(json.dumps(entry, ensure_ascii=False, indent=2), "utf-8")
     log("  " + (report.splitlines()[-1].strip() if report else f"{path.name}: imported"))
+    entry = enrich(entry, path, opts, dest, cache)
+    (dest / "entry.json").write_text(json.dumps(entry, ensure_ascii=False, indent=2), "utf-8")
     return entry
 
 
@@ -124,6 +195,8 @@ def install(entries: list[tuple[str, dict]], cache: Path) -> list[dict]:
     for g in local["games"]:  # remove what the inbox installed last time
         if g.get("inbox"):
             (ASSETS / g["bundle"]).unlink(missing_ok=True)
+            if (g.get("cover") or {}).get("file"):
+                (ASSETS / g["cover"]["file"]).unlink(missing_ok=True)
     mine = [g for g in local["games"] if not g.get("inbox")]
     taken, games = {g["id"] for g in mine} | {Path(g["bundle"]).stem for g in mine}, []
     official = {g["id"] for g in json.loads((ROOT / "data/arcade.json").read_text("utf-8"))["games"] if g.get("bundle")}
@@ -135,7 +208,13 @@ def install(entries: list[tuple[str, dict]], cache: Path) -> list[dict]:
         target = ASSETS / folder / (gid + Path(name).suffix)
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(cache / key / name, target)
-        games.append(dict(e, id=gid, bundle=f"{folder}/{target.name}"))
+        g = dict(e, id=gid, bundle=f"{folder}/{target.name}")
+        if (e.get("cover") or {}).get("file"):  # the box art found for it, next to the bundles
+            cover = ASSETS / "games" / "covers" / f"{gid}.png"
+            cover.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(cache / key / e["cover"]["file"], cover)
+            g["cover"] = dict(e["cover"], file=f"games/covers/{gid}.png")
+        games.append(g)
         taken.add(gid)
     add_game.save_local({**local, "games": mine + games})
     return games
@@ -197,8 +276,10 @@ def main() -> int:
     ap.add_argument("--watch", type=float, default=15, help="seconds between looks at the folder (default 15)")
     ap.add_argument("--once", action="store_true", help="import, build and exit")
     ap.add_argument("--base-url", help="passed on to build.py")
+    ap.add_argument("--all-games", action="store_true",
+                    help="also list the museum's demo and the freeware it knows (default: only the games you have)")
     args = ap.parse_args()
-    extra = ["--base-url", args.base_url] if args.base_url else []
+    extra = (["--base-url", args.base_url] if args.base_url else []) + ([] if args.all_games else ["--arcade-local-only"])
     inbox, cache = args.inbox.expanduser(), args.cache.expanduser()
     inbox.mkdir(parents=True, exist_ok=True)
     cache.mkdir(parents=True, exist_ok=True)

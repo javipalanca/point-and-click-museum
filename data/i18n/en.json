@@ -215,5 +215,10 @@
  "murrayTitle": "Murray, the talking skull",
  "murrayOpen": "Talk to Murray",
  "murrayClose": "Close the chat",
- "murrayReset": "New conversation"
+ "murrayReset": "New conversation",
+ "arcadeRecord": "Museum record",
+ "arcadeCover": "Box art",
+ "arcadeCoverAlt": "Box art of {title}",
+ "arcadeNoGames": "No games yet. Drop .zip files in the server's games folder and they will appear here within seconds. You can also try your own copy with “Bring your own game”.",
+ "volume": "Volume"
 }

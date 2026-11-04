@@ -18,6 +18,16 @@ if (document.getElementById("dosHost")) (() => {
   let capture = lockAllowed && store("dosCapture") !== false;
   let sensitivity = +(store("dosSens") || 0.5);
   sens.value = sensitivity;
+  /* game volume (0–1), for DOSBox (js-dos setVolume) and ScummVM (a gain node inside its frame); remembered */
+  const vol = $("#dosVol"), volOut = $("#dosVolOut");
+  let volume = store("dosVolume") == null ? 0.8 : +store("dosVolume");
+  const showVolume = () => { vol.value = volume; volOut.textContent = Math.round(volume * 100) + "%"; };
+  function applyVolume() {
+    if (player) try { player.setVolume(volume); } catch (e) { /* older js-dos */ }
+    const f = host.querySelector(".svm-frame");
+    if (f) try { f.contentWindow.PCM_SET_VOLUME && f.contentWindow.PCM_SET_VOLUME(volume); } catch (e) { /* frame not ready */ }
+  }
+  showVolume();
 
   function renderMouse() {
     mouseBtn.setAttribute("aria-pressed", String(capture));
@@ -75,7 +85,8 @@ if (document.getElementById("dosHost")) (() => {
     const el = document.createElement("div"); el.className = "dos-player"; host.appendChild(el);
     const options = Object.assign({ pathPrefix: base + "emulators/" }, E.options, opts, {
       mouseCapture: capture, mouseSensitivity: sensitivity,
-      onEvent: (ev) => { if (ev === "ci-ready" && player) { try { player.setMouseCapture(capture); player.setMouseSensitivity(sensitivity); } catch (e) { /* older player */ } } },
+      volume,
+      onEvent: (ev) => { if (ev === "ci-ready" && player) { try { player.setMouseCapture(capture); player.setMouseSensitivity(sensitivity); player.setVolume(volume); } catch (e) { /* older player */ } } },
     });
     player = window.Dos(el, options);
     stopBtn.disabled = false; fullBtn.disabled = false;
@@ -88,7 +99,7 @@ if (document.getElementById("dosHost")) (() => {
     sfx("open");
     if (!D.svm || !D.svm.available) { now.textContent = t("svmMissing"); toast(t("svmMissing")); return false; }
     await stop();
-    window.PCM_SVM_JOB = Object.assign({ data: D.svm.data, inline: D.svm.inline }, job);
+    window.PCM_SVM_JOB = Object.assign({ data: D.svm.data, inline: D.svm.inline, volume }, job);
     idle.hidden = true; now.textContent = "▶ " + title + " · ScummVM";
     const f = document.createElement("iframe");
     f.className = "svm-frame"; f.title = title; f.allow = "autoplay; fullscreen; gamepad";
@@ -162,6 +173,7 @@ if (document.getElementById("dosHost")) (() => {
     if (!capture && document.pointerLockElement) document.exitPointerLock();
     if (player) try { player.setMouseCapture(capture); } catch (e) { /* ignore */ }
   });
+  vol.addEventListener("input", () => { volume = +vol.value; store("dosVolume", volume); showVolume(); applyVolume(); });
   sens.addEventListener("input", () => {
     sensitivity = +sens.value; store("dosSens", sensitivity);
     if (player) try { player.setMouseSensitivity(sensitivity); } catch (e) { /* ignore */ }

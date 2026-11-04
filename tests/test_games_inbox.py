@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import add_game  # noqa: E402
 import games_inbox  # noqa: E402
+import identify_game  # noqa: E402
 
 
 def make_zip(path: Path, files: dict):
@@ -28,6 +29,18 @@ class GamesInboxTest(unittest.TestCase):
         self.inbox, self.cache = self.tmp / "inbox", self.tmp / "cache"
         self.inbox.mkdir(), self.cache.mkdir()
         self.saved = (add_game.LOCAL, add_game.SVM_BUILT, games_inbox.ASSETS, games_inbox.build)
+        self.net = (identify_game.find_cover, identify_game.fetch_cover)
+        self.covers = []
+
+        def find_cover(title, year, cache):  # no network in the tests
+            return f"github:libretro-thumbnails/DOS@abc123/Named_Boxarts/{title}.png" if title == "Space Quest III: The Pirates of Pestulon" else None
+
+        def fetch_cover(spec, dest):
+            self.covers.append(spec)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(b"\x89PNG fake")
+            return {"page": "https://github.com/libretro-thumbnails/DOS/blob/abc123/x.png", "w": 170, "h": 240, "src": spec}
+        identify_game.find_cover, identify_game.fetch_cover = find_cover, fetch_cover
         add_game.LOCAL = self.tmp / "arcade.local.json"
         add_game.SVM_BUILT = self.tmp / "no-scummvm.js"
         games_inbox.ASSETS = self.tmp / "assets"
@@ -40,6 +53,7 @@ class GamesInboxTest(unittest.TestCase):
 
     def tearDown(self):
         add_game.LOCAL, add_game.SVM_BUILT, games_inbox.ASSETS, games_inbox.build = self.saved
+        identify_game.find_cover, identify_game.fetch_cover = self.net
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def sync(self):
@@ -73,14 +87,41 @@ class GamesInboxTest(unittest.TestCase):
         self.assertEqual(self.builds, 3)
 
     def test_keeps_games_added_by_hand_and_avoids_clashes(self):
-        add_game.save_local({"games": [{"id": "loom-mine", "title": "Mine", "bundle": "games/loom-mine.jsdos"}]})
-        make_zip(self.inbox / "Loom Mine.zip", {"LOOM.EXE": b"l"})
-        make_zip(self.inbox / "a/Loom Mine.zip", {"LOOM.EXE": b"l2"})
+        add_game.save_local({"games": [{"id": "zzyx-mine", "title": "Mine", "bundle": "games/zzyx-mine.jsdos"}]})
+        make_zip(self.inbox / "Zzyx Mine.zip", {"ZZYX.EXE": b"l"})
+        make_zip(self.inbox / "a/Zzyx Mine.zip", {"ZZYX.EXE": b"l2"})
         self.sync()
-        self.assertEqual(set(self.local()), {"loom-mine", "loom-mine-2", "loom-mine-3"})
-        self.assertFalse(self.local()["loom-mine"].get("inbox"))
-        self.assertEqual(self.local()["loom-mine"]["bundle"], "games/loom-mine.jsdos")   # yours is never overwritten
-        self.assertFalse((games_inbox.ASSETS / "games/loom-mine.jsdos").exists())
+        self.assertEqual(set(self.local()), {"zzyx-mine", "zzyx-mine-2", "zzyx-mine-3"})
+        self.assertFalse(self.local()["zzyx-mine"].get("inbox"))
+        self.assertEqual(self.local()["zzyx-mine"]["bundle"], "games/zzyx-mine.jsdos")   # yours is never overwritten
+        self.assertFalse((games_inbox.ASSETS / "games/zzyx-mine.jsdos").exists())
+
+    def test_identifies_the_game_and_its_cover(self):
+        make_zip(self.inbox / "MI2_GOG.zip", {"MONKEY2/MONKEY2.000": b"d", "MONKEY2/MONKEY2.EXE": b"e"})   # a data file
+        make_zip(self.inbox / "Space_Quest_III_DOS.zip", {"SQ3/RESOURCE.MAP": b"m", "SQ3/SIERRA.EXE": b"s"})   # the zip name
+        make_zip(self.inbox / "x.zip", {"ZZYX.EXE": b"z"})                                                    # unknown
+        self.sync()
+        games = self.local()
+        mi2 = games["monkey-island-2"]  # the museum's record: its title, year, description and checked cover
+        self.assertEqual((mi2["title"], mi2["year"], mi2["timeline"]), ("Monkey Island 2: LeChuck's Revenge", 1991, "monkey-island-2"))
+        self.assertEqual(mi2["cover"], {"media": "games/monkey-island-2/cover"})
+        self.assertIn("Big Whoop", mi2["desc"]["en"])
+        sq3 = games["space-quest-iii"]  # not in the timeline: ScummVM catalogue data and a libretro box
+        self.assertEqual((sq3["year"], sq3["studio"]), (1989, "Sierra"))
+        self.assertEqual(sq3["cover"]["file"], "games/covers/space-quest-iii.png")
+        self.assertTrue((games_inbox.ASSETS / "games/covers/space-quest-iii.png").exists())
+        self.assertNotIn("cover", games["x"])
+        self.assertEqual(len(self.covers), 1)
+        self.sync()  # cached: nothing downloaded again
+        self.assertEqual(len(self.covers), 1)
+
+    def test_settings_file_wins(self):
+        make_zip(self.inbox / "MI2.zip", {"MONKEY2.000": b"d", "MONKEY2.EXE": b"e"})
+        (self.inbox / "MI2.json").write_text(json.dumps({"title": "Mi copia", "year": 1992, "cover": False}))
+        self.sync()
+        g = self.local()["mi-copia"]
+        self.assertEqual((g["title"], g["year"]), ("Mi copia", 1992))
+        self.assertNotIn("cover", g)
 
     def test_bad_files_are_reported_once_and_skipped(self):
         make_zip(self.inbox / "windows.zip", {"README.TXT": b"no program here"})

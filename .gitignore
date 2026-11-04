@@ -5,7 +5,8 @@ node_modules/
 .DS_Store
 
 # Juegos locales añadidos con tools/add_game.py (no se versionan)
-assets/games/
+assets/games/*
+!/games/README.md
 data/arcade.local.json
 # Descargas sin procesar, por si las guardas dentro del proyecto
 downloads/
@@ -24,4 +25,5 @@ assets/scummvm/
 .env
 
 # Games inbox on the server (docker compose: GAMES_DIR, default ./games)
-/games/
+/games/*
+!/games/README.md

@@ -230,6 +230,10 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   `npm run test:catalog`) y en Docker; **las fuentes reales no eran accesibles desde la sesión**: pendiente la
   primera sincronización en el servidor, revisar los nombres de colecciones de IA y la respuesta real de GOG.
 
+- **2026-11-05 · `games/` existe en el repositorio** (solo con su README; el resto sigue ignorado). En Docker Desktop
+  para Mac, `docker compose up` fallaba con «error while creating mount source path …/games: chown … permission
+  denied» porque Docker no puede crear la carpeta de un bind mount. Si se cambia `GAMES_DIR`, hay que crearla antes.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

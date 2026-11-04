@@ -214,6 +214,7 @@ Cuatro contenedores:
 
 ```bash
 cp ~/Descargas/MiJuego.zip games/      # GAMES_DIR en .env; por defecto ./games junto a docker-compose.yml
+# si cambias GAMES_DIR, crea esa carpeta antes de docker compose up (Docker Desktop para Mac no puede crearla)
 docker compose logs -f builder         # importing MiJuego.zip · ok: … DOSBox runs MIJUEGO.EXE · built 44 pages
 ```
 

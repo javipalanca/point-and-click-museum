@@ -303,6 +303,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   Artifact); en Docker las propias están activas y GA cuando se pone `GA_MEASUREMENT_ID`. Probado con
   `npm run test:admin` y en Docker. Nota de prueba: Chromium manda el beacon de una página que se cierra con su
   user agent «HeadlessChrome», que cuenta como robot.
+- **2026-11-05 · Despliegue junto a pointandclickle** (petición del usuario: «enrutar ambos sin toquetearlos
+  demasiado»). pointandclickle (cookiecutter-django) ya tiene Traefik 2.2 en 80/443 con Let's Encrypt y proveedor de
+  fichero: se reutiliza en vez de añadir otro router. Red externa `edge`; `docker-compose.edge.yml` (activado con
+  `COMPOSE_FILE`) pone el `web` del museo en ella con el alias `museum-web`; `deploy/traefik/museum.yml` trae los
+  routers (`museum.pointandclickle.com` y `pointandclickle.com/museum` → 301 al subdominio, no un subdirectorio: el
+  museo usa rutas absolutas `/api/…` y una URL canónica es mejor para SEO). nginx usa `real_ip` desde redes privadas y
+  pasa el `X-Forwarded-Proto` del proxy al panel. Probado en Docker con Traefik 2.2.11 y la configuración de
+  pointandclickle (Django simulado): rutas, 301, cookie `Secure`, `/api/murray/stats` cerrado y `X-Forwarded-For`
+  falsificado descartado por Traefik. Pendiente: aplicarlo en el servidor (DNS, cambios en pointandclickle).
 
 ## Datos técnicos útiles
 

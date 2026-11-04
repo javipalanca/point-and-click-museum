@@ -1,0 +1,15 @@
+# Point and Click Museum behind a reverse proxy that already owns ports 80/443 on the same machine (for example the
+# Traefik of pointandclickle). Add it with COMPOSE_FILE in .env (see .env.example), no flags needed:
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.edge.yml
+# and create the shared network once:  docker network create edge
+# The proxy reaches the museum at http://museum-web:80; set PORT=127.0.0.1:8080 so that it is not public on its own.
+services:
+  web:
+    networks:
+      default:
+      edge:
+        aliases: [museum-web]
+
+networks:
+  edge:
+    external: true

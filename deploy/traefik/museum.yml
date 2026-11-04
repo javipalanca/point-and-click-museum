@@ -1,0 +1,34 @@
+# Routers for the Traefik of pointandclickle (compose/production/traefik/traefik.yml): merge each block into the
+# matching section of that file (http.routers, http.middlewares, http.services). Then put its traefik service on
+# the "edge" network (see deploy/traefik/README.md) and rebuild it.
+http:
+  routers:
+    museum-router:
+      rule: "Host(`museum.pointandclickle.com`)"
+      entryPoints:
+        - web-secure
+      service: museum
+      tls:
+        certResolver: letsencrypt
+    museum-path-router:      # pointandclickle.com/museum/... -> museum.pointandclickle.com/... (301)
+      rule: "(Host(`pointandclickle.com`) || Host(`www.pointandclickle.com`)) && PathPrefix(`/museum`)"
+      entryPoints:
+        - web-secure
+      middlewares:
+        - museum-redirect
+      service: museum
+      tls:
+        certResolver: letsencrypt
+
+  middlewares:
+    museum-redirect:
+      redirectRegex:
+        regex: "^https?://[^/]+/museum/?(.*)$"
+        replacement: "https://museum.pointandclickle.com/${1}"
+        permanent: true
+
+  services:
+    museum:
+      loadBalancer:
+        servers:
+          - url: http://museum-web:80

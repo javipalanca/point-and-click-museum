@@ -146,6 +146,12 @@ detrás de HTTPS), cabecera obligatoria en los POST, bloqueo tras 5 intentos fal
 `robots.txt`. Si no defines usuario y contraseña, el panel no existe. Fuentes y nombres de colecciones en
 `data/catalog.sources.json`.
 
+### Detrás de otro proxy (pointandclickle)
+
+Para servirlo en la misma máquina que pointandclickle, con `museum.pointandclickle.com` y una redirección desde
+`pointandclickle.com/museum`, usando el Traefik que ya tiene: `deploy/traefik/README.md` (red `edge`,
+`docker-compose.edge.yml` y los routers de `deploy/traefik/museum.yml`).
+
 ### Estadísticas
 
 Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en el Artifact:

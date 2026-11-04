@@ -281,6 +281,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   ahora a partir de los plugins compilados (`data/plugins/lib*.so`). Listas vacías con `${A[@]+"${A[@]}"}` por el
   bash 3.2 de macOS. Sin probar la compilación completa en la sesión (no se puede ejecutar Emscripten aquí).
 
+- **2026-11-05 · Textos sin hablar de la propia web** (petición del usuario: «elimina los textos explicativos que dicen
+  lo que has hecho por la propia web»; skill `impeccable`, pasos *distill* y *clarify*). Fuera las frases sobre cómo
+  está hecha la web (servidor, Docker, modelos de lenguaje, «captura real», notas del laboratorio, explicaciones de
+  estados y de por qué un juego no es jugable en la sala); los textos que quedan hablan de las aventuras. Sin la
+  etiqueta «Sala n» encima de cada título (sigue en las puertas y en la portada). Créditos de las tarjetas en una línea
+  («© su editor · fuente ↗»), descripción solo si existe, «Unknown Company» oculto, «Pendiente» → «Próximamente».
+  `impeccable` se vendoriza sin `scripts/` (el lanzador descarga y ejecuta un binario). El estilo retro manda sobre sus
+  prohibiciones genéricas.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

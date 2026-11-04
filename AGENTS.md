@@ -132,5 +132,5 @@ Propias, en `.claude/skills/`: `add-timeline-game`, `add-language`, `edit-miniga
 `verify-site`, `publish-artifact`, `find-media`. Úsalas para las tareas que describen.
 
 De terceros (de skills.sh, fijadas a un commit; ver `.claude/skills/THIRD_PARTY.md`): `frontend-design` y
-`web-design-guidelines` (revisión visual y de accesibilidad), `webapp-testing` (Playwright en Python),
+`web-design-guidelines` (revisión visual y de accesibilidad), `impeccable` (pulir, simplificar y aclarar textos de la interfaz; sin sus scripts), `webapp-testing` (Playwright en Python),
 `seo-audit` y `schema` (SEO multilingüe y JSON-LD). Las reglas de este archivo mandan sobre sus consejos genéricos.

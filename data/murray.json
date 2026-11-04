@@ -58,10 +58,10 @@
  },
  "errors": {
   "offlineSite": {
-   "es": "Murray no está conectado: esta copia del museo no tiene servidor. Con Docker Compose (ver README) despierta.",
-   "en": "Murray isn't connected: this copy of the museum has no server. Run it with Docker Compose (see README) to wake him up.",
-   "de": "Murray ist nicht verbunden: Diese Museumskopie hat keinen Server. Mit Docker Compose (siehe README) wacht er auf.",
-   "fr": "Murray n'est pas connecté : cette copie du musée n'a pas de serveur. Avec Docker Compose (voir README), il se réveille."
+   "es": "Murray está dormido. Vuelve más tarde.",
+   "en": "Murray is asleep. Come back later.",
+   "de": "Murray schläft. Komm später wieder.",
+   "fr": "Murray dort. Revenez plus tard."
   },
   "busy": {
    "es": "Demasiadas preguntas, mortal. Hasta las calaveras demoníacas necesitan un respiro. Vuelve en unos minutos.",
@@ -154,10 +154,10 @@
    "fr": "connecté à l'oracle"
   },
   "privacy": {
-   "es": "Las preguntas van al servidor del museo, que busca en su base de datos y, si está configurado, consulta un modelo de lenguaje. No se guardan conversaciones.",
-   "en": "Questions go to the museum's server, which searches its database and, if configured, asks a language model. Conversations are not stored.",
-   "de": "Fragen gehen an den Museumsserver, der seine Datenbank durchsucht und, falls eingerichtet, ein Sprachmodell fragt. Gespräche werden nicht gespeichert.",
-   "fr": "Les questions vont au serveur du musée, qui cherche dans sa base de données et, s'il est configuré, interroge un modèle de langage. Les conversations ne sont pas conservées."
+   "es": "No se guardan las conversaciones.",
+   "en": "Conversations are not stored.",
+   "de": "Gespräche werden nicht gespeichert.",
+   "fr": "Les conversations ne sont pas conservées."
   },
   "goingTo": {
    "es": "Rumbo a",

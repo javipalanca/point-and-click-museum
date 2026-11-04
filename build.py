@@ -176,7 +176,9 @@ def add_catalog(arcade: dict, catalog: dict, timeline: dict) -> dict:
         v = (ed or {}).get("validated") or {}
         why = ("" if c["status"] != "pending" else "failed" if v.get("ok") is False else
                "rights" if ed and ed["rights"] not in ("freeware", "shareware", "demo", "public-domain", "open-license", "permission") else "checks")
-        g = {"id": c["id"], "title": c["title"], "year": c.get("year"), "studio": c.get("developer") or "", "icon": "floppy",
+        dev = c.get("developer") or ""
+        dev = "" if dev.lower().startswith("unknown") else dev  # ScummVM's "Unknown Company" says nothing
+        g = {"id": c["id"], "title": c["title"], "year": c.get("year"), "studio": dev, "icon": "floppy",
              "catalog": True, "status": c["status"], "why": why, "error": v.get("error", ""), "timeline": c.get("timeline"),
              "gog": c.get("gog"), "cover": c.get("cover"), "edition": (ed or {}).get("edition", ""), "kind": (ed or {}).get("kind"),
              "rights": (ed or {}).get("rights"), "engine": (ed or {}).get("emulator", "dosbox"),
@@ -594,7 +596,6 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         + "".join(f'<li><a href="{E(u(c))}">{E(n)}</a></li>' for c, n in crumbs)
         + f'<li aria-current="page">{E(page_title(ui, pid))}</li></ol></nav>'
         + f'<div class="page-head"><img src="{root}img/sprites/{page["icon"]}.png" width="48" height="48" alt="">'
-        + (f'<span class="room">{E(ui["roomFmt"].format(n=room))}</span>' if room else "")
         + f'<h1 id="page-title">{E(page_title(ui, pid))}</h1></div>')
 
     # previous / next room
@@ -764,8 +765,6 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
             action = f'<button class="pbtn small dos-play" type="button" data-id="{E(g["id"])}">{E(ui["arcadePlayDemo"] if g.get("kind") == "demo" else ui["arcadePlay"])}</button>'
         elif g.get("catalog"):
             action = f'<span class="chip state {st}"{f" title={chr(34)}{E(g["error"])}{chr(34)}" if g.get("error") else ""}>{E(ui["catState_" + st])}</span>'
-            if st == "pending":
-                action += f' <small class="why">{E(ui["catWhy_" + g["why"]])}</small>'
         else:
             action = f'<span class="chip warn">{E(ui["arcadeNeedsBundle"])}</span>'
         if g.get("gog"):
@@ -778,8 +777,8 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
         cover = arcade_cover(S, g, root, ui)
         art = (f'<img class="cover" src="{E(cover["src"])}" width="{cover["w"]}" height="{cover["h"]}" alt="{E(ui["arcadeCoverAlt"].format(title=g["title"]))}" loading="lazy">'
                if cover else f'<img src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">')
-        credit = (f'<small class="credit">{E(ui["arcadeCover"])}: {E(cover["label"] or g["title"])} · {E(cover["rights"])} · '
-                  f'<a href="{E(cover["url"])}" rel="noopener" target="_blank">{E(cover["via"])} ↗</a></small>' if cover else "")
+        credit = (f'<small class="credit">{E(cover["rights"])} · '
+                  f'<a href="{E(cover["url"])}" rel="noopener" target="_blank" title="{E(cover["label"] or g["title"])}">{E(cover["via"])} ↗</a></small>' if cover else "")
         engine = g.get("engine", "dosbox")
         rights = ui.get("rights_label_" + (g.get("rights") or ""), "") if g.get("catalog") and st != "record" else ""
         chips = (f'<span class="chip engine">{"ScummVM" if engine == "scummvm" else "DOSBox"}</span> ' if st != "record" else "") \
@@ -788,7 +787,7 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
             f'<article class="px dos-game" data-id="{E(g["id"])}" data-engine="{engine}" data-status="{st}" data-key="{E(key)}" data-letter="{letter}" '
             f'data-studio="{E(g.get("studio") or "")}" data-year="{g.get("year") or 9999}"{" data-cover" if cover else ""}>'
             f'{art}<h3>{E(g["title"])}</h3><div class="meta">{meta} {chips}</div>'
-            f'<p>{E(g["desc"] or ui["catDesc_" + st])}</p><div class="row">{action}</div>{credit}</article>')
+            + (f'<p>{E(g["desc"])}</p>' if g.get("desc") else "") + f'<div class="row">{action}</div>{credit}</article>')
     b["arcadeGames"] = "".join(items) or f'<p class="cat-none">{E(ui["arcadeNoGames"])}</p>'
     b["arcadeCount"] = E(ui["catCount"].format(n=len(games), total=len(games)))
     tools = ""

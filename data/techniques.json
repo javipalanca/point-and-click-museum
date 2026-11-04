@@ -348,7 +348,7 @@
    },
    "media": "games/kings-quest-5/screenshot",
    "body": {
-    "es": "La misma captura real de King's Quest V (VGA, 1990) reducida a cada modo gráfico del PC: CGA mostraba 4 colores fijos a 320 × 200, EGA 16 colores y VGA 256 elegidos entre 262.144. Por eso Sierra y LucasArts publicaban versiones EGA y VGA del mismo juego.",
+    "es": "Una captura de King's Quest V (VGA, 1990) reducida a cada modo gráfico del PC: CGA mostraba 4 colores fijos a 320 × 200, EGA 16 colores y VGA 256 elegidos entre 262.144. Por eso Sierra y LucasArts publicaban versiones EGA y VGA del mismo juego.",
     "en": "The same real King's Quest V screenshot (VGA, 1990) reduced to each PC graphics mode: CGA showed 4 fixed colours at 320 × 200, EGA 16 colours and VGA 256 chosen from 262,144. That is why Sierra and LucasArts shipped EGA and VGA versions of the same game.",
     "de": "Derselbe echte Screenshot aus King's Quest V (VGA, 1990), reduziert auf jeden PC-Grafikmodus: CGA zeigte 4 feste Farben bei 320 × 200, EGA 16 Farben und VGA 256 aus 262.144. Deshalb erschienen Spiele von Sierra und LucasArts in EGA- und VGA-Fassungen.",
     "fr": "La même capture réelle de King's Quest V (VGA, 1990) réduite à chaque mode graphique du PC : le CGA affichait 4 couleurs fixes en 320 × 200, l'EGA 16 couleurs et le VGA 256 choisies parmi 262 144. D'où les versions EGA et VGA d'un même jeu chez Sierra et LucasArts."
@@ -678,22 +678,16 @@
     "fr": "Réinitialiser la scène"
    },
    "realLabel": {
-    "es": "Captura real",
-    "en": "Real screenshot",
-    "de": "Echter Screenshot",
-    "fr": "Capture réelle"
+    "es": "Original",
+    "en": "Original",
+    "de": "Original",
+    "fr": "Original"
    },
    "labLabel": {
     "es": "Reconstrucción jugable",
     "en": "Playable reconstruction",
     "de": "Spielbare Rekonstruktion",
     "fr": "Reconstitution jouable"
-   },
-   "labNote": {
-    "es": "Escena original del museo; los verbos, su disposición y la forma de usarlos son los del juego.",
-    "en": "An original museum scene; the verbs, their layout and how they work match the game.",
-    "de": "Eine eigene Museumsszene; Verben, Anordnung und Bedienung entsprechen dem Spiel.",
-    "fr": "Une scène originale du musée ; les verbes, leur disposition et leur fonctionnement sont ceux du jeu."
    },
    "done": {
     "es": "Hecho.",

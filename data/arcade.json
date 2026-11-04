@@ -14,10 +14,10 @@
     }
   },
   "intro": {
-    "es": "Una sala con dos emuladores en el navegador: DOSBox (js-dos) para programas de MS-DOS y ScummVM para juegos de datos como los de LucasArts, Sierra, Revolution o AGS. El catálogo se actualiza solo desde ScummVM e Internet Archive: «jugable» es un juego con distribución autorizada (freeware, demos, shareware) y comprobado; «pendiente» está localizado pero sin confirmar; «solo ficha» está documentado, sin distribución autorizada, con enlace a GOG si aún se vende. Tu propia copia se ejecuta solo en tu navegador.",
-    "en": "A room with two emulators in the browser: DOSBox (js-dos) for MS-DOS programs and ScummVM for data-based games such as LucasArts, Sierra, Revolution or AGS titles. The catalogue updates itself from ScummVM and Internet Archive: “playable” means authorised for distribution (freeware, demos, shareware) and checked; “pending” means found but not confirmed; “record only” means documented, with no authorised distribution, and a GOG link if it is still sold. Your own copy runs only in your browser.",
-    "de": "Ein Raum mit zwei Emulatoren im Browser: DOSBox (js-dos) für MS-DOS-Programme und ScummVM für datenbasierte Spiele wie die von LucasArts, Sierra, Revolution oder AGS. Der Katalog aktualisiert sich selbst aus ScummVM und Internet Archive: „spielbar“ heißt Vertrieb erlaubt (Freeware, Demos, Shareware) und geprüft; „wird geprüft“ heißt gefunden, aber nicht bestätigt; „nur Eintrag“ heißt dokumentiert, ohne erlaubten Vertrieb, mit GOG-Link, falls es noch verkauft wird. Deine eigene Kopie läuft nur in deinem Browser.",
-    "fr": "Une salle avec deux émulateurs dans le navigateur : DOSBox (js-dos) pour les programmes MS-DOS et ScummVM pour les jeux à données comme ceux de LucasArts, Sierra, Revolution ou AGS. Le catalogue se met à jour seul depuis ScummVM et Internet Archive : « jouable » signifie distribution autorisée (freeware, démos, shareware) et vérifiée ; « en attente » signifie trouvé mais non confirmé ; « fiche seule » signifie documenté, sans distribution autorisée, avec un lien GOG s'il est encore vendu. Votre propre copie tourne uniquement dans votre navigateur."
+    "es": "Aventuras de MS-DOS y ScummVM para jugar aquí mismo, con ratón y sonido.",
+    "en": "MS-DOS and ScummVM adventures to play right here, with mouse and sound.",
+    "de": "MS-DOS- und ScummVM-Abenteuer zum Spielen gleich hier, mit Maus und Ton.",
+    "fr": "Des aventures MS-DOS et ScummVM à jouer ici même, avec souris et son."
   },
   "games": [
     {
@@ -169,9 +169,9 @@
     "pageSize": 10
   },
   "introServer": {
-    "es": "Una sala con dos emuladores en el navegador: DOSBox (js-dos) para programas de MS-DOS y ScummVM para juegos de datos como los de LucasArts, Sierra, Revolution o AGS. El catálogo se actualiza solo desde ScummVM e Internet Archive: «jugable» es un juego con distribución autorizada (freeware, demos, shareware) y comprobado; «pendiente» está localizado pero sin confirmar; «solo ficha» está documentado, sin distribución autorizada, con enlace a GOG si aún se vende. Tu propia copia se ejecuta solo en tu navegador. En este servidor también están los juegos de su carpeta de juegos.",
-    "en": "A room with two emulators in the browser: DOSBox (js-dos) for MS-DOS programs and ScummVM for data-based games such as LucasArts, Sierra, Revolution or AGS titles. The catalogue updates itself from ScummVM and Internet Archive: “playable” means authorised for distribution (freeware, demos, shareware) and checked; “pending” means found but not confirmed; “record only” means documented, with no authorised distribution, and a GOG link if it is still sold. Your own copy runs only in your browser. This server also lists the games in its games folder.",
-    "de": "Ein Raum mit zwei Emulatoren im Browser: DOSBox (js-dos) für MS-DOS-Programme und ScummVM für datenbasierte Spiele wie die von LucasArts, Sierra, Revolution oder AGS. Der Katalog aktualisiert sich selbst aus ScummVM und Internet Archive: „spielbar“ heißt Vertrieb erlaubt (Freeware, Demos, Shareware) und geprüft; „wird geprüft“ heißt gefunden, aber nicht bestätigt; „nur Eintrag“ heißt dokumentiert, ohne erlaubten Vertrieb, mit GOG-Link, falls es noch verkauft wird. Deine eigene Kopie läuft nur in deinem Browser. Dieser Server zeigt auch die Spiele aus seinem Spieleordner.",
-    "fr": "Une salle avec deux émulateurs dans le navigateur : DOSBox (js-dos) pour les programmes MS-DOS et ScummVM pour les jeux à données comme ceux de LucasArts, Sierra, Revolution ou AGS. Le catalogue se met à jour seul depuis ScummVM et Internet Archive : « jouable » signifie distribution autorisée (freeware, démos, shareware) et vérifiée ; « en attente » signifie trouvé mais non confirmé ; « fiche seule » signifie documenté, sans distribution autorisée, avec un lien GOG s'il est encore vendu. Votre propre copie tourne uniquement dans votre navigateur. Ce serveur présente aussi les jeux de son dossier de jeux."
+    "es": "Aventuras de MS-DOS y ScummVM para jugar aquí mismo, con ratón y sonido.",
+    "en": "MS-DOS and ScummVM adventures to play right here, with mouse and sound.",
+    "de": "MS-DOS- und ScummVM-Abenteuer zum Spielen gleich hier, mit Maus und Ton.",
+    "fr": "Des aventures MS-DOS et ScummVM à jouer ici même, avec souris et son."
   }
 }

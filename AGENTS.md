@@ -62,6 +62,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `server/admin.py`, `server/admin/` | panel de control privado (`/admin/`, usuario y contraseña del entorno): sincronizar, probar en DOSBox/ScummVM, validar, derechos con prueba, búsqueda en IA; decisiones en `catalog.admin.json`. Solo en español (herramienta privada, no contenido del museo) |
 | `tools/sync_catalog.py`, `tools/game_fetch.py`, `server/games.py` | sincronización (ScummVM, Internet Archive, GOG), descarga y validación, y proxy `/api/games/` (solo ediciones jugables) |
 | `tools/ia_inspect.py` | qué hay en un elemento de Internet Archive sin descargarlo (índice de sus zips por peticiones parciales y cabecera de cada programa): DOS, Windows, instalador o ScummVM, y el programa sugerido; lo usa el panel antes de añadir una edición |
+| `tools/iso9660.py` | lector de imágenes de CD (.iso) con la biblioteca estándar, sobre fichero local o peticiones parciales; `game_fetch` las monta en DOSBox como D: |
 | `tools/identify_game.py` | identificación de juegos (firmas de ficheros SCUMM/AGI, nombres, `timeline.json` + catálogo de ScummVM) y portadas (`media.json` del museo o libretro-thumbnails) |
 | `data/media.json` + `assets/media/` | imágenes reales (portadas, capturas, logos) con su fuente exacta; `refs` reutiliza imágenes entre fichas |
 | `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos de la interfaz y los minijuegos |
@@ -92,7 +93,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
    Los textos pueden ser cadena o `{"es","en","de","fr"}`; `build.py` los resuelve por idioma.
 2. **Siempre los cuatro idiomas.** Cualquier texto nuevo va en es/en/de/fr. `build.py` avisa de lo que falte.
    Vocabulario de la aventura de texto: palabras sin tildes ni diéresis (se normalizan), incluye sinónimos.
-3. **Python sin dependencias** (stdlib, 3.9+). JS sin frameworks ni build step: scripts clásicos con `defer`,
+3. **Python sin dependencias** (stdlib, 3.9+; la única herramienta externa es el programa 7-Zip, `7z`, para los juegos en .7z/RAR). JS sin frameworks ni build step: scripts clásicos con `defer`,
    todo cuelga de `window.PCM`. Nada de `fetch` de datos: van incrustados en `<script id="pcm-data">`.
 4. **La puntuación suma 100.** Si añades premios en `site.json → score.awards`, reajusta otros. `build.py` lo valida.
 5. **Prefijos de clase CSS:** js-dos carga Tailwind/daisyUI, que define `.btn`, `.modal`, `.toast`, `.card`, `.title`.

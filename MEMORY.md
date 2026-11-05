@@ -343,7 +343,26 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   y se cierra con «Apagar», que para el emulador y devuelve el foco a la portada. No es un `<dialog>`: los juegos DOS
   usan Esc y no debe cerrarla. Mientras está abierta, la página, la cabecera, el pie y Murray quedan `inert` y sin
   scroll; la pantalla mide lo que permite el alto de la ventana (4:3). Mientras carga, la pantalla repite el mensaje
-  de la barra (descargando, error…).
+  de la barra (descargando, error…).- **2026-11-05 · Juegos en .7z, RAR e imágenes de CD; enlace de archive.org en el panel** (petición del usuario: «3 Skulls
+  of the Toltecs.zip trae el juego en .7z; también he visto .iso»). `game_fetch.unpack` reconoce el formato por sus
+  primeros bytes (zip, 7z, RAR, ISO 9660); un zip sin juego pero con otro archivo dentro se abre en cascada (2 niveles).
+  7z/RAR con el programa 7-Zip (`7z`/`7zz`/`7za`; Python no los lee), con límite de tamaño y sin enlaces simbólicos;
+  `p7zip-full` en las imágenes `games` y `builder` (sin probar el build en la sesión: su proxy solo admite HTTPS y los
+  espejos de Debian van por HTTP). Las ISO se leen con `tools/iso9660.py` (stdlib; local o por `Range`, así la
+  inspección lista un CD sin descargarlo) y en DOSBox **no se descomprimen**: el paquete lleva `cd.iso` y el autoexec
+  hace `imgmount d cd.iso -t iso`, `d:` y arranca el programa desde el CD (probado con js-dos real: PAINT.COM desde D:
+  pinta igual que desde C:). Para ScummVM se extraen sus ficheros. Lo que solo se sabe al abrirlo (7z, archivo dentro
+  de un zip) se prueba en modo `emulator: auto` (ScummVM si reconoce datos y no hay programa DOS); el panel exige
+  probarlo antes de añadirlo y guarda lo que arrancó (`TRIED`). El panel acepta un enlace de archive.org (`/details/…`
+  o `/download/…/fichero`) además de la búsqueda, y marca el fichero enlazado. Sin probar con archive.org real.
+- **2026-11-05 · La portada abre en el idioma del navegador** (petición del usuario). Sustituye al aviso «esta página
+  también está en…» de la raíz. Un script en el `<head>` de `/` (antes del primer pintado) elige: el idioma elegido en
+  la web (`pcm-lang`, se guarda al pulsar cualquier enlace con `hreflang`) o, la primera vez, el primero de
+  `navigator.languages` que tengamos o su más cercano (`site.json → languageFallback`: catalán, gallego, euskera,
+  portugués, italiano, lenguas indígenas de América → español; occitano, bretón, corso, criollo haitiano, África
+  francófona → francés; luxemburgués, alemán suizo, romanche → alemán; el resto → inglés), y redirige con
+  `location.replace`. Las demás páginas no redirigen nunca (un enlace a `/fr/…` se respeta).
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

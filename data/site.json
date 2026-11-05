@@ -245,5 +245,48 @@
       "games": "star"
     },
     "languageSwitch": "fade"
+  },
+  "languageFallback": {
+    "_doc": "The home page opens in the browser's language, or the closest of ours; a language chosen on the site wins.",
+    "default": "en",
+    "closest": {
+      "es": [
+        "ca",
+        "gl",
+        "eu",
+        "ast",
+        "an",
+        "ext",
+        "pt",
+        "it",
+        "la",
+        "qu",
+        "gn",
+        "ay",
+        "nah"
+      ],
+      "fr": [
+        "oc",
+        "br",
+        "co",
+        "wa",
+        "ht",
+        "mg",
+        "wo",
+        "ln",
+        "rw",
+        "rn"
+      ],
+      "de": [
+        "lb",
+        "gsw",
+        "als",
+        "bar",
+        "nds",
+        "rm",
+        "hsb",
+        "dsb"
+      ]
+    }
   }
 }

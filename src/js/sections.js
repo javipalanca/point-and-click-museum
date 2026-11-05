@@ -4,18 +4,6 @@
   const { D, $, $$, t, esc, store, spriteURL, rng, mediaFigure, pixelText, pixelTextWidth, canvasPoint, sfx, tone, ac, typeText, award, openModal, reduceMotion } = PCM;
   const smooth = reduceMotion ? "auto" : "smooth";
 
-  /* ================= Language hint (root page only) ================= */
-  (() => {
-    if (!D.isRoot || store("lang")) return;
-    const pref = (navigator.languages || [navigator.language || ""]).map(l => l.slice(0, 2).toLowerCase()).find(l => D.langHints[l]);
-    if (!pref || pref === D.lang) return;
-    const h = $("#langHint"), info = D.langHints[pref];
-    h.innerHTML = '<span lang="' + pref + '">' + esc(info.text) + '</span> <a href="' + esc(info.url) + '" hreflang="' + pref + '" lang="' + pref + '">' + esc(info.label) + '</a><button type="button" aria-label="' + esc(t("close")) + '">×</button>';
-    h.hidden = false;
-    h.querySelector("button").onclick = () => { store("lang", D.lang); h.hidden = true; };
-  })();
-  $$(".langs a, footer a[hreflang]").forEach(a => a.addEventListener("click", () => store("lang", a.getAttribute("hreflang"))));
-
   const linkHtml = (url, label) => '<a class="ext" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(label) + ' ↗</a>';
   const linkLabel = url => (/wikipedia\.org/.test(url) ? "Wikipedia" : t("officialSite"));
 

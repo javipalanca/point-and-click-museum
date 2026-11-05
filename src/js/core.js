@@ -116,6 +116,8 @@ window.PCM = (() => {
     return true;
   }
   renderScore();
+  /* a language chosen on the site wins over the browser's (the root page reads it, see build.py lang_redirect) */
+  document.addEventListener("click", e => { const a = e.target.closest && e.target.closest("a[hreflang]"); if (a) store("lang", a.getAttribute("hreflang")); }, true);
 
   /* ---------- modal ---------- */
   const modalBg = $("#modalBg"), modal = $("#modal");

@@ -84,9 +84,6 @@ section { padding-block: 56px 24px; scroll-margin-top: 56px; }
 .row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
 
-.lang-hint { background: var(--teal); color: var(--ink); font-size: 20px; padding: 8px var(--gutter-r) 8px var(--gutter-l); display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
-.lang-hint a { color: var(--ink); font-family: var(--display); font-size: 10px; }
-.lang-hint button { background: none; border: 0; font-size: 22px; color: var(--ink); min-width: 36px; min-height: 36px; }
 
 /* Hero */
 .hero { padding-block: 22px 8px; }

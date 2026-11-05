@@ -163,6 +163,24 @@ function serve(DIST) {
     await c.close(); ok(dev);
   }
 
+  console.log("The home page opens in the browser's language, or the closest one; a language chosen on the site wins");
+  for (const [locale, want] of [["en-US", "/en/"], ["de-CH", "/de/"], ["fr-FR", "/fr/"], ["ca-ES", "/"], ["pt-BR", "/"], ["ja-JP", "/en/"], ["lb-LU", "/de/"], ["oc-FR", "/fr/"]]) {
+    const c = await browser.newContext({ locale }), page = await c.newPage();
+    await page.goto(`${base}/`); await page.waitForTimeout(300);
+    const at = new URL(page.url()).pathname;
+    at === want ? ok(`${locale} → ${want === "/" ? "/ (Spanish)" : want}`) : fail(`${locale} went to ${at}, expected ${want}`);
+    await c.close();
+  }
+  {
+    const c = await browser.newContext({ locale: "en-GB" }), page = await c.newPage();
+    await page.goto(`${base}/`); await page.waitForURL(/\/en\/$/);
+    await page.click('.lang-menu summary'); await page.click('.lang-menu a[hreflang="es"]');
+    await page.waitForURL(/\/es\/$/);
+    await page.goto(`${base}/`); await page.waitForTimeout(400);
+    new URL(page.url()).pathname === "/" ? ok("after choosing Spanish on the site, an English browser stays in Spanish") : fail("the chosen language was not kept: " + page.url());
+    await c.close();
+  }
+
   console.log("Statistics are off unless the build asks for them");
   {
     const page = await ctx.newPage(), out = [];

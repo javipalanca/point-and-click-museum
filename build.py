@@ -824,6 +824,19 @@ def pick(obj, path):
     return obj
 
 
+def lang_redirect(S: Site, langs: list[str], default: str) -> str:
+    """The root page opens in the language the visitor chose on the site (pcm-lang) or, the first time, in the
+    browser's language or the closest of ours (site.json languageFallback). Runs before the first paint."""
+    fb = S.d["site"].get("languageFallback", {})
+    near = {code: target for target, codes in fb.get("closest", {}).items() if target in langs for code in codes}
+    cfg = json.dumps({"u": {l: S.url(l, "home", 0) for l in langs}, "n": near, "f": fb.get("default", default), "d": default},
+                     separators=(",", ":"))
+    return ("<script>(function(c){try{var s=null,l=null,a,i,p;try{s=JSON.parse(localStorage.getItem(\"pcm-lang\"))}catch(e){}"
+            "if(s&&c.u[s])l=s;else{a=navigator.languages||[navigator.language||\"\"];"
+            "for(i=0;i<a.length&&!l;i++){p=String(a[i]).toLowerCase().split(\"-\")[0];l=c.u[p]?p:(c.n[p]||null)}l=l||c.f}"
+            "if(l!==c.d&&c.u[l])location.replace(c.u[l]+location.hash)}catch(e){}})(" + cfg + ")</script>\n")
+
+
 def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=None) -> str:
     d, site, langs, default = S.d, S.d["site"], S.d["langs"], S.d["site"]["defaultLanguage"]
     L = {k: localize(d[k], lang, langs, default) for k in ("timeline", "studios", "engines", "techniques", "hero", "games", "arcade", "murray")}
@@ -862,8 +875,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
         "analytics": {"ga": S.args.ga_id, "stats": S.args.stats_url},
         "svm": dict(svm or {"available": False}, base=f"{'../' * Site.depth(page, is_root)}scummvm/"),
         "pageUrls": {p["id"]: S.url(lang, p["id"], depth) for p in S.pages},
-        "langHints": {l: {"text": d["i18n"][l]["langHintText"], "label": d["i18n"][l]["langHintLink"],
-                          "url": S.url(l, pid, depth)} for l in langs},
+
     }
     for path in page.get("data", []):
         node, keys = data, path.split(".")
@@ -880,6 +892,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
         scripts.append(f'<script src="{root}games/bundles.js?v={build_id}" defer></script>')
     scripts += [f'<script src="{root}js/{n}.js?v={build_id}" defer></script>' for n in sorted(names, key=order.index)]
     blocks["scripts"] = "\n".join(scripts)
+    blocks["langRedirect"] = lang_redirect(S, langs, default) if is_root else ""
     blocks["consentLink"] = (f'<p><button class="link-btn" type="button" id="consentOpen">{E(ui["consentLink"])}</button></p>'
                              if S.args.ga_id else "")
 

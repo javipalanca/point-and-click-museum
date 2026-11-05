@@ -62,7 +62,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `server/admin.py`, `server/admin/` | panel de control privado (`/admin/`, usuario y contraseña del entorno): sincronizar, probar en DOSBox/ScummVM, validar, derechos con prueba, búsqueda en IA; decisiones en `catalog.admin.json`. Solo en español (herramienta privada, no contenido del museo) |
 | `tools/sync_catalog.py`, `tools/game_fetch.py`, `server/games.py` | sincronización (ScummVM, Internet Archive, GOG), descarga y validación, y proxy `/api/games/` (solo ediciones jugables) |
 | `tools/ia_inspect.py` | qué hay en un elemento de Internet Archive sin descargarlo (índice de sus zips por peticiones parciales y cabecera de cada programa): DOS, Windows, instalador o ScummVM, y el programa sugerido; lo usa el panel antes de añadir una edición |
-| `tools/iso9660.py` | lector de imágenes de CD (.iso) con la biblioteca estándar, sobre fichero local o peticiones parciales; `game_fetch` las monta en DOSBox como D: |
+| `tools/iso9660.py` | lector de imágenes de CD con la biblioteca estándar (.iso, .bin crudos MODE1/MODE2 y hojas .cue con pistas de audio), sobre fichero local o peticiones parciales; `game_fetch.CD` las monta en DOSBox como D: o se las da a ScummVM como ficheros + `trackNN.wav` |
 | `tools/identify_game.py` | identificación de juegos (firmas de ficheros SCUMM/AGI, nombres, `timeline.json` + catálogo de ScummVM) y portadas (`media.json` del museo o libretro-thumbnails) |
 | `data/media.json` + `assets/media/` | imágenes reales (portadas, capturas, logos) con su fuente exacta; `refs` reutiliza imágenes entre fichas |
 | `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos de la interfaz y los minijuegos |
@@ -107,6 +107,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 8. **Legalidad:** nada de juegos comerciales ni recreaciones de juegos existentes en el repositorio. La colección
    personal del usuario va en `assets/games/`, `assets/scummvm/` y `data/arcade.local.json`, que están en `.gitignore`: no los fuerces
    con `git add -f` ni los publiques (los builds públicos usan `--no-local`). Los minijuegos y gráficos de interfaz son originales.
+   **ScummVM primero:** si un juego trae datos que ScummVM reconoce y ese motor está compilado, se juega con ScummVM
+   aunque haya un programa de DOS; DOSBox solo cuando ScummVM no puede (`game_fetch.prepare(switch=True)`, `detected`).
    **Catálogo automático:** solo es «jugable» lo que tiene distribución autorizada (`game_fetch.RIGHTS_PLAYABLE`) y pasa
    las comprobaciones. «Abandonware» no es una licencia: los juegos comerciales de Internet Archive son «solo ficha»
    salvo que el usuario los marque como disponibles en el panel (él se ocupa de la autorización; `approved`). El catálogo

@@ -372,9 +372,12 @@ def merge(found: list[dict], prev: dict, overrides: dict) -> list[dict]:
         if ed["key"] in ((overrides.get(gid) or {}).get("removedEditions") or {}):
             continue  # removed in the control panel: the sources do not bring it back
         fix = ((overrides.get(gid) or {}).get("editions") or {}).get(ed["key"])
+        prev_ed = next((x for x in old.get(gid, {}).get("editions", []) if x.get("key") == ed["key"]), {})
+        det = prev_ed.get("detected")
+        if det and prev_ed.get("download", {}).get("url") == ed.get("download", {}).get("url"):
+            ed.update(detected=det, **det)  # a check found ScummVM data in it: ScummVM first, also tomorrow
         if fix:  # the control panel's (or the file's) corrections, before deciding whether the last check still holds
             ed.update(fix)
-        prev_ed = next((x for x in old.get(gid, {}).get("editions", []) if x.get("key") == ed["key"]), {})
         if prev_ed.get("validated") and prev_ed.get("download", {}).get("url") == ed.get("download", {}).get("url") \
                 and (prev_ed.get("run") or {}) == (ed.get("run") or {}):
             ed["validated"] = prev_ed["validated"]
@@ -431,8 +434,10 @@ def validate(games: list[dict], cache: Path, limit: int) -> int:
             done += 1
             job = {"id": ed["key"], "title": g["title"], **ed}
             try:
-                r = game_fetch.prepare(job, cache)
+                r = game_fetch.prepare(job, cache, switch=True)  # ScummVM first
                 ed["validated"] = {"ok": True, "at": r["at"], "checks": r["checks"]}
+                if game_fetch.detected(ed, r):
+                    log(f"  → {g['title']}: ScummVM data (engine {r['engine']}), played with ScummVM")
                 net_errors = 0
                 log(f"  ✓ {g['title']} ({ed['edition']})")
             except game_fetch.GameError as e:  # the file itself is not right: a verdict

@@ -38,7 +38,7 @@ TAIL = 65536 + 22           # the end-of-central-directory record is within the 
 HEAD = 4096                 # bytes of each program read to tell DOS from Windows
 MAX_PROGRAMS = 16           # programs whose header is read, per zip
 MAX_ZIPS = 4                # zips looked at per item (largest first)
-OTHER = re.compile(r"\.(cue|bin|img|ima|exe|dsk|adf|d64|st|mdf|nrg)$", re.I)
+OTHER = re.compile(r"\.(ima|dsk|adf|d64|st|mdf|mds|nrg|ccd|chd)$", re.I)
 
 
 class InspectError(Exception):
@@ -125,7 +125,55 @@ Head = game_fetch.Head
 
 
 def look_at_zip(url: str, size: int, title: str, start: str | None) -> dict:
-    return analyse(central_directory(url, size), lambda e: head(url, e), title, start)
+    entries = central_directory(url, size)
+    out = analyse(entries, lambda e: head(url, e), title, start)
+    if out["verdict"] in ("dosbox", "scummvm"):
+        return out
+    cd = cd_in_zip(url, entries, title, start)  # a CD image inside the zip (.cue + .bin, .iso)
+    return dict(out, **cd) if cd else out
+
+
+def member_reader(url: str, e: dict):
+    """Random access to a file stored (not compressed) inside a remote zip: where its bytes start, then ranges."""
+    local = ranged(url, e["offset"], e["offset"] + 29, 30)
+    nl, xl = struct.unpack("<HH", local[26:30])
+    base = e["offset"] + 30 + nl + xl
+    return lambda off, n: ranged(url, base + off, base + off + n - 1, n)
+
+
+def cd_in_zip(url: str, entries: list[dict], title: str, start: str | None) -> dict | None:
+    by_name = {e["name"].lower(): e for e in entries}
+    image, mode, first, audio, note = None, None, 0, 0, None
+    for e in entries:
+        if e["name"].lower().endswith(".cue"):
+            try:
+                tracks = iso9660.parse_cue(head(url, e).decode("latin-1"))
+            except Exception:
+                continue
+            folder = str(PurePosixPath(e["name"]).parent)
+            prefix = "" if folder == "." else folder + "/"
+            data = iso9660.data_track(tracks)
+            bin_entry = data and by_name.get((prefix + PurePosixPath(data["file"].replace("\\", "/")).name).lower())
+            if bin_entry:
+                image, mode, first, audio, note = bin_entry, data["mode"], data["start"], sum(t["mode"] == "AUDIO" for t in tracks), e["name"]
+                break
+    if not image:
+        isos = [e for e in entries if e["name"].lower().endswith((".iso", ".bin", ".img"))]
+        if not isos:
+            return None
+        image = max(isos, key=lambda e: e["size"])
+        note = image["name"]
+    if image["method"] != 0:  # compressed inside the zip: it cannot be read in place, trying it opens it
+        return {"verdict": "nested", "inner": [note]}
+    read_raw = member_reader(url, image)
+    if mode is None:
+        headb = read_raw(0, game_fetch.RAW_HEAD)
+        mode = "MODE1/2048" if iso9660.is_iso(headb) else iso9660.raw_mode(headb)
+        if not mode:
+            return None
+    read = iso9660.track_reader(read_raw, mode, first)
+    out = analyse(iso9660.listing(read), lambda e: iso9660.read_file(read, e, HEAD), title, start)
+    return dict(out, cd=True, cdInZip=note, audioTracks=audio)
 
 
 def look_at_iso(url: str, title: str, start: str | None) -> dict:
@@ -173,7 +221,7 @@ def analyse(entries: list[dict], first_bytes, title: str, start: str | None) -> 
     programs.sort(key=lambda x: (order.get(x["path"], 999), x["path"]))
     out["programs"] = programs[:40]
     out["suggested"] = ranked[0] if ranked else None
-    inner = [n for n in names if n.lower().endswith(game_fetch.ARCHIVES)]
+    inner = [n for n in names if n.lower().endswith(game_fetch.ARCHIVES + (".cue",))]
     if out.get("scummvm"):
         out["verdict"] = "scummvm"
     elif ranked:
@@ -187,6 +235,14 @@ def analyse(entries: list[dict], first_bytes, title: str, start: str | None) -> 
     return out
 
 
+def look_at_cd(url: str, mode: str, start: int, title: str, emu_start: str | None) -> dict:
+    """The data track of a raw image (or an .iso), read remotely sector by sector."""
+    read = iso9660.track_reader(lambda off, n: ranged(url, off, off + n - 1, n), mode, start)
+    out = analyse(iso9660.listing(read), lambda e: iso9660.read_file(read, e, HEAD), title, emu_start)
+    out["cd"] = True  # DOSBox mounts it as drive D:; ScummVM gets its files
+    return out
+
+
 def inspect(ident: str) -> dict:
     if not re.fullmatch(r"[A-Za-z0-9._-]{1,120}", ident):
         raise InspectError("bad Internet Archive identifier")
@@ -195,16 +251,51 @@ def inspect(ident: str) -> dict:
     if not md:
         raise InspectError("no such item")
     title = str(sync_catalog.as_list(md.get("title"))[0] if md.get("title") else ident)
+    emu_start = md.get("emulator_start")
     files = [f for f in meta.get("files", []) if f.get("source") != "metadata" or str(f.get("name", "")).lower().endswith(".zip")]
-    zips = sorted((f for f in files if str(f.get("name", "")).lower().endswith(game_fetch.ARCHIVES)), key=lambda f: -int(f.get("size") or 0))
+    url = lambda name: f"{sync_catalog.IA}/download/{urllib.parse.quote(ident)}/{urllib.parse.quote(name)}"
+    part = lambda f: {"name": f["name"], "size": int(f.get("size") or 0), "md5": f.get("md5"), "sha1": f.get("sha1"), "url": url(f["name"])}
+    by_name = {PurePosixPath(str(f.get("name", ""))).name.lower(): f for f in files}
     report = {"identifier": ident, "title": title, "page": f"https://archive.org/details/{ident}",
               "year": sync_catalog.year_of(md), "creator": md.get("creator"), "rights": sync_catalog.ia_rights(md),
-              "start": md.get("emulator_start"), "zips": [],
+              "start": emu_start, "zips": [],
               "other": [{"name": f["name"], "size": int(f.get("size") or 0)} for f in files if OTHER.search(str(f.get("name", "")))][:10]}
-    for f in zips[:MAX_ZIPS]:
+
+    # CD images published as a cue sheet and its tracks (.bin): one candidate with all its parts
+    in_cues: set[str] = set()
+    for f in [f for f in files if str(f.get("name", "")).lower().endswith(".cue")][:MAX_ZIPS]:
+        z = {"name": f["name"], "kind": "cue", "url": url(f["name"]), "size": int(f.get("size") or 0)}
+        try:
+            size = int(f.get("size") or 0)
+            tracks = iso9660.parse_cue(ranged(z["url"], 0, max(size, 1) - 1, 65536).decode("latin-1"))
+            bins = []
+            for t in tracks:
+                g = by_name.get(PurePosixPath(t["file"].replace("\\", "/")).name.lower())
+                if not g:
+                    raise InspectError(f"the cue sheet needs {t['file']}, which is not in the item")
+                if g not in bins:
+                    bins.append(g)
+            in_cues.update(str(g["name"]) for g in bins)
+            z["parts"] = [part(f)] + [part(g) for g in bins]
+            z["size"] = sum(p["size"] for p in z["parts"])
+            z["audioTracks"] = sum(t["mode"] == "AUDIO" for t in tracks)
+            data = iso9660.data_track(tracks)
+            if z["size"] > game_fetch.MAX_BYTES:
+                z["verdict"] = "too-big"
+            elif not data:
+                z["verdict"] = "none"
+            else:
+                z.update(look_at_cd(url(by_name[PurePosixPath(data["file"].replace("\\", "/")).name.lower()]["name"]),
+                                    data["mode"], data["start"], title, emu_start))
+        except Exception as e:  # one image that cannot be read does not hide the rest
+            z["verdict"], z["error"] = "error", f"{type(e).__name__}: {e}"[:200]
+        report["zips"].append(z)
+
+    candidates = [f for f in files if str(f.get("name", "")).lower().endswith(game_fetch.ARCHIVES + (".bin", ".img"))
+                  and str(f["name"]) not in in_cues]
+    for f in sorted(candidates, key=lambda f: -int(f.get("size") or 0))[:MAX_ZIPS]:
         size = int(f.get("size") or 0)
-        z = {"name": f["name"], "size": size, "md5": f.get("md5"), "sha1": f.get("sha1"),
-             "url": f"{sync_catalog.IA}/download/{urllib.parse.quote(ident)}/{urllib.parse.quote(f['name'])}"}
+        z = dict(part(f))
         ext = PurePosixPath(f["name"]).suffix.lower()
         z["kind"] = ext[1:]
         if size > game_fetch.MAX_BYTES:
@@ -213,12 +304,19 @@ def inspect(ident: str) -> dict:
             z["verdict"] = "packed"
         else:
             try:
-                z.update(look_at_iso(z["url"], title, md.get("emulator_start")) if ext == ".iso" else
-                         look_at_zip(z["url"], size, title, md.get("emulator_start")))
-            except Exception as e:  # one zip that cannot be read does not hide the others
+                if ext in (".iso", ".bin", ".img"):  # an .iso, or a raw image without its cue sheet
+                    head = ranged(z["url"], 0, game_fetch.RAW_HEAD - 1, game_fetch.RAW_HEAD)
+                    mode = "MODE1/2048" if iso9660.is_iso(head) else iso9660.raw_mode(head)
+                    if not mode:
+                        continue  # a .bin that is not a CD image (data of something else)
+                    z["kind"] = "iso" if mode == "MODE1/2048" else "bin"
+                    z.update(look_at_cd(z["url"], mode, 0, title, emu_start))
+                else:
+                    z.update(look_at_zip(z["url"], size, title, emu_start))
+            except Exception as e:  # one file that cannot be read does not hide the others
                 z["verdict"], z["error"] = "error", f"{type(e).__name__}: {e}"[:200]
         report["zips"].append(z)
-    rank = {"dosbox": 0, "scummvm": 0, "nested": 1, "packed": 1}
+    rank = {"scummvm": 0, "dosbox": 0, "nested": 1, "packed": 1}
     report["zips"].sort(key=lambda z: (rank.get(z.get("verdict"), 2), -z["size"]))  # what can be played first
     usable = [z for z in report["zips"] if z.get("verdict") in ("dosbox", "scummvm")]
     report["best"] = usable[0]["name"] if usable else None

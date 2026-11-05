@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.parse
 import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -50,6 +51,23 @@ ITEMS["cd_quest_1995"] = {"title": "Quest for the Museum CD (1995)", "year": "19
                           "collection": ["softwarelibrary_msdos_games"]}
 
 
+def cue_bin(data_files, name="GAME", seconds=1):
+    """A raw CD (MODE1/2352 data track + an AUDIO track of `seconds` of silence) and its cue sheet."""
+    data = iso9660.raw(iso9660.build(data_files))
+    audio = bytes(2352 * 75 * seconds)
+    cue = (f'FILE "{name} (Track 1).bin" BINARY\r\n  TRACK 01 MODE1/2352\r\n    INDEX 01 00:00:00\r\n'
+           f'FILE "{name} (Track 2).bin" BINARY\r\n  TRACK 02 AUDIO\r\n    INDEX 01 00:00:00\r\n').encode()
+    return {f"{name}.cue": cue, f"{name} (Track 1).bin": data, f"{name} (Track 2).bin": audio}
+
+
+# a CD with ScummVM data *and* a DOS program (ScummVM must win), zipped; and a CD as loose .cue + .bin files
+FILES["/download/cd_sky/SKYCD.ZIP"] = zbytes(cue_bin({"SKY.DNR": b"d" * 100, "SKY.DSK": b"k" * 100, "SKY.EXE": DOS}, "SKY"))
+ITEMS["cd_sky"] = {"title": "Beneath a Steel Sky CD (1994)", "year": "1994", "creator": "Revolution Software", "collection": ["softwarelibrary_msdos_games"]}
+for n, d in cue_bin({"QUEST/QUEST.EXE": DOS}, "QUESTCUE").items():
+    FILES[f"/download/cd_quest_cue/{n}"] = d
+ITEMS["cd_quest_cue"] = {"title": "Quest for the Museum CD-ROM (1996)", "year": "1996", "creator": "Some Studio", "collection": ["softwarelibrary_msdos_games"]}
+
+
 def seven(files):
     """A .7z made with the 7-Zip program (Python cannot write them); None without it."""
     exe = next((b for b in ("7z", "7zz", "7za") if shutil.which(b)), None)
@@ -85,7 +103,7 @@ class H(BaseHTTPRequestHandler):
         pass
 
     def do_GET(self):
-        path = self.path.split("?")[0]
+        path = urllib.parse.unquote(self.path.split("?")[0])
         m = re.fullmatch(r"/metadata/([\w.-]+)", path)
         if path == "/advancedsearch.php":
             data = json.dumps(SEARCH).encode()

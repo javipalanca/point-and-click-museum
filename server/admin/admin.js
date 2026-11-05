@@ -174,9 +174,12 @@
       const blind = z.verdict === "nested" || z.verdict === "packed";   // what it holds is known only once it is opened
       const usable = (z.programs || []).some(pr => pr.type !== "windows");
       return '<div class="zip" data-file="' + esc(z.name) + '"><h4>' + esc(z.name) + ' <span class="muted">' + mb(z.size) + (z.files ? " · " + z.files + " ficheros" : "") + '</span> <span class="badge ' + cls + '">' + esc(label) + "</span></h4>" +
-        (svm ? '<p>Datos de ScummVM: motor <b>' + esc(svm.engine) + "</b>" + (svm.folder ? " en " + esc(svm.folder) + "/" : "") + (svm.built ? "" : ' <span class="err">(no está en nuestra compilación)</span>') + "</p>" : "") +
+        (svm ? '<p>Datos de ScummVM: motor <b>' + esc(svm.engine) + "</b>" + (svm.folder ? " en " + esc(svm.folder) + "/" : "") + (svm.built ? " · <b>se jugará con ScummVM</b>" + (z.suggested ? " (tiene prioridad sobre el programa de DOS)" : "")
+          : ' <span class="err">(no está en nuestra compilación' + (z.suggested ? ": se usará DOSBox" : "") + ")</span>") + "</p>" : "") +
         (z.inner ? "<p>Contiene: " + z.inner.map(esc).join(", ") + ". Se abre al probarlo.</p>" : "") +
-        (z.cd ? "<p>Imagen de CD: DOSBox la monta como unidad D: y arranca el juego desde ella.</p>" : "") +
+        (z.cd ? "<p>Imagen de CD" + (z.cdInZip ? " dentro del zip (" + esc(z.cdInZip) + (z.audioTracks ? ", " + z.audioTracks + " pista" + (z.audioTracks > 1 ? "s" : "") + " de audio" : "") + ")" : "") + (z.kind === "cue" ? " (.cue con " + (z.parts.length - 1) + " fichero" + (z.parts.length > 2 ? "s" : "") + " .bin" +
+          (z.audioTracks ? ", " + z.audioTracks + " pista" + (z.audioTracks > 1 ? "s" : "") + " de audio" : "") + ")" : "") +
+          ": DOSBox la monta como unidad D:; para ScummVM se sacan sus ficheros" + (z.audioTracks ? " y la música como trackNN.wav" : "") + ".</p>" : "") +
         (z.error ? '<p class="err">' + esc(z.error) + "</p>" : "") +
         (progs && usable ? '<label class="row">Programa <select name="exe"' + (svm ? " disabled" : "") + ">" + progs + "</select></label>" : "") +
         (progs && !usable ? '<p class="muted">Programas: ' + z.programs.map(pr => esc(pr.path) + " (Windows)").join(", ") + "</p>" : "") +
@@ -188,12 +191,14 @@
     return '<div class="inspection"><p><a href="' + url(r.page) + '" target="_blank" rel="noopener">Abrir en archive.org ↗</a>' +
       (r.start ? ' · su emulador arranca <code>' + esc(r.start) + "</code>" : "") + "</p>" +
       (r.zips.length ? r.zips.map(zip).join("") : '<p class="err">No tiene ningún zip.</p>') +
-      (r.other.length ? '<p class="muted">Otros ficheros (aún no se pueden usar): ' + r.other.map(o => esc(o.name) + " " + mb(o.size)).join(", ") + "</p>" : "") + "</div>";
+      (r.other.length ? '<p class="muted">Otros ficheros (formatos que aún no se pueden usar): ' + r.other.map(o => esc(o.name) + " " + mb(o.size)).join(", ") + "</p>" : "") + "</div>";
   }
   const choice = el => {
     const z = el.closest(".zip"), sel = z.querySelector("select[name=exe]"), ident = el.closest("tr.inspect").dataset.for;
     const rep = inspected[ident], info = rep.zips.find(x => x.name === z.dataset.file);
-    return { archive: ident, file: z.dataset.file, title: rep.title, engine: info.scummvm ? info.scummvm.engine : null, exe: info.scummvm ? null : (sel ? sel.value : null) };
+    // ScummVM first: its data wins when that engine is built; otherwise the DOS program chosen in the list
+    const svm = info.scummvm && (info.scummvm.built || !info.suggested) ? info.scummvm.engine : null;
+    return { archive: ident, file: z.dataset.file, title: rep.title, engine: svm, exe: svm ? null : (sel ? sel.value : null) };
   };
   const inspected = {};
 

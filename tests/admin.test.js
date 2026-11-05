@@ -230,6 +230,31 @@ const firstLine = proc => new Promise((resolve, reject) => {
       check(true, "the loose .7z was added after trying it");
     } else console.log("  (no 7-Zip program here: the .7z checks are skipped)");
 
+    console.log("CD images as .cue + .bin, and ScummVM first");
+    await page.fill('#iaLink [name=link]', "https://archive.org/details/cd_quest_cue");
+    await page.click("#iaLink button");
+    const cueSel = '#iaLinkResult .zip[data-file="QUESTCUE.cue"]';
+    await page.waitForSelector(cueSel);
+    check(/\.cue con 2 ficheros \.bin, 1 pista de audio/.test(await page.textContent(cueSel)) && (await page.$eval(cueSel + " select", s => s.value)) === "QUEST/QUEST.EXE",
+      "a cue sheet with its .bin tracks, read without downloading them");
+    await page.click(cueSel + " [data-try]");
+    await page.waitForTimeout(6000);
+    check(!!(await page.$("#playerHost canvas")), "the .cue + .bin CD runs in the panel's DOSBox");
+    await page.click("#playerClose");
+    await page.click(cueSel + " [data-add]");
+    await page.waitForFunction(() => [...document.querySelectorAll("#detail .edition")].some(e => /cd_quest_cue/.test(e.textContent)));
+    const cueEd = JSON.parse(fs.readFileSync(catFile, "utf8")).games.find(g => g.id === "quest-for-the-museum").editions.find(e => e.archive === "cd_quest_cue");
+    check(cueEd && cueEd.download.parts.length === 3 && cueEd.run.exe === "QUEST/QUEST.EXE", "added with the cue sheet and both tracks");
+    await page.fill('#iaLink [name=link]', "https://archive.org/details/cd_sky");
+    await page.click("#iaLink button");
+    const skySel = '#iaLinkResult .zip[data-file="SKYCD.ZIP"]';
+    await page.waitForSelector(skySel);
+    check(/se jugará con ScummVM \(tiene prioridad sobre el programa de DOS\)/.test(await page.textContent(skySel)), "ScummVM data and a DOS program: ScummVM is chosen");
+    await page.click(skySel + " [data-add]");
+    await page.waitForFunction(() => [...document.querySelectorAll("#detail .edition")].some(e => /cd_sky/.test(e.textContent)));
+    const skyEd = JSON.parse(fs.readFileSync(catFile, "utf8")).games.find(g => g.id === "quest-for-the-museum").editions.find(e => e.archive === "cd_sky");
+    check(skyEd && skyEd.emulator === "scummvm" && skyEd.run.svmEngine === "sky", "added as a ScummVM edition");
+
     console.log("Statistics in the panel");
     await page.click('[data-tab="stats"]');
     await page.waitForSelector("#stats .counts");

@@ -1,9 +1,12 @@
-"""A small reader of ISO 9660 CD images (the format of the CD-ROMs of the 90s), standard library only.
+"""A small reader of CD images (the CD-ROMs of the 90s), standard library only.
 
-It works on any `read(offset, length) -> bytes`, so the same code lists a local .iso and one on Internet Archive
-through HTTP range requests (tools/ia_inspect.py), without downloading the whole image. It reads the primary
-volume descriptor's directory tree (8.3 names, which is what DOS games use) and also writes small images for
-the tests (`build`)."""
+  · ISO 9660 file systems: the directory tree of the primary volume descriptor (8.3 names, as DOS games use).
+  · .iso images (2048-byte sectors) and raw .bin images (2352-byte sectors, MODE1 or MODE2) with their .cue sheet,
+    whose first data track holds the file system and whose AUDIO tracks are the CD's music (CD-DA).
+
+It works on any `read(offset, length) -> bytes`, so the same code lists a local image and one on Internet Archive
+through HTTP range requests (tools/ia_inspect.py), without downloading it. It also writes small images for the
+tests (`build`, `raw`)."""
 from __future__ import annotations
 
 import struct
@@ -142,3 +145,73 @@ def build(files: dict[str, bytes], label: str = "MUSEUM") -> bytes:
         data = dirs[d][n]
         img[lba * SECTOR:lba * SECTOR + len(data)] = data
     return bytes(img)
+
+
+# ---------------------------------------------------------------- raw images (.bin) and cue sheets
+# sector size and where the 2048 bytes of user data start inside each sector
+LAYOUTS = {"MODE1/2048": (2048, 0), "MODE1/2352": (2352, 16), "MODE2/2352": (2352, 24), "MODE2/2336": (2336, 8)}
+SYNC = b"\x00" + b"\xff" * 10 + b"\x00"
+
+
+def parse_cue(text: str) -> list[dict]:
+    """The tracks of a cue sheet: [{"file", "number", "mode", "start" (sector within its file)}]."""
+    tracks, current = [], None
+    for line in text.splitlines():
+        words = line.strip().split()
+        if not words:
+            continue
+        key = words[0].upper()
+        if key == "FILE":
+            m = line.strip()[4:].strip()
+            if m.startswith('"'):
+                current = m[1:m.index('"', 1)]
+            else:
+                current = m.rsplit(" ", 1)[0]
+        elif key == "TRACK" and len(words) >= 3 and current is not None:
+            tracks.append({"file": current, "number": int(words[1]), "mode": words[2].upper(), "start": 0})
+        elif key == "INDEX" and len(words) >= 3 and tracks and words[1] == "01":
+            mm, ss, ff = (int(x) for x in words[2].split(":"))
+            tracks[-1]["start"] = (mm * 60 + ss) * 75 + ff
+    return tracks
+
+
+def data_track(tracks: list[dict]) -> dict | None:
+    return next((t for t in tracks if t["mode"] in LAYOUTS), None)
+
+
+def raw_mode(head: bytes) -> str | None:
+    """The layout of a .bin without its cue sheet, from its first 17 sectors (None if it is not a CD image)."""
+    for mode, (size, off) in LAYOUTS.items():
+        p = 16 * size + off
+        if len(head) >= p + 6 and head[p + 1:p + 6] == b"CD001" and (size == 2048 or head[16 * size:16 * size + 12] == SYNC):
+            return mode
+    return None
+
+
+def track_reader(read_raw: Reader, mode: str, start: int = 0) -> Reader:
+    """A reader of the 2048-byte logical sectors of a data track inside a raw image."""
+    size, off = LAYOUTS[mode]
+    if size == SECTOR and off == 0 and start == 0:
+        return read_raw
+
+    def read(offset: int, length: int) -> bytes:
+        if length <= 0:
+            return b""
+        first, last = offset // SECTOR, (offset + length - 1) // SECTOR
+        raw = read_raw((start + first) * size, (last - first + 1) * size)
+        data = b"".join(raw[i * size + off:i * size + off + SECTOR] for i in range(last - first + 1))
+        return data[offset - first * SECTOR:offset - first * SECTOR + length]
+    return read
+
+
+def raw(iso: bytes, mode: str = "MODE1/2352") -> bytes:
+    """An .iso turned into a raw image (sync + header + data + empty error correction). For the tests."""
+    size, off = LAYOUTS[mode]
+    out = bytearray()
+    for i in range(len(iso) // SECTOR):
+        lba = i + 150
+        msf = bytes(((lba // 4500 // 10) << 4 | lba // 4500 % 10, (lba // 75 % 60 // 10) << 4 | lba // 75 % 60 % 10,
+                     (lba % 75 // 10) << 4 | lba % 75 % 10))
+        head = (SYNC + msf + bytes([1 if mode.startswith("MODE1") else 2]) + (bytes(8) if off == 24 else b""))[:off]
+        out += (head + iso[i * SECTOR:(i + 1) * SECTOR]).ljust(size, b"\0")
+    return bytes(out)

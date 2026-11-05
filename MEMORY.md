@@ -366,6 +366,21 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   usaba el `admin.js` anterior con el servidor nuevo). `/admin/` sirve `admin.js?v=` y `admin.css?v=` con un hash de
   su contenido, así una actualización nunca se mezcla con una copia vieja. Prueba con un elemento cuyo único fichero
   es un .7z suelto.
+- **2026-11-05 · BIN/CUE y ScummVM primero** (petición del usuario: «¿y los .bin y .cue? La prioridad siempre ha de ser
+  ScummVM frente a DOSBox»). Comprobado en el código de ScummVM 2.9.1 (`backends/audiocd/default/default-audiocd.cpp`,
+  `audio/audiostream.cpp`): **no lee imágenes de CD**; el audio de CD lo busca como `track1`/`track01`/`track_1` +
+  `.ogg/.flac/.mp3/.m4a/.wav` (WAV siempre disponible). Así que: `tools/iso9660.py` lee hojas .cue y sectores crudos
+  (MODE1/2352, MODE2/2352, MODE2/2336); `game_fetch.CD` representa .iso, .cue+.bin o .bin suelto; **DOSBox** monta la
+  imagen como D: (`imgmount d cd.cue -t iso`, con las pistas renombradas `cd01.bin`…; probado con js-dos real) y
+  arranca el juego desde C: si los ficheros del zip lo traen o desde D:; **ScummVM** recibe los ficheros de la pista de
+  datos y cada pista AUDIO como `trackNN.wav` (PCM 44,1 kHz estéreo con `wave`). Un .cue con sus .bin sueltos en un
+  elemento de IA se descarga en partes (`download.parts`, cada una con su hash). La inspección los lee sin descargar
+  (también un CD guardado sin comprimir dentro de un zip; comprimido → «se abre al probarlo»). **ScummVM primero**:
+  `prepare(switch=True)` (validación de la sincronización y del panel) elige ScummVM si reconoce los datos y el motor
+  está compilado aunque haya un .EXE de DOS, y `game_fetch.detected` lo guarda en la edición (`detected`, que la
+  sincronización conserva mientras la descarga sea la misma); el proxy público (`switch=False`) se ciñe a la edición.
+  En el panel, «Probar»/«Añadir» eligen ScummVM si el motor está compilado. Sin probar con archive.org real ni con un
+  juego real en CD; formatos aún no admitidos: .mdf/.mds, .nrg, .ccd, .chd.
 
 ## Datos técnicos útiles
 

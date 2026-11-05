@@ -83,7 +83,8 @@ def inspect_item(ident: str) -> dict:
 
 
 def choose(report: dict, file: str | None, exe: str | None, engine: str | None) -> tuple[dict, dict]:
-    """The zip of an inspected item and how to start it: the person's choice, or what the inspection suggests."""
+    """The zip of an inspected item and how to start it: the person's choice, or what the inspection suggests.
+    ScummVM first: its data, when that engine is in our build, wins over a DOS program."""
     zips = {z["name"]: z for z in report["zips"]}
     z = zips.get(file or report.get("best") or "")
     if not z:
@@ -96,10 +97,13 @@ def choose(report: dict, file: str | None, exe: str | None, engine: str | None) 
         if not re.fullmatch(r"[\w .()/\\-]{1,160}", exe):
             raise ValueError("bad program name")
         return z, {"emulator": "dosbox", "run": {"exe": exe}}
-    if (z.get("scummvm") or {}).get("engine"):
-        return z, {"emulator": "scummvm", "run": {"svmEngine": z["scummvm"]["engine"]}}
+    svm = z.get("scummvm") or {}
+    if svm.get("engine") and svm.get("built"):
+        return z, {"emulator": "scummvm", "run": {"svmEngine": svm["engine"]}}
     if z.get("suggested"):
         return z, {"emulator": "dosbox", "run": {"exe": z["suggested"]}}
+    if svm.get("engine"):  # ScummVM data, but its engine is not built: trying it says so
+        return z, {"emulator": "scummvm", "run": {"svmEngine": svm["engine"]}}
     if z.get("verdict") in ("nested", "packed"):  # only known once it is opened: trying it tells (see TRIED)
         return z, TRIED.get((report["identifier"], z["name"])) or {"emulator": "auto", "run": {}}
     raise ValueError("this zip has no program to start: choose one")
@@ -107,6 +111,14 @@ def choose(report: dict, file: str | None, exe: str | None, engine: str | None) 
 
 TRIED: dict[tuple[str, str], dict] = {}  # (identifier, file) -> how it ran when it was tried (for 7z and archives inside zips)
 LINK = re.compile(r"archive\.org/(?:details|download|embed)/([A-Za-z0-9._-]{1,120})(?:/([^?#]+))?")
+
+
+def download_of(z: dict) -> dict:
+    """What to download for one candidate of an inspection: a file, or a cue sheet with its tracks."""
+    dl = {"provider": "archive", "file": z["name"], "size": z["size"] or None, "md5": z.get("md5"), "sha1": z.get("sha1"), "url": z["url"]}
+    if z.get("parts"):
+        dl.update(parts=z["parts"], size=None, md5=None, sha1=None)
+    return dl
 
 
 def item_ref(value: str) -> tuple[str, str | None]:
@@ -390,8 +402,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
             return send(h, 502, {"error": f"Internet Archive did not answer ({type(e).__name__})"})
         z, how = choose(report, arg("file"), arg("exe"), arg("engine"))
         key = "try-" + hashlib.sha1(json.dumps([ident, z["name"], how], sort_keys=True).encode()).hexdigest()[:16]
-        game = {"id": key, "title": report["title"], "download": {"provider": "archive", "url": z["url"], "size": z["size"] or None,
-                                                                  "md5": z.get("md5"), "sha1": z.get("sha1")}, **how}
+        game = {"id": key, "title": report["title"], "download": download_of(z), **how}
         t0 = time.time()
         try:
             r = game_fetch.prepare(game, P["cache"], admin=True)
@@ -451,8 +462,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
                 z, how = choose(report, b.get("file"), b.get("exe"), b.get("engine"))
                 if how["emulator"] == "auto":
                     raise ValueError("pruébalo antes de añadirlo: hasta abrir este archivo no se sabe qué contiene")
-                entry["download"] = {"provider": "archive", "file": z["name"], "size": z["size"] or None, "md5": z.get("md5"),
-                                     "sha1": z.get("sha1"), "url": z["url"]}
+                entry["download"] = download_of(z)
                 entry.update(how)
                 stem = re.sub(r"\.zip$", "", z["name"], flags=re.I)
                 many = len(report["zips"]) > 1
@@ -503,7 +513,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
             return send(h, 405, {"error": "POST"})
         t0 = time.time()
         try:
-            r = game_fetch.prepare({"id": key, "title": g["title"], **ed}, P["cache"], admin=True)
+            r = game_fetch.prepare({"id": key, "title": g["title"], **ed}, P["cache"], admin=True, switch=True)  # ScummVM first
             record_download(P, {"key": key, "title": g["title"], "ok": True, "by": "panel", "seconds": round(time.time() - t0, 1),
                                 "bytes": r.get("bytes"), "checks": r["checks"]})
         except Exception as e:  # GameError or network: shown in the panel
@@ -516,8 +526,16 @@ def route(h, method: str, path: str, q: dict, P: dict):
                     sync_catalog.restatus(g2)
                 edit(P, fail)
             return send(h, 422 if isinstance(e, game_fetch.GameError) else 502, {"error": str(e)})
+        if r["kind"] == "svm" and ed.get("emulator") != "scummvm":  # it turned out to be ScummVM data: keep it so
+            def found(cat, ov):
+                g2, ed2 = find(cat, key)
+                game_fetch.detected(ed2, r)
+                ov_edition(ov, g2["id"], key).update(emulator="scummvm", run={"svmEngine": r["engine"]})
+            edit(P, found)
         if action == "bundle":
-            return send_file(h, Path(r["file"]), "application/zip")
+            return send_file(h, Path(r["file"]), "application/zip", {"X-PCM-Emulator": "scummvm" if r["kind"] == "svm" else "dosbox",
+                                                                     "X-PCM-Engine": r.get("engine") or "",
+                                                                     "X-PCM-Exe": urllib.parse.quote(r.get("exe") or "")})
 
         def ok(cat, ov):
             g2, ed2 = find(cat, key)

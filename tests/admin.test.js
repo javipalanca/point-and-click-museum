@@ -180,6 +180,41 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await page.waitForSelector("#detail .edition");
     check(!(await page.$("#detail [data-restore]")), "restored");
 
+    console.log("From an archive.org link: a CD image and a game packed as .7z");
+    await page.fill("#q", "quest for the museum");
+    await page.click('#gameList li[data-id="quest-for-the-museum"]');
+    await page.fill('#iaLink [name=link]', "https://archive.org/details/cd_quest_1995");
+    await page.click("#iaLink button");
+    const cdSel = '#iaLinkResult .zip[data-file="QUESTCD.ISO"]';
+    await page.waitForSelector(cdSel);
+    check(/Imagen de CD/.test(await page.textContent(cdSel)) && (await page.$eval(cdSel + " select", s => s.value)) === "QUEST/QUEST.EXE",
+      "a pasted link shows what the item holds: a CD image, with the program on it");
+    await page.click(cdSel + " [data-try]");
+    await page.waitForTimeout(6000);
+    check(!!(await page.$("#playerHost canvas")), "the CD image runs in the panel's DOSBox (mounted as D:)");
+    await page.click("#playerClose");
+    await page.click(cdSel + " [data-add]");
+    await page.waitForFunction(() => [...document.querySelectorAll("#detail .edition")].some(e => /cd_quest_1995/.test(e.textContent)));
+    const cdEd = JSON.parse(fs.readFileSync(catFile, "utf8")).games.find(g => g.id === "quest-for-the-museum").editions.find(e => e.archive === "cd_quest_1995");
+    check(cdEd && cdEd.download.file === "QUESTCD.ISO" && cdEd.run.exe === "QUEST/QUEST.EXE", "added from the link, with its CD image and program");
+    if (await page.evaluate(async () => (await fetch("/api/admin/inspect?archive=skulls_7z")).ok)) {
+      await page.fill('#iaLink [name=link]', "https://archive.org/download/skulls_7z/Skulls.zip");
+      await page.click("#iaLink button");
+      const sk = '#iaLinkResult .zip[data-file="Skulls.zip"]';
+      await page.waitForSelector(sk);
+      check(/Skulls\.7z/.test(await page.textContent(sk)) && await page.$eval(sk + " [data-add]", b => b.disabled) && await page.$(sk + ".linked"),
+        "a zip with the game as .7z: the linked file is marked, and it must be tried before adding it");
+      await page.click(sk + " [data-try]");
+      await page.waitForTimeout(6000);
+      check(!!(await page.$("#playerHost canvas")) && /SKULLS\.EXE/.test(await page.textContent("#playerTitle")), "trying it opens the .7z and runs the program it finds");
+      await page.click("#playerClose");
+      check(!(await page.$eval(sk + " [data-add]", b => b.disabled)), "after trying it, it can be added");
+      await page.click(sk + " [data-add]");
+      await page.waitForFunction(() => [...document.querySelectorAll("#detail .edition")].some(e => /skulls_7z/.test(e.textContent)));
+      const skEd = JSON.parse(fs.readFileSync(catFile, "utf8")).games.find(g => g.id === "quest-for-the-museum").editions.find(e => e.archive === "skulls_7z");
+      check(skEd && skEd.run.exe === "SKULLS/SKULLS.EXE" && skEd.emulator === "dosbox", "added with what ran when it was tried");
+    } else console.log("  (no 7-Zip program here: the .7z checks are skipped)");
+
     console.log("Statistics in the panel");
     await page.click('[data-tab="stats"]');
     await page.waitForSelector("#stats .counts");

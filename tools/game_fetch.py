@@ -5,7 +5,9 @@ validates new games, and the download proxy server/games.py, which prepares them
     python3 tools/game_fetch.py <catalog-id> [--cache DIR]     # download, validate and prepare one game
 
 Only from the hosts in ALLOWED_HOSTS and only games whose rights allow it (see RIGHTS_PLAYABLE). Checks, in order:
-  size (declared and maximum) · checksum (md5/sha1 from Internet Archive's metadata, when known) · it is a valid zip
+  size (declared and maximum) · checksum (md5/sha1 from Internet Archive's metadata, when known) · it opens: a zip,
+  a 7z or RAR (with the 7-Zip program, `7z`), or a CD image (.iso, read here and mounted in DOSBox as drive D:); a
+  zip that holds no game but another archive (a .7z, an .iso…) is opened in turn
   · DOSBox: a DOS program to start (the catalogue's `run.exe`, Internet Archive's emulator_start, or the best
   guess of tools/add_game.py), not a Windows executable · ScummVM: the engine is in our ScummVM build and its data
   files are there.
@@ -20,6 +22,8 @@ import io
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -32,7 +36,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 import add_game  # noqa: E402
-from tools.jsdos import make_bundle  # noqa: E402
+import iso9660  # noqa: E402
+from tools.jsdos import dosbox_conf, make_bundle  # noqa: E402
 
 UA = "PointAndClickMuseum-games/1.0 (+https://github.com/javipalanca/point-and-click-museum)"
 ALLOWED_HOSTS = {"downloads.scummvm.org", "archive.org"}  # and Internet Archive's servers (*.archive.org)
@@ -124,6 +129,109 @@ def read_files(path: Path) -> dict[str, bytes]:
         raise GameError(f"damaged zip ({e})") from None
 
 
+# ---------------------------------------------------------------- archives: zip, 7z / RAR, CD images
+ARCHIVES = (".zip", ".7z", ".rar", ".iso")
+
+
+def sniff(path: Path) -> str | None:
+    with open(path, "rb") as f:
+        head = f.read(16 * iso9660.SECTOR + 6)
+    if head[:4] in (b"PK\x03\x04", b"PK\x05\x06"):
+        return "zip"
+    if head[:6] == b"7z\xbc\xaf\x27\x1c":
+        return "7z"
+    if head[:4] == b"Rar!":
+        return "rar"
+    if iso9660.is_iso(head):
+        return "iso"
+    return None
+
+
+def seven_zip() -> str | None:
+    return next((b for b in ("7z", "7zz", "7za") if shutil.which(b)), None)
+
+
+def unpack_7z(path: Path, work: Path) -> dict[str, bytes]:
+    """A 7z or RAR file, opened with the 7-Zip program (Python's library cannot read them)."""
+    exe = seven_zip()
+    if not exe:
+        raise GameError("this game comes as 7z/RAR: the 7-Zip program (7z) is needed on the server "
+                        "(apt install p7zip-full, or brew install sevenzip)")
+    listed = subprocess.run([exe, "l", "-slt", "-ba", str(path)], capture_output=True, text=True, timeout=120)
+    if listed.returncode != 0:
+        raise GameError("damaged or unsupported 7z/RAR archive" + (" (RAR needs a 7-Zip build with RAR support)" if path.suffix.lower() == ".rar" else ""))
+    total = sum(int(m) for m in re.findall(r"^Size = (\d+)", listed.stdout, re.M))
+    if total > MAX_BYTES * 3:
+        raise GameError("unpacks to too much data")
+    out = work / ("x-" + path.stem)
+    out.mkdir(parents=True, exist_ok=True)
+    done = subprocess.run([exe, "x", "-y", "-bd", f"-o{out}", str(path)], capture_output=True, text=True, timeout=900)
+    if done.returncode != 0:
+        raise GameError("could not unpack the 7z/RAR archive")
+    files, base = {}, out.resolve()
+    for f in sorted(out.rglob("*")):
+        if f.is_symlink() or not f.is_file() or base not in f.resolve().parents:
+            continue
+        files[f.relative_to(out).as_posix()] = f.read_bytes()
+    shutil.rmtree(out, ignore_errors=True)
+    return files
+
+
+def has_game(files: dict[str, bytes]) -> bool:
+    return bool(add_game.candidates(files, "") or add_game.detect_engine(files)[0])
+
+
+def unpack(path: Path, work: Path, depth: int = 0) -> tuple[dict[str, bytes], Path | None, str]:
+    """(files, CD image, how it was opened). A CD image is not unpacked: DOSBox mounts it as drive D:."""
+    kind = sniff(path)
+    if kind == "zip":
+        files, how = read_files(path), "valid zip"
+    elif kind in ("7z", "rar"):
+        files, how = unpack_7z(path, work), f"{kind} archive"
+    elif kind == "iso":
+        return {}, path, "CD image (ISO 9660)"
+    else:
+        raise GameError("not a zip, 7z, RAR or CD image")
+    inner = sorted((n for n in files if n.lower().endswith(ARCHIVES)), key=lambda n: -len(files[n]))
+    if depth < 2 and inner and not has_game(files):  # e.g. a zip with the manual, a cover and the game as .7z
+        nested = work / f"inner{depth}{PurePosixPath(inner[0]).suffix.lower()}"
+        nested.write_bytes(files[inner[0]])
+        files.clear()
+        sub, iso, sub_how = unpack(nested, work, depth + 1)
+        return sub, iso, f"{how}, with {PurePosixPath(inner[0]).name} inside ({sub_how})"
+    return files, None, how + f", {len(files)} files"
+
+
+class Head(bytes):
+    """The first bytes of a file, with the size of the whole file (what add_game.candidates looks at)."""
+    def __new__(cls, data: bytes, size: int):
+        obj = super().__new__(cls, data)
+        obj.full = size
+        return obj
+
+    def __len__(self):
+        return self.full
+
+
+def cd_programs(iso: Path) -> tuple[dict[str, bytes], list[dict]]:
+    """The programs of a CD image (their first 4 KB, to tell DOS from Windows) and its whole listing."""
+    read = iso9660.file_reader(iso)
+    entries = iso9660.listing(read)
+    progs = {e["name"]: Head(iso9660.read_file(read, e, 4096) or b"MZ", e["size"]) for e in entries
+             if PurePosixPath(e["name"]).suffix.lower() in add_game.RUNNABLE}
+    return progs, entries
+
+
+def cd_bundle(iso: Path, exe: str, cycles: str | None, out: Path):
+    """A js-dos bundle with the CD image, mounted as D:, starting the game from it."""
+    parts = [p for p in exe.replace("/", "\\").split("\\") if p]
+    autoexec = ["imgmount d cd.iso -t iso", "d:"] + (["cd \\" + "\\".join(parts[:-1])] if len(parts) > 1 else []) + [parts[-1]]
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_STORED) as z:
+        z.writestr(".jsdos/dosbox.conf", dosbox_conf(None, cycles, autoexec))
+        z.writestr(".jsdos/jsdos.json", json.dumps({"version": "js-dos-v8"}, indent=2))
+        z.write(iso, "cd.iso")
+
+
 def strip_folder(files: dict[str, bytes]) -> tuple[dict[str, bytes], str]:
     """Removes a single enclosing folder ('GAME/…' -> '…'), as ScummVM wants the data at --path."""
     tops = {PurePosixPath(n).parts[0] for n in files}
@@ -153,7 +261,9 @@ def find_exe(files: dict[str, bytes], wanted: str | None, stem: str) -> str:
 def prepare(game: dict, cache: Path, admin: bool = False) -> dict:
     """Downloads and prepares a catalogue game. -> {"file": path, "kind": "jsdos"|"svm", "checks": [...]}
     admin=True (the control panel, behind its password): also editions whose rights are not confirmed, so that a
-    person can test them before deciding; the public proxy never serves those."""
+    person can test them before deciding; the public proxy never serves those.
+    emulator "auto" (a 7z, or an archive inside a zip, whose contents are only known once unpacked): ScummVM if its
+    data is recognised and there is no DOS program, DOSBox otherwise; the result says which ("kind", "engine")."""
     gid = game["id"]
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,80}", gid):
         raise GameError("bad id")
@@ -164,26 +274,41 @@ def prepare(game: dict, cache: Path, admin: bool = False) -> dict:
         raise GameError("no download")
     emulator = game.get("emulator", "dosbox")
     kind = "svm" if emulator == "scummvm" else "jsdos"
-    out = cache / (f"{gid}.jsdos" if kind == "jsdos" else f"{gid}.svm.zip")
+    output = lambda k: cache / (f"{gid}.jsdos" if k == "jsdos" else f"{gid}.svm.zip")
     report = cache / f"{gid}.json"
     stamp = dl.get("sha1") or dl.get("md5") or f"{dl['url']}|{dl.get('size')}"
-    if out.exists() and report.exists():
+    if report.exists():
         rep = json.loads(report.read_text("utf-8"))
-        if rep.get("stamp") == stamp:
-            out.touch()  # recently used (LRU)
-            return dict(rep, file=str(out))
+        done = output(rep.get("kind"))
+        if rep.get("stamp") == stamp and done.exists() and (emulator == "auto" or rep.get("kind") == kind):
+            done.touch()  # recently used (LRU)
+            return dict(rep, file=str(done))
     checks = []
     if emulator == "scummvm" and not engine_built(game.get("run", {}).get("svmEngine", "")):
         raise GameError(f"ScummVM engine '{game.get('run', {}).get('svmEngine')}' is not in our build (tools/build_scummvm.sh ENGINES)")
     cache.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=cache) as tmp:
-        src = download(dl["url"], Path(tmp) / "download.zip", dl.get("size"))
+        src = download(dl["url"], Path(tmp) / "download.bin", dl.get("size"))
         checks.append(f"downloaded {src.stat().st_size} bytes from {urllib.parse.urlparse(dl['url']).hostname}")
         algo = check_hash(src, dl)
         checks.append(f"{algo} matches" if algo else "no checksum published")
-        files = read_files(src)
-        checks.append(f"valid zip, {len(files)} files")
-        run = game.get("run", {})
+        files, iso, how = unpack(src, Path(tmp))
+        checks.append(how)
+        run = dict(game.get("run", {}))
+        if emulator == "auto":  # now that it is open: ScummVM data, or a DOS program
+            names = files if not iso else {e["name"]: b"" for e in iso9660.listing(iso9660.file_reader(iso))}
+            engine = add_game.detect_engine(names)[0] if names else None
+            dos = cd_programs(iso)[0] if iso else files
+            if engine and not (run.get("exe") or add_game.candidates(dos, "")):
+                if not engine_built(engine):
+                    raise GameError(f"ScummVM data (engine '{engine}'), but that engine is not in our build (tools/build_scummvm.sh ENGINES)")
+                kind, run["svmEngine"] = "svm", engine
+            checks.append("contents: " + ("ScummVM data" if kind == "svm" else "a DOS game"))
+        out = output(kind)
+        if iso and kind == "svm":  # ScummVM wants the files, not a drive: take them out of the image
+            read = iso9660.file_reader(iso)
+            files = {e["name"]: iso9660.read_file(read, e) for e in iso9660.listing(read)}
+            iso = None
         if kind == "svm":
             data, top = strip_folder(files)
             engine, folder = add_game.detect_engine(files)
@@ -195,7 +320,12 @@ def prepare(game: dict, cache: Path, admin: bool = False) -> dict:
             with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
                 for n, d in sorted(data.items()):
                     z.writestr(n, d)
-            blob, extra = buf.getvalue(), {"files": sorted(data)}
+            blob, extra = buf.getvalue(), {"files": sorted(data), "engine": run.get("svmEngine")}
+        elif iso:
+            progs, entries = cd_programs(iso)
+            exe = find_exe(progs, run.get("exe"), game.get("title", gid))
+            checks.append(f"CD image with {len(entries)} files, mounted as D:; DOSBox runs D:\\{exe.replace('/', chr(92))}")
+            blob, extra = None, {"exe": exe, "cd": True}
         else:
             exe = find_exe(files, run.get("exe"), game.get("title", gid))
             if add_game.is_windows_exe(files[exe]):
@@ -204,7 +334,10 @@ def prepare(game: dict, cache: Path, admin: bool = False) -> dict:
             blob, extra = make_bundle(files, exe, run.get("cycles") and str(run["cycles"])), {"exe": exe}
         out.parent.mkdir(parents=True, exist_ok=True)
         tmp_out = Path(tmp) / out.name
-        tmp_out.write_bytes(blob)
+        if blob is None:
+            cd_bundle(iso, exe, run.get("cycles") and str(run["cycles"]), tmp_out)
+        else:
+            tmp_out.write_bytes(blob)
         os.replace(tmp_out, out)
     rep = {"id": gid, "kind": kind, "stamp": stamp, "checks": checks, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
            "bytes": out.stat().st_size, **extra}

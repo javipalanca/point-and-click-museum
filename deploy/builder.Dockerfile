@@ -3,6 +3,8 @@
 FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 WORKDIR /src
+# 7-Zip opens the games that come as .7z (Python's library cannot); CD images (.iso) are read in Python
+RUN apt-get update && apt-get install -y --no-install-recommends p7zip-full && rm -rf /var/lib/apt/lists/*
 COPY . .
 # PUBLIC=1 (default) leaves out the local collection that may be in the build context (assets/games,
 # assets/scummvm, data/arcade.local.json); the games you drop in the inbox are always included.

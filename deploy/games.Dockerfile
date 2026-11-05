@@ -6,6 +6,8 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 GAMES_PORT=8081 GAMES_TRUST_PROXY=1 \
     PCM_CATALOG=/catalog/catalog.json GAMES_CACHE=/games-cache
 WORKDIR /app
+# 7-Zip opens the games that come as .7z (Python's library cannot); CD images (.iso) are read in Python
+RUN apt-get update && apt-get install -y --no-install-recommends p7zip-full && rm -rf /var/lib/apt/lists/*
 COPY server/games.py server/admin.py server/stats.py server/
 COPY server/admin/ server/admin/
 COPY tools/ tools/

@@ -84,3 +84,6 @@ table.ia tr.inspect td { background: #241a13; }
 .inspection h4 { margin: 0 0 6px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .inspection select { max-width: 100%; }
 .inspection code { color: var(--amber); }
+.inspection .zip.linked { border-color: var(--amber); }
+#iaLink { margin-top: 10px; }
+#iaLink input { flex: 1 1 320px; }

@@ -4,14 +4,17 @@
     python3 tools/ia_inspect.py <identifier>
 
 For each zip of the item it reads only the zip's index (the central directory at the end of the file, with HTTP
-range requests) and the first bytes of each program, never the whole download. From that:
+range requests) and the first bytes of each program, never the whole download; for a CD image (.iso) its directory
+tree, the same way (tools/iso9660.py). A 7z or RAR cannot be listed without downloading it: it is marked "packed" and
+opened when it is tried (tools/game_fetch.py, with the 7-Zip program). From that:
 
   · ScummVM data (the same file signatures as tools/add_game.py), and whether that engine is in our build;
   · DOS programs (.EXE/.COM/.BAT), Windows programs (PE header) and installers, with the one most likely to start
     the game first (the same ranking as add_game.candidates);
-  · a verdict: dosbox, scummvm, windows (DOSBox cannot run it), nested (a zip inside the zip), none, too-big.
+  · a verdict: dosbox, scummvm, windows (DOSBox cannot run it), nested (another archive inside the zip: a .7z,
+    an .iso…), packed (a 7z/RAR), none, too-big.
 
-Other files (ISO, 7z, RAR, disk images) are listed but not usable yet. Used by the control panel
+Other files (BIN/CUE, disk images) are listed but not usable yet. Used by the control panel
 (GET /api/admin/inspect) so that a person sees what an item holds, tries it and only then adds it.
 Standard library only."""
 from __future__ import annotations
@@ -28,13 +31,14 @@ from pathlib import Path, PurePosixPath
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import add_game  # noqa: E402
 import game_fetch  # noqa: E402
+import iso9660  # noqa: E402
 import sync_catalog  # noqa: E402
 
 TAIL = 65536 + 22           # the end-of-central-directory record is within the last 64 KB
 HEAD = 4096                 # bytes of each program read to tell DOS from Windows
 MAX_PROGRAMS = 16           # programs whose header is read, per zip
 MAX_ZIPS = 4                # zips looked at per item (largest first)
-OTHER = re.compile(r"\.(iso|cue|bin|img|ima|7z|rar|exe|dsk|adf|d64|st)$", re.I)
+OTHER = re.compile(r"\.(cue|bin|img|ima|exe|dsk|adf|d64|st|mdf|nrg)$", re.I)
 
 
 class InspectError(Exception):
@@ -117,19 +121,21 @@ def head(url: str, e: dict) -> bytes:
     return b""
 
 
-class Head(bytes):
-    """The first bytes of a program, with the size of the whole file (what add_game.candidates looks at)."""
-    def __new__(cls, data: bytes, size: int):
-        obj = super().__new__(cls, data)
-        obj.full = size
-        return obj
-
-    def __len__(self):
-        return self.full
+Head = game_fetch.Head
 
 
 def look_at_zip(url: str, size: int, title: str, start: str | None) -> dict:
-    entries = central_directory(url, size)
+    return analyse(central_directory(url, size), lambda e: head(url, e), title, start)
+
+
+def look_at_iso(url: str, title: str, start: str | None) -> dict:
+    read = lambda off, n: ranged(url, off, off + n - 1, n)
+    out = analyse(iso9660.listing(read), lambda e: iso9660.read_file(read, e, HEAD), title, start)
+    out["cd"] = True  # DOSBox mounts it as drive D:
+    return out
+
+
+def analyse(entries: list[dict], first_bytes, title: str, start: str | None) -> dict:
     names = [e["name"] for e in entries]
     out = {"files": len(entries), "sample": sorted(names, key=lambda n: (n.count("/"), n.lower()))[:12]}
     # ScummVM data, by file names (as add_game.detect_engine, without reading them)
@@ -151,7 +157,7 @@ def look_at_zip(url: str, size: int, title: str, start: str | None) -> dict:
         data = b""
         if suffix == ".exe" and i < MAX_PROGRAMS:
             try:
-                data = head(url, e)
+                data = first_bytes(e)
             except Exception:  # network trouble on one program: it stays "unknown"
                 data = b""
         # an .EXE without the MZ header is loaded by DOS as a .COM image: still a DOS program
@@ -167,7 +173,7 @@ def look_at_zip(url: str, size: int, title: str, start: str | None) -> dict:
     programs.sort(key=lambda x: (order.get(x["path"], 999), x["path"]))
     out["programs"] = programs[:40]
     out["suggested"] = ranked[0] if ranked else None
-    inner = [n for n in names if n.lower().endswith(".zip")]
+    inner = [n for n in names if n.lower().endswith(game_fetch.ARCHIVES)]
     if out.get("scummvm"):
         out["verdict"] = "scummvm"
     elif ranked:
@@ -190,24 +196,29 @@ def inspect(ident: str) -> dict:
         raise InspectError("no such item")
     title = str(sync_catalog.as_list(md.get("title"))[0] if md.get("title") else ident)
     files = [f for f in meta.get("files", []) if f.get("source") != "metadata" or str(f.get("name", "")).lower().endswith(".zip")]
-    zips = sorted((f for f in files if str(f.get("name", "")).lower().endswith(".zip")), key=lambda f: -int(f.get("size") or 0))
+    zips = sorted((f for f in files if str(f.get("name", "")).lower().endswith(game_fetch.ARCHIVES)), key=lambda f: -int(f.get("size") or 0))
     report = {"identifier": ident, "title": title, "page": f"https://archive.org/details/{ident}",
               "year": sync_catalog.year_of(md), "creator": md.get("creator"), "rights": sync_catalog.ia_rights(md),
               "start": md.get("emulator_start"), "zips": [],
-              "other": [{"name": f["name"], "size": int(f.get("size") or 0)} for f in files if OTHER.search(str(f.get("name", ""))) and not str(f["name"]).lower().endswith(".zip")][:10]}
+              "other": [{"name": f["name"], "size": int(f.get("size") or 0)} for f in files if OTHER.search(str(f.get("name", "")))][:10]}
     for f in zips[:MAX_ZIPS]:
         size = int(f.get("size") or 0)
         z = {"name": f["name"], "size": size, "md5": f.get("md5"), "sha1": f.get("sha1"),
              "url": f"{sync_catalog.IA}/download/{urllib.parse.quote(ident)}/{urllib.parse.quote(f['name'])}"}
+        ext = PurePosixPath(f["name"]).suffix.lower()
+        z["kind"] = ext[1:]
         if size > game_fetch.MAX_BYTES:
             z["verdict"] = "too-big"
+        elif ext in (".7z", ".rar"):
+            z["verdict"] = "packed"
         else:
             try:
-                z.update(look_at_zip(z["url"], size, title, md.get("emulator_start")))
+                z.update(look_at_iso(z["url"], title, md.get("emulator_start")) if ext == ".iso" else
+                         look_at_zip(z["url"], size, title, md.get("emulator_start")))
             except Exception as e:  # one zip that cannot be read does not hide the others
                 z["verdict"], z["error"] = "error", f"{type(e).__name__}: {e}"[:200]
         report["zips"].append(z)
-    rank = {"dosbox": 0, "scummvm": 0, "nested": 1}
+    rank = {"dosbox": 0, "scummvm": 0, "nested": 1, "packed": 1}
     report["zips"].sort(key=lambda z: (rank.get(z.get("verdict"), 2), -z["size"]))  # what can be played first
     usable = [z for z in report["zips"] if z.get("verdict") in ("dosbox", "scummvm")]
     report["best"] = usable[0]["name"] if usable else None

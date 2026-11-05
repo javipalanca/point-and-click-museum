@@ -138,7 +138,11 @@ Con `ADMIN_USER` y `ADMIN_PASSWORD` en `.env`, el contenedor `games` sirve un pa
   para añadir un elemento a un juego que no lo tenía. Cada resultado enlaza a su página de archive.org y tiene **«Ver qué
   contiene»**: lee solo el índice de cada zip (sin descargarlo) y dice si hay un programa de DOS, solo de Windows, solo
   un instalador o datos de ScummVM, con el programa que arranca el juego ya sugerido. Desde ahí, **Probar** ese zip con
-  ese programa (no guarda nada) y **Añadir como edición** con lo que has probado (`tools/ia_inspect.py`).
+  ese programa (no guarda nada) y **Añadir como edición** con lo que has probado (`tools/ia_inspect.py`). Además de zips:
+  **imágenes de CD** (.iso: se listan sin descargarlas y DOSBox las monta como unidad D:) y **.7z/RAR** (también dentro de
+  un zip con el manual y la portada: se abren al probarlos con el programa 7-Zip, que las imágenes Docker instalan; en
+  local, `apt install p7zip-full` o `brew install sevenzip`). Si la búsqueda no lo encuentra, **pega el enlace** de
+  archive.org (`/details/…` o `/download/…`) en la misma ficha.
 - **Fuentes**, **Descargas y errores** (públicas y del panel, con el motivo) y **Registro** de la sincronización.
 
 Un juego pasa a jugable en la web pública cuando **tú lo marcas como disponible** en el panel (la validación

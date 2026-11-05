@@ -9,8 +9,9 @@
     POST /api/admin/sync            {"only": ["scummvm"|"archive"|"gog"], "validate": n, "retryFailed": bool}
     GET  /api/admin/search?q=…      search Internet Archive by title (to attach an item to a game)
     POST /api/admin/games/<id>              {"gog": url|null, "forceRecord": bool}
-    GET  /api/admin/inspect?archive=…       what an Internet Archive item holds (zips, DOS/Windows programs, ScummVM
-                                            data), read from the zips' index without downloading them (tools/ia_inspect.py)
+    GET  /api/admin/inspect?archive=…       what an Internet Archive item holds (zips, 7z, CD images, DOS/Windows
+                                            programs, ScummVM data), without downloading it (tools/ia_inspect.py);
+                                            archive= is an identifier or an archive.org link (details/… or download/…)
     GET  /api/admin/try?archive=…&file=…&exe=…|engine=…   that zip, prepared for the panel's emulator, saving nothing
     POST /api/admin/games/<id>/attach       {"archive": identifier, "file"?: zip, "exe"?: program, "engine"?: scummvm engine}
     GET  /api/admin/editions/<key>/bundle   download and prepare any edition, for testing in the panel's emulator
@@ -99,7 +100,25 @@ def choose(report: dict, file: str | None, exe: str | None, engine: str | None) 
         return z, {"emulator": "scummvm", "run": {"svmEngine": z["scummvm"]["engine"]}}
     if z.get("suggested"):
         return z, {"emulator": "dosbox", "run": {"exe": z["suggested"]}}
+    if z.get("verdict") in ("nested", "packed"):  # only known once it is opened: trying it tells (see TRIED)
+        return z, TRIED.get((report["identifier"], z["name"])) or {"emulator": "auto", "run": {}}
     raise ValueError("this zip has no program to start: choose one")
+
+
+TRIED: dict[tuple[str, str], dict] = {}  # (identifier, file) -> how it ran when it was tried (for 7z and archives inside zips)
+LINK = re.compile(r"archive\.org/(?:details|download|embed)/([A-Za-z0-9._-]{1,120})(?:/([^?#]+))?")
+
+
+def item_ref(value: str) -> tuple[str, str | None]:
+    """An Internet Archive identifier, or a link to one of its pages or files -> (identifier, file or None)."""
+    value = (value or "").strip()
+    m = LINK.search(value)
+    if m:
+        file = urllib.parse.unquote(m.group(2)).split("/")[0] if m.group(2) else None
+        return m.group(1), file if file and file.lower().endswith(game_fetch.ARCHIVES) else None
+    if IDENT.fullmatch(value):
+        return value, None
+    raise ValueError("not an Internet Archive identifier or link (https://archive.org/details/…)")
 
 
 # ---------------------------------------------------------------- files
@@ -225,8 +244,10 @@ def send(handler, code: int, obj, headers: dict | None = None):
     handler.wfile.write(data)
 
 
-def send_file(handler, path: Path, ctype: str | None = None):
+def send_file(handler, path: Path, ctype: str | None = None, headers: dict | None = None):
     handler.send_response(200)
+    for k, v in (headers or {}).items():
+        handler.send_header(k, v)
     handler.send_header("Content-Type", ctype or mimetypes.guess_type(path.name)[0] or "application/octet-stream")
     handler.send_header("Content-Length", str(path.stat().st_size))
     handler.send_header("Cache-Control", "no-store")
@@ -338,19 +359,15 @@ def route(h, method: str, path: str, q: dict, P: dict):
         write_json(P["request"], req)
         return send(h, 202, {"queued": req})
     if path == "/api/admin/inspect":
-        ident = (q.get("archive") or [""])[0]
-        if not IDENT.fullmatch(ident):
-            raise ValueError("bad Internet Archive identifier")
+        ident, linked = item_ref((q.get("archive") or [""])[0])
         try:
-            return send(h, 200, inspect_item(ident))
+            return send(h, 200, dict(inspect_item(ident), linked=linked))
         except ia_inspect.InspectError as e:
             return send(h, 422, {"error": str(e)})
         except Exception as e:
             return send(h, 502, {"error": f"Internet Archive did not answer ({type(e).__name__})"})
     if path == "/api/admin/try":
-        ident = (q.get("archive") or [""])[0]
-        if not IDENT.fullmatch(ident):
-            raise ValueError("bad Internet Archive identifier")
+        ident, _ = item_ref((q.get("archive") or [""])[0])
         arg = lambda k: (q.get(k) or [""])[0] or None
         try:
             report = inspect_item(ident)
@@ -369,7 +386,11 @@ def route(h, method: str, path: str, q: dict, P: dict):
             return send(h, 422 if isinstance(e, game_fetch.GameError) else 502, {"error": str(e)})
         record_download(P, {"key": key, "title": f"{report['title']} · {z['name']} (prueba)", "ok": True, "by": "panel",
                             "seconds": round(time.time() - t0, 1), "bytes": r.get("bytes"), "checks": r["checks"]})
-        return send_file(h, Path(r["file"]), "application/zip")
+        ran = {"emulator": "scummvm", "run": {"svmEngine": r.get("engine") or how["run"].get("svmEngine")}} if r["kind"] == "svm" \
+            else {"emulator": "dosbox", "run": {"exe": r.get("exe")}}
+        TRIED[(ident, z["name"])] = ran  # adding it after trying keeps what ran
+        return send_file(h, Path(r["file"]), "application/zip", {"X-PCM-Emulator": ran["emulator"], "X-PCM-Engine": ran["run"].get("svmEngine") or "",
+                                                                 "X-PCM-Exe": urllib.parse.quote(ran["run"].get("exe") or "")})
     if path == "/api/admin/search":
         title = (q.get("q") or [""])[0].strip()[:120]
         if not title:
@@ -404,9 +425,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
     if m and method == "POST":
         gid, attach, b = m.group(1), m.group(2), body(h)
         if attach:
-            ident = str(b.get("archive", ""))
-            if not re.fullmatch(r"[A-Za-z0-9._-]{1,120}", ident):
-                raise ValueError("bad Internet Archive identifier")
+            ident, _ = item_ref(str(b.get("archive", "")))
             try:
                 meta, doc = sync_catalog.ia_meta(ident), sync_catalog.http_json(f"{sync_catalog.IA}/metadata/{urllib.parse.quote(ident)}")
             except Exception as e:
@@ -415,6 +434,8 @@ def route(h, method: str, path: str, q: dict, P: dict):
             if b.get("file") or b.get("exe") or b.get("engine"):
                 report = inspect_item(ident)
                 z, how = choose(report, b.get("file"), b.get("exe"), b.get("engine"))
+                if how["emulator"] == "auto":
+                    raise ValueError("pruébalo antes de añadirlo: hasta abrir este archivo no se sabe qué contiene")
                 entry["download"] = {"provider": "archive", "file": z["name"], "size": z["size"] or None, "md5": z.get("md5"),
                                      "sha1": z.get("sha1"), "url": z["url"]}
                 entry.update(how)

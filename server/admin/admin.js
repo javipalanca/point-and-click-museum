@@ -123,13 +123,27 @@
       (Object.keys(removed).length ? "<h2>Ediciones eliminadas</h2><ul class=\"removed\">" + Object.entries(removed).map(([k, e]) =>
         "<li>" + esc(e.edition || k) + ' <button class="link" data-restore="' + esc(k) + '">Restaurar</button></li>').join("") + "</ul>" : "") +
       '<h2>Buscar en Internet Archive</h2><form class="row" id="iaForm"><input type="text" name="q" value="' + esc(g.title.split(":")[0]) + '">' +
-      '<label><input type="checkbox" name="all"> fuera de las colecciones configuradas</label><button>Buscar</button></form><div id="iaResults"></div>';
+      '<label><input type="checkbox" name="all"> fuera de las colecciones configuradas</label><button>Buscar</button></form><div id="iaResults"></div>' +
+      '<form class="row" id="iaLink"><input type="url" name="link" placeholder="O pega un enlace: https://archive.org/details/…" required>' +
+      '<button>Ver qué contiene</button></form><div id="iaLinkResult"></div>';
     $("#gogForm").addEventListener("submit", async e => {
       e.preventDefault();
       try { await post("/api/admin/games/" + g.id, { gog: new FormData(e.target).get("gog") || null }); await loadCatalog(); } catch (x) { alert(x.message); }
     });
     $("#forceRecord").addEventListener("change", async e => {
       try { await post("/api/admin/games/" + g.id, { forceRecord: e.target.checked }); await loadCatalog(); } catch (x) { alert(x.message); }
+    });
+    $("#iaLink").addEventListener("submit", async e => {
+      e.preventDefault();
+      const box = $("#iaLinkResult"), link = new FormData(e.target).get("link");
+      box.innerHTML = '<p class="muted">Leyendo el índice de sus archivos en archive.org…</p>';
+      try {
+        const r = await api("/api/admin/inspect?archive=" + encodeURIComponent(link));
+        inspected[r.identifier] = r;
+        box.innerHTML = '<table class="ia"><tr><td><b>' + esc(r.title) + "</b><br><small>" + esc(r.identifier) + (r.year ? " · " + esc(r.year) : "") +
+          " · " + esc(r.rights[0]) + '</small></td></tr><tr class="inspect" data-for="' + esc(r.identifier) + '"><td>' + inspectionHtml(r) + "</td></tr></table>";
+        if (r.linked) { const z = box.querySelector('.zip[data-file="' + CSS.escape(r.linked) + '"]'); if (z) z.classList.add("linked"); }
+      } catch (x) { box.innerHTML = '<p class="err">' + esc(x.message) + "</p>"; }
     });
     $("#iaForm").addEventListener("submit", async e => {
       e.preventDefault();
@@ -148,7 +162,7 @@
   }
 
   const VERDICT = { dosbox: ["playable", "DOS: se puede probar"], scummvm: ["playable", "ScummVM"], windows: ["fail", "solo Windows: DOSBox no lo ejecuta"],
-    nested: ["pending", "zip dentro del zip"], none: ["fail", "sin programa que arranque el juego"], "too-big": ["fail", "demasiado grande (GAMES_MAX_MB)"], error: ["fail", "no se pudo leer"] };
+    nested: ["pending", "contiene otro archivo: se abre al probarlo"], packed: ["pending", "7z/RAR: se abre al probarlo"], none: ["fail", "sin programa que arranque el juego"], "too-big": ["fail", "demasiado grande (GAMES_MAX_MB)"], error: ["fail", "no se pudo leer"] };
   const mb = n => !n ? "" : n < 1048576 ? Math.max(1, Math.round(n / 1024)) + " KB" : (n / 1048576).toFixed(1) + " MB";
   function inspectionHtml(r) {
     const zip = z => {
@@ -156,16 +170,20 @@
       const progs = (z.programs || []).map(pr => '<option value="' + esc(pr.path) + '"' + (pr.path === z.suggested ? " selected" : "") + (pr.type === "windows" ? " disabled" : "") + ">" +
         esc(pr.path) + " · " + mb(pr.size) + (pr.type === "windows" ? " (Windows)" : "") + (pr.installer ? " (instalador)" : "") + (pr.path === z.suggested ? " · sugerido" : "") + "</option>").join("");
       // add: what will start (DOS program, ScummVM data, a zip inside to open); try: also a zip with only an installer, to look at it
-      const add = ["dosbox", "scummvm", "nested"].includes(z.verdict), tryIt = add || (z.programs || []).some(pr => pr.type !== "windows");
+      const add = ["dosbox", "scummvm", "nested", "packed"].includes(z.verdict), tryIt = add || (z.programs || []).some(pr => pr.type !== "windows");
+      const blind = z.verdict === "nested" || z.verdict === "packed";   // what it holds is known only once it is opened
       const usable = (z.programs || []).some(pr => pr.type !== "windows");
       return '<div class="zip" data-file="' + esc(z.name) + '"><h4>' + esc(z.name) + ' <span class="muted">' + mb(z.size) + (z.files ? " · " + z.files + " ficheros" : "") + '</span> <span class="badge ' + cls + '">' + esc(label) + "</span></h4>" +
         (svm ? '<p>Datos de ScummVM: motor <b>' + esc(svm.engine) + "</b>" + (svm.folder ? " en " + esc(svm.folder) + "/" : "") + (svm.built ? "" : ' <span class="err">(no está en nuestra compilación)</span>') + "</p>" : "") +
         (z.inner ? "<p>Contiene: " + z.inner.map(esc).join(", ") + ". Se abre al probarlo.</p>" : "") +
+        (z.cd ? "<p>Imagen de CD: DOSBox la monta como unidad D: y arranca el juego desde ella.</p>" : "") +
         (z.error ? '<p class="err">' + esc(z.error) + "</p>" : "") +
         (progs && usable ? '<label class="row">Programa <select name="exe"' + (svm ? " disabled" : "") + ">" + progs + "</select></label>" : "") +
         (progs && !usable ? '<p class="muted">Programas: ' + z.programs.map(pr => esc(pr.path) + " (Windows)").join(", ") + "</p>" : "") +
         (z.sample && !progs ? '<p class="muted">Ficheros: ' + z.sample.map(esc).join(", ") + "</p>" : "") +
-        (tryIt ? '<div class="row"><button data-try>Probar</button>' + (add ? '<button class="primary" data-add>Añadir como edición</button>' : "") + "</div>" : "") + "</div>";
+        (tryIt ? '<div class="row"><button data-try>Probar</button>' + (add ? '<button class="primary" data-add' +
+          (blind ? ' disabled title="Pruébalo primero: hasta abrirlo no se sabe qué contiene"' : "") + '>Añadir como edición</button>' : "") +
+          (blind ? '<span class="muted">Pruébalo primero; al añadirlo se guarda lo que arrancó.</span>' : "") + "</div>" : "") + "</div>";
     };
     return '<div class="inspection"><p><a href="' + url(r.page) + '" target="_blank" rel="noopener">Abrir en archive.org ↗</a>' +
       (r.start ? ' · su emulador arranca <code>' + esc(r.start) + "</code>" : "") + "</p>" +
@@ -224,7 +242,10 @@
     if (ev.target.closest("[data-try]")) {
       const c = choice(ev.target);
       const q = "archive=" + encodeURIComponent(c.archive) + "&file=" + encodeURIComponent(c.file) + (c.engine ? "&engine=" + encodeURIComponent(c.engine) : c.exe ? "&exe=" + encodeURIComponent(c.exe) : "");
-      return play(c.title + " · " + c.file + (c.exe ? " · " + c.exe : ""), "/api/admin/try?" + q, c.engine ? "scummvm" : "dosbox", c.engine);
+      const zip = ev.target.closest(".zip");
+      const okay = await play(c.title + " · " + c.file + (c.exe ? " · " + c.exe : ""), "/api/admin/try?" + q, c.engine ? "scummvm" : "dosbox", c.engine);
+      if (okay) { const add = zip.querySelector("[data-add]"); if (add) { add.disabled = false; add.removeAttribute("title"); } }
+      return;
     }
     if (ev.target.closest("[data-add]")) {
       const c = choice(ev.target), b = ev.target.closest("[data-add]");
@@ -300,13 +321,19 @@
     let bytes;
     try {
       const r = await fetch(src, { credentials: "same-origin" });
+      // a 7z or an archive inside a zip: the server says what it found in it (ScummVM data or a DOS program)
+      if (r.ok && r.headers.get("X-PCM-Emulator")) {
+        emulator = r.headers.get("X-PCM-Emulator"); engine = r.headers.get("X-PCM-Engine") || engine;
+        const exe = decodeURIComponent(r.headers.get("X-PCM-Exe") || "");
+        if (exe) $("#playerTitle").textContent = title + " · " + exe;
+      }
       if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).error) || "HTTP " + r.status);
       bytes = new Uint8Array(await r.arrayBuffer());
-    } catch (x) { $("#playerState").textContent = "Error: " + x.message; if (refresh) loadCatalog(); return; }
+    } catch (x) { $("#playerState").textContent = "Error: " + x.message; if (refresh) loadCatalog(); return false; }
     $("#playerState").textContent = (bytes.length / 1048576).toFixed(1) + " MB";
     if (emulator === "scummvm") {
       const m = await (await fetch("/scummvm/manifest.json")).json().catch(() => ({ available: false }));
-      if (!m.available) { $("#playerState").textContent = "ScummVM no está compilado en este servidor (tools/build_scummvm.sh)."; return; }
+      if (!m.available) { $("#playerState").textContent = "ScummVM no está compilado en este servidor (tools/build_scummvm.sh)."; return false; }
       const files = await unzip(bytes);
       window.PCM_SVM_JOB = { data: m.data, inline: m.inline, gameId: "test", engine, files: Object.keys(files),
         memFiles: files, gameBase: "", args: ["--path=/games/test", "--auto-detect"], volume: 1 };
@@ -323,6 +350,7 @@
       dos = window.Dos(el, { url: blobUrl, pathPrefix: "/vendor/js-dos/emulators/", autoStart: true, noCloud: true, noNetworking: true, theme: "dark" });
     }
     if (refresh) loadCatalog();
+    return true;
   }
 
   /* ---------- sources and downloads */

@@ -72,7 +72,6 @@
  "check": "COMPROBAR",
  "newRound": "NUEVA RONDA",
  "arcadeTitle": "Sala DOSBox",
- "arcadeIdle": "Elige una aventura de la estantería o carga tu propia copia.",
  "arcadeNothing": "SIN JUEGO CARGADO",
  "arcadeLoading": "Cargando {title}...",
  "arcadeEmuError": "No se pudo cargar el emulador. Revisa tu conexión.",

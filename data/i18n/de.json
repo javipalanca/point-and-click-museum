@@ -72,7 +72,6 @@
  "check": "PRÜFEN",
  "newRound": "NEUE RUNDE",
  "arcadeTitle": "DOSBox-Raum",
- "arcadeIdle": "Wähle ein Abenteuer aus dem Regal oder lade deine eigene Kopie.",
  "arcadeNothing": "KEIN SPIEL GELADEN",
  "arcadeLoading": "Lade {title} …",
  "arcadeEmuError": "Der Emulator konnte nicht geladen werden. Prüfe deine Verbindung.",

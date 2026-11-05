@@ -208,8 +208,14 @@ function serve(DIST) {
   console.log("DOSBox room boots the demo bundle");
   {
     const page = await ctx.newPage(); await page.goto(`${base}/es/arcade/`);
+    (await page.isHidden("#dosModal")) ? ok("no DOSBox window until a game starts: the shelf is what you see") : fail("DOSBox window shown before playing");
     await page.click(".dos-play"); await page.waitForTimeout(8000);
-    (await page.$("#dosHost canvas")) ? ok("emulator canvas present") : fail("emulator did not start");
+    (await page.isVisible("#dosModal")) && (await page.$("#dosHost canvas")) ? ok("the game opens in the DOSBox window") : fail("emulator did not start");
+    await page.keyboard.press("Escape");   // games use Esc: it must not close the window
+    (await page.isVisible("#dosModal")) ? ok("Esc goes to the game, not to the window") : fail("Esc closed the window");
+    await page.click("#dosStop"); await page.waitForTimeout(400);
+    (await page.isHidden("#dosModal")) && !(await page.$("#dosHost canvas")) && await page.evaluate(() => document.activeElement.classList.contains("dos-play"))
+      ? ok("turning it off closes the window and goes back to the shelf") : fail("closing the DOSBox window");
     await page.close();
   }
 

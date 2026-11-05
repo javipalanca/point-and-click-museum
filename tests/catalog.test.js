@@ -86,6 +86,7 @@ const firstLine = proc => new Promise((resolve, reject) => {
     check(proxied === 1, "the second time it comes from the browser's cache, not the server");
 
     console.log("DOSBox");
+    await page.click("#dosStop");   // back to the shelf, then the next game
     await page.click('.dos-game[data-id="pixel-cave"] .dos-play');
     await page.waitForTimeout(6000);
     check(!!(await page.$("#dosHost canvas")) && !(await page.$(".svm-frame")), "a DOS game of the catalogue runs in DOSBox");

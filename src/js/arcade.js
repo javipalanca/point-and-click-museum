@@ -65,6 +65,28 @@ if (document.getElementById("dosHost")) (() => {
     if (svm) hint.textContent = t("svmMouseHint"); else renderMouse();
   }
 
+  /* the DOSBox window opens with a game and closes when it is turned off; the rest of the page waits behind it */
+  const modal = $("#dosModal");
+  /* the screen says what the bar says (loading, downloading, an error) until the game covers it */
+  const idleMsg = $("#dosIdleMsg");
+  if (idleMsg) new MutationObserver(() => { idleMsg.textContent = now.textContent; }).observe(now, { childList: true, characterData: true, subtree: true });
+  let opener = null;
+  const behind = () => [$("#siteHeader"), $("#arcadeRoom"), $(".site-footer"), $("#murrayWidget")].filter(Boolean);
+  function openWindow() {
+    if (!modal.hidden) return;
+    opener = document.activeElement;
+    modal.hidden = false;
+    document.documentElement.classList.add("dos-open");
+    behind().forEach(el => { el.inert = true; });
+    stopBtn.disabled = false; stopBtn.focus({ preventScroll: true });   // whatever happens next, it can always be closed
+  }
+  function closeWindow() {
+    modal.hidden = true;
+    document.documentElement.classList.remove("dos-open");
+    behind().forEach(el => { el.inert = false; });
+    if (opener && opener.focus) opener.focus({ preventScroll: true });
+  }
+
   async function stop() {
     if (document.pointerLockElement) document.exitPointerLock();
     mouseMode("dosbox");
@@ -75,7 +97,7 @@ if (document.getElementById("dosHost")) (() => {
   }
 
   async function run(title, opts, blob) {
-    sfx("open");
+    sfx("open"); openWindow();
     now.textContent = t("arcadeLoading", { title });
     try { await loadJsDos(); }
     catch (e) { now.textContent = t("arcadeEmuError"); toast(t("arcadeEmuError")); PCM.track("arcade_error", { id: title, kind: "emulator" }); return false; }
@@ -90,13 +112,12 @@ if (document.getElementById("dosHost")) (() => {
     });
     player = window.Dos(el, options);
     stopBtn.disabled = false; fullBtn.disabled = false;
-    $("#dosScreen").scrollIntoView({ behavior: PCM.reduceMotion ? "auto" : "smooth", block: "nearest" });
     return true;
   }
 
   /* ScummVM: player.html in an iframe; it reads window.PCM_SVM_JOB from this page */
   async function runScummVM(title, job) {
-    sfx("open");
+    sfx("open"); openWindow();
     if (!D.svm || !D.svm.available) { now.textContent = t("svmMissing"); toast(t("svmMissing")); return false; }
     await stop();
     window.PCM_SVM_JOB = Object.assign({ data: D.svm.data, inline: D.svm.inline, volume }, job);
@@ -108,7 +129,6 @@ if (document.getElementById("dosHost")) (() => {
     host.appendChild(f);
     mouseMode("scummvm");
     stopBtn.disabled = false; fullBtn.disabled = false;
-    $("#dosScreen").scrollIntoView({ behavior: PCM.reduceMotion ? "auto" : "smooth", block: "nearest" });
     return true;
   }
   const svmArgs = id => ["--path=/games/" + id, "--auto-detect"];
@@ -209,6 +229,7 @@ if (document.getElementById("dosHost")) (() => {
   }
   async function playCatalog(g) {
     let bytes;
+    openWindow();
     try { now.textContent = t("arcadeLoading", { title: g.title }); bytes = await fetchGame(g); }
     catch (e) { now.textContent = t("arcadeNothing"); toast(e.message); sfx("bad"); PCM.track("arcade_error", { id: g.id, kind: "download" }); return; }
     if (g.engine === "scummvm") {
@@ -269,7 +290,7 @@ if (document.getElementById("dosHost")) (() => {
     play(g);
   };
   fromHash(); addEventListener("hashchange", fromHash);
-  stopBtn.addEventListener("click", () => { sfx("click"); stop(); });
+  stopBtn.addEventListener("click", async () => { sfx("click"); await stop(); closeWindow(); });
   fullBtn.addEventListener("click", () => {
     const el = $("#dosScreen");
     try { (el.requestFullscreen || el.webkitRequestFullscreen).call(el); } catch (e) { toast(t("fullscreenFail")); }

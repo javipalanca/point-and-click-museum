@@ -72,7 +72,6 @@
  "check": "CHECK",
  "newRound": "NEW ROUND",
  "arcadeTitle": "DOSBox room",
- "arcadeIdle": "Pick an adventure from the shelf or load your own copy.",
  "arcadeNothing": "NO GAME LOADED",
  "arcadeLoading": "Loading {title}...",
  "arcadeEmuError": "The emulator did not load. Check your connection.",

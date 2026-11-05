@@ -226,7 +226,14 @@ section { padding-block: 56px 24px; scroll-margin-top: 56px; }
 .result { font-size: 23px; color: var(--amber); min-height: 1.4em; }
 
 /* Arcade */
-.arcade { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 22px; align-items: start; }
+/* the DOSBox window: over the page while a game runs; the screen as large as the viewport's height allows (4:3) */
+.dos-modal { position: fixed; inset: 0; z-index: 105; display: grid; place-items: center; overflow-y: auto; overscroll-behavior: contain;
+  background: rgba(10, 16, 13, .9); padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.dos-modal[hidden] { display: none; }
+html.dos-open { overflow: hidden; }
+.dos-modal .arcade { width: 100%; max-width: 1400px; }
+.dos-modal .dos-frame { width: min(100%, calc((100vh - 110px) * 4 / 3)); width: min(100%, calc((100dvh - 110px) * 4 / 3)); justify-self: center; }
+.arcade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); gap: 18px; align-items: start; }
 @media (max-width: 900px) { .arcade { grid-template-columns: 1fr; } }
 .dos-frame { --c: var(--amber); padding: 0; background: #000; min-width: 0; }
 .dos-screen { position: relative; aspect-ratio: 4 / 3; width: 100%; background: #000; overflow: hidden; }
@@ -801,7 +808,8 @@ html.map-open { overflow: hidden; }
 .dos-controls { --c: var(--panel2); padding: 0; background: var(--panel); }
 .dos-controls .byo-wrap { padding-top: 0; }
 
-.dos-shelf { margin-top: 32px; }
+.dos-shelf { margin-top: 24px; }
+#room-arcade .byo-wrap { --c: var(--panel2); margin-top: 28px; max-width: 640px; }
 .dos-shelf .cat-title { margin-bottom: 12px; }
 .cat-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .cat-tools input[type="search"] { flex: 3 1 260px; }

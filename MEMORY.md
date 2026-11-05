@@ -336,6 +336,14 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   `file`/`exe`/`engine`). Probado con el archive.org falso (`tests/fixtures/fake_sources.py` responde a `Range`); el real
   no era accesible desde la sesión.
 
+- **2026-11-05 · La ventana de DOSBox, solo al jugar** (petición del usuario: «que sea modal y solo se vea cuando
+  arrancas un juego; la estantería queda bajo la ventana y no se ve»). Sustituye a «pantalla arriba y estantería debajo»
+  de la sala como estantería: la página es la estantería (y «Trae tu propio juego» al final); la pantalla, la ficha del
+  juego y los controles van en una capa (`#dosModal`) que se abre al jugar (también con `#play=` y con un juego propio)
+  y se cierra con «Apagar», que para el emulador y devuelve el foco a la portada. No es un `<dialog>`: los juegos DOS
+  usan Esc y no debe cerrarla. Mientras está abierta, la página, la cabecera, el pie y Murray quedan `inert` y sin
+  scroll; la pantalla mide lo que permite el alto de la ventana (4:3). Mientras carga, la pantalla repite el mensaje
+  de la barra (descargando, error…).
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

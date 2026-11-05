@@ -72,7 +72,6 @@
  "check": "VÉRIFIER",
  "newRound": "NOUVELLE MANCHE",
  "arcadeTitle": "Salle DOSBox",
- "arcadeIdle": "Choisissez une aventure sur l'étagère ou chargez votre propre copie.",
  "arcadeNothing": "AUCUN JEU CHARGÉ",
  "arcadeLoading": "Chargement de {title}…",
  "arcadeEmuError": "L'émulateur n'a pas pu se charger. Vérifiez votre connexion.",

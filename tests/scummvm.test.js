@@ -65,6 +65,7 @@ with zipfile.ZipFile(sys.argv[1] + "/dosgame.zip", "w") as z:
     await page.locator("#dosVol").fill("0.3");
     check(frame && Math.abs(await gain() - 0.3) < 0.01 && (await page.textContent("#dosVolOut")) === "30%", "the volume slider changes ScummVM's volume");
     check(await page.isHidden("#dosMouse"), "DOSBox mouse controls hidden for ScummVM");
+    await page.click("#dosStop");   // back to the room, then the next game
     await page.setInputFiles("#byoFile", path.join(tmp, "dosgame.zip"));
     await page.click("#byoForm button[type=submit]");
     await page.waitForTimeout(6000);

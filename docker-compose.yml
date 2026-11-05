@@ -25,7 +25,7 @@ services:
       - games-proxy:/games-proxy          # games checked by the catalogue sync, served by the games proxy
     cap_drop: [ALL]
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges:false
     restart: unless-stopped
 
   web:
@@ -71,7 +71,7 @@ services:
       - /tmp
     cap_drop: [ALL]
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges:false
     restart: unless-stopped
 
   murray:
@@ -104,7 +104,7 @@ services:
       - /tmp
     cap_drop: [ALL]
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges:false
     restart: unless-stopped
 
 volumes:

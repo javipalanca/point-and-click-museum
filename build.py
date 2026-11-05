@@ -151,7 +151,6 @@ def media_view(it: dict, root: str, ui: dict) -> dict:
 
 LOCAL_ARCADE = DATA / "arcade.local.json"   # games added with tools/add_game.py (not versioned)
 CATALOG = Path(os.environ.get("PCM_CATALOG", DATA / "catalog.json"))   # tools/sync_catalog.py (refreshed daily on the server)
-STATUS_RANK = {"playable": 0, "pending": 1, "record": 2}
 INCLUDE_LOCAL = True                         # switched off by --no-local
 LOCAL_ONLY = False                           # --arcade-local-only: list only your games (the server's games folder)
 
@@ -161,31 +160,25 @@ def load_catalog() -> dict:
 
 
 def add_catalog(arcade: dict, catalog: dict, timeline: dict) -> dict:
-    """The automatic catalogue in the DOSBox room: one card per game, playable / pending / record only.
+    """The playable games of the automatic catalogue in the DOSBox room (the rest is for the timeline and the panel).
     Your own copy of a game (local or inbox) wins over the catalogue's, and gets its shop link."""
     tl = {t["id"]: t for t in timeline["games"]}
     by_id = {g["id"]: g for g in arcade["games"]}
     for c in catalog.get("games", []):
-        ed = (c.get("editions") or [None])[0]
         mine = by_id.get(c["id"])
-        if c["status"] == "record" and not c.get("timeline") and not mine:
-            continue  # the hundreds of games only located (ScummVM's list, Internet Archive) are for the control panel
         if mine and mine.get("bundle"):
             mine.update({k: c[k] for k in ("gog", "timeline") if c.get(k) and not mine.get(k)})
             continue
-        v = (ed or {}).get("validated") or {}
-        why = ("" if c["status"] != "pending" else "failed" if v.get("ok") is False else
-               "rights" if ed and ed["rights"] not in ("freeware", "shareware", "demo", "public-domain", "open-license", "permission") else "checks")
+        if c["status"] != "playable":
+            continue
+        ed = c["editions"][0]
         dev = c.get("developer") or ""
         dev = "" if dev.lower().startswith("unknown") else dev  # ScummVM's "Unknown Company" says nothing
         g = {"id": c["id"], "title": c["title"], "year": c.get("year"), "studio": dev, "icon": "floppy",
-             "catalog": True, "status": c["status"], "why": why, "error": v.get("error", ""), "timeline": c.get("timeline"),
-             "gog": c.get("gog"), "cover": c.get("cover"), "edition": (ed or {}).get("edition", ""), "kind": (ed or {}).get("kind"),
-             "rights": (ed or {}).get("rights"), "engine": (ed or {}).get("emulator", "dosbox"),
-             "svmEngine": ((ed or {}).get("run") or {}).get("svmEngine"),
+             "catalog": True, "status": "playable", "key": ed["key"], "timeline": c.get("timeline"),
+             "gog": c.get("gog"), "cover": c.get("cover"), "edition": ed.get("edition", ""), "kind": ed.get("kind"),
+             "engine": ed.get("emulator", "dosbox"), "svmEngine": (ed.get("run") or {}).get("svmEngine"),
              "desc": {lang: v["d"] for lang, v in tl[c["timeline"]]["text"].items()} if c.get("timeline") in tl else None}
-        if c["status"] == "playable":
-            g["key"] = ed["key"]
         if mine:
             arcade["games"][arcade["games"].index(mine)] = g  # e.g. a freeware the museum listed without a bundle
         else:
@@ -754,40 +747,26 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
 
     A = L["arcade"]
     b["arcadeIntro"] = E(A["introServer"] if A.get("localOnly") else A["intro"])
-    status_of = lambda g: g.get("status") or ("playable" if g.get("bundle") else "pending")
-    games = sorted(A["games"], key=lambda g: (0 if g.get("pinned") else 1, STATUS_RANK[status_of(g)], sort_key(g["title"])))
+    # the room shows only what can be played here; the rest of the catalogue lives in the timeline and the panel
+    games = sorted((g for g in A["games"] if g.get("bundle") or g.get("key")),
+                   key=lambda g: (0 if g.get("pinned") else 1, sort_key(g["title"])))
     items = []
     for g in games:
         key = sort_key(g["title"])
         letter = key[:1].upper() if key[:1].isalpha() else "#"
-        st = status_of(g)
-        if g.get("bundle") or g.get("key"):
-            action = f'<button class="pbtn small dos-play" type="button" data-id="{E(g["id"])}">{E(ui["arcadePlayDemo"] if g.get("kind") == "demo" else ui["arcadePlay"])}</button>'
-        elif g.get("catalog"):
-            action = f'<span class="chip state {st}"{f" title={chr(34)}{E(g["error"])}{chr(34)}" if g.get("error") else ""}>{E(ui["catState_" + st])}</span>'
-        else:
-            action = f'<span class="chip warn">{E(ui["arcadeNeedsBundle"])}</span>'
-        if g.get("gog"):
-            action += f' <a class="ext buy" href="{E(g["gog"])}" rel="noopener" target="_blank">{E(ui["buyGog"])} ↗</a>'
-        if g.get("source"):
-            action += f' <a class="ext" href="{E(g["source"])}" rel="noopener" target="_blank">{E(ui["arcadeSource"])} ↗</a>'
-        if g.get("timeline"):  # the museum has a record of it
-            action += f' <a class="ext" href="{root}{E(S.url(lang, "timeline", 0))}#{E(g["timeline"])}">{E(ui["arcadeRecord"])}</a>'
-        meta = " · ".join(x for x in (str(g["year"]) if g.get("year") else "", E(g.get("studio") or "")) if x)
         cover = arcade_cover(S, g, root, ui)
-        art = (f'<img class="cover" src="{E(cover["src"])}" width="{cover["w"]}" height="{cover["h"]}" alt="{E(ui["arcadeCoverAlt"].format(title=g["title"]))}" loading="lazy">'
-               if cover else f'<img src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">')
-        credit = (f'<small class="credit">{E(cover["rights"])} · '
-                  f'<a href="{E(cover["url"])}" rel="noopener" target="_blank" title="{E(cover["label"] or g["title"])}">{E(cover["via"])} ↗</a></small>' if cover else "")
-        engine = g.get("engine", "dosbox")
-        rights = ui.get("rights_label_" + (g.get("rights") or ""), "") if g.get("catalog") and st != "record" else ""
-        chips = (f'<span class="chip engine">{"ScummVM" if engine == "scummvm" else "DOSBox"}</span> ' if st != "record" else "") \
-            + (f'<span class="chip">{E(g["license"])}</span>' if g.get("license") else "") + (f'<span class="chip">{E(rights)}</span>' if rights else "") + (f' <span class="chip local">{E(ui["catLocal"])}</span>' if g.get("local") and not A.get("localOnly") else "")
+        art = (f'<img class="cover" src="{E(cover["src"])}" width="{cover["w"]}" height="{cover["h"]}" alt="" loading="lazy">'
+               if cover else f'<img class="icon" src="{root}img/sprites/{g["icon"]}.png" width="40" height="40" alt="" loading="lazy">')
+        play = ui["arcadePlayDemo"] if g.get("kind") == "demo" else ui["arcadePlay"]
+        meta = " · ".join(x for x in (str(g["year"]) if g.get("year") else "", E(g.get("studio") or ""),
+                                      E(ui["catDemo"]) if g.get("kind") == "demo" else "") if x)
+        credit = (f'<small class="credit">{E(cover["rights"])} · <a href="{E(cover["url"])}" rel="noopener" target="_blank" '
+                  f'title="{E(cover["label"] or g["title"])}">{E(cover["via"])} ↗</a></small>' if cover else "")
         items.append(
-            f'<article class="px dos-game" data-id="{E(g["id"])}" data-engine="{engine}" data-status="{st}" data-key="{E(key)}" data-letter="{letter}" '
+            f'<article class="dos-game" data-id="{E(g["id"])}" data-engine="{g.get("engine", "dosbox")}" data-key="{E(key)}" data-letter="{letter}" '
             f'data-studio="{E(g.get("studio") or "")}" data-year="{g.get("year") or 9999}"{" data-cover" if cover else ""}>'
-            f'{art}<h3>{E(g["title"])}</h3><div class="meta">{meta} {chips}</div>'
-            + (f'<p>{E(g["desc"])}</p>' if g.get("desc") else "") + f'<div class="row">{action}</div>{credit}</article>')
+            f'<button class="dos-play" type="button" data-id="{E(g["id"])}" aria-label="{E(play)}: {E(g["title"])}">{art}<span class="go">▶ {E(play)}</span></button>'
+            f'<h3>{E(g["title"])}</h3><p class="meta">{meta}</p>{credit}</article>')
     b["arcadeGames"] = "".join(items) or f'<p class="cat-none">{E(ui["arcadeNoGames"])}</p>'
     b["arcadeCount"] = E(ui["catCount"].format(n=len(games), total=len(games)))
     tools = ""
@@ -798,23 +777,16 @@ def render_blocks(S: Site, page, lang, L, ui, depth) -> dict:
             '<div class="cat-tools">'
             f'<label class="vh" for="catSearch">{E(ui["catSearch"])}</label>'
             f'<input type="search" id="catSearch" placeholder="{E(ui["catSearch"])}" autocomplete="off">'
-            '<div class="row">'
             f'<label class="vh" for="catStudio">{E(ui["catAllStudios"])}</label><select id="catStudio"><option value="">{E(ui["catAllStudios"])}</option>'
             + "".join(f'<option value="{E(st)}">{E(st)}</option>' for st in studios) + "</select>"
-            + (f'<label class="vh" for="catEngine">{E(ui["catAllEngines"])}</label><select id="catEngine"><option value="">{E(ui["catAllEngines"])}</option>'
-               '<option value="dosbox">DOSBox</option><option value="scummvm">ScummVM</option></select>'
-               if len({g.get("engine", "dosbox") for g in games}) > 1 else "")
-            + (f'<label class="vh" for="catStatus">{E(ui["catAllStates"])}</label><select id="catStatus"><option value="">{E(ui["catAllStates"])}</option>'
-               + "".join(f'<option value="{x}">{E(ui["catState_" + x])}</option>' for x in STATUS_RANK if any(status_of(g) == x for g in games)) + "</select>"
-               if len({status_of(g) for g in games}) > 1 else "")
             + f'<label class="vh" for="catSort">{E(ui["catSortTitle"])}</label><select id="catSort">'
             f'<option value="title">{E(ui["catSortTitle"])}</option><option value="year">{E(ui["catSortYear"])}</option></select></div>'
             f'<nav class="letters" aria-label="{E(ui["catLetters"])}"><button type="button" data-l="" aria-pressed="true">{E(ui["catAllLetters"])}</button>'
             + "".join(f'<button type="button" data-l="{c}" aria-pressed="false"{"" if c in letters else " disabled"}>{c}</button>'
                       for c in ["#"] + [chr(x) for x in range(65, 91)])
-            + "</nav></div>")
+            + "</nav>")
     b["arcadeTools"] = tools
-    b["catClass"] = "cat-list compact" if tools else "cat-list"
+    b["catClass"] = "cat-grid"
 
     # structured data
     page_url = S.abs(lang, pid)

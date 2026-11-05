@@ -141,18 +141,6 @@
    "de": "Murray grübelt…",
    "fr": "Murray réfléchit…"
   },
-  "offlineBadge": {
-   "es": "modo vitrina (sin LLM)",
-   "en": "display-case mode (no LLM)",
-   "de": "Vitrinenmodus (ohne LLM)",
-   "fr": "mode vitrine (sans LLM)"
-  },
-  "llmBadge": {
-   "es": "conectado al oráculo",
-   "en": "connected to the oracle",
-   "de": "mit dem Orakel verbunden",
-   "fr": "connecté à l'oracle"
-  },
   "privacy": {
    "es": "No se guardan las conversaciones.",
    "en": "Conversations are not stored.",
@@ -164,6 +152,12 @@
    "en": "Heading to",
    "de": "Unterwegs zu",
    "fr": "Direction"
+  },
+  "try": {
+   "es": "Prueba:",
+   "en": "Try:",
+   "de": "Probier:",
+   "fr": "Essayez :"
   }
  },
  "about": {

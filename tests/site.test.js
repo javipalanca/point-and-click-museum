@@ -3,6 +3,8 @@
    Needs Playwright with Chromium (npm install && npx playwright install chromium). */
 "use strict";
 const http = require("http");
+const os = require("os");
+const { execFileSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const { chromium, devices } = require("playwright");
@@ -24,7 +26,7 @@ let failures = 0;
 const fail = msg => { failures++; console.log("  ✗ " + msg); };
 const ok = msg => console.log("  ✓ " + msg);
 
-function serve() {
+function serve(DIST) {
   return new Promise(resolve => {
     const srv = http.createServer((req, res) => {
       let p = decodeURIComponent(req.url.split("?")[0]);
@@ -39,7 +41,7 @@ function serve() {
 
 (async () => {
   if (!fs.existsSync(path.join(DIST, "index.html"))) { console.error("dist/ not found: run python3 build.py first"); process.exit(2); }
-  const srv = await serve(), base = `http://localhost:${srv.address().port}`;
+  const srv = await serve(DIST), base = `http://localhost:${srv.address().port}`;
   const browser = await chromium.launch();
 
   console.log("Pages (desktop): errors, overflow, internal links");
@@ -112,20 +114,34 @@ function serve() {
     const kept = await page.$$eval("#murrayLog li", l => l.length);
     kept >= 3 ? ok("Murray: conversation follows the visitor between rooms") : fail("Murray conversation lost: " + kept);
     await page.unroute("**/api/murray/chat");
-    // Murray takes the visitor to another room: the page changes on its own and the chat stays open
+    // Murray takes the visitor to another room: first the trip, then he answers there (never before leaving)
     await page.route("**/api/murray/chat", route => route.fulfill({ headers: { "Content-Type": "text/event-stream" },
-      body: "data: " + JSON.stringify({ delta: "¡Vamos a ver Loom!" }) + "\n\n" +
+      body: "data: " + JSON.stringify({ navigate: { page: "timeline", hash: "loom", title: "Loom" } }) + "\n\n" +
+            "data: " + JSON.stringify({ delta: "¡Ya estamos en Loom!" }) + "\n\n" +
             "data: " + JSON.stringify({ done: true, sources: [], mode: "llm", navigate: { page: "timeline", hash: "loom", title: "Loom" } }) + "\n\n" }));
+    await page.addInitScript(() => {  // what the chat showed in each room, kept across the trip
+      addEventListener("DOMContentLoaded", () => {
+        const log = document.getElementById("murrayLog");
+        if (log) new MutationObserver(() => { try { sessionStorage.setItem("test-seen", (sessionStorage.getItem("test-seen") || "") + "\n" + location.pathname + "|" + log.textContent); } catch (e) { /* ignore */ } })
+          .observe(log, { childList: true, subtree: true, characterData: true });
+      });
+    });
     await page.goto(`${base}/es/studios/`);
     if (!(await page.isVisible("#murrayPanel"))) await page.click("#murrayFab");
     await page.fill("#murrayIn", "Llévame a Loom"); await page.press("#murrayIn", "Enter");
     const moved = await page.waitForURL(/\/es\/timeline\/#loom$/, { timeout: 6000 }).then(() => true, () => false);
-    await page.waitForTimeout(600);
-    const after = moved && await page.evaluate(() => ({ open: !document.getElementById("murrayPanel").hidden,
-      nav: /Loom/.test(document.querySelector("#murrayLog .m-nav")?.textContent || ""),
-      sheet: document.getElementById("modalBg").classList.contains("open") && /Loom/.test(document.getElementById("mTitle")?.textContent || "") }));
-    after && after.open && after.nav && after.sheet ? ok("Murray: takes the visitor to Loom's record, chat still open")
-      : fail("Murray navigation: " + JSON.stringify({ moved, after }));
+    const said = moved && await page.waitForFunction(() => /Ya estamos en Loom/.test(document.querySelector("#murrayLog li:last-child")?.textContent || ""), null, { timeout: 6000 }).then(() => true, () => false);
+    const after = await page.evaluate(() => {
+      const items = [...document.querySelectorAll("#murrayLog li")], nav = items.findIndex(li => li.classList.contains("m-nav") && /Loom/.test(li.textContent));
+      return { open: !document.getElementById("murrayPanel").hidden, navBefore: nav >= 0 && nav < items.length - 1,
+        before: (sessionStorage.getItem("test-seen") || "").split("\n").filter(l => l.startsWith("/es/studios/")).some(l => /Ya estamos/.test(l)),
+        sheet: document.getElementById("modalBg").classList.contains("open") && /Loom/.test(document.getElementById("mTitle")?.textContent || "") };
+    });
+    moved && said && after.open && after.navBefore && !after.before && after.sheet
+      ? ok("Murray: travels to Loom's record first and answers once there") : fail("Murray navigation: " + JSON.stringify({ moved, said, after }));
+    (await page.$("#murrayMode")) ? fail("Murray: the model badge is still there") : ok("Murray: no model badge");
+    const tips = await page.$eval("#murraySugg", el => ({ hidden: el.hidden, buttons: el.querySelectorAll("button.pbtn").length }));
+    tips.hidden && tips.buttons === 0 ? ok("Murray: suggestions are small text, gone once you have asked") : fail("Murray suggestions: " + JSON.stringify(tips));
     await page.unroute("**/api/murray/chat");
     await page.evaluate(() => sessionStorage.removeItem("pcm-murray"));
     const js = fs.readdirSync(path.join(DIST, "js")).map(f => fs.readFileSync(path.join(DIST, "js", f), "utf8")).join("\n");
@@ -197,9 +213,17 @@ function serve() {
     await page.close();
   }
 
-  console.log("DOSBox room catalogue: 10 per page, with search, letters and order");
+  console.log("DOSBox room: only playable games, on a shelf of 10 per page, with search, letters and order");
   {
-    const page = await ctx.newPage(); await page.goto(`${base}/es/arcade/`);
+    (await (await ctx.newPage()).goto(`${base}/es/arcade/`).then(r => r.text())).includes('data-status="pending"')
+      ? fail("games that cannot be played are listed in the room") : ok("the room lists only playable games");
+    // a build with 25 playable games (tests/fixtures/arcade_catalog.py), to see the shelf with pages
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "pcm-shelf-")), cat = path.join(tmp, "catalog.json"), out = path.join(tmp, "site");
+    execFileSync("python3", [path.join(__dirname, "fixtures/arcade_catalog.py"), cat, "25"], { stdio: "ignore" });
+    execFileSync("python3", [path.join(__dirname, "..", "build.py"), "--out", out, "--no-local"], { env: { ...process.env, PCM_CATALOG: cat }, stdio: "ignore" });
+    const srv2 = await serve(out), base2 = `http://localhost:${srv2.address().port}`;
+    const page = await ctx.newPage(); await page.goto(`${base2}/es/arcade/`);
+    (await page.$("#catStatus, #catEngine, .chip")) ? fail("state or engine filters, or chips, are still there") : ok("no state or engine filters, no chips");
     const visible = () => page.$$eval(".dos-game", a => a.filter(x => !x.hidden).map(x => x.querySelector("h3").textContent));
     const total = await page.$$eval(".dos-game", a => a.length);
     (await visible()).length === Math.min(10, total) ? ok("10 games on the first page") : fail("first page shows " + (await visible()).length);
@@ -219,9 +243,19 @@ function serve() {
     em.length > 0 && em.length <= 10 && em.every(t => /^(the |a |an )?m/i.test(t)) ? ok("letter M, at most 10 per page") : fail("letter: " + em.join(", "));
     await page.click('.letters button[data-l=""]');
     await page.selectOption("#catSort", "year");
-    const years = await page.$$eval(".dos-game", a => a.filter(x => !x.hidden && x.dataset.status === "record").map(x => +x.dataset.year));
+    const years = await page.$$eval(".dos-game", a => a.filter(x => !x.hidden).map(x => +x.dataset.year));
     years.every((y, i) => i === 0 || y >= years[i - 1]) ? ok("order by year kept within the page") : fail("year order " + years);
-    await page.close();
+    const shelf = await page.$eval("#catList", el => getComputedStyle(el).gridTemplateColumns.split(" ").length);
+    shelf === 5 ? ok("five games per row on the shelf") : fail("shelf columns: " + shelf);
+    await page.evaluate(() => { window.Dos = () => ({ stop() {}, setMouseCapture() {}, setMouseSensitivity() {}, setVolume() {} }); });
+    await page.route(/\/api\/games\//, r => r.fulfill({ status: 200, contentType: "application/zip", body: Buffer.from("PK\x05\x06" + "\0".repeat(18), "binary") }));
+    const pick = await page.$eval(".dos-game:not([hidden])", el => el.dataset.id);
+    await page.click(`.dos-game[data-id="${pick}"] .dos-play`);
+    await page.waitForSelector("#dosInfo:not([hidden]) h3");
+    (await page.textContent("#dosInfo h3")) === (await page.textContent(`.dos-game[data-id="${pick}"] h3`)) && (await page.$(`.dos-game.on[data-id="${pick}"]`))
+      ? ok("the chosen game shows beside the screen and is marked on the shelf") : fail("info panel");
+    await page.close(); srv2.close();
+    fs.rmSync(tmp, { recursive: true, force: true });
   }
 
   console.log("Navigation: doors, games submenu, museum map, in-this-room strip");

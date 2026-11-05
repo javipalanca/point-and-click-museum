@@ -23,6 +23,7 @@ python3 tools/games_inbox.py ~/juegos [--once]   # vigila una carpeta de zips, l
 python3 tools/identify_game.py juego.zip --cover   # qué juego es (ficheros, nombres, línea temporal, catálogo ScummVM) y su portada
 python3 tools/sync_catalog.py [--only scummvm|archive|gog] [--validate N]   # catálogo automático -> data/catalog.json
 python3 tools/game_fetch.py <edición>   # descarga, valida y prepara una edición del catálogo
+python3 tools/ia_inspect.py <identificador>   # qué contiene un elemento de Internet Archive (programas DOS/Windows, ScummVM)
 python3 server/games.py          # proxy de descarga del catálogo en local (puerto 8081)
 npm run test:catalog             # extremo a extremo del catálogo (fuentes falsas, proxy real)
 npm run test:admin               # extremo a extremo del panel de control (/admin/)
@@ -60,6 +61,7 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
 | `data/catalog.overrides.json`, `data/catalog.sources.json` | correcciones a mano (ganan siempre) y configuración de las fuentes |
 | `server/admin.py`, `server/admin/` | panel de control privado (`/admin/`, usuario y contraseña del entorno): sincronizar, probar en DOSBox/ScummVM, validar, derechos con prueba, búsqueda en IA; decisiones en `catalog.admin.json`. Solo en español (herramienta privada, no contenido del museo) |
 | `tools/sync_catalog.py`, `tools/game_fetch.py`, `server/games.py` | sincronización (ScummVM, Internet Archive, GOG), descarga y validación, y proxy `/api/games/` (solo ediciones jugables) |
+| `tools/ia_inspect.py` | qué hay en un elemento de Internet Archive sin descargarlo (índice de sus zips por peticiones parciales y cabecera de cada programa): DOS, Windows, instalador o ScummVM, y el programa sugerido; lo usa el panel antes de añadir una edición |
 | `tools/identify_game.py` | identificación de juegos (firmas de ficheros SCUMM/AGI, nombres, `timeline.json` + catálogo de ScummVM) y portadas (`media.json` del museo o libretro-thumbnails) |
 | `data/media.json` + `assets/media/` | imágenes reales (portadas, capturas, logos) con su fuente exacta; `refs` reutiliza imágenes entre fichas |
 | `data/sprites.json`, `characters.json`, `pixelfont.json` | gráficos de la interfaz y los minijuegos |

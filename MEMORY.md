@@ -312,6 +312,29 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   pasa el `X-Forwarded-Proto` del proxy al panel. Probado en Docker con Traefik 2.2.11 y la configuración de
   pointandclickle (Django simulado): rutas, 301, cookie `Secure`, `/api/murray/stats` cerrado y `X-Forwarded-For`
   falsificado descartado por Traefik. Pendiente: aplicarlo en el servidor (DNS, cambios en pointandclickle).
+- **2026-11-05 · Sala DOSBox como estantería** (petición del usuario: «quita "Con permiso", el filtro de estado y el de
+  motores; la disposición queda muy desigual con la caja de DOSBox»). La sala lista solo lo que se puede jugar (con
+  paquete o edición jugable); lo pendiente y lo «solo ficha» viven en la línea temporal y el panel. Sin etiquetas
+  (motor, licencia, derechos) ni filtros de estado o motor: búsqueda, compañía, orden y letras en una fila. Arriba, la
+  pantalla y a su lado la ficha del juego elegido (portada, descripción, «Ver ficha», GOG, crédito) y los controles;
+  debajo, una estantería de portadas de 5 × 2 (10 por página; 4, 3 y 2 columnas al estrecharse) con «▶ Jugar» al pasar
+  por encima. Pruebas con `tests/fixtures/arcade_catalog.py` (25 juegos jugables).
+- **2026-11-05 · Murray más sencillo y primero el viaje** (petición del usuario). Fuera la etiqueta del modo («conectado
+  al oráculo», «sin LLM»); las preguntas de ejemplo son 3 enlaces de texto pequeño al pie, junto a la nota de
+  privacidad y el crédito en una línea, y desaparecen tras la primera pregunta. Cuando Murray usa `go_to`, el servidor
+  manda un evento `navigate` antes del texto; el widget no muestra la respuesta, anuncia «Rumbo a…», espera a que termine,
+  hace la transición y en la sala de destino la dice palabra a palabra (`pending` en `sessionStorage`). Con la marca
+  `[[go:…]]` (modelos sin herramientas) el destino llega al final: la respuesta se retira y se dice al llegar.
+- **2026-11-05 · Ver qué contiene un elemento de Internet Archive antes de añadirlo** (petición del usuario: «falla
+  mucho añadir la edición y luego descubrir que no hay ejecutable»). `tools/ia_inspect.py` lee de cada zip (hasta 4,
+  el mayor primero) solo el directorio central con peticiones `Range` (zip64 incluido) y los primeros 4 KB de cada
+  `.EXE` (descomprimiendo deflate parcial) para distinguir DOS de Windows (PE); aplica las firmas de ScummVM y la
+  clasificación de `add_game.candidates` (instaladores fuera). Veredicto por zip: dosbox, scummvm, windows, nested,
+  none, too-big. Un `.EXE` sin cabecera MZ cuenta como DOS (DOS lo carga como `.COM`). En el panel: enlace a archive.org
+  en cada resultado, «Ver qué contiene», «Probar» (`/api/admin/try`, edición temporal `try-<hash>` en la caché, no
+  guarda nada ni recarga la ficha) y «Añadir como edición» con el zip y el programa probados (`attach` con
+  `file`/`exe`/`engine`). Probado con el archive.org falso (`tests/fixtures/fake_sources.py` responde a `Range`); el real
+  no era accesible desde la sesión.
 
 ## Datos técnicos útiles
 

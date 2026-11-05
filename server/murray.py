@@ -410,7 +410,9 @@ class GoMarker:
 
 
 def llm_events(history: list[dict], lang: str, cfg: dict, page: str = ""):
-    """The answer as a stream of events: ("delta", text)… then ("done", {"sources", "mode"})."""
+    """The answer as a stream of events: ("delta", text)… then ("done", {"sources", "mode"}). When Murray decides to
+    take the visitor somewhere with the go_to tool, ("navigate", {...}) comes first, before the text: the page starts
+    the trip and shows the answer on arrival."""
     question = history[-1]["content"]
     context = MUSEUM.search(question, lang, 6)
     records = "\n".join(f"- [{d.id}] {d.text}" for d in context) or "- (no matching records)"
@@ -471,6 +473,7 @@ def llm_events(history: list[dict], lang: str, cfg: dict, page: str = ""):
                 used += docs
                 if fn.get("name") == "go_to" and json.loads(out).get("ok"):
                     navigate = json.loads(out)["going_to"]
+                    yield "navigate", navigate
             except (ValueError, TypeError) as e:
                 out = json.dumps({"error": f"bad arguments: {e}"})
             messages.append({"role": "tool", "tool_call_id": c.get("id", ""), "content": out})
@@ -483,7 +486,7 @@ def llm_reply(history: list[dict], lang: str, cfg: dict, page: str = "") -> dict
     for kind, value in llm_events(history, lang, cfg, page):
         if kind == "delta":
             parts.append(value)
-        else:
+        elif kind == "done":
             meta = value
     return {"reply": "".join(parts).strip(), **meta}
 
@@ -572,7 +575,7 @@ def answer(body: dict) -> dict:
     for kind, value in answer_events(body):
         if kind == "delta":
             parts.append(value)
-        else:
+        elif kind == "done":
             meta = value
     return {"reply": "".join(parts).strip(), **meta}
 
@@ -643,7 +646,7 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         try:
             for kind, value in events:
-                obj = {"delta": value} if kind == "delta" else {"done": True, **value}
+                obj = {"delta": value} if kind == "delta" else {"navigate": value} if kind == "navigate" else {"done": True, **value}
                 self.wfile.write(b"data: " + json.dumps(obj, ensure_ascii=False).encode("utf-8") + b"\n\n")
                 self.wfile.flush()
         except (BrokenPipeError, ConnectionResetError):
@@ -692,7 +695,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_stream(measured(body, answer_events(body)))
             parts, meta = [], {}
             for kind, value in measured(body, answer_events(body)):
-                parts.append(value) if kind == "delta" else meta.update(value)
+                if kind == "delta":
+                    parts.append(value)
+                elif kind == "done":
+                    meta.update(value)
             return self.send_json(200, {"reply": "".join(parts).strip(), **meta})
         except (ValueError, UnicodeDecodeError) as e:
             return self.send_json(400, {"error": str(e)})
@@ -710,6 +716,8 @@ def probe(question: str, lang: str = "es"):
                 first = time.monotonic() - t0
                 print(f"\n[first word after {first:.1f}s]\n", file=sys.stderr)
             print(value, end="", flush=True)
+        elif kind == "navigate":
+            print(f"\n[going to {value.get('page')}#{value.get('hash', '')} after {time.monotonic() - t0:.1f}s]\n", file=sys.stderr)
         else:
             print(f"\n\n[done after {time.monotonic() - t0:.1f}s · mode {value.get('mode')}"
                   f"{' · refused by the guard' if value.get('guard') else ''}]", file=sys.stderr)

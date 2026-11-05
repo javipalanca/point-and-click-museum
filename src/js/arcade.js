@@ -8,7 +8,7 @@
    embedding frame refuses pointer lock, we fall back to direct mode automatically. */
 "use strict";
 if (document.getElementById("dosHost")) (() => {
-  const { D, $, $$, t, sfx, toast, store } = PCM;
+  const { D, $, $$, t, esc, sfx, toast, store } = PCM;
   const E = D.arcade.emulator;
   const base = D.arcadeVendored ? D.root + E.local : E.cdn;
   const host = $("#dosHost"), idle = $("#dosIdle"), now = $("#dosNow"), stopBtn = $("#dosStop"), fullBtn = $("#dosFull");
@@ -221,7 +221,27 @@ if (document.getElementById("dosHost")) (() => {
     }
   }
 
+  /* the chosen game, next to the screen: its box, what it is and where to read more */
+  function showInfo(g) {
+    const info = $("#dosInfo");
+    if (!info) return;
+    $$(".dos-game.on").forEach(x => x.classList.remove("on"));
+    if (!g) { info.hidden = true; return; }
+    const card = $('.dos-game[data-id="' + g.id + '"]');
+    if (card) card.classList.add("on");
+    const img = card && card.querySelector("img.cover"), credit = card && card.querySelector(".credit"), meta = card && card.querySelector(".meta");
+    const links = [];
+    if (g.timeline && D.pageUrls.timeline != null) links.push('<a href="' + esc(D.pageUrls.timeline + "#" + g.timeline) + '">' + esc(t("arcadeRecord")) + "</a>");
+    if (g.gog) links.push('<a href="' + esc(g.gog) + '" rel="noopener" target="_blank">' + esc(t("buyGog")) + " ↗</a>");
+    info.innerHTML = (img ? '<img class="cover" src="' + esc(img.getAttribute("src")) + '" alt="' + esc(t("arcadeCoverAlt", { title: g.title })) + '">' : "") +
+      "<h3>" + esc(g.title) + "</h3>" + (meta && meta.textContent.trim() ? '<p class="meta">' + esc(meta.textContent) + "</p>" : "") +
+      (g.desc ? '<p class="desc">' + esc(g.desc) + "</p>" : "") + (links.length ? '<p class="links">' + links.join(" · ") + "</p>" : "") +
+      (credit ? credit.outerHTML : "");
+    info.hidden = false;
+  }
+
   function play(g) {
+    showInfo(g);
     PCM.track("arcade_play", { id: g.id, engine: g.engine || "dosbox", src: g.key ? "catalog" : g.local ? "local" : "museum" });
     if (g.key) return playCatalog(g);
     if (g.engine === "scummvm") {
@@ -260,6 +280,7 @@ if (document.getElementById("dosHost")) (() => {
     const err = $("#byoErr"), file = $("#byoFile").files[0], exe = $("#byoExe").value.trim();
     err.textContent = "";
     if (!file) { err.textContent = t("byoNoFile"); sfx("bad"); return; }
+    showInfo(null);
     const name = file.name.toLowerCase();
     if (name.endsWith(".jsdos")) {
       const u = URL.createObjectURL(file);
@@ -288,7 +309,7 @@ if (document.getElementById("dosHost")) (() => {
 if (document.getElementById("catList")) (() => {
   const { D, $, $$, t, sfx, reduceMotion } = PCM;
   const list = $("#catList"), items = $$(".dos-game", list), count = $("#catCount"), empty = $("#catEmpty");
-  const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button"), engineSel = $("#catEngine"), stateSel = $("#catStatus");
+  const search = $("#catSearch"), studio = $("#catStudio"), sort = $("#catSort"), letters = $$(".letters button");
   if (!search) return; // few games: no filters
   const PER = (D.arcade.catalogue || {}).pageSize || 10;
   const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -300,9 +321,9 @@ if (document.getElementById("catList")) (() => {
 
   /* what the search, filters and letter leave, in the list's current order; then only the current page is shown */
   function apply(keepPage) {
-    const q = norm(search.value.trim()), st = studio.value, en = engineSel ? engineSel.value : "", ss = stateSel ? stateSel.value : "";
+    const q = norm(search.value.trim()), st = studio.value;
     matched = $$(".dos-game", list).filter(el => (!q || q.split(/\s+/).every(w => el._text.includes(w))) && (!st || el.dataset.studio === st) &&
-      (!letter || el.dataset.letter === letter) && (!en || el.dataset.engine === en) && (!ss || el.dataset.status === ss));
+      (!letter || el.dataset.letter === letter));
     if (!keepPage) page = 0;
     show();
   }
@@ -334,8 +355,7 @@ if (document.getElementById("catList")) (() => {
   });
   function reorder() {
     const by = sort.value;
-    const rank = { playable: 0, pending: 1, record: 2 }, r = el => rank[el.dataset.status] || 0;
-    items.slice().sort((a, b) => r(a) - r(b) || (by === "year" ? (+a.dataset.year - +b.dataset.year) || a.dataset.key.localeCompare(b.dataset.key) : a.dataset.key.localeCompare(b.dataset.key)))
+    items.slice().sort((a, b) => (by === "year" ? (+a.dataset.year - +b.dataset.year) || a.dataset.key.localeCompare(b.dataset.key) : a.dataset.key.localeCompare(b.dataset.key)))
       .forEach(el => list.appendChild(el));
     apply();
   }
@@ -346,8 +366,6 @@ if (document.getElementById("catList")) (() => {
     if (search.value.trim()) searchTimer = setTimeout(() => PCM.track("catalog_search", { results: matched.length > 0 }), 1500);
   });
   studio.addEventListener("change", () => { sfx("click"); apply(); });
-  if (engineSel) engineSel.addEventListener("change", () => { sfx("click"); apply(); });
-  if (stateSel) stateSel.addEventListener("change", () => { sfx("click"); apply(); });
   sort.addEventListener("change", () => { sfx("click"); reorder(); });
   letters.forEach(b => b.addEventListener("click", () => {
     letter = b.dataset.l; letters.forEach(x => x.setAttribute("aria-pressed", String(x === b))); sfx("click"); apply(); list.scrollTop = 0;
@@ -360,7 +378,7 @@ if (document.getElementById("catList")) (() => {
     const m = /^#play=([\w-]+)/.exec(location.hash), el = m && items.find(x => x.dataset.id === m[1]);
     if (!el) return;
     let i = matched.indexOf(el);
-    if (i < 0) { search.value = ""; letter = ""; studio.value = ""; if (engineSel) engineSel.value = ""; if (stateSel) stateSel.value = "";
+    if (i < 0) { search.value = ""; letter = ""; studio.value = "";
       letters.forEach(x => x.setAttribute("aria-pressed", String(x.dataset.l === ""))); apply(); i = matched.indexOf(el); }
     page = Math.floor(i / PER); show();
   };

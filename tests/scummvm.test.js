@@ -47,7 +47,7 @@ with zipfile.ZipFile(sys.argv[1] + "/dosgame.zip", "w") as z:
     const page = await browser.newPage(); const errs = [];
     page.on("pageerror", e => errs.push(e.message));
     await page.goto(base + "/es/arcade/");
-    check((await page.locator('.dos-game[data-id="beneath-a-steel-sky"] .chip.engine').textContent()) === "ScummVM", "freeware listed as ScummVM");
+    check(!(await page.$('.dos-game[data-id="beneath-a-steel-sky"]')), "a freeware without its files is not on the shelf (only what can be played)");
     await page.click(".byo-wrap summary");
     await page.setInputFiles("#byoFile", path.join(tmp, "monkey.zip"));
     await page.click("#byoForm button[type=submit]");

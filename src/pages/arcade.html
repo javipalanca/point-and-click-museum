@@ -12,25 +12,30 @@
           <span class="now" id="dosNow">{{t:arcadeNothing}}</span>
           <span class="row"><button class="pbtn small" id="dosMouse" type="button" aria-pressed="true" title="{{t:mouseModeTitle}}">{{t:mouseLock}}</button><button class="pbtn small" id="dosFull" type="button" disabled>{{t:fullscreen}}</button><button class="pbtn small" id="dosStop" type="button" disabled>{{t:stop}}</button></span>
         </div>
-        <div class="dos-help"><label for="dosVol">{{t:volume}}</label><input type="range" id="dosVol" min="0" max="1" step="0.05" value="0.8"><output id="dosVolOut" for="dosVol">80%</output><label for="dosSens">{{t:mouseSpeed}}</label><input type="range" id="dosSens" min="0.1" max="1" step="0.05" value="0.5"><span id="dosMouseHint">{{t:mouseHintLock}}</span></div>
-        <details class="byo-wrap"><summary>{{t:byoTitle}}</summary>
-          <form class="byo" id="byoForm">
-          <p>{{t:byoBody}}</p>
-          <label for="byoFile">{{t:byoFile}}<input id="byoFile" type="file" accept=".jsdos,.zip,application/zip"></label>
-          <label for="byoEngine">{{t:byoEngine}}<select id="byoEngine"><option value="auto">{{t:byoAuto}}</option><option value="dosbox">DOSBox</option><option value="scummvm">ScummVM</option></select></label>
-          <label for="byoExe">{{t:byoExe}}<input id="byoExe" type="text" spellcheck="false" autocapitalize="characters" placeholder="GAME.EXE"></label>
-          <button class="pbtn small" type="submit">{{t:byoRun}}</button>
-          <p class="err" id="byoErr" aria-live="polite"></p>
-        </form>
-        </details>
       </div>
-      <div class="dos-list">
-        <h2 class="cat-title" id="catTitle">{{t:catTitle}}</h2>
-        {{raw:arcadeTools}}
-        <p class="cat-count" id="catCount" aria-live="polite">{{raw:arcadeCount}}</p>
-        <div class="{{raw:catClass}}" id="catList" aria-labelledby="catTitle">{{raw:arcadeGames}}</div>
-        <p class="cat-empty" id="catEmpty" hidden>{{t:catEmpty}}</p>
-      </div>
+      <aside class="dos-side">
+        <article class="px dos-info" id="dosInfo" hidden></article>
+        <div class="px dos-controls">
+          <div class="dos-help"><label for="dosVol">{{t:volume}}</label><input type="range" id="dosVol" min="0" max="1" step="0.05" value="0.8"><output id="dosVolOut" for="dosVol">80%</output><label for="dosSens">{{t:mouseSpeed}}</label><input type="range" id="dosSens" min="0.1" max="1" step="0.05" value="0.5"><span id="dosMouseHint">{{t:mouseHintLock}}</span></div>
+          <details class="byo-wrap"><summary>{{t:byoTitle}}</summary>
+            <form class="byo" id="byoForm">
+            <p>{{t:byoBody}}</p>
+            <label for="byoFile">{{t:byoFile}}<input id="byoFile" type="file" accept=".jsdos,.zip,application/zip"></label>
+            <label for="byoEngine">{{t:byoEngine}}<select id="byoEngine"><option value="auto">{{t:byoAuto}}</option><option value="dosbox">DOSBox</option><option value="scummvm">ScummVM</option></select></label>
+            <label for="byoExe">{{t:byoExe}}<input id="byoExe" type="text" spellcheck="false" autocapitalize="characters" placeholder="GAME.EXE"></label>
+            <button class="pbtn small" type="submit">{{t:byoRun}}</button>
+            <p class="err" id="byoErr" aria-live="polite"></p>
+          </form>
+          </details>
+        </div>
+      </aside>
+    </div>
+    <div class="dos-shelf">
+      <h2 class="cat-title" id="catTitle">{{t:catTitle}}</h2>
+      <div class="cat-head">{{raw:arcadeTools}}</div>
+      <p class="cat-count" id="catCount" aria-live="polite">{{raw:arcadeCount}}</p>
+      <div class="{{raw:catClass}}" id="catList" aria-labelledby="catTitle">{{raw:arcadeGames}}</div>
+      <p class="cat-empty" id="catEmpty" hidden>{{t:catEmpty}}</p>
     </div>
   </div>
 </section>

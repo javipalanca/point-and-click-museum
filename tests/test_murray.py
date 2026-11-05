@@ -194,6 +194,12 @@ class AnswerTests(unittest.TestCase):
         r = murray.answer({"lang": "es", "page": "studios", "messages": [{"role": "user", "content": "Llévame a Loom"}]})
         self.assertEqual(r["navigate"], {"page": "timeline", "hash": "loom", "title": "Loom"})
         self.assertIn("studios", FakeLLM.requests[0]["body"]["messages"][0]["content"])   # Murray knows where you are
+        # the trip is announced before the first word, so that the page moves first and Murray talks on arrival
+        FakeLLM.requests.clear()
+        events = list(murray.answer_events({"lang": "es", "messages": [{"role": "user", "content": "Llévame a Loom"}]}))
+        kinds = [k for k, _ in events]
+        self.assertIn("navigate", kinds)
+        self.assertLess(kinds.index("navigate"), kinds.index("delta"))
 
     def test_marker_navigates_without_tools(self):
         self.configure(MURRAY_LLM_TOOLS="0")

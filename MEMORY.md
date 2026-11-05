@@ -362,6 +362,10 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   portugués, italiano, lenguas indígenas de América → español; occitano, bretón, corso, criollo haitiano, África
   francófona → francés; luxemburgués, alemán suizo, romanche → alemán; el resto → inglés), y redirige con
   `location.replace`. Las demás páginas no redirigen nunca (un enlace a `/fr/…` se respeta).
+- **2026-11-05 · El panel carga su script con versión** (el usuario vio un .7z como «packed» sin botones: su navegador
+  usaba el `admin.js` anterior con el servidor nuevo). `/admin/` sirve `admin.js?v=` y `admin.css?v=` con un hash de
+  su contenido, así una actualización nunca se mezcla con una copia vieja. Prueba con un elemento cuyo único fichero
+  es un .7z suelto.
 
 ## Datos técnicos útiles
 

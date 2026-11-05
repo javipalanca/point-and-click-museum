@@ -267,9 +267,24 @@ def handle(handler, method: str, P: dict) -> bool:
     if not ENABLED:
         send(handler, 404, {"error": "the control panel is off: set ADMIN_USER and ADMIN_PASSWORD"})
         return True
-    if path in ("/admin", "/admin/") or re.fullmatch(r"/admin/(admin\.js|admin\.css)", path):
-        name = "index.html" if path in ("/admin", "/admin/") else path.rsplit("/", 1)[1]
-        send_file(handler, UI / name, {"js": "text/javascript", "css": "text/css"}.get(name.rsplit(".", 1)[-1], "text/html; charset=utf-8"))
+    if path in ("/admin", "/admin/"):
+        # the panel's script and styles carry a version made from their contents: after an update the browser can
+        # never keep running an old admin.js against the new server
+        page = (UI / "index.html").read_text("utf-8")
+        for name in ("admin.js", "admin.css"):
+            v = hashlib.sha1((UI / name).read_bytes()).hexdigest()[:10]
+            page = page.replace(f'"/admin/{name}"', f'"/admin/{name}?v={v}"')
+        data = page.encode("utf-8")
+        handler.send_response(200)
+        for k, v in (("Content-Type", "text/html; charset=utf-8"), ("Content-Length", str(len(data))), ("Cache-Control", "no-store"),
+                     ("X-Robots-Tag", "noindex"), ("X-Frame-Options", "SAMEORIGIN")):
+            handler.send_header(k, v)
+        handler.end_headers()
+        handler.wfile.write(data)
+        return True
+    if re.fullmatch(r"/admin/(admin\.js|admin\.css)", path):
+        name = path.rsplit("/", 1)[1]
+        send_file(handler, UI / name, {"js": "text/javascript", "css": "text/css"}[name.rsplit(".", 1)[-1]])
         return True
     ip = handler.client_ip()
     if method == "POST" and handler.headers.get("X-PCM-Admin") != "1":

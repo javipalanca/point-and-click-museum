@@ -95,6 +95,8 @@ const firstLine = proc => new Promise((resolve, reject) => {
     console.log("Access");
     await page.goto(base + "/admin/");
     check(await page.isVisible("#loginForm"), "asks for user and password");
+    check(await page.$('script[src^="/admin/admin.js?v="]') && await page.$('link[href^="/admin/admin.css?v="]'),
+      "the panel loads its script and styles with a version: an update is never mixed with an old copy");
     check(await page.evaluate(async () => (await fetch("/api/admin/catalog")).status) === 401, "the API refuses without a session");
     await page.fill("[name=user]", "javi"); await page.fill("[name=password]", "wrong"); await page.click("#loginForm button");
     await page.waitForSelector("#loginErr:not(:empty)");
@@ -213,6 +215,19 @@ const firstLine = proc => new Promise((resolve, reject) => {
       await page.waitForFunction(() => [...document.querySelectorAll("#detail .edition")].some(e => /skulls_7z/.test(e.textContent)));
       const skEd = JSON.parse(fs.readFileSync(catFile, "utf8")).games.find(g => g.id === "quest-for-the-museum").editions.find(e => e.archive === "skulls_7z");
       check(skEd && skEd.run.exe === "SKULLS/SKULLS.EXE" && skEd.emulator === "dosbox", "added with what ran when it was tried");
+      // an item whose only file is a .7z (not inside a zip)
+      await page.fill('#iaLink [name=link]', "https://archive.org/details/skulls_cd_7z");
+      await page.click("#iaLink button");
+      const lone = '#iaLinkResult .zip[data-file="Skulls_PC_CD_1996.7z"]';
+      await page.waitForSelector(lone);
+      check(/7z\/RAR: se abre al probarlo/.test(await page.textContent(lone)) && !!(await page.$(lone + " [data-try]")) && await page.$eval(lone + " [data-add]", b => b.disabled),
+        "a loose .7z: «Probar», and «Añadir» once tried");
+      await page.click(lone + " [data-try]");
+      await page.waitForTimeout(6000);
+      await page.click("#playerClose");
+      await page.click(lone + " [data-add]");
+      await page.waitForFunction(() => [...document.querySelectorAll("#detail .edition")].some(e => /skulls_cd_7z/.test(e.textContent)));
+      check(true, "the loose .7z was added after trying it");
     } else console.log("  (no 7-Zip program here: the .7z checks are skipped)");
 
     console.log("Statistics in the panel");

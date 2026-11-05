@@ -68,6 +68,9 @@ if packed:  # like "3 Skulls of the Toltecs.zip": manual, cover, metadata and th
     FILES["/download/skulls_7z/Skulls.zip"] = zbytes({"Skulls/Skulls - Manual.pdf": b"%PDF" + b"m" * 300, "Skulls/Skulls.7z": packed,
                                                       "Skulls/Skulls_01.png": b"\x89PNG" + b"p" * 200, "Skulls/metadata.json": b"{}", "Skulls/README.txt": b"r"})
     ITEMS["skulls_7z"] = {"title": "Skulls of the Museum (1996)", "year": "1996", "creator": "Some Studio", "collection": ["softwarelibrary_msdos_games"]}
+    # an item whose only file is the .7z itself (like "3 Skulls Of The Toltecs PC CD 1996 Spanish")
+    FILES["/download/skulls_cd_7z/Skulls_PC_CD_1996.7z"] = packed
+    ITEMS["skulls_cd_7z"] = {"title": "Skulls of the Museum PC CD 1996", "year": "1996", "creator": "Some Studio", "collection": ["softwarelibrary_msdos_games"]}
 SEARCH = {"response": {"docs": [dict(m, identifier=i) for i, m in ITEMS.items()]}}
 
 

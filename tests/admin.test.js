@@ -141,14 +141,34 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await page.waitForFunction(() => document.querySelector("#detail h2 .badge").textContent.includes("Jugable"));
     check(true, "choosing permission in the rights form, without any link, also makes it available");
 
-    console.log("Locate a game in Internet Archive");
+    console.log("Locate a game in Internet Archive: see what it holds, try it, then add it");
     await page.fill("#q", "lonely game");
     await page.click('#gameList li[data-id="lonely-game"]');
     await page.click("#iaForm button");
-    await page.waitForSelector("[data-attach]");
-    await page.click("[data-attach]");
+    await page.waitForSelector("[data-inspect]");
+    check(await page.$('tr[data-ident="msdos_quest_1991"] a[href="https://archive.org/details/msdos_quest_1991"]') !== null, "each result links to its archive.org page");
+    await page.click('[data-inspect="win_quest_1998"]');
+    await page.waitForSelector('tr.inspect[data-for="win_quest_1998"] .zip');
+    const win = await page.textContent('tr.inspect[data-for="win_quest_1998"]');
+    check(/solo Windows/.test(win) && !(await page.$('tr.inspect[data-for="win_quest_1998"] [data-add]')), "a Windows-only item is spotted before adding it, and cannot be added");
+    await page.click('[data-inspect="msdos_quest_1991"]');
+    await page.waitForSelector('tr.inspect[data-for="msdos_quest_1991"] .zip');
+    const zipSel = 'tr.inspect[data-for="msdos_quest_1991"] .zip[data-file="QUEST.ZIP"]';
+    check(/DOS/.test(await page.textContent(zipSel)) && (await page.$eval(zipSel + " select", s => s.value)) === "QUEST/QUEST.EXE",
+      "its zip has a DOS program, and the one that starts the game is suggested");
+    check(/sin programa/.test(await page.textContent('tr.inspect[data-for="msdos_quest_1991"] .zip[data-file="QUEST_EXTRAS.ZIP"]')), "a zip with only an installer is flagged");
+    await page.$eval('tr.inspect[data-for="msdos_quest_1991"]', el => el.scrollIntoView({ block: "center" }));
+    await shot(page, "admin-inspect");
+    await page.click(zipSel + " [data-try]");
+    await page.waitForTimeout(6000);
+    check(!!(await page.$("#playerHost canvas")), "tried in the panel's DOSBox before adding it");
+    await page.click("#playerClose");
+    check(!JSON.parse(fs.readFileSync(catFile, "utf8")).games.find(g => g.id === "lonely-game").editions.length, "trying it saved nothing");
+    await page.click(zipSel + " [data-add]");
     await page.waitForSelector("#detail .edition");
-    check((await page.textContent("#detail .edition")).includes("msdos_quest_1991"), "an Internet Archive item attached to a game");
+    const added = JSON.parse(fs.readFileSync(catFile, "utf8")).games.find(g => g.id === "lonely-game").editions[0];
+    check((await page.textContent("#detail .edition")).includes("msdos_quest_1991") && added.download.file === "QUEST.ZIP" && added.run.exe === "QUEST/QUEST.EXE",
+      "added with the zip and the program that were tried");
 
     console.log("Remove an edition, and restore it");
     await page.click('#detail [data-act="delete"]');

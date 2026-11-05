@@ -137,13 +137,47 @@
       box.innerHTML = '<p class="muted">Buscando…</p>';
       try {
         const r = await api("/api/admin/search?q=" + encodeURIComponent(f.get("q")) + (f.get("all") ? "&all=1" : ""));
-        box.innerHTML = r.results.length ? "<table><tr><th>Elemento</th><th>Año</th><th>Derechos según sus metadatos</th><th></th></tr>" + r.results.map(x =>
-          '<tr><td><a href="' + url(x.page) + '" target="_blank" rel="noopener">' + esc(x.title) + "</a><br><small>" + esc(x.identifier) + "</small></td><td>" + esc(x.year || "") +
-          "</td><td>" + esc(x.rights[0]) + (x.rights[1] ? " (" + esc(x.rights[1]) + ")" : "") + '</td><td><button data-attach="' + esc(x.identifier) + '">Añadir</button></td></tr>').join("") + "</table>"
+        box.innerHTML = r.results.length ? '<table class="ia"><tr><th>Elemento</th><th>Año</th><th>Derechos según sus metadatos</th><th></th></tr>' + r.results.map(x =>
+          '<tr data-ident="' + esc(x.identifier) + '"><td>' + esc(x.title) + '<br><small>' + esc(x.identifier) + (x.creator ? " · " + esc([].concat(x.creator)[0]) : "") +
+          ' · <a href="' + url(x.page) + '" target="_blank" rel="noopener">archive.org ↗</a></small></td><td>' + esc(x.year || "") +
+          "</td><td>" + esc(x.rights[0]) + (x.rights[1] ? " (" + esc(x.rights[1]) + ")" : "") + '</td><td><button data-inspect="' + esc(x.identifier) + '">Ver qué contiene</button></td></tr>' +
+          '<tr class="inspect" data-for="' + esc(x.identifier) + '" hidden><td colspan="4"></td></tr>').join("") + "</table>"
           : '<p class="muted">Sin resultados.</p>';
       } catch (x) { box.innerHTML = '<p class="err">' + esc(x.message) + "</p>"; }
     });
   }
+
+  const VERDICT = { dosbox: ["playable", "DOS: se puede probar"], scummvm: ["playable", "ScummVM"], windows: ["fail", "solo Windows: DOSBox no lo ejecuta"],
+    nested: ["pending", "zip dentro del zip"], none: ["fail", "sin programa que arranque el juego"], "too-big": ["fail", "demasiado grande (GAMES_MAX_MB)"], error: ["fail", "no se pudo leer"] };
+  const mb = n => !n ? "" : n < 1048576 ? Math.max(1, Math.round(n / 1024)) + " KB" : (n / 1048576).toFixed(1) + " MB";
+  function inspectionHtml(r) {
+    const zip = z => {
+      const [cls, label] = VERDICT[z.verdict] || ["pending", z.verdict], svm = z.scummvm;
+      const progs = (z.programs || []).map(pr => '<option value="' + esc(pr.path) + '"' + (pr.path === z.suggested ? " selected" : "") + (pr.type === "windows" ? " disabled" : "") + ">" +
+        esc(pr.path) + " · " + mb(pr.size) + (pr.type === "windows" ? " (Windows)" : "") + (pr.installer ? " (instalador)" : "") + (pr.path === z.suggested ? " · sugerido" : "") + "</option>").join("");
+      // add: what will start (DOS program, ScummVM data, a zip inside to open); try: also a zip with only an installer, to look at it
+      const add = ["dosbox", "scummvm", "nested"].includes(z.verdict), tryIt = add || (z.programs || []).some(pr => pr.type !== "windows");
+      const usable = (z.programs || []).some(pr => pr.type !== "windows");
+      return '<div class="zip" data-file="' + esc(z.name) + '"><h4>' + esc(z.name) + ' <span class="muted">' + mb(z.size) + (z.files ? " · " + z.files + " ficheros" : "") + '</span> <span class="badge ' + cls + '">' + esc(label) + "</span></h4>" +
+        (svm ? '<p>Datos de ScummVM: motor <b>' + esc(svm.engine) + "</b>" + (svm.folder ? " en " + esc(svm.folder) + "/" : "") + (svm.built ? "" : ' <span class="err">(no está en nuestra compilación)</span>') + "</p>" : "") +
+        (z.inner ? "<p>Contiene: " + z.inner.map(esc).join(", ") + ". Se abre al probarlo.</p>" : "") +
+        (z.error ? '<p class="err">' + esc(z.error) + "</p>" : "") +
+        (progs && usable ? '<label class="row">Programa <select name="exe"' + (svm ? " disabled" : "") + ">" + progs + "</select></label>" : "") +
+        (progs && !usable ? '<p class="muted">Programas: ' + z.programs.map(pr => esc(pr.path) + " (Windows)").join(", ") + "</p>" : "") +
+        (z.sample && !progs ? '<p class="muted">Ficheros: ' + z.sample.map(esc).join(", ") + "</p>" : "") +
+        (tryIt ? '<div class="row"><button data-try>Probar</button>' + (add ? '<button class="primary" data-add>Añadir como edición</button>' : "") + "</div>" : "") + "</div>";
+    };
+    return '<div class="inspection"><p><a href="' + url(r.page) + '" target="_blank" rel="noopener">Abrir en archive.org ↗</a>' +
+      (r.start ? ' · su emulador arranca <code>' + esc(r.start) + "</code>" : "") + "</p>" +
+      (r.zips.length ? r.zips.map(zip).join("") : '<p class="err">No tiene ningún zip.</p>') +
+      (r.other.length ? '<p class="muted">Otros ficheros (aún no se pueden usar): ' + r.other.map(o => esc(o.name) + " " + mb(o.size)).join(", ") + "</p>" : "") + "</div>";
+  }
+  const choice = el => {
+    const z = el.closest(".zip"), sel = z.querySelector("select[name=exe]"), ident = el.closest("tr.inspect").dataset.for;
+    const rep = inspected[ident], info = rep.zips.find(x => x.name === z.dataset.file);
+    return { archive: ident, file: z.dataset.file, title: rep.title, engine: info.scummvm ? info.scummvm.engine : null, exe: info.scummvm ? null : (sel ? sel.value : null) };
+  };
+  const inspected = {};
 
   function editionHtml(e) {
     const v = e.validated || {}, dl = e.download || {};
@@ -178,10 +212,25 @@
       catch (x) { alert(x.message); }
       return;
     }
-    const attach = ev.target.closest("[data-attach]");
-    if (attach) {
-      try { await post("/api/admin/games/" + current + "/attach", { archive: attach.dataset.attach }); await loadCatalog(); }
-      catch (x) { alert(x.message); }
+    const ins = ev.target.closest("[data-inspect]");
+    if (ins) {
+      const row = $('tr.inspect[data-for="' + CSS.escape(ins.dataset.inspect) + '"]'), cell = row.querySelector("td");
+      if (!row.hidden && cell.innerHTML) { row.hidden = true; return; }
+      row.hidden = false; cell.innerHTML = '<p class="muted">Leyendo el índice de sus zips en archive.org…</p>';
+      try { inspected[ins.dataset.inspect] = await api("/api/admin/inspect?archive=" + encodeURIComponent(ins.dataset.inspect)); cell.innerHTML = inspectionHtml(inspected[ins.dataset.inspect]); }
+      catch (x) { cell.innerHTML = '<p class="err">' + esc(x.message) + "</p>"; }
+      return;
+    }
+    if (ev.target.closest("[data-try]")) {
+      const c = choice(ev.target);
+      const q = "archive=" + encodeURIComponent(c.archive) + "&file=" + encodeURIComponent(c.file) + (c.engine ? "&engine=" + encodeURIComponent(c.engine) : c.exe ? "&exe=" + encodeURIComponent(c.exe) : "");
+      return play(c.title + " · " + c.file + (c.exe ? " · " + c.exe : ""), "/api/admin/try?" + q, c.engine ? "scummvm" : "dosbox", c.engine);
+    }
+    if (ev.target.closest("[data-add]")) {
+      const c = choice(ev.target), b = ev.target.closest("[data-add]");
+      b.disabled = true; b.textContent = "Añadiendo…";
+      try { await post("/api/admin/games/" + current + "/attach", { archive: c.archive, file: c.file, exe: c.exe, engine: c.engine }); await loadCatalog(); }
+      catch (x) { alert(x.message); b.disabled = false; b.textContent = "Añadir como edición"; }
       return;
     }
     const btn = ev.target.closest("[data-act]");
@@ -237,24 +286,29 @@
     if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
   }
   $("#playerClose").addEventListener("click", async () => { await stopPlayer(); $("#player").close(); });
-  async function test(key) {
+  function test(key) {
     const g = catalog.games.find(x => x.id === current), e = g.editions.find(x => x.key === key);
+    return play(g.title + " · " + (e.edition || key), "/api/admin/editions/" + key + "/bundle", e.emulator, (e.run || {}).svmEngine, true);
+  }
+  /* refresh: an edition of the catalogue (its download log and checks change); an item being tried changes nothing,
+     and the search results stay where they were */
+  async function play(title, src, emulator, engine, refresh) {
     await stopPlayer();
-    $("#playerTitle").textContent = g.title + " · " + (e.edition || key);
+    $("#playerTitle").textContent = title;
     $("#playerState").textContent = "descargando en el servidor y preparando…";
     $("#player").showModal();
     let bytes;
     try {
-      const r = await fetch("/api/admin/editions/" + key + "/bundle", { credentials: "same-origin" });
+      const r = await fetch(src, { credentials: "same-origin" });
       if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).error) || "HTTP " + r.status);
       bytes = new Uint8Array(await r.arrayBuffer());
-    } catch (x) { $("#playerState").textContent = "Error: " + x.message; loadCatalog(); return; }
+    } catch (x) { $("#playerState").textContent = "Error: " + x.message; if (refresh) loadCatalog(); return; }
     $("#playerState").textContent = (bytes.length / 1048576).toFixed(1) + " MB";
-    if (e.emulator === "scummvm") {
+    if (emulator === "scummvm") {
       const m = await (await fetch("/scummvm/manifest.json")).json().catch(() => ({ available: false }));
       if (!m.available) { $("#playerState").textContent = "ScummVM no está compilado en este servidor (tools/build_scummvm.sh)."; return; }
       const files = await unzip(bytes);
-      window.PCM_SVM_JOB = { data: m.data, inline: m.inline, gameId: "test", engine: (e.run || {}).svmEngine, files: Object.keys(files),
+      window.PCM_SVM_JOB = { data: m.data, inline: m.inline, gameId: "test", engine, files: Object.keys(files),
         memFiles: files, gameBase: "", args: ["--path=/games/test", "--auto-detect"], volume: 1 };
       const f = document.createElement("iframe");
       f.src = "/scummvm/player.html#" + encodeURI(window.PCM_SVM_JOB.args.join(" ")); f.allow = "autoplay; fullscreen";
@@ -268,7 +322,7 @@
       const el = document.createElement("div"); $("#playerHost").appendChild(el);
       dos = window.Dos(el, { url: blobUrl, pathPrefix: "/vendor/js-dos/emulators/", autoStart: true, noCloud: true, noNetworking: true, theme: "dark" });
     }
-    loadCatalog();
+    if (refresh) loadCatalog();
   }
 
   /* ---------- sources and downloads */

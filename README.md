@@ -135,7 +135,10 @@ Con `ADMIN_USER` y `ADMIN_PASSWORD` en `.env`, el contenedor `games` sirve un pa
   disponible** / **Retirar de la web** (tu decisión: queda anotado quién y cuándo; nota y enlace opcionales) y
   **Arranque** (ejecutable y `cycles`) y **Eliminar edición** (la sincronización no la vuelve a traer; las eliminadas se
   listan al final de la ficha con «Restaurar»). También el enlace de GOG, dejar un juego como solo ficha y **buscar en Internet Archive**
-  para añadir un elemento a un juego que no lo tenía.
+  para añadir un elemento a un juego que no lo tenía. Cada resultado enlaza a su página de archive.org y tiene **«Ver qué
+  contiene»**: lee solo el índice de cada zip (sin descargarlo) y dice si hay un programa de DOS, solo de Windows, solo
+  un instalador o datos de ScummVM, con el programa que arranca el juego ya sugerido. Desde ahí, **Probar** ese zip con
+  ese programa (no guarda nada) y **Añadir como edición** con lo que has probado (`tools/ia_inspect.py`).
 - **Fuentes**, **Descargas y errores** (públicas y del panel, con el motivo) y **Registro** de la sincronización.
 
 Un juego pasa a jugable en la web pública cuando **tú lo marcas como disponible** en el panel (la validación

@@ -9,7 +9,10 @@
     POST /api/admin/sync            {"only": ["scummvm"|"archive"|"gog"], "validate": n, "retryFailed": bool}
     GET  /api/admin/search?q=…      search Internet Archive by title (to attach an item to a game)
     POST /api/admin/games/<id>              {"gog": url|null, "forceRecord": bool}
-    POST /api/admin/games/<id>/attach       {"archive": identifier}
+    GET  /api/admin/inspect?archive=…       what an Internet Archive item holds (zips, DOS/Windows programs, ScummVM
+                                            data), read from the zips' index without downloading them (tools/ia_inspect.py)
+    GET  /api/admin/try?archive=…&file=…&exe=…|engine=…   that zip, prepared for the panel's emulator, saving nothing
+    POST /api/admin/games/<id>/attach       {"archive": identifier, "file"?: zip, "exe"?: program, "engine"?: scummvm engine}
     GET  /api/admin/editions/<key>/bundle   download and prepare any edition, for testing in the panel's emulator
     POST /api/admin/editions/<key>/validate run the automatic checks
     POST /api/admin/editions/<key>/rights   {"approved": true} makes it available on the web (your decision);
@@ -47,6 +50,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import game_fetch  # noqa: E402
+import ia_inspect  # noqa: E402
 import stats  # noqa: E402
 import sync_catalog  # noqa: E402
 
@@ -62,6 +66,40 @@ LOCK = threading.Lock()
 DOWNLOADS: deque = deque(maxlen=300)
 RIGHTS = sorted(game_fetch.RIGHTS_PLAYABLE | {"commercial", "unknown"})
 ID = re.compile(r"[a-z0-9][a-z0-9-]{0,80}")
+IDENT = re.compile(r"[A-Za-z0-9._-]{1,120}")
+INSPECTED: dict[str, tuple[float, dict]] = {}  # identifier -> (when, report), for 15 minutes
+
+
+def inspect_item(ident: str) -> dict:
+    hit = INSPECTED.get(ident)
+    if hit and time.time() - hit[0] < 900:
+        return hit[1]
+    report = ia_inspect.inspect(ident)
+    INSPECTED[ident] = (time.time(), report)
+    if len(INSPECTED) > 300:
+        INSPECTED.pop(next(iter(INSPECTED)))
+    return report
+
+
+def choose(report: dict, file: str | None, exe: str | None, engine: str | None) -> tuple[dict, dict]:
+    """The zip of an inspected item and how to start it: the person's choice, or what the inspection suggests."""
+    zips = {z["name"]: z for z in report["zips"]}
+    z = zips.get(file or report.get("best") or "")
+    if not z:
+        raise ValueError("choose a zip of this item")
+    if engine:
+        if not re.fullmatch(r"[a-z0-9_]{1,24}", engine):
+            raise ValueError("bad ScummVM engine")
+        return z, {"emulator": "scummvm", "run": {"svmEngine": engine}}
+    if exe:
+        if not re.fullmatch(r"[\w .()/\\-]{1,160}", exe):
+            raise ValueError("bad program name")
+        return z, {"emulator": "dosbox", "run": {"exe": exe}}
+    if (z.get("scummvm") or {}).get("engine"):
+        return z, {"emulator": "scummvm", "run": {"svmEngine": z["scummvm"]["engine"]}}
+    if z.get("suggested"):
+        return z, {"emulator": "dosbox", "run": {"exe": z["suggested"]}}
+    raise ValueError("this zip has no program to start: choose one")
 
 
 # ---------------------------------------------------------------- files
@@ -299,6 +337,39 @@ def route(h, method: str, path: str, q: dict, P: dict):
                "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
         write_json(P["request"], req)
         return send(h, 202, {"queued": req})
+    if path == "/api/admin/inspect":
+        ident = (q.get("archive") or [""])[0]
+        if not IDENT.fullmatch(ident):
+            raise ValueError("bad Internet Archive identifier")
+        try:
+            return send(h, 200, inspect_item(ident))
+        except ia_inspect.InspectError as e:
+            return send(h, 422, {"error": str(e)})
+        except Exception as e:
+            return send(h, 502, {"error": f"Internet Archive did not answer ({type(e).__name__})"})
+    if path == "/api/admin/try":
+        ident = (q.get("archive") or [""])[0]
+        if not IDENT.fullmatch(ident):
+            raise ValueError("bad Internet Archive identifier")
+        arg = lambda k: (q.get(k) or [""])[0] or None
+        try:
+            report = inspect_item(ident)
+        except Exception as e:
+            return send(h, 502, {"error": f"Internet Archive did not answer ({type(e).__name__})"})
+        z, how = choose(report, arg("file"), arg("exe"), arg("engine"))
+        key = "try-" + hashlib.sha1(json.dumps([ident, z["name"], how], sort_keys=True).encode()).hexdigest()[:16]
+        game = {"id": key, "title": report["title"], "download": {"provider": "archive", "url": z["url"], "size": z["size"] or None,
+                                                                  "md5": z.get("md5"), "sha1": z.get("sha1")}, **how}
+        t0 = time.time()
+        try:
+            r = game_fetch.prepare(game, P["cache"], admin=True)
+        except Exception as e:
+            record_download(P, {"key": key, "title": f"{report['title']} · {z['name']} (prueba)", "ok": False, "by": "panel", "error": str(e)[:300],
+                                "network": not isinstance(e, game_fetch.GameError)})
+            return send(h, 422 if isinstance(e, game_fetch.GameError) else 502, {"error": str(e)})
+        record_download(P, {"key": key, "title": f"{report['title']} · {z['name']} (prueba)", "ok": True, "by": "panel",
+                            "seconds": round(time.time() - t0, 1), "bytes": r.get("bytes"), "checks": r["checks"]})
+        return send_file(h, Path(r["file"]), "application/zip")
     if path == "/api/admin/search":
         title = (q.get("q") or [""])[0].strip()[:120]
         if not title:
@@ -341,7 +412,17 @@ def route(h, method: str, path: str, q: dict, P: dict):
             except Exception as e:
                 return send(h, 502, {"error": f"Internet Archive did not answer ({type(e).__name__})"})
             entry = sync_catalog.ia_entry(dict(doc.get("metadata", {}), identifier=ident), meta)
-            entry["key"] = sync_catalog.add_game.slugify(f"{gid}-{entry['kind']}-{ident}")[:80].strip("-")
+            if b.get("file") or b.get("exe") or b.get("engine"):
+                report = inspect_item(ident)
+                z, how = choose(report, b.get("file"), b.get("exe"), b.get("engine"))
+                entry["download"] = {"provider": "archive", "file": z["name"], "size": z["size"] or None, "md5": z.get("md5"),
+                                     "sha1": z.get("sha1"), "url": z["url"]}
+                entry.update(how)
+                stem = re.sub(r"\.zip$", "", z["name"], flags=re.I)
+                many = len(report["zips"]) > 1
+            else:
+                stem, many = "", False
+            entry["key"] = sync_catalog.add_game.slugify(f"{gid}-{entry['kind']}-{ident}" + (f"-{stem}" if many else ""))[:80].strip("-")
             entry["added"] = "panel"
 
             def change(cat, ov):

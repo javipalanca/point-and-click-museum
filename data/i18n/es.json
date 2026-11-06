@@ -232,5 +232,7 @@
  "consentAccept": "Aceptar",
  "consentReject": "Rechazar",
  "consentLink": "Cookies",
- "catDemo": "demo"
+ "catDemo": "demo",
+ "consentTextClarity": "¿Nos dejas ver por dónde se mueve la gente con Microsoft Clarity (mapas de calor)? Usa cookies; sin ellas el museo funciona igual.",
+ "consentTextBoth": "¿Nos dejas contar tu visita con Google Analytics y ver por dónde se pulsa con Microsoft Clarity? Usan cookies; sin ellas el museo funciona igual."
 }

@@ -382,6 +382,24 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   En el panel, «Probar»/«Añadir» eligen ScummVM si el motor está compilado. Sin probar con archive.org real ni con un
   juego real en CD; formatos aún no admitidos: .mdf/.mds, .nrg, .ccd, .chd.
 
+- **2026-11-06 · Google Analytics a fondo y mapas de calor con Clarity** (petición del usuario: «sácale el máximo
+  partido a Google Analytics»). Plan de medición en `data/analytics.json` (eventos, parámetros, 32 dimensiones de
+  evento, 8 de usuario, 3 métricas, 5 eventos clave), fuente única para `src/js/analytics.js`, `tools/ga_setup.py` y
+  `tests/test_analytics_plan.py`. `PCM.ga()` envía solo a GA con la sala y el idioma; `PCM.track()` se traduce a
+  eventos recomendados (`select_content`, `unlock_achievement`, `earn_virtual_currency`, `post_score`,
+  `level_start`/`level_end`, `search`, `exception`) y propios (`game_start`/`game_end` con `play_seconds`, Murray sin
+  texto, `language_switch`, `outbound_click`, `gog_click`, `setting_change`, `section_view`, `scroll_depth`,
+  `web_vitals`). Mapa de clics en GA con `ui_click` (elemento, zona de la página, posición en tramos del 5 %, viewport).
+  `content_group` = sala; propiedades de usuario: idioma de la web, del navegador y preferido, dispositivo, banda de
+  puntuación y ajustes; `visitor_type` nuevo/recurrente (solo con consentimiento). GA4 no tiene mapas de calor: se
+  añade **Microsoft Clarity** opcional (`CLARITY_ID`), con el mismo aviso de consentimiento, Murray y el formulario de
+  juego propio enmascarados. **Decisión:** a GA (tras aceptar) llega el término de búsqueda del catálogo (minúsculas,
+  40 caracteres), nunca las preguntas a Murray; las estadísticas propias siguen sin guardar textos. Señales de Google y
+  demografía apagadas (exigirían consentimiento para publicidad). `tools/ga_setup.py` registra lo que falte con la
+  Admin API v1beta (dimensiones, métricas, eventos clave, retención de 14 meses), probado contra una API falsa.
+  Skill `analytics` vendorizada desde GitHub (skills.sh no era accesible). Pendiente: ejecutar `ga_setup.py` en la
+  propiedad real, crear el proyecto de Clarity y comprobar los eventos en DebugView (`?ga_debug=1`).
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

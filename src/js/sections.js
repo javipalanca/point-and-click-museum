@@ -3,6 +3,8 @@
 (() => {
   const { D, $, $$, t, esc, store, spriteURL, rng, mediaFigure, pixelText, pixelTextWidth, canvasPoint, sfx, tone, ac, typeText, award, openModal, reduceMotion } = PCM;
   const smooth = reduceMotion ? "auto" : "smooth";
+  const usedDemo = new Set();
+  const demo = id => { if (!usedDemo.has(id)) { usedDemo.add(id); PCM.ga("select_content", { content_type: "technique", content_id: id }); } };
 
   const linkHtml = (url, label) => '<a class="ext" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(label) + ' ↗</a>';
   const linkLabel = url => (/wikipedia\.org/.test(url) ? "Wikipedia" : t("officialSite"));
@@ -128,6 +130,7 @@
     function kick() { if (!running) { running = true; requestAnimationFrame(loop); } }
     function act(s) {
       typeText($("#heroSay"), s.text); sfx("open"); visitor.say(Math.min(4000, s.text.length * 45));
+      PCM.ga("select_content", { content_type: "hotspot", content_id: s.id });
       award("hero", s.id, s.verb + " " + s.name);
       if (s.go && D.pageUrls[s.go]) setTimeout(() => (PCM.go ? PCM.go(D.pageUrls[s.go], { kind: "iris", x: cv.getBoundingClientRect().left + (s.rect[0] + s.rect[2] / 2) / W * cv.clientWidth, y: cv.getBoundingClientRect().top + (s.rect[1] + s.rect[3] / 2) / H * cv.clientHeight }) : (location.href = D.pageUrls[s.go])), 1600);
     }
@@ -196,6 +199,7 @@
     });
     function talk(i) {
       const s = D.studios[i], asked = new Set(), el = $$(".studio")[i];
+      PCM.ga("select_content", { content_type: "studio", content_id: s.id });
       box.hidden = false; $("#dlgFace").innerHTML = $(".top", el).firstElementChild.outerHTML; $("#dlgName").textContent = t("guideAbout", { name: s.name });
       $("#dlgLink").innerHTML = s.link ? linkHtml(s.link, t("moreAbout") + " · " + linkLabel(s.link)) : "";
       const render = () => {
@@ -242,6 +246,7 @@
     const carts = $$(".cart");
     carts.forEach(b => b.addEventListener("click", () => {
       const en = D.engines[+b.dataset.i];
+      PCM.ga("select_content", { content_type: "engine", content_id: en.id });
       carts.forEach(c => c.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true"); sfx("open");
       $("#led").classList.add("on"); $("#slot").textContent = en.name.toUpperCase();
       const scr = $("#screen");
@@ -288,8 +293,8 @@
     }
     render(); if (!reduceMotion) requestAnimationFrame(frame);
     const pbtn = $("#cycleBtn");
-    pbtn.onclick = () => { on = !on; pbtn.textContent = t(on ? "cycleOn" : "cycleOff"); pbtn.setAttribute("aria-pressed", on); sfx("click"); if (reduceMotion) { off = (off + 1) % 8; render(); } award("techCycle", "x", D.techniques.demos.cycle.title); };
-    $("#cycleSpeed").oninput = e => { speed = +e.target.value; award("techCycle", "x", D.techniques.demos.cycle.title); };
+    pbtn.onclick = () => { on = !on; pbtn.textContent = t(on ? "cycleOn" : "cycleOff"); pbtn.setAttribute("aria-pressed", on); sfx("click"); if (reduceMotion) { off = (off + 1) % 8; render(); } demo("cycle"); award("techCycle", "x", D.techniques.demos.cycle.title); };
+    $("#cycleSpeed").oninput = e => { speed = +e.target.value; demo("cycle"); award("techCycle", "x", D.techniques.demos.cycle.title); };
   })();
 
   /* ================= Techniques: dithering ================= */
@@ -315,9 +320,9 @@
     }
     draw();
     const label = D.techniques.demos.dither.title;
-    $("#ditherLevels").oninput = e => { levels = +e.target.value; draw(); award("techDither", "x", label); };
+    $("#ditherLevels").oninput = e => { levels = +e.target.value; draw(); demo("dither"); award("techDither", "x", label); };
     const pbtn = $("#ditherBtn");
-    pbtn.onclick = () => { bayer = !bayer; pbtn.textContent = t(bayer ? "bayerOn" : "bayerOff"); pbtn.setAttribute("aria-pressed", bayer); draw(); sfx("click"); award("techDither", "x", label); };
+    pbtn.onclick = () => { bayer = !bayer; pbtn.textContent = t(bayer ? "bayerOn" : "bayerOff"); pbtn.setAttribute("aria-pressed", bayer); draw(); sfx("click"); demo("dither"); award("techDither", "x", label); };
   })();
 
   /* ================= Techniques: parallax ================= */
@@ -339,7 +344,7 @@
     }
     new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv);
     (function loop() { if (visible) draw(); requestAnimationFrame(loop); })();
-    const move = e => { const rc = cv.getBoundingClientRect(); auto = false; target = ((e.clientX - rc.left) / rc.width) * 400; award("techParallax", "x", D.techniques.demos.parallax.title); };
+    const move = e => { const rc = cv.getBoundingClientRect(); auto = false; target = ((e.clientX - rc.left) / rc.width) * 400; demo("parallax"); award("techParallax", "x", D.techniques.demos.parallax.title); };
     cv.addEventListener("pointermove", move); cv.addEventListener("pointerdown", move);
     cv.addEventListener("pointerleave", () => { auto = !reduceMotion; });
   })();
@@ -378,7 +383,7 @@
       playing = !playing; play.textContent = t(playing ? "stopMusic" : "play");
       if (playing) {
         if (!PCM.soundOn) info.textContent = t("soundOff");
-        step = 0; nextT = a.currentTime + 0.05; timer = setInterval(tick, 40); award("techMusic", "x", D.techniques.demos.music.title);
+        step = 0; nextT = a.currentTime + 0.05; timer = setInterval(tick, 40); demo("music"); award("techMusic", "x", D.techniques.demos.music.title);
       } else { clearInterval(timer); drawBar(-1); }
     };
     const pick = k => () => {

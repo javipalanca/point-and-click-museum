@@ -16,6 +16,7 @@ services:
       GAMES_MAX_MB: ${GAMES_MAX_MB:-400}
       # statistics (see .env.example): Google Analytics only after the visitor accepts; the museum's own, without cookies
       PCM_GA_ID: ${GA_MEASUREMENT_ID:-}
+      PCM_CLARITY_ID: ${CLARITY_ID:-}
       PCM_STATS_URL: ${STATS_URL-/api/stats}
     volumes:
       - ${GAMES_DIR:-./games}:/inbox:ro   # drop .zip / .jsdos files here (sub-folders too)

@@ -340,6 +340,8 @@
   }
 
   /* ---------------------------------------------------------------- tabs */
-  $$("#uiTabs button").forEach((b, i) => b.addEventListener("click", () => { build(i); sfx("click"); award("techUi", UI[i].id, UI[i].label); }));
+  $$("#uiTabs button").forEach((b, i) => b.addEventListener("click", () => {
+    build(i); sfx("click"); PCM.ga("select_content", { content_type: "interface", content_id: UI[i].id }); award("techUi", UI[i].id, UI[i].label);
+  }));
   reset(); build(0);
 })();

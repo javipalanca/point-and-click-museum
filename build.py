@@ -872,7 +872,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
         "nav": site["nav"], "gamePages": [p["id"] for p in S.pages if p.get("parent") == "games"],
         "site": {"score": site["score"]}, "transitions": site.get("transitions", {}), "sprites": d["sprites"], "font": d["font"], "characters": d["characters"],
         "arcadeVendored": vendored,
-        "analytics": {"ga": S.args.ga_id, "stats": S.args.stats_url},
+        "analytics": {"ga": S.args.ga_id, "stats": S.args.stats_url, "clarity": S.args.clarity_id},
         "svm": dict(svm or {"available": False}, base=f"{'../' * Site.depth(page, is_root)}scummvm/"),
         "pageUrls": {p["id"]: S.url(lang, p["id"], depth) for p in S.pages},
 
@@ -894,7 +894,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     blocks["scripts"] = "\n".join(scripts)
     blocks["langRedirect"] = lang_redirect(S, langs, default) if is_root else ""
     blocks["consentLink"] = (f'<p><button class="link-btn" type="button" id="consentOpen">{E(ui["consentLink"])}</button></p>'
-                             if S.args.ga_id else "")
+                             if S.args.ga_id or S.args.clarity_id else "")
 
     def sub(m, vars_):
         kind, key = m.group(1), m.group(2)
@@ -994,6 +994,8 @@ def main() -> int:
                     help="the DOSBox room lists only your games (data/arcade.local.json), as on a server with a games folder")
     ap.add_argument("--ga-id", default=os.environ.get("PCM_GA_ID", ""),
                     help="Google Analytics 4 measurement id (G-XXXXXXX), loaded only after the visitor accepts (env PCM_GA_ID)")
+    ap.add_argument("--clarity-id", default=os.environ.get("PCM_CLARITY_ID", ""),
+                    help="Microsoft Clarity project id (heatmaps, recordings), loaded only after the visitor accepts (env PCM_CLARITY_ID)")
     ap.add_argument("--stats-url", default=os.environ.get("PCM_STATS_URL", ""),
                     help="where the pages send their cookieless usage events, e.g. /api/stats (env PCM_STATS_URL)")
     ap.add_argument("--check", action="store_true", help="only validate the data")
@@ -1015,6 +1017,11 @@ def main() -> int:
         print(f"warning: GA id {args.ga_id!r} is not a GA4 measurement id (G-XXXXXXX, in Google Analytics → Admin → "
               "Data streams); Google Analytics stays off", file=sys.stderr)
         args.ga_id = ""
+    args.clarity_id = args.clarity_id.strip().strip("'\"").strip().lower()
+    if args.clarity_id and not re.fullmatch(r"[a-z0-9]{6,20}", args.clarity_id):
+        print(f"warning: Clarity id {args.clarity_id!r} is not a Clarity project id (Clarity → Settings → Overview); Clarity stays off",
+              file=sys.stderr)
+        args.clarity_id = ""
     args.stats_url = args.stats_url.strip().strip("'\"").strip()
     if args.stats_url and not re.fullmatch(r"(/|https://)[\w./-]{1,200}", args.stats_url):
         print(f"warning: stats URL {args.stats_url!r} must be a path (/api/stats) or an https URL; statistics stay off", file=sys.stderr)

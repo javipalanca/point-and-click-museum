@@ -27,7 +27,7 @@ def main() -> int:
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
     subprocess.run([sys.executable, str(ROOT / "build.py"), "--out", str(args.out), "--link-style", "file", "--inline-bundles", "--no-local",
-                    "--ga-id", "", "--stats-url", ""], check=True)  # no statistics in the Artifact
+                    "--ga-id", "", "--clarity-id", "", "--stats-url", ""], check=True)  # no statistics in the Artifact
     for junk in list(args.out.rglob("*.jsdos")) + [args.out / ".nojekyll", args.out / "vendor/js-dos/VERSION"]:
         if junk.exists():
             junk.unlink()

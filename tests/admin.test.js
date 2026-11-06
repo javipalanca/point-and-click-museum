@@ -34,7 +34,7 @@ const firstLine = proc => new Promise((resolve, reject) => {
   const catFile = path.join(catDir, "catalog.json");
   fs.writeFileSync(catFile, JSON.stringify(catalog));
   const out = path.join(tmp, "site");
-  execFileSync("python3", [path.join(ROOT, "build.py"), "--out", out, "--no-local"], { env: { ...process.env, PCM_CATALOG: catFile, PCM_GA_ID: "G-TEST1234", PCM_STATS_URL: "/api/stats" }, stdio: "ignore" });
+  execFileSync("python3", [path.join(ROOT, "build.py"), "--out", out, "--no-local"], { env: { ...process.env, PCM_CATALOG: catFile, PCM_GA_ID: "G-TEST1234", PCM_CLARITY_ID: "testclarity1", PCM_STATS_URL: "/api/stats" }, stdio: "ignore" });
   const games = spawn("python3", [path.join(ROOT, "server/games.py")], { env: { ...process.env, GAMES_PORT: "0", PCM_CATALOG: catFile,
     GAMES_CACHE: path.join(tmp, "cache"), PCM_GAMES_TEST_HOSTS: "127.0.0.1", PCM_IA_BASE: src, ADMIN_USER: "javi", ADMIN_PASSWORD: "una-clave-larga-de-prueba",
     PCM_STATS_DIR: path.join(tmp, "stats"), MURRAY_URL: "" } });
@@ -63,27 +63,44 @@ const firstLine = proc => new Promise((resolve, reject) => {
     console.log("Statistics, as a visitor");
     const vctx = await browser.newContext({ viewport: { width: 1280, height: 800 },  // headless browsers count as robots
       userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36" }), v = await vctx.newPage();
-    let gaRequests = 0;
+    let gaRequests = 0, clarityRequests = 0;
     await vctx.route(/googletagmanager\.com/, r => { gaRequests++; r.fulfill({ status: 200, contentType: "text/javascript", body: "/* gtag stub */" }); });
+    await vctx.route(/clarity\.ms/, r => { clarityRequests++; r.fulfill({ status: 200, contentType: "text/javascript", body: "/* clarity stub */" }); });
     await vctx.route(/fonts\.(googleapis|gstatic)\.com/, r => r.fulfill({ status: 200, contentType: "text/css", body: "" }));
     v.on("pageerror", e => errs.push(e.message));
     await v.goto(base + "/es/");
     await v.waitForSelector(".pconsent");
-    check(gaRequests === 0, "Google Analytics does not load before the visitor answers");
+    check(gaRequests === 0 && clarityRequests === 0, "Google Analytics and Clarity do not load before the visitor answers");
+    check(/Microsoft Clarity/.test(await v.textContent(".pconsent")), "the banner names both tools");
     await v.click('.pconsent [data-c="0"]');
     check(!(await v.$(".pconsent")), "declining closes the banner");
     await v.goto(base + "/es/timeline/");
     await v.waitForTimeout(300);
-    check(!(await v.$(".pconsent")) && gaRequests === 0, "the answer is remembered and Google stays out");
+    check(!(await v.$(".pconsent")) && gaRequests === 0 && clarityRequests === 0, "the answer is remembered and Google and Clarity stay out");
     check(!(await vctx.cookies()).some(c => /^_ga/.test(c.name)), "no analytics cookies");
     await v.click("#consentOpen");
     await v.click('.pconsent [data-c="1"]');
     for (let i = 0; i < 20 && !gaRequests; i++) await v.waitForTimeout(100);
     check(gaRequests === 1 && await v.evaluate(() => JSON.stringify(window.dataLayer).includes('"analytics_storage":"granted"')),
       "accepting from the footer loads gtag.js with analytics consent granted (ads stay denied)");
+    check(clarityRequests === 1 && await v.evaluate(() => (window.clarity.q || []).some(a => a[0] === "consent")), "Clarity loads after accepting, with its consent");
     await v.click(".tl-entry");
     await v.waitForSelector("#modalBg.open");
     await v.waitForTimeout(1200);
+    // what reaches Google: the measurement plan of data/analytics.json
+    const layer = await v.evaluate(() => window.dataLayer.map(a => [...a]));
+    const evs = layer.filter(a => a[0] === "event").map(a => ({ name: a[1], ...a[2] }));
+    const cfg = layer.find(a => a[0] === "config"), up = layer.find(a => a[0] === "set" && a[1] === "user_properties");
+    check(cfg && cfg[2].room === "timeline" && cfg[2].site_language === "es" && cfg[2].content_group === "timeline" && cfg[2].allow_google_signals === false,
+      "page views carry the room and the site's language");
+    check(up && up[2].ui_language === "es" && up[2].browser_language && up[2].device_class === "desktop" && up[2].score_band,
+      "user properties: language of the site and of the browser, device, score");
+    const sel = evs.find(e => e.name === "select_content");
+    check(sel && sel.content_type === "game" && sel.content_id && sel.room === "timeline", "opening a record: select_content (game)");
+    const click = evs.find(e => e.name === "ui_click");
+    check(click && click.region === "main" && click.element && Number.isInteger(click.x_pct) && click.x_pct % 5 === 0 && click.viewport === "desktop",
+      "every click: what, where on the screen and in which part of the page");
+    check(evs.some(e => e.name === "unlock_achievement") && evs.some(e => e.name === "earn_virtual_currency" && e.value > 0), "points: unlock_achievement and earn_virtual_currency");
     const beacon = v.waitForRequest(r => r.url().endsWith("/api/stats") && r.method() === "POST");
     await v.evaluate(() => { Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true }); document.dispatchEvent(new Event("visibilitychange")); });
     const sent = JSON.parse((await beacon).postData());

@@ -87,7 +87,17 @@ if (document.getElementById("dosHost")) (() => {
     if (opener && opener.focus) opener.focus({ preventScroll: true });
   }
 
+  /* how long each game is played (Google Analytics: game_end) */
+  let session = null;
+  function ended() {
+    if (!session) return;
+    PCM.ga("game_end", { game_id: session.id, game_engine: session.engine, play_seconds: Math.round((Date.now() - session.t0) / 1000) });
+    session = null;
+  }
+  addEventListener("pagehide", ended);
+
   async function stop() {
+    ended();
     if (document.pointerLockElement) document.exitPointerLock();
     mouseMode("dosbox");
     if (player) { try { await player.stop(); } catch (e) { /* already stopped */ } }
@@ -263,7 +273,8 @@ if (document.getElementById("dosHost")) (() => {
 
   function play(g) {
     showInfo(g);
-    PCM.track("arcade_play", { id: g.id, engine: g.engine || "dosbox", src: g.key ? "catalog" : g.local ? "local" : "museum" });
+    PCM.track("arcade_play", { id: g.id, title: g.title, engine: g.engine || "dosbox", src: g.key ? "catalog" : g.local ? "local" : "museum" });
+    session = { id: g.id, engine: g.engine || "dosbox", t0: Date.now() };
     if (g.key) return playCatalog(g);
     if (g.engine === "scummvm") {
       runScummVM(g.title, { gameId: g.id, engine: g.svmEngine, files: g.files || [], gameBase: "games/" + g.id + "/", args: svmArgs(g.id) });
@@ -309,6 +320,7 @@ if (document.getElementById("dosHost")) (() => {
     } else if (name.endsWith(".zip")) {
       const bytes = new Uint8Array(await file.arrayBuffer()), want = $("#byoEngine").value;
       PCM.track("arcade_play", { id: "(own game)", engine: want || "auto", src: "byo" });
+      session = { id: "(own game)", engine: want || "auto", t0: Date.now() };
       let files;
       try { files = await unzip(bytes); } catch (x) { err.textContent = x.message; sfx("bad"); return; }
       const svm = want !== "dosbox" ? detectScummVM(files) : null;
@@ -384,7 +396,10 @@ if (document.getElementById("catList")) (() => {
   search.addEventListener("input", () => {
     apply();
     clearTimeout(searchTimer);  // only whether a search found something, never what was typed
-    if (search.value.trim()) searchTimer = setTimeout(() => PCM.track("catalog_search", { results: matched.length > 0 }), 1500);
+    if (search.value.trim()) searchTimer = setTimeout(() => {
+      PCM.track("catalog_search", { results: matched.length > 0 });   // the museum's own statistics: never the words
+      PCM.ga("search", { search_term: search.value.trim().toLowerCase().slice(0, 40), results_found: matched.length > 0 ? "yes" : "no" });
+    }, 1500);
   });
   studio.addEventListener("change", () => { sfx("click"); apply(); });
   sort.addEventListener("change", () => { sfx("click"); reorder(); });

@@ -151,5 +151,5 @@ window.PCM = (() => {
 
   return { D, $, $$, t, fmt, esc, store, spriteURL, drawSprite, hash, rng, mediaFigure, pixelText, pixelTextWidth, canvasPoint,
     tone, sfx, ac, get soundOn() { return soundOn; }, typeText, award, toast, openModal, closeModal, reduceMotion,
-    track() { /* replaced by analytics.js */ } };
+    track() { /* replaced by analytics.js */ }, ga() { /* replaced by analytics.js */ } };
 })();

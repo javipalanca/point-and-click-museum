@@ -169,7 +169,34 @@ Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en 
 - **Google Analytics 4** (`GA_MEASUREMENT_ID=G-…` en `.env`, o `build.py --ga-id`). Solo se carga si el visitante
   acepta el aviso de cookies (Consent Mode con todo denegado por defecto, sin señales de Google ni publicidad); la
   decisión se recuerda y se cambia desde «Cookies» en el pie. Con GPC o «Do Not Track» no se muestra el aviso ni se carga.
-  Los eventos de abajo también llegan a GA como eventos personalizados.
+  Lo que se envía está en el plan de medición `data/analytics.json`: cada página vista lleva la sala
+  (`content_group`) y el idioma del sitio; propiedades de usuario con el idioma de la web, el del navegador y el
+  preferido, el dispositivo, la banda de puntuación y los ajustes (sonido, CRT, movimiento reducido); eventos
+  recomendados de GA4 (`select_content` al abrir una ficha, un estudio, un motor, una interfaz o una demo; `search`
+  con el término del catálogo; `unlock_achievement`, `earn_virtual_currency`, `post_score`, `level_start`/`level_end`
+  en los minijuegos; `exception`) y propios (`game_start`/`game_end` con el tiempo jugado, `game_error`,
+  `murray_open`/`murray_question`/`murray_answer`/`murray_guided` sin el texto, `language_switch`, `outbound_click`,
+  `gog_click`, `setting_change`, `section_view` cuando una época o vitrina se ve 1,5 s, `scroll_depth`,
+  `web_vitals`) y **`ui_click`**: cada clic con el elemento, la zona de la página (cabecera, sala, Murray, DOSBox,
+  plano…) y la posición en la pantalla y en la página en tramos del 5 %, para mapas de clics en Exploraciones.
+  Los eventos clave son `game_start`, `level_end`, `murray_question`, `post_score` y `gog_click`.
+  Para que los parámetros aparezcan en los informes hay que registrarlos como dimensiones y métricas; lo hace
+  `tools/ga_setup.py` con la Admin API (no borra nada; sin `--apply` solo enseña lo que haría):
+
+  ```bash
+  gcloud auth application-default login --scopes=https://www.googleapis.com/auth/analytics.edit,https://www.googleapis.com/auth/cloud-platform
+  GA_TOKEN=$(gcloud auth application-default print-access-token) GA_QUOTA_PROJECT=mi-proyecto \
+    python3 tools/ga_setup.py --property 123456789 --apply --retention
+  ```
+
+  `--retention` sube la conservación de datos a 14 meses (por defecto, 2). En GA conviene además dejar activada la
+  medición mejorada y vincular Clarity (Clarity → Settings → Google Analytics). Para ver los eventos en directo,
+  abre cualquier página con `?ga_debug=1` (DebugView). Las señales de Google y los datos demográficos siguen
+  apagados a propósito: exigirían consentimiento para publicidad.
+- **Microsoft Clarity** (`CLARITY_ID=` en `.env`, o `build.py --clarity-id`), opcional y gratuito: mapas de calor de
+  clics y de scroll y grabaciones de sesión, que GA4 no tiene. Se carga con el mismo consentimiento que GA (el aviso
+  nombra las dos herramientas), recibe la sala, el idioma y el dispositivo como etiquetas y los eventos clave; el
+  chat de Murray y el formulario de juego propio van enmascarados.
 - **Estadísticas propias** (`STATS_URL=/api/stats`, por defecto en Docker; vacío para apagarlas): sin cookies, sin
   nada guardado en el navegador y sin IPs. Los visitantes únicos se cuentan con un hash de IP + navegador con una sal que
   cambia cada día y solo vive en memoria. Se ven en el panel, pestaña «Estadísticas»: visitantes y páginas por día,

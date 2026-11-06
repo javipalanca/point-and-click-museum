@@ -125,7 +125,7 @@
     q = q.trim(); if (!q || busy) return;
     busy = true; send.disabled = true; input.value = "";
     add("you", q); history.push({ role: "user", content: q }); sfx("click");
-    PCM.track("murray_ask");
+    PCM.track("murray_ask", { turn: history.filter(x => x.role === "user").length });
     const li = render({ who: "murray", text: U.thinking, waiting: true }), p = li.querySelector("p");
     let text = "", trip = null;
     $("#murraySugg").hidden = true;
@@ -150,6 +150,7 @@
       $$(".murray-log li.waiting").forEach(x => x.remove()); li.remove();
       history.push({ role: "assistant", content: text });
       if (!trip && end.navigate && destination(end.navigate)) { trip = end.navigate; announce(trip); }
+      PCM.ga("murray_answer", { murray_mode: end.mode || "", murray_sources: (end.sources || []).length, murray_guided: trip ? "yes" : "no" });
       if (trip) travel(trip, text, end.sources);
       else add("murray", text, end.sources);
     } catch (e) {

@@ -46,6 +46,7 @@ class PlanTest(unittest.TestCase):
 
 class FakeAdmin(BaseHTTPRequestHandler):
     created: list = []
+    impersonated: list = []
 
     def log_message(self, *a):
         pass
@@ -68,6 +69,11 @@ class FakeAdmin(BaseHTTPRequestHandler):
 
     def do_POST(self):
         body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+        if self.path.endswith(":generateAccessToken"):
+            assert self.headers["Authorization"] == "Bearer usertok" and body["scope"] == ["https://www.googleapis.com/auth/analytics.edit"]
+            FakeAdmin.impersonated.append(self.path)
+            return self.reply({"accessToken": "tok", "expireTime": "2030-01-01T00:00:00Z"})
+        assert self.headers["Authorization"] == "Bearer tok"
         FakeAdmin.created.append((self.path.rsplit("/", 1)[1], body))
         self.reply(body)
 
@@ -94,6 +100,22 @@ class SetupToolTest(unittest.TestCase):
         self.assertEqual(kinds.count("customMetrics"), len(PLAN["metrics"]))
         self.assertEqual(sorted(b["eventName"] for k, b in FakeAdmin.created if k == "keyEvents"), sorted(set(PLAN["keyEvents"]) - {"game_start"}))
         self.assertTrue(any(k.startswith("dataRetentionSettings") for k in kinds))
+
+    def test_service_account_impersonation(self):
+        FakeAdmin.created.clear()
+        srv = ThreadingHTTPServer(("127.0.0.1", 0), FakeAdmin)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        base = f"http://127.0.0.1:{srv.server_address[1]}"
+        env = dict(os.environ, PCM_GA_ADMIN_API=base + "/v1beta", PCM_IAM_API=base + "/v1")
+        env.pop("GA_TOKEN", None)
+        try:
+            r = subprocess.run([sys.executable, str(ROOT / "tools/ga_setup.py"), "--property", "123456789", "--token", "usertok",
+                                "--service-account", "ga@p.iam.gserviceaccount.com"], env=env, capture_output=True, text=True)
+        finally:
+            srv.shutdown()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("would create", r.stdout)
+        self.assertEqual(FakeAdmin.impersonated, ["/v1/projects/-/serviceAccounts/ga@p.iam.gserviceaccount.com:generateAccessToken"])
 
     def test_property_number_not_measurement_id(self):
         r = subprocess.run([sys.executable, str(ROOT / "tools/ga_setup.py"), "--property", "G-ABC123"], capture_output=True, text=True)

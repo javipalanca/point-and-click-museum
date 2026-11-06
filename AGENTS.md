@@ -32,7 +32,7 @@ npm run test:scummvm             # prueba la integración de ScummVM con tests/f
 python3 -m unittest discover -s tests        # pruebas de tools/add_game.py
 python3 build.py --no-local      # build público sin la colección local
 python3 build.py --ga-id G-XXXX --clarity-id abc123 --stats-url /api/stats   # con estadísticas (en Docker: GA_MEASUREMENT_ID, CLARITY_ID y STATS_URL en .env)
-python3 tools/ga_setup.py --property 123456789 [--apply --retention]   # registra en GA4 las dimensiones, métricas y eventos clave de data/analytics.json
+python3 tools/ga_setup.py --property 123456789 --service-account ga-setup@P.iam.gserviceaccount.com [--apply --retention]   # registra en GA4 las dimensiones, métricas y eventos clave de data/analytics.json
 python3 tools/make_jsdos_bundle.py <carpeta|zip> --exe GAME.EXE --out assets/games/x.jsdos
 python3 tools/fetch_jsdos.py     # vuelve a descargar js-dos en vendor/
 python3 tools/fetch_media.py     # descarga portadas, capturas y logos de data/media.json (--check, --only grupo/id)

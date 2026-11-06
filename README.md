@@ -183,10 +183,24 @@ Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en 
   Para que los parámetros aparezcan en los informes hay que registrarlos como dimensiones y métricas; lo hace
   `tools/ga_setup.py` con la Admin API (no borra nada; sin `--apply` solo enseña lo que haría):
 
+  Google bloquea el permiso `analytics.edit` para el inicio de sesión propio de gcloud («Google ha bloqueado este
+  acceso»), así que se usa una cuenta de servicio con rol de Editor en la propiedad, suplantada desde tu sesión
+  normal de gcloud (sin fichero de clave ni pantalla de consentimiento):
+
   ```bash
-  gcloud auth application-default login --scopes=https://www.googleapis.com/auth/analytics.edit,https://www.googleapis.com/auth/cloud-platform
-  GA_TOKEN=$(gcloud auth application-default print-access-token) GA_QUOTA_PROJECT=mi-proyecto \
-    python3 tools/ga_setup.py --property 123456789 --apply --retention
+  gcloud auth login
+  gcloud config set project mi-proyecto
+  gcloud services enable analyticsadmin.googleapis.com iamcredentials.googleapis.com
+  gcloud iam service-accounts create ga-setup
+  gcloud iam service-accounts add-iam-policy-binding ga-setup@mi-proyecto.iam.gserviceaccount.com \
+    --member=user:TU_CORREO --role=roles/iam.serviceAccountTokenCreator
+  ```
+
+  En Google Analytics → Administrar → Gestión de acceso a la propiedad, añade
+  `ga-setup@mi-proyecto.iam.gserviceaccount.com` como Editor. Después:
+
+  ```bash
+  python3 tools/ga_setup.py --property 123456789 --service-account ga-setup@mi-proyecto.iam.gserviceaccount.com --apply --retention
   ```
 
   `--retention` sube la conservación de datos a 14 meses (por defecto, 2). En GA conviene además dejar activada la

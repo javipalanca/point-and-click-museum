@@ -399,6 +399,10 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   Admin API v1beta (dimensiones, métricas, eventos clave, retención de 14 meses), probado contra una API falsa.
   Skill `analytics` vendorizada desde GitHub (skills.sh no era accesible). Pendiente: ejecutar `ga_setup.py` en la
   propiedad real, crear el proyecto de Clarity y comprobar los eventos en DebugView (`?ga_debug=1`).
+  2026-11-06: `gcloud auth application-default login --scopes=…analytics.edit` lo bloquea Google («ha bloqueado este
+  acceso»: el cliente OAuth de gcloud no puede pedir ese permiso). `ga_setup.py --service-account` suplanta una cuenta
+  de servicio (Editor de la propiedad) desde la sesión normal de gcloud con `generateAccessToken` de IAM Credentials,
+  con el permiso `analytics.edit` y 15 minutos de vida; sin ficheros de clave.
 
 ## Datos técnicos útiles
 

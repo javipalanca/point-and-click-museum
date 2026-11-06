@@ -403,6 +403,8 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   acceso»: el cliente OAuth de gcloud no puede pedir ese permiso). `ga_setup.py --service-account` suplanta una cuenta
   de servicio (Editor de la propiedad) desde la sesión normal de gcloud con `generateAccessToken` de IAM Credentials,
   con el permiso `analytics.edit` y 15 minutos de vida; sin ficheros de clave.
+  2026-11-06: la Admin API rechaza nombres visibles con tildes o símbolos («only alphanumeric, underscore, or space»):
+  los nombres del plan van sin tildes ni paréntesis y únicos (la prueba lo exige) y `ga_setup.display_name` los limpia.
 
 ## Datos técnicos útiles
 

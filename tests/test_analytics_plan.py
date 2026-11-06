@@ -35,6 +35,9 @@ class PlanTest(unittest.TestCase):
         for d in PLAN["dimensions"] + PLAN["metrics"]:
             self.assertRegex(d["parameter"], r"^[a-z][a-z0-9_]{0,39}$")
             self.assertLessEqual(len(d["name"]), 82)
+            self.assertRegex(d["name"], r"^[A-Za-z][A-Za-z0-9_ ]*$", "GA display names: no accents or symbols")
+        names = [d["name"] for d in PLAN["dimensions"] + PLAN["metrics"]]
+        self.assertEqual(len(names), len(set(names)), "display names must be unique")
         for k in PLAN["keyEvents"]:
             self.assertIn(k, PLAN["events"])
 
@@ -100,6 +103,9 @@ class SetupToolTest(unittest.TestCase):
         self.assertEqual(kinds.count("customMetrics"), len(PLAN["metrics"]))
         self.assertEqual(sorted(b["eventName"] for k, b in FakeAdmin.created if k == "keyEvents"), sorted(set(PLAN["keyEvents"]) - {"game_start"}))
         self.assertTrue(any(k.startswith("dataRetentionSettings") for k in kinds))
+        for k, b in FakeAdmin.created:
+            if "displayName" in b:
+                self.assertRegex(b["displayName"], r"^[A-Za-z][A-Za-z0-9_ ]*$")
 
     def test_service_account_impersonation(self):
         FakeAdmin.created.clear()

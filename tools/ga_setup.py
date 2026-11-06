@@ -106,6 +106,14 @@ class Admin:
                 return out
 
 
+def display_name(name: str) -> str:
+    """GA only accepts letters, digits, underscore and space (no accents), starting with a letter, up to 82."""
+    import unicodedata
+    plain = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+    plain = re.sub(r"\s+", " ", re.sub(r"[^A-Za-z0-9_ ]", " ", plain)).strip()
+    return (plain if plain[:1].isalpha() else "P " + plain)[:82]
+
+
 def plan() -> dict:
     return json.loads((ROOT / "data" / "analytics.json").read_text("utf-8"))
 
@@ -139,9 +147,9 @@ def main() -> int:
     have_dims = {(d["parameterName"], d.get("scope")) for d in ga.all("/customDimensions", "customDimensions")}
     have_metrics = {m["parameterName"] for m in ga.all("/customMetrics", "customMetrics")}
     have_keys = {k["eventName"] for k in ga.all("/keyEvents", "keyEvents")}
-    todo = [("customDimensions", {"parameterName": d["parameter"], "displayName": d["name"], "description": d["description"][:150],
+    todo = [("customDimensions", {"parameterName": d["parameter"], "displayName": display_name(d["name"]), "description": d["description"][:150],
                                   "scope": d["scope"]}) for d in p["dimensions"] if (d["parameter"], d["scope"]) not in have_dims]
-    todo += [("customMetrics", {"parameterName": m["parameter"], "displayName": m["name"], "description": m["description"][:150],
+    todo += [("customMetrics", {"parameterName": m["parameter"], "displayName": display_name(m["name"]), "description": m["description"][:150],
                                 "measurementUnit": m["unit"], "scope": "EVENT"}) for m in p["metrics"] if m["parameter"] not in have_metrics]
     todo += [("keyEvents", {"eventName": k, "countingMethod": "ONCE_PER_EVENT"}) for k in p["keyEvents"] if k not in have_keys]
     print(f"Property {a.property}: {len(have_dims)} dimensions, {len(have_metrics)} metrics and {len(have_keys)} key events already there; "

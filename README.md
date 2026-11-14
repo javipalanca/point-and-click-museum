@@ -169,9 +169,14 @@ Para servirlo en la misma máquina que pointandclickle, con `museum.pointandclic
 
 Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en el Artifact:
 
-- **Google Analytics 4** (`GA_MEASUREMENT_ID=G-…` en `.env`, o `build.py --ga-id`). Solo se carga si el visitante
-  acepta el aviso de cookies (Consent Mode con todo denegado por defecto, sin señales de Google ni publicidad); la
-  decisión se recuerda y se cambia desde «Cookies» en el pie. Con GPC o «Do Not Track» no se muestra el aviso ni se carga.
+- **Google Analytics 4** (`GA_MEASUREMENT_ID=G-…` en `.env`, o `build.py --ga-id`) con **Consent Mode avanzado**
+  (`GA_CONSENT_MODE=advanced`, por defecto): GA se carga en todas las páginas con todo denegado, así que no pone
+  cookies ni identificadores y Google solo recibe pings anónimos (página, navegador, hora); con ellos estima en los
+  informes a quienes rechazan. Si el visitante acepta el aviso, pasa a `analytics_storage: granted` y usa cookies; la
+  publicidad sigue denegada siempre y no hay señales de Google. `GA_CONSENT_MODE=basic` vuelve al modo anterior (GA
+  no se carga hasta aceptar). La decisión se recuerda y se cambia desde «Cookies» en el pie. Con GPC o «Do Not Track»
+  no se muestra el aviso ni se carga nada. Ojo: las autoridades europeas de protección de datos (CEPD, AEPD) discuten
+  si esos pings sin cookies necesitan también consentimiento; si prefieres no correr ese riesgo, usa `basic`.
   Lo que se envía está en el plan de medición `data/analytics.json`: cada página vista lleva la sala
   (`content_group`) y el idioma del sitio; propiedades de usuario con el idioma de la web, el del navegador y el
   preferido, el dispositivo, la banda de puntuación y los ajustes (sonido, CRT, movimiento reducido); eventos
@@ -211,7 +216,7 @@ Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en 
   abre cualquier página con `?ga_debug=1` (DebugView). Las señales de Google y los datos demográficos siguen
   apagados a propósito: exigirían consentimiento para publicidad.
 - **Microsoft Clarity** (`CLARITY_ID=` en `.env`, o `build.py --clarity-id`), opcional y gratuito: mapas de calor de
-  clics y de scroll y grabaciones de sesión, que GA4 no tiene. Se carga con el mismo consentimiento que GA (el aviso
+  clics y de scroll y grabaciones de sesión, que GA4 no tiene. Solo se carga si el visitante acepta (el aviso
   nombra las dos herramientas), recibe la sala, el idioma y el dispositivo como etiquetas y los eventos clave; el
   chat de Murray y el formulario de juego propio van enmascarados.
 - **Estadísticas propias** (`STATS_URL=/api/stats`, por defecto en Docker; vacío para apagarlas): sin cookies, sin
@@ -223,6 +228,9 @@ Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en 
   preguntas a Murray (idioma, sala, respuesta con modelo o sin él, negativas del guardarraíl, errores, latencia de la
   primera palabra y total, nunca el texto) y el proxy de juegos (pedidos, caché, KB servidos, tiempo de preparación,
   errores). Un fichero JSON por día en los volúmenes `stats` y `murray-stats` (`server/stats.py`).
+- **Contador de visitas** al estilo de los 90 en el pie de todas las páginas («Eres el visitante nº 0001234», con
+  rodillos que giran hasta su sitio): suma los visitantes únicos de cada día de las estadísticas propias
+  (`GET /api/stats/counter`); al pasar por encima dice desde cuándo cuenta. Solo aparece con `STATS_URL`.
 
 ### ScummVM
 

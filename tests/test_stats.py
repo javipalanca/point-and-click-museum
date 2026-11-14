@@ -79,6 +79,22 @@ class IngestTest(unittest.TestCase):
         self.assertEqual(g["(other)"], 5)
 
 
+class CounterTest(unittest.TestCase):
+    def test_counter_adds_up_every_day_and_today(self):
+        import json, tempfile, time
+        with tempfile.TemporaryDirectory() as d:
+            for day, n in (("2026-01-02", 5), ("2026-01-01", 3)):
+                Path(d, f"web-{day}.json").write_text(json.dumps({"visitors": n}))
+            Path(d, "games-2026-01-01.json").write_text(json.dumps({"visitors": 100}))   # another source: not counted
+            st = stats.Stats(d, "web", every=3600)
+            self.assertEqual(st.counter(), {"visitors": 8, "since": "2026-01-01"})
+            st.visitor("1.2.3.4", "ua")
+            st.visitor("1.2.3.4", "ua")                                                 # the same visitor today
+            self.assertEqual(st.counter()["visitors"], 9)
+        empty = stats.Stats(None, "web")
+        self.assertEqual(empty.counter(), {"visitors": 0, "since": time.strftime("%Y-%m-%d", time.gmtime())})
+
+
 class SummaryTest(unittest.TestCase):
     def test_percentiles_from_the_histogram(self):
         st = stats.Stats(None, "murray")

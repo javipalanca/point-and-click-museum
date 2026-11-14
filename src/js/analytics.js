@@ -3,9 +3,12 @@
    - stats: the museum's own counters (server/stats.py). No cookies, nothing stored in the browser, no identifiers;
      events go in batches with navigator.sendBeacon. Off when the browser asks not to be tracked (GPC / DNT).
    - ga: Google Analytics 4, following the measurement plan in data/analytics.json (events, parameters, user
-     properties; tools/ga_setup.py registers them in the property). Loaded only after the visitor accepts the banner
-     (it sets cookies); the choice is remembered and can be changed from the footer. Consent Mode starts denied.
-   - clarity: Microsoft Clarity (heatmaps and session recordings), loaded with the same consent as GA.
+     properties; tools/ga_setup.py registers them in the property). Consent Mode starts denied. In "advanced" mode
+     (the default, analytics.gaMode) GA loads on every page but sets no cookies until the visitor accepts the banner:
+     until then Google gets cookieless pings, and models in its reports the visitors who decline. In "basic" mode GA
+     does not load at all until they accept. The choice is remembered and can be changed from the footer.
+   - clarity: Microsoft Clarity (heatmaps and session recordings), loaded only after the visitor accepts.
+   - counter: the 90s hit counter at the foot of the pages, read from the museum's own statistics.
    Other scripts call PCM.track(name, params) (own statistics and GA) or PCM.ga(name, params) (GA and Clarity only);
    neither ever throws, and both do nothing without a destination. Murray's questions are never sent anywhere. */
 "use strict";
@@ -88,6 +91,7 @@
   const navEntry = (performance.getEntriesByType && performance.getEntriesByType("navigation")[0]) || {};
   const viewport = () => (innerWidth < 600 ? "mobile" : innerWidth < 1024 ? "tablet" : "desktop");
   track("page_view", { ref: document.referrer, dev: viewport(), nav: navEntry.type || "navigate", blang: (navigator.language || "").slice(0, 2) });
+  flush();  // at once: the visit counter below should already count this visitor
   let visible = document.visibilityState === "visible" ? performance.now() : null, shown = 0, maxScroll = 0;
   const reached = new Set();
   const scrolled = () => {
@@ -196,11 +200,38 @@
     ["pointerdown", "keydown"].forEach(k => addEventListener(k, start, true));
   }
 
-  /* ---------- Google Analytics and Microsoft Clarity, only with consent ---------- */
+  /* ---------- the visit counter of the 90s: "you are visitor no. 0001234" ---------- */
+  const hc = $("#hitCounter");
+  if (hc && web && A.counter) {
+    const show = data => {
+      const n = Math.max(0, Math.floor(+data.visitors || 0));
+      if (!n) return;
+      const digits = String(n).padStart(7, "0"), box = hc.querySelector(".hc-digits");
+      box.innerHTML = [...digits].map(d => '<span class="hc-d" data-d="' + d + '">' + (PCM.reduceMotion ? d : "0") + "</span>").join("");
+      let date = data.since || "";
+      try { date = new Date(data.since + "T12:00:00Z").toLocaleDateString(D.lang, { year: "numeric", month: "long", day: "numeric" }); } catch (e) { /* keep the ISO date */ }
+      const label = t("hitCounterSince", { n: n.toLocaleString(D.lang), date });
+      hc.querySelector(".hc-sr").textContent = n.toLocaleString(D.lang);
+      hc.title = label;
+      hc.hidden = false;
+      if (PCM.reduceMotion) return;
+      // the wheels roll into place one after the other, the rightmost last, like a mechanical counter
+      [...box.children].forEach((el, i) => {
+        const target = +el.dataset.d;
+        let k = 0;
+        const roll = setInterval(() => { el.textContent = String(k % 10); if (k >= 10 + target + i * 2) { clearInterval(roll); el.textContent = String(target); } k++; }, 45);
+      });
+    };
+    setTimeout(() => fetch(A.counter, { credentials: "omit" }).then(r => (r.ok ? r.json() : null)).then(d => d && show(d)).catch(() => {}), 700);
+  }
+
+  /* ---------- Google Analytics (Consent Mode) and Microsoft Clarity ---------- */
   if (!(A.ga || A.clarity) || !web) return;
+  const advanced = A.gaMode !== "basic";
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
   window.gtag("consent", "default", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
+  window.gtag("set", "ads_data_redaction", true);
 
   function visitorType() {
     try {
@@ -209,10 +240,10 @@
       return n > 1 ? "returning" : "new";
     } catch (e) { return "unknown"; }
   }
-  function startGA() {
+  function loadGA(granted) {
     if (ga || !A.ga) return;
     ga = true;
-    window.gtag("consent", "update", { analytics_storage: "granted" });
+    if (granted) window.gtag("consent", "update", { analytics_storage: "granted" });
     window.gtag("js", new Date());
     const lang = store("lang");
     window.gtag("set", "user_properties", {
@@ -220,10 +251,18 @@
       device_class: viewport(), score_band: band(scoreNow()), sound: store("snd") === false ? "off" : "on", crt: store("crt") === false ? "off" : "on",
       reduced_motion: PCM.reduceMotion ? "yes" : "no" });
     window.gtag("config", A.ga, Object.assign({ page_title: document.title, content_group: D.page, language: D.lang, room: D.page, site_language: D.lang,
-      visitor_type: visitorType(), allow_google_signals: false, allow_ad_personalization_signals: false }, debug ? { debug_mode: true } : {}));
+      allow_google_signals: false, allow_ad_personalization_signals: false }, granted ? { visitor_type: visitorType() } : {}, debug ? { debug_mode: true } : {}));
     const s = document.createElement("script");
     s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(A.ga);
     document.head.appendChild(s);
+    watch();
+  }
+  function startGA() {
+    if (!A.ga) return;
+    if (!ga) return loadGA(true);
+    // advanced mode: GA was already counting without cookies; from now on it may use them
+    window.gtag("consent", "update", { analytics_storage: "granted" });
+    window.gtag("set", { visitor_type: visitorType() });
   }
   function startClarity() {
     if (clarity || !A.clarity) return;
@@ -235,11 +274,14 @@
     window.clarity("consent");
     window.clarity("set", "room", D.page); window.clarity("set", "site_language", D.lang); window.clarity("set", "viewport", viewport());
   }
-  function start() { startGA(); startClarity(); watchSections(); scrolled(); }
+  let watching = false;
+  const watch = () => { if (!watching) { watching = true; watchSections(); scrolled(); } };
+  function start() { startGA(); startClarity(); watch(); }
   function stop() {
     if (ga) window.gtag("consent", "update", { analytics_storage: "denied" });
     if (clarity) try { window.clarity("consent", false); } catch (e) { /* not loaded */ }
-    ga = clarity = false;
+    if (!advanced) ga = false;  // advanced mode: GA goes on, without cookies
+    clarity = false;
     const domain = location.hostname.split(".").slice(-2).join(".");
     document.cookie.split(";").map(c => c.trim().split("=")[0]).filter(n => /^(_ga|_clck|_clsk|CLID|MUID)/.test(n)).forEach(n => {
       [location.hostname, "." + domain, ""].forEach(d => { document.cookie = n + "=; Max-Age=0; path=/" + (d ? "; domain=" + d : ""); });
@@ -259,7 +301,8 @@
     if (box) return;
     box = document.createElement("div");
     box.className = "pconsent px"; box.id = "consentBox"; box.setAttribute("role", "region"); box.setAttribute("aria-label", t("consentLink"));
-    box.innerHTML = "<p>" + esc(t(A.clarity ? (A.ga ? "consentTextBoth" : "consentTextClarity") : "consentText")) + '</p><div class="row"><button class="pbtn small" type="button" data-c="1">' +
+    const text = A.ga && advanced ? (A.clarity ? "consentTextAdvBoth" : "consentTextAdv") : A.clarity ? (A.ga ? "consentTextBoth" : "consentTextClarity") : "consentText";
+    box.innerHTML = "<p>" + esc(t(text)) + '</p><div class="row"><button class="pbtn small" type="button" data-c="1">' +
       esc(t("consentAccept")) + '</button><button class="pbtn small ghost" type="button" data-c="0">' + esc(t("consentReject")) + "</button></div>";
     box.addEventListener("click", e => { const b = e.target.closest("button[data-c]"); if (b) choose(b.dataset.c === "1"); });
     document.body.appendChild(box);
@@ -269,5 +312,8 @@
   if (optOut) return;                       // the browser already said no: no banner, no Google, no Clarity
   const choice = store("consent");
   if (choice === "granted") start();
-  else if (choice !== "denied") ask();
+  else {
+    if (advanced) loadGA(false);            // cookieless until the visitor accepts
+    if (choice !== "denied") ask();
+  }
 })();

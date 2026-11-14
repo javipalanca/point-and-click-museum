@@ -430,6 +430,19 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   Loom, DOTT, KQ V, Grim Fandango, Broken Sword, Fate of Atlantis) y con sitios y modelo falsos (`tests/test_guides.py`);
   SearXNG solo con uno falso. Sin probar con el Qwen del usuario.
 
+- **2026-11-14 · Contador de visitas de los 90 y Consent Mode avanzado** (petición del usuario). Contador en el pie
+  de todas las páginas («Eres el visitante nº» + 7 rodillos que giran hasta su cifra, sin animación con movimiento
+  reducido): visitantes únicos por día de las estadísticas propias sumados desde el primer día
+  (`Stats.counter()`, `GET /api/stats/counter` en el contenedor `games`, `max-age=30`, location propia en nginx); el
+  `page_view` se envía al momento para que el visitante ya se cuente. Solo con `STATS_URL` (no en el Artifact ni en un
+  build local). **Consent Mode avanzado** (`GA_CONSENT_MODE=advanced`, por defecto; sustituye a «GA no se carga hasta
+  aceptar» de las estadísticas del 2026-11-05): gtag se carga siempre con los cuatro consentimientos denegados y
+  `ads_data_redaction`, sin cookies ni `visitor_type` (necesita localStorage) hasta aceptar; aceptar hace
+  `consent update analytics_storage: granted` sobre el GA que ya corre; rechazar lo deja denegado y borra cookies.
+  Clarity sigue solo tras aceptar (no tiene modo sin cookies). GPC/DNT: nada. `basic` conserva el modo anterior.
+  Aviso nuevo («cuenta las visitas sin cookies ni identificadores»). Advertido al usuario: el CEPD (Directrices
+  2/2023 sobre el art. 5.3 de ePrivacy) y la AEPD pueden exigir consentimiento también para esos pings.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

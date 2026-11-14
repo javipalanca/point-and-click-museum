@@ -234,5 +234,9 @@
  "consentLink": "Cookies",
  "catDemo": "Demo",
  "consentTextClarity": "Dürfen wir mit Microsoft Clarity (Heatmaps) sehen, wie man sich bewegt? Es nutzt Cookies; das Museum funktioniert auch ohne.",
- "consentTextBoth": "Dürfen wir deinen Besuch mit Google Analytics zählen und mit Microsoft Clarity sehen, wo geklickt wird? Sie nutzen Cookies; das Museum funktioniert auch ohne."
+ "consentTextBoth": "Dürfen wir deinen Besuch mit Google Analytics zählen und mit Microsoft Clarity sehen, wo geklickt wird? Sie nutzen Cookies; das Museum funktioniert auch ohne.",
+ "hitCounter": "Du bist Besucher Nr.",
+ "hitCounterSince": "{n} Besucher seit dem {date}",
+ "consentTextAdv": "Google Analytics zählt die Besuche ohne Cookies und ohne Kennungen. Dürfen wir seine Cookies nutzen, um genauer zu messen? Ohne sie funktioniert das Museum genauso.",
+ "consentTextAdvBoth": "Google Analytics zählt die Besuche ohne Cookies und ohne Kennungen. Dürfen wir seine Cookies nutzen und mit Microsoft Clarity sehen, wo geklickt wird? Ohne sie funktioniert das Museum genauso."
 }

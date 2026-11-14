@@ -70,20 +70,34 @@ const firstLine = proc => new Promise((resolve, reject) => {
     v.on("pageerror", e => errs.push(e.message));
     await v.goto(base + "/es/");
     await v.waitForSelector(".pconsent");
-    check(gaRequests === 0 && clarityRequests === 0, "Google Analytics and Clarity do not load before the visitor answers");
-    check(/Microsoft Clarity/.test(await v.textContent(".pconsent")), "the banner names both tools");
+    const consentOf = () => v.evaluate(() => window.dataLayer.filter(a => a[0] === "consent").map(a => a[1] + ":" + a[2].analytics_storage).join(","));
+    for (let i = 0; i < 20 && !gaRequests; i++) await v.waitForTimeout(100);
+    check(gaRequests === 1 && clarityRequests === 0 && await consentOf() === "default:denied",
+      "Consent Mode advanced: GA loads at once with everything denied (cookieless pings); Clarity waits for an answer");
+    check(!(await vctx.cookies()).some(c => /^_ga|^_cl/.test(c.name)), "no analytics cookies before the answer");
+    check(/Microsoft Clarity/.test(await v.textContent(".pconsent")) && /sin cookies/.test(await v.textContent(".pconsent")),
+      "the banner names both tools and says GA counts without cookies");
+    await v.waitForSelector("#hitCounter:not([hidden])");
+    await v.waitForTimeout(1200);
+    const counter = await v.evaluate(() => ({ digits: [...document.querySelectorAll("#hitCounter .hc-d")].map(d => d.textContent).join(""),
+      title: document.querySelector("#hitCounter").title }));
+    check(/^\d{7}$/.test(counter.digits) && +counter.digits >= 1 && /visitantes desde/.test(counter.title),
+      "the 90s visit counter shows the visitors so far, this one included (" + counter.digits + ")");
     await v.click('.pconsent [data-c="0"]');
     check(!(await v.$(".pconsent")), "declining closes the banner");
     await v.goto(base + "/es/timeline/");
     await v.waitForTimeout(300);
-    check(!(await v.$(".pconsent")) && gaRequests === 0 && clarityRequests === 0, "the answer is remembered and Google and Clarity stay out");
-    check(!(await vctx.cookies()).some(c => /^_ga/.test(c.name)), "no analytics cookies");
+    check(!(await v.$(".pconsent")) && gaRequests === 2 && clarityRequests === 0 && await consentOf() === "default:denied",
+      "the answer is remembered: GA goes on without cookies, Clarity stays out");
+    check(!(await vctx.cookies()).some(c => /^_ga|^_cl/.test(c.name)), "no analytics cookies after declining");
     await v.click("#consentOpen");
     await v.click('.pconsent [data-c="1"]');
-    for (let i = 0; i < 20 && !gaRequests; i++) await v.waitForTimeout(100);
-    check(gaRequests === 1 && await v.evaluate(() => JSON.stringify(window.dataLayer).includes('"analytics_storage":"granted"')),
-      "accepting from the footer loads gtag.js with analytics consent granted (ads stay denied)");
+    for (let i = 0; i < 20 && !clarityRequests; i++) await v.waitForTimeout(100);
+    check(gaRequests === 2 && await consentOf() === "default:denied,update:granted" &&
+      await v.evaluate(() => window.dataLayer.some(a => a[0] === "set" && a[1] && a[1].visitor_type)),
+      "accepting from the footer grants analytics storage to the GA already running (ads stay denied)");
     check(clarityRequests === 1 && await v.evaluate(() => (window.clarity.q || []).some(a => a[0] === "consent")), "Clarity loads after accepting, with its consent");
+    await v.waitForTimeout(300);  // clicks closer than 250 ms are one gesture for ui_click
     await v.click(".tl-entry");
     await v.waitForSelector("#modalBg.open");
     await v.waitForTimeout(1200);
@@ -97,7 +111,7 @@ const firstLine = proc => new Promise((resolve, reject) => {
       "user properties: language of the site and of the browser, device, score");
     const sel = evs.find(e => e.name === "select_content");
     check(sel && sel.content_type === "game" && sel.content_id && sel.room === "timeline", "opening a record: select_content (game)");
-    const click = evs.find(e => e.name === "ui_click");
+    const click = evs.find(e => e.name === "ui_click" && e.region === "main");  // the footer and banner clicks come first now
     check(click && click.region === "main" && click.element && Number.isInteger(click.x_pct) && click.x_pct % 5 === 0 && click.viewport === "desktop",
       "every click: what, where on the screen and in which part of the page");
     check(evs.some(e => e.name === "unlock_achievement") && evs.some(e => e.name === "earn_virtual_currency" && e.value > 0), "points: unlock_achievement and earn_virtual_currency");

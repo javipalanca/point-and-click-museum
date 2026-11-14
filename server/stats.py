@@ -61,6 +61,7 @@ class Stats:
         self.folder = Path(folder) if folder else None
         self.prefix, self.lock, self.every = prefix, threading.Lock(), every
         self.day, self.doc, self.dirty, self.seen, self.salt = None, None, False, set(), b""
+        self.past = None  # (day, visitors before that day, first day): for the page's visit counter
         if self.folder:
             threading.Thread(target=self._loop, daemon=True).start()
 
@@ -140,6 +141,26 @@ class Stats:
             doc["visitors"] = doc.get("visitors", 0) + 1
             self.dirty = True
             return True
+
+
+    def counter(self) -> dict:
+        """All the visitors so far (one per browser and day, as counted above) and the first day with numbers: the
+        hit counter shown at the foot of the pages. Earlier days are read from disk once a day."""
+        with self.lock:
+            doc = self._today()
+            if not self.past or self.past[0] != self.day:
+                total, first = 0, self.day
+                for f in sorted(self.folder.glob(f"{self.prefix}-????-??-??.json")) if self.folder else []:
+                    day = f.stem[-10:]
+                    if f.stem[:-11] != self.prefix or day >= self.day:
+                        continue
+                    try:
+                        total += int(json.loads(f.read_text("utf-8")).get("visitors", 0))
+                        first = min(first, day)
+                    except (OSError, ValueError, TypeError):
+                        continue
+                self.past = (self.day, total, first)
+            return {"visitors": self.past[1] + int(doc.get("visitors", 0)), "since": self.past[2]}
 
 
 # -------------------------------------------------------------- events from the browser

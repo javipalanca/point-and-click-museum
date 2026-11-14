@@ -4,6 +4,7 @@
     GET /api/games/health
     GET /api/games/<edition key>      -> the js-dos bundle (.jsdos) or the ScummVM data (.zip) of that edition
     POST /api/stats                   -> usage events of the site, without cookies (server/stats.py)
+    GET  /api/stats/counter           -> {"visitors": n, "since": "YYYY-MM-DD"}: the hit counter of the pages
 
 Why a proxy: Internet Archive and ScummVM's download server do not always let a page read their files with fetch()
 (CORS), and a game must be checked and turned into a js-dos bundle with its dosbox.conf before DOSBox can run it.
@@ -163,6 +164,17 @@ class Handler(BaseHTTPRequestHandler):
         path = self.path.split("?", 1)[0]
         if path == "/api/games/health":
             return self.send_json(200, {"ok": True, "cacheMB": CACHE_MB})
+        if path == "/api/stats/counter":
+            if not WEB.folder:
+                return self.send_json(404, {"error": "statistics are off"})
+            data = json.dumps(WEB.counter()).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "public, max-age=30")  # the same number for everyone: cheap to serve
+            self.end_headers()
+            self.wfile.write(data)
+            return
         m = KEY.match(path)
         ed = CAT.get(m.group(1)) if m else None
         if not ed:

@@ -162,7 +162,7 @@ class AnswerTests(unittest.TestCase):
         self.assertEqual(first["path"], "/v1/chat/completions")
         self.assertEqual(first["auth"], "Bearer " + SECRET)
         self.assertEqual(first["body"]["model"], "qwen3.8")
-        self.assertEqual({t["function"]["name"] for t in first["body"]["tools"]}, {"search_museum", "get_record", "list_games", "go_to"})
+        self.assertEqual({t["function"]["name"] for t in first["body"]["tools"]}, {"search_museum", "get_record", "list_games", "go_to", "search_guides"})
         self.assertIn("[engine:scumm]", first["body"]["messages"][0]["content"])  # RAG records in the system prompt
         self.assertEqual(second["body"]["messages"][-1]["role"], "tool")
         self.assertNotIn(SECRET, json.dumps(r))

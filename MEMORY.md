@@ -415,6 +415,21 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   (`GAMES_CACHE_MB` también en el `builder`), y `trim_cache` borra las carpetas `tmp*` de descargas interrumpidas de
   más de una hora.
 
+- **2026-11-14 · Murray busca en guías cuando preguntan por soluciones** (petición del usuario). `server/guides.py`:
+  Adventure Gamers por su API de WordPress (`/wp-json/wp/v2/walkthroughs`, sin clave: búsqueda por título y texto de
+  la guía), y SearXNG opcional (`MURRAY_SEARCH_URL`) para otros sitios de `murray.json → guides.sites`. Murray da una
+  pista con sus palabras y enlaza la guía (herramienta `search_guides`; sin herramientas, la guía va en el prompt; sin
+  modelo, responde con el enlace si reconoce la petición en 4 idiomas). El juego se reconoce por el título (el más largo
+  cuyas palabras estén en la pregunta, números romanos como cifras; «Monkey Island» a secas = el más antiguo) y la
+  guía por título con penalización si no coincide el número de la secuela (*Monkey Island 2* ≠ *Return to Monkey
+  Island*). Se eligen ventanas de ~700 caracteres con más palabras de la pregunta (sin las del título ni los índices).
+  **Decisión:** solo sitios cuyo `robots.txt` admite agentes de IA (se comprueba en cada sitio para `ClaudeBot`,
+  `GPTBot`, `ChatGPT-User`…): fuera GameFAQs, StrategyWiki y Walkthrough King, que los excluyen. La API de Adventure
+  Gamers se llama con `per_page` delante porque su `robots.txt` tiene `Disallow: *?s` (pensado para las búsquedas
+  `?s=` de WordPress, y `?search=` también encajaría). Probado contra la web real desde la sesión (Monkey Island 1 y 2,
+  Loom, DOTT, KQ V, Grim Fandango, Broken Sword, Fate of Atlantis) y con sitios y modelo falsos (`tests/test_guides.py`);
+  SearXNG solo con uno falso. Sin probar con el Qwen del usuario.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

@@ -165,5 +165,88 @@
   "en": "Point and Click Museum is a virtual museum: a pixel-art website about the history of graphic adventure games, from the text adventures of the 1970s to today. It is not a physical museum, it does not belong to any university or institution, and it has nothing to do with other museums (for example, the UPV Computer Museum is a separate project). Its rooms: a timeline of over a hundred adventures, studios and creators, engines, techniques (interface evolution, colour cycling, dithering, parallax, dynamic music, walk boxes, priority screens, CGA/EGA/VGA palettes), original minigames and a room to play with DOSBox and ScummVM in the browser. Murray is its guide.",
   "de": "Point and Click Museum ist ein virtuelles Museum: eine Pixel-Art-Website über die Geschichte der Grafik-Adventures, von den Textadventures der 1970er bis heute. Es ist kein physisches Museum, gehört zu keiner Universität oder Institution und hat nichts mit anderen Museen zu tun (das Computermuseum der UPV etwa ist ein eigenes Projekt). Säle: ein Zeitstrahl mit über hundert Adventures, Studios und Macher, Engines, Techniken, eigene Minispiele und ein Saal zum Spielen mit DOSBox und ScummVM im Browser. Murray ist sein Führer.",
   "fr": "Point and Click Museum est un musée virtuel : un site en pixel art sur l'histoire des jeux d'aventure graphiques, des aventures textuelles des années 1970 à aujourd'hui. Ce n'est pas un musée physique, il n'appartient à aucune université ni institution et n'a aucun lien avec d'autres musées (le musée d'informatique de l'UPV, par exemple, est un autre projet). Ses salles : une frise de plus de cent aventures, studios et créateurs, moteurs, techniques, mini-jeux originaux et une salle pour jouer avec DOSBox et ScummVM dans le navigateur. Murray en est le guide."
+ },
+ "guides": {
+  "_doc": "Walkthroughs for visitors who are stuck (server/guides.py). Only these sites are read, and only if their robots.txt lets AI agents in (GameFAQs, StrategyWiki and Walkthrough King keep them out). Adventure Gamers is searched through its WordPress API; the others need MURRAY_SEARCH_URL (SearXNG).",
+  "sites": [
+   "adventuregamers.com",
+   "the-spoiler.com",
+   "gameboomers.com"
+  ],
+  "adventureGamers": {
+   "name": "Adventure Gamers",
+   "base": "https://adventuregamers.com"
+  },
+  "intent": {
+   "es": [
+    "solucion",
+    "soluciones",
+    "como paso",
+    "como se pasa",
+    "como consigo",
+    "como abro",
+    "como salgo",
+    "atascado",
+    "atascada",
+    "no puedo pasar",
+    "pista",
+    "pistas",
+    "guia",
+    "truco",
+    "trucos",
+    "que hago",
+    "que tengo que hacer",
+    "estoy bloqueado",
+    "estoy bloqueada"
+   ],
+   "en": [
+    "walkthrough",
+    "solution",
+    "hint",
+    "hints",
+    "stuck",
+    "how do i get",
+    "how do i open",
+    "how do i beat",
+    "how do i solve",
+    "how to get past",
+    "what do i do",
+    "guide",
+    "cheat"
+   ],
+   "de": [
+    "losung",
+    "komplettlosung",
+    "tipp",
+    "tipps",
+    "hinweis",
+    "komme nicht weiter",
+    "wie komme ich",
+    "wie bekomme ich",
+    "wie offne ich",
+    "hilfe beim",
+    "festgesteckt"
+   ],
+   "fr": [
+    "soluce",
+    "solution",
+    "astuce",
+    "astuces",
+    "indice",
+    "bloque",
+    "bloquee",
+    "comment j obtiens",
+    "comment obtenir",
+    "comment ouvrir",
+    "comment passer",
+    "que faire"
+   ]
+  },
+  "found": {
+   "es": "Mis vitrinas no guardan soluciones, pero los mortales de {site} escribieron una guía: {title}. Léela poco a poco, no te destripes el juego entero.",
+   "en": "My display cases hold no solutions, but the mortals at {site} wrote a guide: {title}. Read it a bit at a time; don't spoil the whole game.",
+   "de": "In meinen Vitrinen liegen keine Lösungen, aber die Sterblichen von {site} haben eine geschrieben: {title}. Lies sie Stück für Stück und verdirb dir nicht das ganze Spiel.",
+   "fr": "Mes vitrines ne gardent pas de solutions, mais les mortels de {site} en ont écrit une : {title}. Lis-la petit à petit, ne te gâche pas tout le jeu."
+  }
  }
 }

@@ -841,6 +841,7 @@ def render_page(S: Site, page, lang, is_root, layout, build_id, vendored, svm=No
     d, site, langs, default = S.d, S.d["site"], S.d["langs"], S.d["site"]["defaultLanguage"]
     L = {k: localize(d[k], lang, langs, default) for k in ("timeline", "studios", "engines", "techniques", "hero", "games", "arcade", "murray")}
     L["timeline"]["games"].sort(key=lambda g: g["year"])
+    L["murray"].pop("guides", None)  # the walkthrough sites and search words are for the Murray server only
     ui = dict(d["i18n"][default], **d["i18n"][lang])
     pid = page["id"]
     depth = Site.depth(page, is_root)

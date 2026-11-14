@@ -385,6 +385,17 @@ Island*), que responde sobre la historia de las aventuras gráficas a partir de 
 - **Herramientas**: si el servidor del modelo admite *function calling*, el modelo puede además buscar
   (`search_museum`), leer una ficha (`get_record`) o listar juegos por año, estudio o motor (`list_games`). Si el
   servidor rechaza las herramientas, se reintenta automáticamente solo con RAG.
+- **Guías y soluciones** (`server/guides.py`): si el visitante está atascado o pide una pista o la solución, Murray
+  busca la guía del juego en [Adventure Gamers](https://adventuregamers.com/walkthrough) (su API pública de
+  WordPress, sin clave; miles de guías de aventuras), elige los pasajes que responden a la pregunta y da una pista con
+  sus palabras, primero un empujón y la solución entera solo si se la piden, con el enlace a la guía. Con un modelo
+  con herramientas lo decide él (`search_guides`); sin herramientas, la guía va en el prompt; sin modelo, Murray
+  reconoce la petición en los cuatro idiomas (`data/murray.json → guides.intent`) y responde con el enlace. Opcional:
+  `MURRAY_SEARCH_URL` apunta a un SearXNG propio para buscar también en los otros sitios de `guides.sites`.
+  Buenas maneras: solo https y solo esos sitios (también tras redirecciones), respeta su `robots.txt` para nuestro
+  agente **y para los agentes de IA habituales** (por eso no están GameFAQs, StrategyWiki ni Walkthrough King, que
+  los excluyen), páginas de 2 MB como mucho, caché de un día y al modelo solo llegan pasajes cortos marcados como
+  texto de terceros. `MURRAY_GUIDES=0` lo apaga.
 - **Modelo**: cualquier API compatible con OpenAI (`/v1/chat/completions`): Ollama, vLLM, llama.cpp, LM Studio,
   LocalAI, OpenRouter… Se configura en `.env`:
 

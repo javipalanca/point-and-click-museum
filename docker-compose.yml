@@ -94,6 +94,8 @@ services:
       MURRAY_GUARD: ${MURRAY_GUARD:-strict}
       MURRAY_RATE: ${MURRAY_RATE:-30}
       MURRAY_DAILY_LIMIT: ${MURRAY_DAILY_LIMIT:-2000}
+      MURRAY_GUIDES: ${MURRAY_GUIDES:-1}          # walkthroughs (Adventure Gamers) when a visitor is stuck
+      MURRAY_SEARCH_URL: ${MURRAY_SEARCH_URL:-}   # optional SearXNG, for the other guide sites
       PCM_STATS_DIR: /stats               # counts and response times only, never the questions
     volumes:
       - murray-stats:/stats

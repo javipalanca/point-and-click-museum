@@ -388,12 +388,12 @@
     "web.consent": "Google Analytics (banner)", "web.js_error": "Errores de JavaScript", "web.vitals_rating": "Core Web Vitals (valoración)", "web.scroll_depth": "Hasta dónde leen",
     "web.bots": "Robots descartados",
     "murray.answers": "Murray · respuestas", "murray.langs": "Murray · idioma", "murray.pages": "Murray · desde qué sala", "murray.turns": "Murray · turno de la conversación",
-    "murray.errors": "Murray · errores", "murray.navigate": "Murray · visitas guiadas",
+    "murray.errors": "Murray · errores", "murray.navigate": "Murray · visitas guiadas", "murray.guides": "Murray · guías de soluciones",
     "games.requests": "Proxy · juegos pedidos", "games.cache": "Proxy · caché", "games.served": "Proxy · respuestas", "games.served_kb": "Proxy · KB servidos",
     "games.errors": "Proxy · errores", "games.not_playable": "Proxy · pedidos no jugables" };
   const ORDER = ["web.pages", "web.entry_pages", "web.referrers", "web.langs", "web.browser_langs", "web.devices", "web.timeline_open", "web.arcade_play",
     "web.arcade_engine", "web.arcade_source", "web.award", "web.scroll_depth", "web.murray_open", "murray.answers", "murray.pages", "murray.langs", "murray.turns",
-    "murray.navigate", "murray.errors", "games.requests", "games.cache", "games.served", "games.served_kb", "games.errors", "games.not_playable",
+    "murray.navigate", "murray.guides", "murray.errors", "games.requests", "games.cache", "games.served", "games.served_kb", "games.errors", "games.not_playable",
     "web.outbound", "web.lang_switch", "web.toggle", "web.catalog_search", "web.consent", "web.vitals_rating", "web.arcade_error", "web.js_error", "web.score_complete", "web.navigation", "web.bots"];
   function bars(title, kv, unit) {
     const rows = Object.entries(kv || {}).sort((a, b) => b[1] - a[1]), top = rows.slice(0, 15), max = top.length ? top[0][1] : 1;

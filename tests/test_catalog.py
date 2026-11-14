@@ -199,6 +199,25 @@ class CatalogTest(unittest.TestCase):
         self.assertNotIn("validated", eds["far"])                     # unreachable: tried again next time
         self.assertEqual(eds["svm"]["validated"]["engineMissing"], "sword25")  # known without downloading, not counted
 
+    def test_sync_finds_games_without_downloading(self):
+        g = self.sync(validate=0)
+        self.assertTrue(g, "games are found and added")
+        self.assertFalse(any(e.get("validated", {}).get("ok") for x in g.values() for e in x["editions"]), "nothing validated")
+        self.assertFalse(self.cache.exists() and any(self.cache.iterdir()), "and nothing downloaded")
+        import subprocess, sys as _sys
+        h = subprocess.run([_sys.executable, str(Path(self.sc.__file__)), "--help"], capture_output=True, text=True,
+                           env={k: v for k, v in os.environ.items() if k != "GAMES_VALIDATE_PER_RUN"}).stdout
+        self.assertIn("default 0", h, "the periodic sync downloads nothing by default")
+
+    def test_trim_cache_removes_interrupted_downloads(self):
+        self.cache.mkdir(parents=True)
+        old, new = self.cache / "tmpold", self.cache / "tmpnew"
+        old.mkdir(); new.mkdir(); (old / "download.bin").write_bytes(b"x" * 10)
+        os.utime(old, (1, 1))
+        self.gf.trim_cache(self.cache, 2048)
+        self.assertFalse(old.exists(), "left by an interrupted download: removed")
+        self.assertTrue(new.exists(), "a download in progress is kept")
+
     def test_proxy_serves_only_playable_games(self):
         g = self.sync()
         catalog = self.tmp / "catalog.json"

@@ -512,9 +512,18 @@ def prepare(game: dict, cache: Path, admin: bool = False, switch: bool = False) 
 
 
 def trim_cache(cache: Path, max_mb: int) -> list[str]:
-    """Least recently used bundles go first, until the cache fits in max_mb."""
+    """Least recently used bundles go first, until the cache fits in max_mb. Also removes what an interrupted
+    download left behind (temporary folders older than an hour)."""
+    gone = []
+    for d in cache.glob("tmp*"):
+        try:
+            if d.is_dir() and time.time() - d.stat().st_mtime > 3600:
+                shutil.rmtree(d, ignore_errors=True)
+                gone.append(d.name)
+        except OSError:
+            pass
     files = sorted((p for p in cache.glob("*") if p.suffix in (".jsdos", ".zip")), key=lambda p: p.stat().st_mtime)
-    total, gone = sum(p.stat().st_size for p in files), []
+    total = sum(p.stat().st_size for p in files)
     while files and total > max_mb * 1048576:
         p = files.pop(0)
         total -= p.stat().st_size

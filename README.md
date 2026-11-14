@@ -103,8 +103,10 @@ estados, que se ven en la sala DOSBox (con filtro) y en la línea temporal:
 
 Las comprobaciones (`tools/game_fetch.py`): host permitido, tamaño, suma de control, zip válido, programa DOS que no
 sea de Windows (o motor de ScummVM incluido en nuestra compilación). El resultado se convierte en un paquete `.jsdos`
-con su `dosbox.conf`, o en los datos de ScummVM sin la carpeta que los envuelve. Cada pasada valida como mucho
-`GAMES_VALIDATE_PER_RUN` ediciones nuevas; un fallo de red no cuenta como suspenso y se reintenta.
+con su `dosbox.conf`, o en los datos de ScummVM sin la carpeta que los envuelve. La sincronización periódica **no
+descarga nada**: busca juegos y los añade al catálogo, y las ediciones se prueban a mano desde el panel («Probar»,
+«Validar»). Para validar en lote, `GAMES_VALIDATE_PER_RUN` (0 por defecto) o el campo del formulario de sincronizar;
+un fallo de red no cuenta como suspenso. Todo lo descargado (proxy, panel, validaciones) cabe en `GAMES_CACHE_MB`.
 
 El navegador no descarga de las fuentes (CORS y la conversión lo impiden): lo hace el **proxy de descarga**
 (`server/games.py`, contenedor `games`, ruta `/api/games/<edición>`). Solo sirve ediciones jugables, solo desde
@@ -113,7 +115,8 @@ primero) y limita las descargas nuevas por IP (`GAMES_RATE` por hora). El navega
 en Cache Storage y las partidas de ScummVM en IndexedDB, así que sobreviven a la siguiente visita.
 
 ```bash
-python3 tools/sync_catalog.py --validate 0             # refresca las fichas sin descargar nada
+python3 tools/sync_catalog.py                          # refresca las fichas sin descargar nada
+python3 tools/sync_catalog.py --validate 5             # y además descarga y valida 5 ediciones nuevas
 python3 tools/sync_catalog.py --only scummvm           # una fuente; las demás se conservan
 python3 tools/game_fetch.py beneath-a-steel-sky-full-bass-cd-1-2   # descarga y valida una edición
 python3 server/games.py                                 # el proxy en local (puerto 8081)

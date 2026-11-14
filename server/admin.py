@@ -55,6 +55,8 @@ import ia_inspect  # noqa: E402
 import stats  # noqa: E402
 import sync_catalog  # noqa: E402
 
+CACHE_MB = int(os.environ.get("GAMES_CACHE_MB", "2048"))  # the panel's tests share the proxy's cache and its limit
+
 UI = Path(__file__).resolve().parent / "admin"
 USER = os.environ.get("ADMIN_USER", "")
 _salt = secrets.token_bytes(16)
@@ -381,7 +383,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
     if path == "/api/admin/sync" and method == "POST":
         b = body(h)
         req = {"only": [s for s in b.get("only") or [] if s in ("scummvm", "archive", "gog")],
-               "validate": max(0, min(int(b.get("validate", 20)), 500)), "retryFailed": bool(b.get("retryFailed")),
+               "validate": max(0, min(int(b.get("validate", 0)), 500)), "retryFailed": bool(b.get("retryFailed")),
                "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
         write_json(P["request"], req)
         return send(h, 202, {"queued": req})
@@ -406,6 +408,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
         t0 = time.time()
         try:
             r = game_fetch.prepare(game, P["cache"], admin=True)
+            game_fetch.trim_cache(P["cache"], CACHE_MB)
         except Exception as e:
             record_download(P, {"key": key, "title": f"{report['title']} · {z['name']} (prueba)", "ok": False, "by": "panel", "error": str(e)[:300],
                                 "network": not isinstance(e, game_fetch.GameError)})
@@ -514,6 +517,7 @@ def route(h, method: str, path: str, q: dict, P: dict):
         t0 = time.time()
         try:
             r = game_fetch.prepare({"id": key, "title": g["title"], **ed}, P["cache"], admin=True, switch=True)  # ScummVM first
+            game_fetch.trim_cache(P["cache"], CACHE_MB)
             record_download(P, {"key": key, "title": g["title"], "ok": True, "by": "panel", "seconds": round(time.time() - t0, 1),
                                 "bytes": r.get("bytes"), "checks": r["checks"]})
         except Exception as e:  # GameError or network: shown in the panel

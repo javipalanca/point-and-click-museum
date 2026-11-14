@@ -406,6 +406,15 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   2026-11-06: la Admin API rechaza nombres visibles con tildes o símbolos («only alphanumeric, underscore, or space»):
   los nombres del plan van sin tildes ni paréntesis y únicos (la prueba lo exige) y `ga_setup.display_name` los limpia.
 
+- **2026-11-14 · La sincronización del catálogo ya no descarga juegos** (petición del usuario: «la caché de juegos
+  llena el disco; que busque juegos y los añada pero no los descargue, ya los probará el admin a mano»). Sustituye a la
+  validación automática de `GAMES_VALIDATE_PER_RUN` (20) ediciones por pasada del catálogo automático del 2026-11-05:
+  ahora vale 0 por defecto (`sync_catalog.py`, `docker-compose.yml`, `.env.example` y el formulario del panel), y la
+  pasada solo localiza y añade fichas (sigue marcando sin descargar los motores de ScummVM que faltan). Además, solo el
+  proxy recortaba la caché: ahora también la recortan las pruebas y validaciones del panel y una validación en lote
+  (`GAMES_CACHE_MB` también en el `builder`), y `trim_cache` borra las carpetas `tmp*` de descargas interrumpidas de
+  más de una hora.
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

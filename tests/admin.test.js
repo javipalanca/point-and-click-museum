@@ -292,7 +292,7 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await page.click("#syncForm button");
     await page.waitForTimeout(500);
     const req = JSON.parse(fs.readFileSync(path.join(catDir, "sync.request.json"), "utf8"));
-    check(req.validate === 20 && req.only.length === 3, "the sync request reaches the builder (sync.request.json)");
+    check(req.validate === 0 && req.only.length === 3, "the sync request reaches the builder (sync.request.json)");
     await page.waitForTimeout(5500);
     await shot(page, "admin-summary");
     await page.click('[data-tab="downloads"]');

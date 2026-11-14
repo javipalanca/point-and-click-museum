@@ -12,7 +12,8 @@ services:
       BASE_URL: ${BASE_URL:-http://localhost:8080}
       GAMES_WATCH: ${GAMES_WATCH:-15}
       CATALOG_EVERY: ${CATALOG_EVERY:-24}            # hours between catalogue refreshes (ScummVM, Internet Archive, GOG)
-      GAMES_VALIDATE_PER_RUN: ${GAMES_VALIDATE_PER_RUN:-20}   # new editions downloaded and checked per refresh
+      GAMES_VALIDATE_PER_RUN: ${GAMES_VALIDATE_PER_RUN:-0}    # editions downloaded and checked per refresh (0: only find games)
+      GAMES_CACHE_MB: ${GAMES_CACHE_MB:-2048}
       GAMES_MAX_MB: ${GAMES_MAX_MB:-400}
       # statistics (see .env.example): Google Analytics only after the visitor accepts; the museum's own, without cookies
       PCM_GA_ID: ${GA_MEASUREMENT_ID:-}

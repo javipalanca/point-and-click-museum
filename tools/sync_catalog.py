@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Builds data/catalog.json: the museum's catalogue of classic adventures, with where each one can be played or bought.
 
-    python3 tools/sync_catalog.py                    # all sources, validates up to 20 new editions
-    python3 tools/sync_catalog.py --only scummvm --validate 0
+    python3 tools/sync_catalog.py                    # all sources; finds and adds games, downloads nothing
+    python3 tools/sync_catalog.py --validate 5       # also download and check up to 5 new editions (by hand)
     python3 tools/sync_catalog.py --out /catalog/catalog.json --cache /cache/games   # what the Docker builder runs daily
 
 Sources (settings in data/catalog.sources.json):
@@ -458,8 +458,9 @@ def main() -> int:
     ap.add_argument("--out", type=Path, default=Path(os.environ.get("PCM_CATALOG", DATA / "catalog.json")))
     ap.add_argument("--cache", type=Path, default=ROOT / ".cache" / "games-proxy", help="where validated games are kept")
     ap.add_argument("--only", action="append", choices=("scummvm", "archive", "gog"), help="sources to refresh (others are kept)")
-    ap.add_argument("--validate", type=int, default=int(os.environ.get("GAMES_VALIDATE_PER_RUN", "20")),
-                    help="editions to download and check in this run (default 20; 0 = none)")
+    ap.add_argument("--validate", type=int, default=int(os.environ.get("GAMES_VALIDATE_PER_RUN", "0")),
+                    help="editions to download and check in this run (default 0: the sync only finds games; "
+                         "the admin tests them by hand in the panel)")
     ap.add_argument("--retry-failed", action="store_true", help="check again the editions that failed")
     a = ap.parse_args()
     cfg = json.loads((DATA / "catalog.sources.json").read_text("utf-8"))
@@ -519,7 +520,9 @@ def main() -> int:
             for ed in g["editions"]:
                 if (ed.get("validated") or {}).get("ok") is False:
                     ed.pop("validated")
-    checked = validate(games, a.cache, a.validate) if a.validate else 0
+    checked = validate(games, a.cache, max(0, a.validate))  # with 0 it only marks engines we lack (no download)
+    if checked:
+        game_fetch.trim_cache(a.cache, int(os.environ.get("GAMES_CACHE_MB", "2048")))
     # the control panel may have checked editions while this run was reading the sources: keep its newer verdicts
     latest = json.loads(a.out.read_text("utf-8")) if a.out.exists() else {}
     newer = {ed["key"]: ed for g in latest.get("games", []) for ed in g.get("editions", []) if (ed.get("validated") or {}).get("by") == "panel"}

@@ -216,8 +216,10 @@ Dos capas independientes, apagadas en un build normal (`python3 build.py`) y en 
   abre cualquier página con `?ga_debug=1` (DebugView). Las señales de Google y los datos demográficos siguen
   apagados a propósito: exigirían consentimiento para publicidad.
 - **Microsoft Clarity** (`CLARITY_ID=` en `.env`, o `build.py --clarity-id`), opcional y gratuito: mapas de calor de
-  clics y de scroll y grabaciones de sesión, que GA4 no tiene. Solo se carga si el visitante acepta (el aviso
-  nombra las dos herramientas), recibe la sala, el idioma y el dispositivo como etiquetas y los eventos clave; el
+  clics y de scroll y grabaciones de sesión, que GA4 no tiene. Sigue el mismo modo que GA: en `advanced` se carga
+  siempre sin cookies (su `consentv2` con `analytics_Storage` denegado; su propia etiqueta ya llega así) y pasa a
+  usarlas al aceptar; en `basic`, solo tras aceptar. `ad_Storage` siempre denegado. Los datos tardan hasta un par de
+  horas en salir en su panel (el aviso nombra las dos herramientas), recibe la sala, el idioma y el dispositivo como etiquetas y los eventos clave; el
   chat de Murray y el formulario de juego propio van enmascarados.
 - **Estadísticas propias** (`STATS_URL=/api/stats`, por defecto en Docker; vacío para apagarlas): sin cookies, sin
   nada guardado en el navegador y sin IPs. Los visitantes únicos se cuentan con un hash de IP + navegador con una sal que

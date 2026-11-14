@@ -7,7 +7,9 @@
      (the default, analytics.gaMode) GA loads on every page but sets no cookies until the visitor accepts the banner:
      until then Google gets cookieless pings, and models in its reports the visitors who decline. In "basic" mode GA
      does not load at all until they accept. The choice is remembered and can be changed from the footer.
-   - clarity: Microsoft Clarity (heatmaps and session recordings), loaded only after the visitor accepts.
+   - clarity: Microsoft Clarity (heatmaps and session recordings). In "advanced" mode it also loads on every page
+     without cookies (Clarity's consentv2 with analytics_Storage denied) and gets its cookies once the visitor
+     accepts; in "basic" mode it loads only after they accept. ad_Storage is always denied.
    - counter: the 90s hit counter at the foot of the pages, read from the museum's own statistics.
    Other scripts call PCM.track(name, params) (own statistics and GA) or PCM.ga(name, params) (GA and Clarity only);
    neither ever throws, and both do nothing without a destination. Murray's questions are never sent anywhere. */
@@ -264,14 +266,17 @@
     window.gtag("consent", "update", { analytics_storage: "granted" });
     window.gtag("set", { visitor_type: visitorType() });
   }
-  function startClarity() {
-    if (clarity || !A.clarity) return;
+  // Clarity's own tag queues "start" ahead of these calls, so they all reach it once its script has loaded
+  const clarityConsent = granted => window.clarity("consentv2", { ad_Storage: "denied", analytics_Storage: granted ? "granted" : "denied" });
+  function startClarity(granted = true) {
+    if (!A.clarity) return;
+    if (clarity) return clarityConsent(granted);
     clarity = true;
     window.clarity = window.clarity || function () { (window.clarity.q = window.clarity.q || []).push(arguments); };
     const s = document.createElement("script");
     s.async = true; s.src = "https://www.clarity.ms/tag/" + encodeURIComponent(A.clarity);
     document.head.appendChild(s);
-    window.clarity("consent");
+    clarityConsent(granted);
     window.clarity("set", "room", D.page); window.clarity("set", "site_language", D.lang); window.clarity("set", "viewport", viewport());
   }
   let watching = false;
@@ -279,9 +284,8 @@
   function start() { startGA(); startClarity(); watch(); }
   function stop() {
     if (ga) window.gtag("consent", "update", { analytics_storage: "denied" });
-    if (clarity) try { window.clarity("consent", false); } catch (e) { /* not loaded */ }
-    if (!advanced) ga = false;  // advanced mode: GA goes on, without cookies
-    clarity = false;
+    if (clarity) try { clarityConsent(false); } catch (e) { /* not loaded */ }
+    if (!advanced) ga = clarity = false;  // advanced mode: GA and Clarity go on, without cookies
     const domain = location.hostname.split(".").slice(-2).join(".");
     document.cookie.split(";").map(c => c.trim().split("=")[0]).filter(n => /^(_ga|_clck|_clsk|CLID|MUID)/.test(n)).forEach(n => {
       [location.hostname, "." + domain, ""].forEach(d => { document.cookie = n + "=; Max-Age=0; path=/" + (d ? "; domain=" + d : ""); });
@@ -301,7 +305,8 @@
     if (box) return;
     box = document.createElement("div");
     box.className = "pconsent px"; box.id = "consentBox"; box.setAttribute("role", "region"); box.setAttribute("aria-label", t("consentLink"));
-    const text = A.ga && advanced ? (A.clarity ? "consentTextAdvBoth" : "consentTextAdv") : A.clarity ? (A.ga ? "consentTextBoth" : "consentTextClarity") : "consentText";
+    const text = advanced ? (A.ga ? (A.clarity ? "consentTextAdvBoth" : "consentTextAdv") : "consentTextAdvClarity")
+      : A.clarity ? (A.ga ? "consentTextBoth" : "consentTextClarity") : "consentText";
     box.innerHTML = "<p>" + esc(t(text)) + '</p><div class="row"><button class="pbtn small" type="button" data-c="1">' +
       esc(t("consentAccept")) + '</button><button class="pbtn small ghost" type="button" data-c="0">' + esc(t("consentReject")) + "</button></div>";
     box.addEventListener("click", e => { const b = e.target.closest("button[data-c]"); if (b) choose(b.dataset.c === "1"); });
@@ -313,7 +318,7 @@
   const choice = store("consent");
   if (choice === "granted") start();
   else {
-    if (advanced) loadGA(false);            // cookieless until the visitor accepts
+    if (advanced) { loadGA(false); startClarity(false); watch(); }  // cookieless until the visitor accepts
     if (choice !== "denied") ask();
   }
 })();

@@ -238,5 +238,6 @@
  "hitCounter": "Vous êtes le visiteur n°",
  "hitCounterSince": "{n} visiteurs depuis le {date}",
  "consentTextAdv": "Google Analytics compte les visites sans cookies ni identifiants. Pouvons-nous utiliser ses cookies pour mieux mesurer ? Le musée fonctionne pareil sans eux.",
- "consentTextAdvBoth": "Google Analytics compte les visites sans cookies ni identifiants. Pouvons-nous utiliser ses cookies et voir où l'on clique avec Microsoft Clarity ? Le musée fonctionne pareil sans eux."
+ "consentTextAdvBoth": "Google Analytics et Microsoft Clarity mesurent les visites et les clics sans cookies ni identifiants. Pouvons-nous utiliser leurs cookies pour mieux mesurer ? Le musée fonctionne pareil sans eux.",
+ "consentTextAdvClarity": "Microsoft Clarity mesure où l'on clique sans cookies ni identifiants. Pouvons-nous utiliser ses cookies pour mieux mesurer ? Le musée fonctionne pareil sans eux."
 }

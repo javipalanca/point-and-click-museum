@@ -126,7 +126,8 @@ nasm -f bin tools/dos/paint.asm -o tools/dos/PAINT.COM   # solo si cambias el pr
     llama a `/api/murray/chat`. El servidor de Murray usa solo la biblioteca estándar.
 14. **Privacidad en las estadísticas.** Google Analytics con Consent Mode avanzado (`GA_CONSENT_MODE`, por defecto
     `advanced`): se carga siempre con todo denegado, sin cookies hasta que se acepta el aviso (`basic`: no se carga hasta
-    aceptar). Microsoft Clarity solo tras aceptar. El aviso nombra las herramientas activas. Sin Google Signals ni
+    aceptar). Microsoft Clarity igual (`consentv2`: sin cookies hasta aceptar; `ad_Storage` siempre denegado). El aviso
+    nombra las herramientas activas. Sin Google Signals ni
     identificadores de usuario; las estadísticas propias nunca
     guardan IPs, textos escritos por el visitante (preguntas a Murray, búsquedas) ni identificadores. A GA solo llega
     el término de búsqueda del catálogo (en minúsculas, 40 caracteres); las preguntas a Murray nunca, y su panel y el

@@ -443,6 +443,17 @@ Memoria de trabajo compartida entre personas y agentes. Añade entradas al final
   Aviso nuevo («cuenta las visitas sin cookies ni identificadores»). Advertido al usuario: el CEPD (Directrices
   2/2023 sobre el art. 5.3 de ePrivacy) y la AEPD pueden exigir consentimiento también para esos pings.
 
+- **2026-11-14 · Clarity también en modo avanzado** (el usuario: «Clarity parece que aún no va»). Comprobado con el
+  `clarity.js` real (0.8.77) y su etiqueta real (servida con un proyecto inventado y subida a un colector local): el
+  código funcionaba, pero solo grababa a quien aceptaba el aviso (y nada con GPC/DNT o bloqueadores), así que apenas
+  había datos. Ahora sigue `GA_CONSENT_MODE`: en `advanced` se carga siempre con `consentv2` denegado (sin cookies; su
+  etiqueta ya llega con `"track": false`) y aceptar manda `consentv2 {analytics_Storage: granted, ad_Storage: denied}`
+  (sustituye a `clarity("consent")`, API v1). Rechazar lo deja sin cookies. Datos del código de Clarity
+  (microsoft/clarity): su etiqueta encola `start` delante de lo nuestro, así que las llamadas previas no se pierden;
+  `consentv2` se ignora si Clarity no ha arrancado; escucha también el Consent Mode de Google (`google_tag_data.ics`).
+  Para probarlo en local: la URL de subida guardada en `_clsk` se reconstruye con `https://`, así que un colector
+  `http://` falla a partir de la segunda página (artefacto de la prueba, no del sitio).
+
 ## Datos técnicos útiles
 
 - js-dos 8.3.20: `Dos(elemento, opciones)` devuelve un objeto con `stop()`, `setMouseCapture(bool)`,

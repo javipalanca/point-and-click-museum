@@ -72,11 +72,12 @@ const firstLine = proc => new Promise((resolve, reject) => {
     await v.waitForSelector(".pconsent");
     const consentOf = () => v.evaluate(() => window.dataLayer.filter(a => a[0] === "consent").map(a => a[1] + ":" + a[2].analytics_storage).join(","));
     for (let i = 0; i < 20 && !gaRequests; i++) await v.waitForTimeout(100);
-    check(gaRequests === 1 && clarityRequests === 0 && await consentOf() === "default:denied",
-      "Consent Mode advanced: GA loads at once with everything denied (cookieless pings); Clarity waits for an answer");
+    const clarityConsent = () => v.evaluate(() => ((window.clarity && window.clarity.q) || []).filter(a => a[0] === "consentv2").map(a => a[1].analytics_Storage + "/" + a[1].ad_Storage).join(","));
+    check(gaRequests === 1 && clarityRequests === 1 && await consentOf() === "default:denied" && await clarityConsent() === "denied/denied",
+      "Consent Mode advanced: GA and Clarity load at once with everything denied (no cookies until the visitor accepts)");
     check(!(await vctx.cookies()).some(c => /^_ga|^_cl/.test(c.name)), "no analytics cookies before the answer");
     check(/Microsoft Clarity/.test(await v.textContent(".pconsent")) && /sin cookies/.test(await v.textContent(".pconsent")),
-      "the banner names both tools and says GA counts without cookies");
+      "the banner names both tools and says they measure without cookies");
     await v.waitForSelector("#hitCounter:not([hidden])");
     await v.waitForTimeout(1200);
     const counter = await v.evaluate(() => ({ digits: [...document.querySelectorAll("#hitCounter .hc-d")].map(d => d.textContent).join(""),
@@ -87,16 +88,17 @@ const firstLine = proc => new Promise((resolve, reject) => {
     check(!(await v.$(".pconsent")), "declining closes the banner");
     await v.goto(base + "/es/timeline/");
     await v.waitForTimeout(300);
-    check(!(await v.$(".pconsent")) && gaRequests === 2 && clarityRequests === 0 && await consentOf() === "default:denied",
-      "the answer is remembered: GA goes on without cookies, Clarity stays out");
+    check(!(await v.$(".pconsent")) && gaRequests === 2 && clarityRequests === 2 && await consentOf() === "default:denied" && await clarityConsent() === "denied/denied",
+      "the answer is remembered: GA and Clarity go on without cookies");
     check(!(await vctx.cookies()).some(c => /^_ga|^_cl/.test(c.name)), "no analytics cookies after declining");
     await v.click("#consentOpen");
     await v.click('.pconsent [data-c="1"]');
-    for (let i = 0; i < 20 && !clarityRequests; i++) await v.waitForTimeout(100);
+    await v.waitForTimeout(300);
     check(gaRequests === 2 && await consentOf() === "default:denied,update:granted" &&
       await v.evaluate(() => window.dataLayer.some(a => a[0] === "set" && a[1] && a[1].visitor_type)),
       "accepting from the footer grants analytics storage to the GA already running (ads stay denied)");
-    check(clarityRequests === 1 && await v.evaluate(() => (window.clarity.q || []).some(a => a[0] === "consent")), "Clarity loads after accepting, with its consent");
+    check(clarityRequests === 2 && await clarityConsent() === "denied/denied,granted/denied",
+      "accepting grants Clarity analytics storage (consentv2), never ads, without loading it again");
     await v.waitForTimeout(300);  // clicks closer than 250 ms are one gesture for ui_click
     await v.click(".tl-entry");
     await v.waitForSelector("#modalBg.open");
